@@ -7,6 +7,9 @@ default_resources:
   mem_per_cpu: 3072
   partition: "core"
 
+expansionhunter:
+  threads: 16
+
 fastp_pe:
   threads: 2
   time: "12:00:00"

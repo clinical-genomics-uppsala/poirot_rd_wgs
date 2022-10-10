@@ -1,20 +1,22 @@
 ---
 
-resources: "Poirot_RD-WGS-develop/config/resources.yaml"
-samples: "Poirot_RD-WGS-develop/config/samples.tsv"
-units: "Poirot_RD-WGS-develop/config/units.tsv"
+resources: "config/resources.yaml"
+samples: "config/samples.tsv"
+units: "config/units.tsv"
 
 
 default_container: "docker://hydragenetics/common:0.1.1"
 
 
 programdir:
- dir: "/beegfs-storage//projects/wp3/nobackup/WGS/WGS_pilot_CGU202111/UJ-3091/Poirot_RD-WGS-develop/workflow"
-
+        #dir: "/beegfs-storage//projects/wp3/nobackup/WGS/WGS_pilot_CGU202111/UJ-3091/Poirot_RD-WGS-develop/workflow"
+       dir: "/home/padco251/expansionhunter/padraic_testing/Poirot_RD-WGS/workflow"
 
 modules:
+ alignment: "v0.2.0"
  compression: "v1.1.0"
  cnv_sv: "RD_fix"
+ expansionhunter: "add_expansionhunter"
  parabricks: "v0.2.0"
  prealignment: "v0.2.0"
  qc: "develop"
@@ -37,6 +39,10 @@ trimmer_software: "fastp_pe"
 crumble:
   container: "docker://hydragenetics/crumble:0.8.3"
   extra: "-O CRAM"
+
+expansionhunter:
+    container: "docker://hydragenetics/expansionhunter:5.0.0"
+    variant_catalog: "/beegfs-storage/data/ref_data/expansionhunter/variant_catalog/grch38/variant_catalog.json"
 
 fastp_pe:
  container: "docker://hydragenetics/fastp:0.20.1"
@@ -72,7 +78,7 @@ multiqc:
         - "qc/picard_collect_insert_size_metrics/{sample}_{type}.insert_size_metrics.txt"
         - "qc/picard_collect_multiple_metrics/{sample}_{type}.{ext}"
         - "qc/picard_collect_wgs_metrics/{sample}_{type}.txt"
-        - "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"
+        #- "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"
         - "qc/mosdepth_bed/{sample}_{type}.per-base.bed.gz"
         - "qc/samtools_stats/{sample}_{type}.samtools-stats.txt"
         - "prealignment/fastp_pe/{sample}_{flowcell}_{lane}_{barcode}_{type}.json"
@@ -124,6 +130,9 @@ picard_collect_multiple_metrics:
 picard_collect_wgs_metrics:
  container: "docker://hydragenetics/picard:2.25.0"
  threads: 6
+
+reviewer:
+    container: "docker://hydragenetics/reviewer:0.2.7"
 
 samtools_stats:
  container: "docker://hydragenetics/common:0.0.1"

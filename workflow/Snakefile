@@ -5,6 +5,8 @@ __license__ = "GPL-3"
 
 
 include: "rules/common.smk"
+include: "rules/add_ref_to_vcf.smk"
+# include: "rules/peddy.smk"
 
 
 report: "report/workflow.rst"
@@ -13,10 +15,12 @@ report: "report/workflow.rst"
 rule all:
     input:
         unpack(compile_output_list),
-        ["vcf_final/%s.vcf.gz" % sample for sample in get_samples(samples)],
+        ["vcf_final/%s.vcf.gz.tbi" % sample for sample in get_samples(samples)],
         "qc/multiqc/multiqc_DNA.html",
 #        ["cnv_sv/manta_run_workflow_t/%s/results/variants/SV.vcf.gz" % sample for sample in get_samples(samples)],
 
+
+ruleorder: parabricks_fq2bam > alignment_samtools_index
 
 module compression:
     snakefile:
@@ -60,10 +64,42 @@ use rule pbrun_fq2bam from parabricks as parabricks_fq2bam
 
 use rule pbrun_deepvariant from parabricks as parabricks_deepvariant
 
+module cnv_sv:
+    snakefile:
+        github("hydra-genetics/cnv_sv", path="workflow/Snakefile", tag=config["modules"]["expansionhunter"],)
+    config:
+        config
 
-include: "rules/add_ref_to_vcf.smk"
+use rule * from cnv_sv as cnv_sv_*
 
-include: "rules/peddy.smk"
+use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+        ref=config.get("reference", {}).get("fasta", ""),
+        cat=config.get("expansionhunter", {}).get("variant_catalog", ""),
+
+
+module alignment:
+    snakefile:
+        github("hydra-genetics/alignment", path="workflow/Snakefile", tag=config["modules"]["alignment"],)
+    config:
+        config
+
+use rule samtools_sort from alignment as alignment_samtools_sort with:
+    input:
+        "cnv_sv/expansionhunter/{sample}_{type}_realigned.bam"
+    output:
+        "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam"
+    log:
+        "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.log"
+    benchmark:
+        repeat(
+            "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.benchmark.tsv",
+            config.get("samtools_sort", {}).get("benchmark_repeats", 1),
+        )
+
+use rule samtools_index from alignment as alignment_samtools_index
 
 
 module qc:
@@ -184,3 +220,7 @@ use rule samtools_index from misc as misc_samtools_index with:
 #         bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
 #         bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
 #         interval=config.get("reference", {}).get("design_intervals_gatk_cnv", ""),
+
+use rule tabix from misc as misc_tabix
+
+use rule bgzip from misc as misc_bgzip

@@ -17,7 +17,7 @@ min_version("6.10")
 ### Set and validate config file
 
 
-configfile: "config.yaml"
+configfile: "config/config.yaml"
 validate(config, schema="../schemas/config.schema.yaml")
 
 
@@ -75,11 +75,47 @@ def get_in_fq(wildcards):
     return " --in-fq ".join(input_list)
 
 
-
 def compile_output_list(wildcards: snakemake.io.Wildcards):
-    return [
-        "prealignment/merged/{}_{}_{}.fastq.gz".format(sample, t, read)
+    files = {
+        "cnv_sv/expansionhunter": [
+            "vcf",
+        ],
+
+    }
+    output_files = [
+        "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)
+        for prefix in files.keys()
         for sample in get_samples(samples)
-        for t in get_unit_types(units, sample)
-        for read in ["fastq1", "fastq2"]
+        for unit_type in get_unit_types(units, sample)
+        for suffix in files[prefix]
     ]
+
+    output_files += [
+        "cnv_sv/expansionhunter/reviewer/%s_%s/" % (sample, unit_type)
+        for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
+        ]
+
+    # files = {
+    #     "cnv_sv/expansionhunter/reviewer": [
+    #         "svg",
+    #     ],
+    #
+    # }
+    # output_files += [
+    #     "%s/%s_%s.%s.%s" % (prefix, sample, unit_type,locus, suffix)
+    #     for prefix in files.keys()
+    #     for sample in get_samples(samples)
+    #     for unit_type in get_unit_types(units, sample)
+    #     for locus in get_locus_list(wildcards)
+    #     for suffix in files[prefix]
+    # ]
+
+    # return [
+    #     "prealignment/merged/{}_{}_{}.fastq.gz".format(sample, t, read)
+    #     for sample in get_samples(samples)
+    #     for t in get_unit_types(units, sample)
+    #     for read in ["fastq1", "fastq2"]
+    # ]
+
+    return output_files
