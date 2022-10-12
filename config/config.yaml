@@ -21,6 +21,7 @@ modules:
  prealignment: "v0.2.0"
  qc: "develop"
  misc: "v0.1.0"
+ stranger: "93245ee"
 #change qc to version
 
 reference:
@@ -42,7 +43,7 @@ crumble:
 
 expansionhunter:
     container: "docker://hydragenetics/expansionhunter:5.0.0"
-    variant_catalog: "/beegfs-storage/data/ref_data/expansionhunter/variant_catalog/grch38/variant_catalog.json"
+    variant_catalog: "/beegfs-storage/data/ref_data/expansionhunter/v5.0.0/grch38/variant_catalog.json"
 
 fastp_pe:
  container: "docker://hydragenetics/fastp:0.20.1"
@@ -147,6 +148,10 @@ samtools:
 
 spring:
  container: "docker://hydragenetics/spring:1.0.1"
+
+stranger:
+ container: "docker://hydragenetics/stranger:0.8.1"
+ catalog: "/data/ref_data/stranger/v0.8.1/variant_catalog_grch38.json"
 
 svdb_merge:
  container: "docker://hydragenetics/svdb:2.5.0"

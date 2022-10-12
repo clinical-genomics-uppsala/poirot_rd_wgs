@@ -22,6 +22,7 @@ rule all:
 
 ruleorder: parabricks_fq2bam > alignment_samtools_index
 
+
 module compression:
     snakefile:
         github("hydra-genetics/compression", path="workflow/Snakefile", tag=config["modules"]["compression"],)
@@ -53,7 +54,6 @@ module prealignment:
 
 use rule * from prealignment as prealignment_*
 
-
 module parabricks:
     snakefile:
         github("hydra-genetics/parabricks", path="workflow/Snakefile", tag=config["modules"]["parabricks"],)
@@ -70,7 +70,7 @@ module cnv_sv:
     config:
         config
 
-use rule * from cnv_sv as cnv_sv_*
+use rule * from cnv_sv exclude samtools_index as cnv_sv_*
 
 use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
     input:
@@ -79,6 +79,13 @@ use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
         ref=config.get("reference", {}).get("fasta", ""),
         cat=config.get("expansionhunter", {}).get("variant_catalog", ""),
 
+module annotation:
+    snakefile:
+        github("hydra-genetics/annotation", path="workflow/Snakefile", tag=config["modules"]["stranger"],)
+    config:
+        config
+
+use rule stranger from annotation as annotation_stranger
 
 module alignment:
     snakefile:
@@ -98,6 +105,7 @@ use rule samtools_sort from alignment as alignment_samtools_sort with:
             "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.benchmark.tsv",
             config.get("samtools_sort", {}).get("benchmark_repeats", 1),
         )
+
 
 use rule samtools_index from alignment as alignment_samtools_index
 

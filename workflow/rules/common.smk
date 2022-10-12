@@ -78,7 +78,7 @@ def get_in_fq(wildcards):
 def compile_output_list(wildcards: snakemake.io.Wildcards):
     files = {
         "cnv_sv/expansionhunter": [
-            "vcf",
+            "vcf", "stranger.vcf"
         ],
 
     }
