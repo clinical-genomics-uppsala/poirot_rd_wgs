@@ -6,7 +6,7 @@ __license__ = "GPL-3"
 
 include: "rules/common.smk"
 include: "rules/add_ref_to_vcf.smk"
-# include: "rules/peddy.smk"
+include: "rules/peddy.smk"
 
 
 report: "report/workflow.rst"
@@ -16,12 +16,12 @@ rule all:
     input:
         unpack(compile_output_list),
         ["vcf_final/%s.vcf.gz.tbi" % sample for sample in get_samples(samples)],
-        "qc/multiqc/multiqc_DNA.html",
+        # "qc/multiqc/multiqc_DNA.html",
 #        ["cnv_sv/manta_run_workflow_t/%s/results/variants/SV.vcf.gz" % sample for sample in get_samples(samples)],
 
 
 ruleorder: parabricks_fq2bam > alignment_samtools_index
-
+# ruleorder: qc_mosdepth_bed > misc_bgzip
 
 module compression:
     snakefile:
@@ -64,9 +64,26 @@ use rule pbrun_fq2bam from parabricks as parabricks_fq2bam
 
 use rule pbrun_deepvariant from parabricks as parabricks_deepvariant
 
+module snv_indels:
+    snakefile:
+        github("hydra-genetics/snv_indels", path="workflow/Snakefile", tag=config["modules"]["snv_indels"],)
+    config:
+        config
+
+use rule deepvariant from snv_indels as snv_indels_deepvariant with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+        ref=config.get("reference", {}).get("fasta", ""),
+    output:
+        gvcf=temp("snv_indels/deepvariant/{sample}_{type}.g.vcf"),
+        vcf=temp("snv_indels/deepvariant/{sample}_{type}.vcf"),
+
+
 module cnv_sv:
     snakefile:
-        github("hydra-genetics/cnv_sv", path="workflow/Snakefile", tag=config["modules"]["expansionhunter"],)
+        #github("hydra-genetics/cnv_sv", path="workflow/Snakefile", tag=config["modules"]["cnv_sv
+        "/projects/wp3/nobackup/Workspace/padraic_testing/cnv_sv/workflow/Snakefile"
     config:
         config
 
@@ -78,6 +95,7 @@ use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
         bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
         ref=config.get("reference", {}).get("fasta", ""),
         cat=config.get("expansionhunter", {}).get("variant_catalog", ""),
+        sex="qc/peddy/peddy.sex_check.csv"
 
 module annotation:
     snakefile:
@@ -116,6 +134,8 @@ module qc:
     config:
         config
 
+use rule fastqc from qc as qc_fastqc
+
 use rule mosdepth from qc as qc_mosdepth with:
     input:
         bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
@@ -133,9 +153,13 @@ use rule mosdepth_bed from qc as qc_mosdepth_bed with:
         region=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.region.dist.txt"),
         summary=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.summary.txt"),
 
-use rule multiqc from qc as qc_multiqc
+# use rule multiqc from qc as qc_multiqc
 
-use rule fastqc from qc as qc_fastqc
+use rule peddy from qc as qc_peddy with:
+    input:
+        vcf="qc/peddy/all.vcf.gz",
+        tbi="qc/peddy/all.vcf.gz.tbi",
+        ped="qc/peddy/all.ped",
 
 use rule picard_collect_alignment_summary_metrics from qc as qc_pic_align_sum_met with:
     input:
@@ -228,7 +252,7 @@ use rule samtools_index from misc as misc_samtools_index with:
 #         bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
 #         bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
 #         interval=config.get("reference", {}).get("design_intervals_gatk_cnv", ""),
-
+#
 use rule tabix from misc as misc_tabix
 
 use rule bgzip from misc as misc_bgzip

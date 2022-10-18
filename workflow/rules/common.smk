@@ -74,6 +74,14 @@ def get_in_fq(wildcards):
         input_list.append(input_unit)
     return " --in-fq ".join(input_list)
 
+def get_in_gvcf(wildcards):
+    gvcf_list=[
+        "snv_indels/deepvariant/{}_{}.g.vcf".format(sample, t)
+        for sample in get_samples(samples)
+        for t in get_unit_types(units, sample)
+        ]
+    return " -i ".join(gvcf_list)
+
 
 def compile_output_list(wildcards: snakemake.io.Wildcards):
     files = {
