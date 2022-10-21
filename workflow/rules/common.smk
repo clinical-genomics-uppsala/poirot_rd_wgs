@@ -14,12 +14,12 @@ from snakemake.utils import validate
 
 min_version("6.10")
 
+
 ### Set and validate config file
-
-
 configfile: "config/config.yaml"
-validate(config, schema="../schemas/config.schema.yaml")
 
+
+validate(config, schema="../schemas/config.schema.yaml")
 
 config = load_resources(config, config["resources"])
 validate(config, schema="../schemas/resources.schema.yaml")
@@ -47,8 +47,8 @@ wildcard_constraints:
     unit="N|T|R",
     read="fastq[1|2]",
 
-### Functions
 
+### Functions
 def get_in_fastq(units, wildcards):
     return expand(
         "prealignment/merged/{{sample}}_{{type}}_{read}.fastq.gz",
@@ -76,21 +76,22 @@ def get_in_fq(wildcards):
 
 
 def get_in_gvcf(wildcards):
-    gvcf_list=[
+    gvcf_list = [
         "snv_indels/deepvariant/{}_{}.g.vcf".format(sample, t)
         for sample in get_samples(samples)
         for t in get_unit_types(units, sample)
-        ]
+    ]
     return " -i ".join(gvcf_list)
 
 
 def compile_output_list(wildcards: snakemake.io.Wildcards):
     files = {
-#        "cnv_sv/cnvpytor": ["vcf"],
+        #        "cnv_sv/cnvpytor": ["vcf"],
         "cnv_sv/expansionhunter": ["vcf", "stranger.vcf"],
         "cnv_sv/tiddit": ["vcf"],
         "vcf_final": ["vcf.gz.tbi"],
     }
+
     output_files = [
         "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)
         for prefix in files.keys()
@@ -102,10 +103,13 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         "cnv_sv/expansionhunter/reviewer/%s_%s/" % (sample, unit_type)
         for sample in get_samples(samples)
         for unit_type in get_unit_types(units, sample)
-        ]
+    ]
+
+
 #    output_files += [
 #        "cnv_sv/manta_run_workflow_n/%s/results/variants/candidateSV.vcf.gz" % (sample)
 #        for sample in get_samples(samples)
 #    ]
 #    output_files += ["qc/multiqc/multiqc_DNA.html"]
-    return output_files
+
+return output_files

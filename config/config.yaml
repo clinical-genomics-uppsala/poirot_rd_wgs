@@ -21,7 +21,7 @@ modules:
  misc: "v0.1.0"
  snv_indels: "22b2723"
  stranger: "8c2dffa"
-#change qc to version
+
 
 reference:
   design_bed: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
@@ -36,13 +36,25 @@ reference:
 
 trimmer_software: "fastp_pe"
 
+
+cnvpytor:
+  container: "docker://kristinebilgrav/cnvpytor"
+
+
+config_manta_n:
+  container: "docker://hydragenetics/manta:1.6.0"
+  extra: ""
+
+
 crumble:
   container: "docker://hydragenetics/crumble:0.8.3"
   extra: "-O CRAM"
 
+
 deepvariant:
   container: "docker://google/deepvariant:1.4.0"
   extra: "--regions=/beegfs-storage/data/ref_data/peddy/v0.4.8/GRCH38.bed"
+
 
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
@@ -53,21 +65,30 @@ expansionhunter:
 fastp_pe:
  container: "docker://hydragenetics/fastp:0.20.1"
 
+
 fastqc:
  container: "docker://hydragenetics/fastqc:0.11.9"
+
 
 glnexus:
   bedfile: "/data/ref_data/peddy/v0.4.8/GRCH38.bed"
   container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
+
+
+manta_run_workflow_n:
+  container: "docker://hydragenetics/manta:1.6.0"
+
 
 mosdepth:
  container: "docker://hydragenetics/mosdepth:0.3.2"
  by: "500"
  extra: "--fast-mode --no-per-base"
 
+
 mosdepth_bed:
  container: "docker://hydragenetics/mosdepth:0.3.2"
  extra: "--fast-mode "
+
 
 multiqc:
   container: "docker://hydragenetics/multiqc:1.11"
@@ -98,31 +119,38 @@ multiqc:
         - "qc/mosdepth_/{sample}_{type}.mosdepth.summary.txt"
 # config: "/projects/wp1/nobackup/ngs/utveckling/Twist_DNA_DATA/multiqc_config.yaml"
 
+
 peddy:
   container: "docker://hydragenetics/peddy:0.4.8"
   samples: "config/SampleSheet.csv"
   config: 'peddy_mqc.yaml'
   extra: "--sites hg38 "
 
+
 picard_collect_alignment_summary_metrics:
  container: "docker://hydragenetics/picard:2.25.0"
  threads: 6
+
 
 picard_collect_duplication_metrics:
  container: "docker://hydragenetics/picard:2.25.0"
  threads: 3
 
+
 picard_collect_gc_bias_metrics:
  container: "docker://hydragenetics/picard:2.25.0"
  threads: 6
+
 
 picard_collect_hs_metrics:
  container: "docker://hydragenetics/picard:2.25.0"
  threads: 6
 
+
 picard_collect_insert_size_metrics:
  container: "docker://hydragenetics/picard:2.25.0"
  threads: 3
+
 
 picard_collect_multiple_metrics:
  container: "docker://hydragenetics/picard:2.25.0"
@@ -138,30 +166,38 @@ picard_collect_multiple_metrics:
  #  - "quality_distribution_metrics"
  #  - "quality_distribution.pdf"
 
+
 picard_collect_wgs_metrics:
  container: "docker://hydragenetics/picard:2.25.0"
  threads: 6
 
+
 reviewer:
   container: "docker://hydragenetics/reviewer:0.2.7"
+
 
 samtools_stats:
  container: "docker://hydragenetics/common:0.0.1"
  threads: 3
 
+
 samtools_idxstats:
  container: "docker://hydragenetics/common:0.0.1"
  threads: 3
 
+
 samtools:
  container: "docker://hydragenetics/common:0.1.0"
+
 
 spring:
  container: "docker://hydragenetics/spring:1.0.1"
 
+
 stranger:
  container: "docker://hydragenetics/stranger:0.8.1"
  catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_grch38.json"
+
 
 svdb_merge:
  container: "docker://hydragenetics/svdb:2.5.0"
@@ -169,8 +205,14 @@ svdb_merge:
   - "manta"
   - "cnvnator"
 
+
 tabix:
  container: "docker://hydragenetics/common:0.1.0"
+
+
+tiddit:
+  container: "shub://J35P312/TIDDIT:latest"
+
 
 genepanels:
  - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/ALS.bed
