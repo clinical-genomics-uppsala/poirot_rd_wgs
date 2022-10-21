@@ -9,13 +9,12 @@ default_container: "docker://hydragenetics/common:0.1.1"
 
 
 programdir:
-        #dir: "/beegfs-storage//projects/wp3/nobackup/WGS/WGS_pilot_CGU202111/UJ-3091/Poirot_RD-WGS-develop/workflow"
   dir: "/home/padco251/expansionhunter/padraic_testing/Poirot_RD-WGS/workflow"
 
 modules:
  alignment: "v0.2.0"
  compression: "v1.1.0"
- cnv_sv: "d860680"
+ cnv_sv: "develop"
  parabricks: "v0.2.0"
  prealignment: "v0.2.0"
  qc: "develop"

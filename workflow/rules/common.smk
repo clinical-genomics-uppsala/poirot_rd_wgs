@@ -1,5 +1,5 @@
-___author__ = "Jessika Nordin"
-__copyright__ = "Copyright 2022, Martin Rippin"
+___author__ = "Jessika Nordin, Padraic Corcoran"
+__copyright__ = "Copyright 2022"
 __email__ = "jessika.nordin@scilifelab.uu.se"
 __license__ = "GPL-3"
 
@@ -74,6 +74,7 @@ def get_in_fq(wildcards):
         input_list.append(input_unit)
     return " --in-fq ".join(input_list)
 
+
 def get_in_gvcf(wildcards):
     gvcf_list=[
         "snv_indels/deepvariant/{}_{}.g.vcf".format(sample, t)
@@ -85,10 +86,10 @@ def get_in_gvcf(wildcards):
 
 def compile_output_list(wildcards: snakemake.io.Wildcards):
     files = {
-        "cnv_sv/expansionhunter": [
-            "vcf", "stranger.vcf"
-        ],
-
+#        "cnv_sv/cnvpytor": ["vcf"],
+        "cnv_sv/expansionhunter": ["vcf", "stranger.vcf"],
+        "cnv_sv/tiddit": ["vcf"],
+        "vcf_final": ["vcf.gz.tbi"],
     }
     output_files = [
         "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)
@@ -97,33 +98,14 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         for unit_type in get_unit_types(units, sample)
         for suffix in files[prefix]
     ]
-
     output_files += [
         "cnv_sv/expansionhunter/reviewer/%s_%s/" % (sample, unit_type)
         for sample in get_samples(samples)
         for unit_type in get_unit_types(units, sample)
         ]
-
-    # files = {
-    #     "cnv_sv/expansionhunter/reviewer": [
-    #         "svg",
-    #     ],
-    #
-    # }
-    # output_files += [
-    #     "%s/%s_%s.%s.%s" % (prefix, sample, unit_type,locus, suffix)
-    #     for prefix in files.keys()
-    #     for sample in get_samples(samples)
-    #     for unit_type in get_unit_types(units, sample)
-    #     for locus in get_locus_list(wildcards)
-    #     for suffix in files[prefix]
-    # ]
-
-    # return [
-    #     "prealignment/merged/{}_{}_{}.fastq.gz".format(sample, t, read)
-    #     for sample in get_samples(samples)
-    #     for t in get_unit_types(units, sample)
-    #     for read in ["fastq1", "fastq2"]
-    # ]
-
+#    output_files += [
+#        "cnv_sv/manta_run_workflow_n/%s/results/variants/candidateSV.vcf.gz" % (sample)
+#        for sample in get_samples(samples)
+#    ]
+#    output_files += ["qc/multiqc/multiqc_DNA.html"]
     return output_files

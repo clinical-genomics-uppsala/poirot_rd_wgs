@@ -1,5 +1,5 @@
-__author__ = "Jessika Nordin"
-__copyright__ = "Copyright 2022, Jessika Nordin"
+__author__ = "Jessika Nordin, Padraic Corcoran"
+__copyright__ = "Copyright 2022"
 __email__ = "jessika.nordin@scilifelab.uu.se"
 __license__ = "GPL-3"
 
@@ -15,9 +15,6 @@ report: "report/workflow.rst"
 rule all:
     input:
         unpack(compile_output_list),
-        ["vcf_final/%s.vcf.gz.tbi" % sample for sample in get_samples(samples)],
-        # "qc/multiqc/multiqc_DNA.html",
-#        ["cnv_sv/manta_run_workflow_t/%s/results/variants/SV.vcf.gz" % sample for sample in get_samples(samples)],
 
 
 ruleorder: parabricks_fq2bam > alignment_samtools_index
@@ -82,7 +79,7 @@ use rule deepvariant from snv_indels as snv_indels_deepvariant with:
 
 module cnv_sv:
     snakefile:
-        #github("hydra-genetics/cnv_sv", path="workflow/Snakefile", tag=config["modules"]["cnv_sv
+        #github("hydra-genetics/cnv_sv", path="workflow/Snakefile", tag=config["modules"]["cnv_sv],)
         "/projects/wp3/nobackup/Workspace/padraic_testing/cnv_sv/workflow/Snakefile"
     config:
         config
@@ -104,6 +101,34 @@ module annotation:
         config
 
 use rule stranger from annotation as annotation_stranger
+
+module cnv_sv2:
+    snakefile:
+        github("hydra-genetics/cnv_sv", path="workflow/Snakefile", tag=config["modules"]["cnv_sv"],)
+    config:
+        config
+
+#use rule * from cnv_sv2 as cnv_sv_*
+
+#use rule cnvpytor_readdepth from cnv_sv as cnv_sv_cnvpytor_rd with:
+#    input:
+#        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+#        vcf="parabricks/pbrun_deepvariant/{sample}.vcf",
+
+#use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter
+
+#use rule config_manta_n from cnv_sv as cnv_sv_config_manta_n with:
+#    input:
+#        bam="parabricks/pbrun_fq2bam/{sample}_N.bam",
+#        bai="parabricks/pbrun_fq2bam/{sample}_N.bam.bai",
+#        ref=config["reference"]["fasta"],
+
+#use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n
+
+use rule tiddit from cnv_sv as cnv_sv_tiddit with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+
 
 module alignment:
     snakefile:
@@ -153,7 +178,7 @@ use rule mosdepth_bed from qc as qc_mosdepth_bed with:
         region=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.region.dist.txt"),
         summary=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.summary.txt"),
 
-# use rule multiqc from qc as qc_multiqc
+use rule multiqc from qc as qc_multiqc
 
 use rule peddy from qc as qc_peddy with:
     input:
@@ -233,26 +258,6 @@ use rule samtools_index from misc as misc_samtools_index with:
         "{rule}: Index {wildcards.file}.crumble.cram file"
 
 
-# module cnv_sv:
-#     snakefile:
-#         github("hydra-genetics/cnv_sv", path="workflow/Snakefile", tag=config["modules"]["cnv_sv"],)
-#     config:
-#         config
-#
-# use rule manta from cnv_sv as cnv_sv_manta with:
-#     input:
-#         bam_n="parabricks/pbrun_fq2bam/{sample}_N.bam",
-#         bai_n="parabricks/pbrun_fq2bam/{sample}_N.bam.bai",
-#         ref=config["reference"]["fasta"],
-#
-# use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run
-
-# use rule gatk_cnv_collect_read_counts from cnv_sv as gatk_cnv with:
-#     input:
-#         bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-#         bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
-#         interval=config.get("reference", {}).get("design_intervals_gatk_cnv", ""),
-#
 use rule tabix from misc as misc_tabix
 
 use rule bgzip from misc as misc_bgzip

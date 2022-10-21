@@ -10,7 +10,6 @@ default_resources:
 deepvariant:
   threads: 10
 
-
 expansionhunter:
   threads: 16
 
