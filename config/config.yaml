@@ -16,7 +16,7 @@ modules:
   alignment: "v0.2.0"
   compression: "v1.1.0"
   cnv_sv: "add-manta_n"
-  exomehunter: "add_expansionhunter"
+  expansionhunter: "add_expansionhunter"
   parabricks: "v0.2.0"
   prealignment: "v0.2.0"
   qc: "develop"
@@ -56,7 +56,7 @@ deepvariant:
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
   variant_catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_grch38.json"
- # variant_catalog: "/beegfs-storage/data/ref_data/expansionhunter/v5.0.0/grch38/variant_catalog.json"
+  # variant_catalog: "/beegfs-storage/data/ref_data/expansionhunter/v5.0.0/grch38/variant_catalog.json"
 
 
 fastp_pe:

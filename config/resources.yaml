@@ -54,3 +54,6 @@ peddy:
 spring:
   mem_mb: 368640
   threads: 8
+
+tiddit:
+  threads: 8
