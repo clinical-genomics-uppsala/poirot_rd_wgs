@@ -87,9 +87,9 @@ def get_in_gvcf(wildcards):
 def compile_output_list(wildcards: snakemake.io.Wildcards):
     files = {
         #        "cnv_sv/cnvpytor": ["vcf"],
-        "cnv_sv/expansionhunter": ["vcf", "stranger.vcf"],
+#        "cnv_sv/expansionhunter": ["vcf", "stranger.vcf"],
         "cnv_sv/tiddit": ["vcf"],
-        "vcf_final": ["vcf.gz.tbi"],
+#        "vcf_final": ["vcf.gz.tbi"],
     }
 
     output_files = [
@@ -104,12 +104,9 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         for sample in get_samples(samples)
         for unit_type in get_unit_types(units, sample)
     ]
-
-
-#    output_files += [
-#        "cnv_sv/manta_run_workflow_n/%s/results/variants/candidateSV.vcf.gz" % (sample)
-#        for sample in get_samples(samples)
-#    ]
+    output_files += ["cnv_sv/manta_run_workflow_n/%s/results/variants/candidateSV.vcf.gz" % (sample)
+        for sample in get_samples(samples)
+    ]
 #    output_files += ["qc/multiqc/multiqc_DNA.html"]
 
 return output_files

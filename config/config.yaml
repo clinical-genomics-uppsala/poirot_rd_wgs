@@ -12,15 +12,16 @@ programdir:
   dir: "/home/padco251/expansionhunter/padraic_testing/Poirot_RD-WGS/workflow"
 
 modules:
- alignment: "v0.2.0"
- compression: "v1.1.0"
- cnv_sv: "develop"
- parabricks: "v0.2.0"
- prealignment: "v0.2.0"
- qc: "develop"
- misc: "v0.1.0"
- snv_indels: "22b2723"
- stranger: "8c2dffa"
+  alignment: "v0.2.0"
+  compression: "v1.1.0"
+  cnv_sv: "add-manta_n"
+  exomehunter: "add_expansionhunter"
+  parabricks: "v0.2.0"
+  prealignment: "v0.2.0"
+  qc: "develop"
+  misc: "v0.1.0"
+  snv_indels: "22b2723"
+  stranger: "8c2dffa"
 
 
 reference:
@@ -41,11 +42,6 @@ cnvpytor:
   container: "docker://kristinebilgrav/cnvpytor"
 
 
-config_manta_n:
-  container: "docker://hydragenetics/manta:1.6.0"
-  extra: ""
-
-
 crumble:
   container: "docker://hydragenetics/crumble:0.8.3"
   extra: "-O CRAM"
@@ -59,15 +55,15 @@ deepvariant:
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
   variant_catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_grch38.json"
-  # variant_catalog: "/beegfs-storage/data/ref_data/expansionhunter/v5.0.0/grch38/variant_catalog.json"
+ # variant_catalog: "/beegfs-storage/data/ref_data/expansionhunter/v5.0.0/grch38/variant_catalog.json"
 
 
 fastp_pe:
- container: "docker://hydragenetics/fastp:0.20.1"
+  container: "docker://hydragenetics/fastp:0.20.1"
 
 
 fastqc:
- container: "docker://hydragenetics/fastqc:0.11.9"
+  container: "docker://hydragenetics/fastqc:0.11.9"
 
 
 glnexus:
@@ -75,19 +71,24 @@ glnexus:
   container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
 
 
+manta_config_n:
+  container: "docker://hydragenetics/manta:1.6.0"
+  extra: ""
+
+
 manta_run_workflow_n:
   container: "docker://hydragenetics/manta:1.6.0"
 
 
 mosdepth:
- container: "docker://hydragenetics/mosdepth:0.3.2"
- by: "500"
- extra: "--fast-mode --no-per-base"
+  container: "docker://hydragenetics/mosdepth:0.3.2"
+  by: "500"
+  extra: "--fast-mode --no-per-base"
 
 
 mosdepth_bed:
- container: "docker://hydragenetics/mosdepth:0.3.2"
- extra: "--fast-mode "
+  container: "docker://hydragenetics/mosdepth:0.3.2"
+  extra: "--fast-mode "
 
 
 multiqc:
@@ -128,48 +129,48 @@ peddy:
 
 
 picard_collect_alignment_summary_metrics:
- container: "docker://hydragenetics/picard:2.25.0"
- threads: 6
+  container: "docker://hydragenetics/picard:2.25.0"
+  threads: 6
 
 
 picard_collect_duplication_metrics:
- container: "docker://hydragenetics/picard:2.25.0"
- threads: 3
+  container: "docker://hydragenetics/picard:2.25.0"
+  threads: 3
 
 
 picard_collect_gc_bias_metrics:
- container: "docker://hydragenetics/picard:2.25.0"
- threads: 6
+  container: "docker://hydragenetics/picard:2.25.0"
+  threads: 6
 
 
 picard_collect_hs_metrics:
- container: "docker://hydragenetics/picard:2.25.0"
- threads: 6
+  container: "docker://hydragenetics/picard:2.25.0"
+  threads: 6
 
 
 picard_collect_insert_size_metrics:
- container: "docker://hydragenetics/picard:2.25.0"
- threads: 3
+  container: "docker://hydragenetics/picard:2.25.0"
+  threads: 3
 
 
 picard_collect_multiple_metrics:
- container: "docker://hydragenetics/picard:2.25.0"
- threads: 6
+  container: "docker://hydragenetics/picard:2.25.0"
+  threads: 6
  # output_ext:
- #  - "alignment_summary_metrics"
- #  - "base_distribution_by_cycle_metrics"
- #  - "base_distribution_by_cycle.pdf"
- #  - "insert_size_metrics"
- #  - "insert_size_histogram.pdf"
- #  - "quality_by_cycle_metrics"
- #  - "quality_by_cycle.pdf"
- #  - "quality_distribution_metrics"
- #  - "quality_distribution.pdf"
+ # - "alignment_summary_metrics"
+ # - "base_distribution_by_cycle_metrics"
+ # - "base_distribution_by_cycle.pdf"
+ # - "insert_size_metrics"
+ # - "insert_size_histogram.pdf"
+ # - "quality_by_cycle_metrics"
+ # - "quality_by_cycle.pdf"
+ # - "quality_distribution_metrics"
+ # - "quality_distribution.pdf"
 
 
 picard_collect_wgs_metrics:
- container: "docker://hydragenetics/picard:2.25.0"
- threads: 6
+  container: "docker://hydragenetics/picard:2.25.0"
+  threads: 6
 
 
 reviewer:
@@ -177,60 +178,61 @@ reviewer:
 
 
 samtools_stats:
- container: "docker://hydragenetics/common:0.0.1"
- threads: 3
+  container: "docker://hydragenetics/common:0.0.1"
+  threads: 3
 
 
 samtools_idxstats:
- container: "docker://hydragenetics/common:0.0.1"
- threads: 3
+  container: "docker://hydragenetics/common:0.0.1"
+  threads: 3
 
 
 samtools:
- container: "docker://hydragenetics/common:0.1.0"
+  container: "docker://hydragenetics/common:0.1.0"
 
 
 spring:
- container: "docker://hydragenetics/spring:1.0.1"
+  container: "docker://hydragenetics/spring:1.0.1"
 
 
 stranger:
- container: "docker://hydragenetics/stranger:0.8.1"
- catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_grch38.json"
+  container: "docker://hydragenetics/stranger:0.8.1"
+  catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_grch38.json"
 
 
 svdb_merge:
- container: "docker://hydragenetics/svdb:2.5.0"
- cnv_callers:
-  - "manta"
-  - "cnvnator"
+  container: "docker://hydragenetics/svdb:2.5.0"
+  cnv_callers:
+    - "cnvnator"
+    - "manta"
+    - "tiddit"
 
 
 tabix:
- container: "docker://hydragenetics/common:0.1.0"
+  container: "docker://hydragenetics/common:0.1.0"
 
 
 tiddit:
   container: "shub://J35P312/TIDDIT:latest"
 
 
-genepanels:
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/ALS.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Aortopatier.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Arytmier.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Bindvav.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/BRCA.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/CADASIL.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/EBS.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/EDS.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/epilepsi.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/HHT.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Ichtyos.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/kardio.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Kraniosynostos_v2.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/neuromuskular.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/neuropati.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Periodisk_paralys.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Rasopatier.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Sotos.bed
- - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Trombocytopenier.bed
+#genepanels:
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/ALS.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Aortopatier.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Arytmier.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Bindvav.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/BRCA.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/CADASIL.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/EBS.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/EDS.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/epilepsi.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/HHT.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Ichtyos.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/kardio.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Kraniosynostos_v2.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/neuromuskular.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/neuropati.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Periodisk_paralys.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Rasopatier.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Sotos.bed
+# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Trombocytopenier.bed
