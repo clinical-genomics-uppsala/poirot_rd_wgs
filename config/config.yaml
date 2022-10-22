@@ -94,32 +94,26 @@ mosdepth_bed:
 
 multiqc:
   container: "docker://hydragenetics/multiqc:1.11"
-  config: "Poirot_RD-WGS-develop/config/multiqc.config"
   reports:
     DNA:
-      included_unit_types: ['N']
+      config: "config/multiqc_config_dna.yaml"
+      included_unit_types: ["N"]
       qc_files:
-        - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_{read}_fastqc.zip"
+        # - "prealignment/fastp_pe/{sample}_{flowcell}_{lane}_{barcode}_{type}_fastp.json"
+        - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq1_fastqc.zip"
+        - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq2_fastqc.zip"
+        - "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"
+        - "qc/mosdepth/{sample}_{type}.mosdepth.region.dist.txt"
+        - "qc/mosdepth/{sample}_{seqID}.mosdepth.global.dist.txt"
+        - "qc/mosdepth_bed/{sample}_{type}.per-base.bed.gz"
         - "qc/picard_collect_alignment_summary_metrics/{sample}_{type}.alignment_summary_metrics.txt"
         - "qc/picard_collect_duplication_metrics/{sample}_{type}.duplication_metrics.txt"
         - "qc/picard_collect_gc_bias_metrics/{sample}_{type}.gc_bias.summary_metrics"
         - "qc/picard_collect_hs_metrics/{sample}_{type}.HsMetrics.txt"
         - "qc/picard_collect_insert_size_metrics/{sample}_{type}.insert_size_metrics.txt"
-        - "qc/picard_collect_multiple_metrics/{sample}_{type}.{ext}"
         - "qc/picard_collect_wgs_metrics/{sample}_{type}.txt"
-        - "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"
-        - "qc/mosdepth_bed/{sample}_{type}.per-base.bed.gz"
         - "qc/samtools_stats/{sample}_{type}.samtools-stats.txt"
-        - "prealignment/fastp_pe/{sample}_{flowcell}_{lane}_{barcode}_{type}.json"
         - "qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"
-        - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_{read}.zip"
-        - "prealignment/fastp_pe/{sample}_{run}_{lane}_{type}.json"
-        - "qc/mosdepth/{sample}_{type}.regions.bed.gz"
-        - "qc/mosdepth/{sample}_{type}.regions.bed.gz.csi"
-        - "qc/mosdepth/{sample}_{type}.mosdepth.global.dist.txt"
-        - "qc/mosdepth/{sample}_{type}.mosdepth.region.dist.txt"
-        - "qc/mosdepth_/{sample}_{type}.mosdepth.summary.txt"
-# config: "/projects/wp1/nobackup/ngs/utveckling/Twist_DNA_DATA/multiqc_config.yaml"
 
 
 peddy:
@@ -179,17 +173,17 @@ reviewer:
 
 
 samtools_stats:
-  container: "docker://hydragenetics/common:0.0.1"
+  container: "docker://hydragenetics/common:0.1.1"
   threads: 3
 
 
 samtools_idxstats:
-  container: "docker://hydragenetics/common:0.0.1"
+  container: "docker://hydragenetics/common:0.1.1"
   threads: 3
 
 
 samtools:
-  container: "docker://hydragenetics/common:0.1.0"
+  container: "docker://hydragenetics/common:0.1.1"
 
 
 spring:
@@ -210,7 +204,7 @@ svdb_merge:
 
 
 tabix:
-  container: "docker://hydragenetics/common:0.1.0"
+  container: "docker://hydragenetics/common:0.1.1"
 
 
 tiddit:

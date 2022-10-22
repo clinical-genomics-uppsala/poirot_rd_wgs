@@ -41,14 +41,22 @@ validate(units, schema="../schemas/units.schema.yaml")
 ### Set wildcard constraints
 wildcard_constraints:
     barcode="[A-Z+]+",
+    chr="[^_]+",
     flowcell="[A-Z0-9]+",
     lane="L[0-9]+",
-    sample="|".join(get_samples(samples)),
-    unit="N|T|R",
     read="fastq[1|2]",
+    sample="|".join(get_samples(samples)),
+    type="N|T|R",
 
 
 ### Functions
+def get_flowcell(units, wildcards):
+    flowcells = set([u.flowcell for u in get_units(units, wildcards)])
+    if len(flowcells) > 1:
+        raise ValueError("Sample type combination from different sequence flowcells")
+    return flowcells.pop()
+
+
 def get_in_fastq(units, wildcards):
     return expand(
         "prealignment/merged/{{sample}}_{{type}}_{read}.fastq.gz",
@@ -86,12 +94,10 @@ def get_in_gvcf(wildcards):
 
 def compile_output_list(wildcards: snakemake.io.Wildcards):
     files = {
-        #        "cnv_sv/cnvpytor": ["vcf"],
-#        "cnv_sv/expansionhunter": ["vcf", "stranger.vcf"],
+        #       "cnv_sv/cnvpytor": ["vcf"],
+        #       "cnv_sv/expansionhunter": ["vcf", "stranger.vcf"],
         "cnv_sv/tiddit": ["vcf"],
-#        "vcf_final": ["vcf.gz.tbi"],
     }
-
     output_files = [
         "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)
         for prefix in files.keys()
@@ -107,5 +113,8 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
     output_files += ["cnv_sv/manta_run_workflow_n/%s/results/variants/candidateSV.vcf.gz" % (sample)
         for sample in get_samples(samples)
     ]
-#    output_files += ["qc/multiqc/multiqc_DNA.html"]
+    output_files += ["qc/multiqc/multiqc_DNA.html"]
+    output_files += ["vcf_final/%s.vcf.gz.tbi" % (sample)
+        for sample in get_samples(samples)
+    ]
     return output_files

@@ -19,6 +19,7 @@ rule all:
 
 ruleorder: cnv_sv_manta_run_workflow_n > misc_bgzip
 ruleorder: parabricks_fq2bam > alignment_samtools_index
+ruleorder: qc_mosdepth > misc_bgzip
 ruleorder: qc_mosdepth_bed > misc_bgzip
 
 
@@ -230,6 +231,7 @@ use rule mosdepth_bed from qc as qc_mosdepth_bed with:
         bed=temp("qc/mosdepth_bed/{sample}_{type}.regions.bed.gz"),
         bed_csi=temp("qc/mosdepth_bed/{sample}_{type}.regions.bed.gz.csi"),
         glob=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.global.dist.txt"),
+        pairbase=temp("qc/mosdepth_bed/{sample}_{type}.per-base.bed.gz"),
         region=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.region.dist.txt"),
         summary=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.summary.txt"),
 

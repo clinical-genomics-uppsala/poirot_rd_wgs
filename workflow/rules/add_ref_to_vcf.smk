@@ -7,8 +7,6 @@ rule addRef:
         vcf=temp("vcf_final/{sample}_ref.vcf"),
     log:
         "vcf_final/{sample}_add_ref.log",
-    params:
-        config["programdir"]["dirwr"],
     resources:
         mem_mb=config.get("multiqc", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
         mem_per_cpu=config.get("multiqc", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
