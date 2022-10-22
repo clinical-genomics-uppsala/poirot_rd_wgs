@@ -4,7 +4,7 @@ rule addRef:
         vcf="parabricks/pbrun_deepvariant/{sample}.vcf",
         ref=config["reference"]["fasta"],
     output:
-        temp("vcf_final/{sample}_ref.vcf"),
+        vcf=temp("vcf_final/{sample}_ref.vcf"),
     log:
         "vcf_final/{sample}_add_ref.log",
     params:
@@ -16,7 +16,7 @@ rule addRef:
         threads=config.get("multiqc", {}).get("threads", config["default_resources"]["threads"]),
         time=config.get("multiqc", {}).get("time", config["default_resources"]["time"]),
     shell:
-        "( python ../scripts/ref_vcf.py {input.vcf} {input.ref} {output} ) &> {log}"
+        "( python ../scripts/ref_vcf.py {input.vcf} {input.ref} {output.vcf} ) &> {log}"
 
 
 rule changeM2MT:
@@ -33,4 +33,4 @@ rule changeM2MT:
         threads=config.get("multiqc", {}).get("threads", config["default_resources"]["threads"]),
         time=config.get("multiqc", {}).get("time", config["default_resources"]["time"]),
     shell:
-        """( awk '{{gsub(/chrM/,"chrMT"); print}}' {input} > {output} ) &> {log}"""
+        """( awk '{{gsub(/chrM/,"chrMT"); print}}' {input} > {output.vcf} ) &> {log}"""

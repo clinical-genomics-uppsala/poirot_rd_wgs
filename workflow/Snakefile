@@ -114,9 +114,6 @@ module cnv_sv:
         config
 
 
-use rule * from cnv_sv exclude samtools_index as cnv_sv_*
-
-
 use rule cnvpytor_readdepth from cnv_sv as cnv_sv_cnvpytor_rd with:
     input:
         bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
@@ -150,6 +147,8 @@ module expansionhunter:
         )
     config:
         config
+
+use rule * from expansionhunter exclude samtools_index as cnv_sv_*
 
 use rule expansionhunter from expansionhunter as cnv_sv_expansionhunter with:
     input:

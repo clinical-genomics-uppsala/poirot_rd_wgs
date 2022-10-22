@@ -99,14 +99,13 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         for unit_type in get_unit_types(units, sample)
         for suffix in files[prefix]
     ]
-    output_files += [
-        "cnv_sv/expansionhunter/reviewer/%s_%s/" % (sample, unit_type)
-        for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
-    ]
+#    output_files += [
+#        "cnv_sv/expansionhunter/reviewer/%s_%s/" % (sample, unit_type)
+#        for sample in get_samples(samples)
+#        for unit_type in get_unit_types(units, sample)
+#    ]
     output_files += ["cnv_sv/manta_run_workflow_n/%s/results/variants/candidateSV.vcf.gz" % (sample)
         for sample in get_samples(samples)
     ]
 #    output_files += ["qc/multiqc/multiqc_DNA.html"]
-
-return output_files
+    return output_files
