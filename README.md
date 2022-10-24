@@ -11,7 +11,7 @@ The pipeline is built to analys WGS data. Where possible, hydra-genetics modules
 - deepVariant (+ GLNexus for peddy) for calling
 
 
-**CNV, and other SV: inversions, deletion and duplications for Moon**
+**CNV, and other SV: inversions, deletion and duplications**
 
 - Manta
 - CNVpytor
