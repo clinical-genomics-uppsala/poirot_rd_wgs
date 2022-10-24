@@ -15,8 +15,6 @@ def comment_the_config_keys(config_dict):
 
 def get_trio_info(ped_filepath):
     '''
-
-
     '''
 
     ped_cols = ['family_id', 'sample_id', 'paternal_id',
