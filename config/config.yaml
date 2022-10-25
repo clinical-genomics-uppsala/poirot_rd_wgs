@@ -208,7 +208,7 @@ tabix:
 
 
 tiddit:
-  container: "shub://J35P312/TIDDIT:latest"
+  container: "docker://hydragenetics/tiddit:3.3.2"
 
 
 #genepanels:
