@@ -1,15 +1,16 @@
 #Make a virtual envirionment and set it up
-#virtualenv venv -p python3.8
-#source venv/bin/activate
-#
-#pip install hydra-genetics
-#pip install snakemake
-#pip install -r requirements.txt
-#module load singularity
-#module load slurm-drmaa
-#module load bcbio-nextgen
-#pip install --upgrade snakemake
-#pip install drmaa
+virtualenv -p python3.9 venv
+source venv/bin/activate
+pip install hydra-genetics
+
+pip install snakemake
+pip install -r requirements.txt
+pip install pysam
+pip install --upgrade hydra_genetics
+module load slurm-drmaa
+module load bcbio-nextgen
+pip install --upgrade snakemake
+pip install drmaa
 #
 #vim /projects/wp3/nobackup/Workspace/WGS_pipeline_GPU_test/venv/lib/python3.8/site-packages/hydra_genetics/utils/units.py
 #rm [str]
@@ -24,10 +25,35 @@ source venv/bin/activate
 # -s where is the Snakefile, -d which is the working directory
 # units.tsv and sample.tsv should be in working directory
 snakemake --profile profiles/slurm/ -s workflow/Snakefile -d config/
-snakemake -n -s workflow/Snakefile -d config/ --use-singularity --singularity-args " -B /beegfs-storage -B /scratch -B /data "
-snakemake --core 1 -s ../workflow/Snakefile --use-singularity --singularity-args " -B /beegfs-storage -B /scratch -B /data "
+snakemake -n -s workflow/Snakefile -d config/ --use-singularity --singularity-args " -B /projects -B /beegfs-storage -B /scratch -B /data "
+snakemake --core 1 -s ../workflow/Snakefile --use-singularity --singularity-args " -B /projects -B /beegfs-storage -B /scratch -B /data "
 
-snakemake -n -s /projects/wp3/nobackup/Workspace/WGS_pipeline_GPU_test/Poirot_RD-WGS/workflow/Snakefile --use-singularity --singularity-args " -B /beegfs-storage -B /scratch -B /data "
+
+snakemake --cores 2 -s /projects/wp3/nobackup/Workspace/WGS_pipeline_GPU_test/Poirot_test/workflow/Snakefile --use-singularity --singularity-args " -B /projects -B /beegfs-storage -B /scratch -B /data "
+
+
+snakemake -n -s /projects/wp3/nobackup/Workspace/WGS_pipeline_GPU_test/Poirot_RD-WGS/workflow/Snakefile --use-singularity --singularity-args " -B /projects -B /beegfs-storage -B /scratch -B /data "
+
+snakemake -n --configfile Poirot_RD-WGS-develop/config/config.yaml -s Poirot_RD-WGS-develop/workflow/Snakefile --use-singularity --singularity-args " -B /projects -B /beegfs-storage -B /scratch -B /data " --notemp
+
+
+jobs: 100
+keep-going: True
+restart-times: 1
+rerun-incomplete: True
+max-jobs-per-second: 100
+max-status-checks-per-second: 100
+use-singularity: True
+snakefile: "/projects/wp3/nobackup/WGS/WGS_pilot_CGU202111/UJ-3091/Poirot_RD-WGS-develop/workflow/Snakefile"
+configfile: "/projects/wp3/nobackup/WGS/WGS_pilot_CGU202111/UJ-3091/Poirot_RD-WGS-develop/config/config.yaml"
+drmaa: "-p {resources.partition} -t {resources.time} -n {resources.threads} --mem={resources.mem_mb} --mem-per-cpu={resources.mem_per_cpu} {resources.gres} -J {rule} -A wp4 -e slurm/{rule}_%j.err -o slurm/{rule}_%j.out --nodes=1-1"
+default-resources: [gres=""]
+drmaa-log-dir: "slurm"
+singularity-args: "--cleanenv --bind /beegfs-archive,/beegfs-scratch,/beegfs-storage --disable-cache"
+
+
+
+hydra-genetics create-input-files -d
 
 #rule NAME:
 #    input: "path/to/inputfile", "path/to/other/inputfile"
