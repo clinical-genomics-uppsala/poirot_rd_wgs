@@ -94,9 +94,10 @@ def get_in_gvcf(wildcards):
 
 def compile_output_list(wildcards: snakemake.io.Wildcards):
     files = {
-        #       "cnv_sv/cnvpytor": ["vcf"],
-        #       "cnv_sv/expansionhunter": ["vcf", "stranger.vcf"],
+        "cnv_sv/cnvpytor": ["vcf"],
+        "cnv_sv/expansionhunter": ["vcf", "stranger.vcf"],
         "cnv_sv/tiddit": ["vcf"],
+        "cnv_sv/svdb_merge": ["merged.vcf"],
     }
     output_files = [
         "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)
@@ -105,16 +106,23 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         for unit_type in get_unit_types(units, sample)
         for suffix in files[prefix]
     ]
-#    output_files += [
-#        "cnv_sv/expansionhunter/reviewer/%s_%s/" % (sample, unit_type)
-#        for sample in get_samples(samples)
-#        for unit_type in get_unit_types(units, sample)
-#    ]
-    output_files += ["cnv_sv/manta_run_workflow_n/%s/results/variants/candidateSV.vcf.gz" % (sample)
+    output_files += [
+        "cnv_sv/expansionhunter/reviewer/%s_%s/" % (sample, unit_type)
         for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
+   ]
+    output_files += [
+        "cnv_sv/manta_run_workflow_n/%s/results/variants/candidateSV.vcf.gz" % (sample) for sample in get_samples(samples)
     ]
     output_files += ["qc/multiqc/multiqc_DNA.html"]
-    output_files += ["vcf_final/%s.vcf.gz.tbi" % (sample)
-        for sample in get_samples(samples)
+    output_files += [
+        "qc/peddy/peddy.peddy.ped",
+        "qc/peddy/peddy.ped_check.csv",
+        "qc/peddy/peddy.sex_check.csv",
+        "qc/peddy/peddy.het_check.csv",
+        "qc/peddy/peddy.html",
+        "qc/peddy/peddy.vs.html",
+        "qc/peddy/peddy.background_pca.json",
     ]
+    output_files += ["vcf_final/%s.vcf.gz.tbi" % (sample) for sample in get_samples(samples)]
     return output_files

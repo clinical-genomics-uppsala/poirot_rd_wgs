@@ -18,9 +18,83 @@ rule all:
 
 
 ruleorder: cnv_sv_manta_run_workflow_n > misc_bgzip
-ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: qc_mosdepth > misc_bgzip
 ruleorder: qc_mosdepth_bed > misc_bgzip
+
+
+module annotation:
+    snakefile:
+        github(
+            "hydra-genetics/annotation",
+            path="workflow/Snakefile",
+            tag=config["modules"]["stranger"],
+        )
+    config:
+        config
+
+
+use rule stranger from annotation as annotation_stranger
+
+
+module cnv_sv:
+    snakefile:
+        github(
+            "hydra-genetics/cnv_sv",
+            path="workflow/Snakefile",
+            tag=config["modules"]["cnv_sv"],
+        )
+    config:
+        config
+
+
+use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter
+
+
+use rule cnvpytor_readdepth from cnv_sv as cnv_sv_cnvpytor_rd with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        vcf="parabricks/pbrun_deepvariant/{sample}.vcf",
+
+
+use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+        cat=config.get("expansionhunter", {}).get("variant_catalog", ""),
+        ref=config.get("reference", {}).get("fasta", ""),
+        sex="qc/peddy/peddy.sex_check.csv",
+
+
+use rule manta_config_n from cnv_sv as cnv_sv_manta_config_n with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_N.bam",
+        bai="parabricks/pbrun_fq2bam/{sample}_N.bam.bai",
+        ref=config["reference"]["fasta"],
+
+
+use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n
+
+
+use rule generate_reviewer_locus_list from cnv_sv as cnv_sv_generate_reviewer
+
+
+use rule reviewer from cnv_sv as cnv_sv_reviewer with:
+
+
+use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
+    input:
+        vcfs=[
+            "cnv_sv/tiddit/{sample}_{type}.vcf",
+            "cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSV.vcf.gz",
+            "cnv_sv/cnvpytor/{sample}_{type}.vcf",
+        ],
+
+use rule svdb_query from cnv_sv as cnv_sv_svdb_query
+
+
+use rule tiddit from cnv_sv as cnv_sv_tiddit with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
 
 
 module compression:
@@ -52,18 +126,35 @@ use rule spring from compression as compression_spring with:
         spring="compression/spring/{sample}_{flowcell}_{lane}_{barcode}_{type}.spring",
 
 
-module prealignment:
+module misc:
     snakefile:
-        github(
-            "hydra-genetics/prealignment",
-            path="workflow/Snakefile",
-            tag=config["modules"]["prealignment"],
-        )
+        github("hydra-genetics/misc", path="workflow/Snakefile", tag=config["modules"]["misc"])
     config:
         config
 
 
-use rule * from prealignment as prealignment_*
+use rule samtools_index from misc as misc_samtools_index with:
+    input:
+        cram="{file}.crumble.cram",
+    output:
+        crai=temp("{file}.crumble.cram.crai"),
+    params:
+        extra=config.get("extra", {}).get("extra", ""),
+    log:
+        "{file}.crumble.cram.crai.log",
+    benchmark:
+        repeat(
+            "{file}.crumble.cram.crai.benchmark.tsv",
+            config.get("samtools_index", {}).get("benchmark_repeats", 1),
+        )
+    message:
+        "{rule}: Index {wildcards.file}.crumble.cram file"
+
+
+use rule bgzip from misc as misc_bgzip
+
+
+use rule tabix from misc as misc_tabix
 
 
 module parabricks:
@@ -83,123 +174,18 @@ use rule pbrun_fq2bam from parabricks as parabricks_fq2bam
 use rule pbrun_deepvariant from parabricks as parabricks_deepvariant
 
 
-module snv_indels:
+module prealignment:
     snakefile:
         github(
-            "hydra-genetics/snv_indels",
+            "hydra-genetics/prealignment",
             path="workflow/Snakefile",
-            tag=config["modules"]["snv_indels"],
+            tag=config["modules"]["prealignment"],
         )
     config:
         config
 
 
-use rule deepvariant from snv_indels as snv_indels_deepvariant with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
-        ref=config.get("reference", {}).get("fasta", ""),
-    output:
-        gvcf=temp("snv_indels/deepvariant/{sample}_{type}.g.vcf"),
-        vcf=temp("snv_indels/deepvariant/{sample}_{type}.vcf"),
-
-
-module cnv_sv:
-    snakefile:
-        github(
-            "hydra-genetics/cnv_sv",
-            path="workflow/Snakefile",
-            tag=config["modules"]["cnv_sv"],
-        )
-    config:
-        config
-
-
-use rule cnvpytor_readdepth from cnv_sv as cnv_sv_cnvpytor_rd with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        vcf="parabricks/pbrun_deepvariant/{sample}.vcf",
-
-
-use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter
-
-
-use rule manta_config_n from cnv_sv as cnv_sv_manta_config_n with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_N.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_N.bam.bai",
-        ref=config["reference"]["fasta"],
-
-
-use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n
-
-
-use rule tiddit from cnv_sv as cnv_sv_tiddit with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-
-
-module expansionhunter:
-    snakefile:
-        github(
-            "hydra-genetics/cnv_sv",
-            path="workflow/Snakefile",
-            tag=config["modules"]["expansionhunter"],
-        )
-    config:
-        config
-
-use rule * from expansionhunter exclude samtools_index as cnv_sv_*
-
-use rule expansionhunter from expansionhunter as cnv_sv_expansionhunter with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
-        ref=config.get("reference", {}).get("fasta", ""),
-        cat=config.get("expansionhunter", {}).get("variant_catalog", ""),
-        sex="qc/peddy/peddy.sex_check.csv",
-
-
-module annotation:
-    snakefile:
-        github(
-            "hydra-genetics/annotation",
-            path="workflow/Snakefile",
-            tag=config["modules"]["stranger"],
-        )
-    config:
-        config
-
-
-use rule stranger from annotation as annotation_stranger
-
-
-module alignment:
-    snakefile:
-        github(
-            "hydra-genetics/alignment",
-            path="workflow/Snakefile",
-            tag=config["modules"]["alignment"],
-        )
-    config:
-        config
-
-
-use rule samtools_sort from alignment as alignment_samtools_sort with:
-    input:
-        "cnv_sv/expansionhunter/{sample}_{type}_realigned.bam",
-    output:
-        "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam",
-    log:
-        "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.log",
-    benchmark:
-        repeat(
-            "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.benchmark.tsv",
-            config.get("samtools_sort", {}).get("benchmark_repeats", 1),
-        )
-
-
-use rule samtools_index from alignment as alignment_samtools_index
+use rule * from prealignment as prealignment_*
 
 
 module qc:
@@ -302,32 +288,22 @@ use rule samtools_idxstats from qc as qc_samtools_idxstats with:
         temp("qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"),
 
 
-module misc:
+module snv_indels:
     snakefile:
-        github("hydra-genetics/misc", path="workflow/Snakefile", tag=config["modules"]["misc"])
+        github(
+            "hydra-genetics/snv_indels",
+            path="workflow/Snakefile",
+            tag=config["modules"]["snv_indels"],
+        )
     config:
         config
 
 
-use rule samtools_index from misc as misc_samtools_index with:
+use rule deepvariant from snv_indels as snv_indels_deepvariant with:
     input:
-        cram="{file}.crumble.cram",
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+        ref=config.get("reference", {}).get("fasta", ""),
     output:
-        crai=temp("{file}.crumble.cram.crai"),
-    params:
-        extra=config.get("extra", {}).get("extra", ""),
-    log:
-        "{file}.crumble.cram.crai.log",
-    benchmark:
-        repeat(
-            "{file}.crumble.cram.crai.benchmark.tsv",
-            config.get("samtools_index", {}).get("benchmark_repeats", 1),
-        )
-    message:
-        "{rule}: Index {wildcards.file}.crumble.cram file"
-
-
-use rule bgzip from misc as misc_bgzip
-
-
-use rule tabix from misc as misc_tabix
+        gvcf=temp("snv_indels/deepvariant/{sample}_{type}.g.vcf"),
+        vcf=temp("snv_indels/deepvariant/{sample}_{type}.vcf"),

@@ -15,8 +15,7 @@ programdir:
 modules:
   alignment: "v0.2.0"
   compression: "v1.1.0"
-  cnv_sv: "add-manta_n"
-  expansionhunter: "add_expansionhunter"
+  cnv_sv: "develop"
   parabricks: "v0.2.0"
   prealignment: "v0.2.0"
   qc: "develop"
@@ -39,8 +38,18 @@ reference:
 trimmer_software: "fastp_pe"
 
 
-cnvpytor:
-  container: "docker://kristinebilgrav/cnvpytor"
+cnvpytor_readdepth:
+  container: "docker://hydragenetics/cnvpytor:1.2.1"
+  length_list: "1000 10000 100000"
+
+
+cnvpytor_filter:
+  container: "docker://hydragenetics/cnvpytor:1.2.1"
+  dG_range: "100000 inf"
+  p_range: "0 0.01"
+  pN_range: "0 0.5"
+  Q0_range: "0 0.05"
+  view: "1000"
 
 
 crumble:
@@ -55,8 +64,7 @@ deepvariant:
 
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
-  variant_catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_grch38.json"
-  # variant_catalog: "/beegfs-storage/data/ref_data/expansionhunter/v5.0.0/grch38/variant_catalog.json"
+  variant_catalog: "/beegfs-storage/data/ref_data/expansionhunter/v5.0.0/grch38/variant_catalog.json"
 
 
 fastp_pe:
@@ -104,7 +112,7 @@ multiqc:
         - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq2_fastqc.zip"
         - "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"
         - "qc/mosdepth/{sample}_{type}.mosdepth.region.dist.txt"
-        - "qc/mosdepth/{sample}_{seqID}.mosdepth.global.dist.txt"
+        - "qc/mosdepth/{sample}_{type}.mosdepth.global.dist.txt"
         - "qc/mosdepth_bed/{sample}_{type}.per-base.bed.gz"
         - "qc/picard_collect_alignment_summary_metrics/{sample}_{type}.alignment_summary_metrics.txt"
         - "qc/picard_collect_duplication_metrics/{sample}_{type}.duplication_metrics.txt"
@@ -196,11 +204,17 @@ stranger:
 
 
 svdb_merge:
-  container: "docker://hydragenetics/svdb:2.5.0"
+  container: "docker://hydragenetics/svdb:2.6.0"
   cnv_callers:
     - "cnvnator"
     - "manta"
     - "tiddit"
+  overlap: 0.6
+
+
+svdb_query:
+  container: "docker://hydragenetics/svdb:2.6.0"
+  db_string: "--db reference/normal_26_svdb_0.8.vcf"
 
 
 tabix:
