@@ -97,7 +97,7 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         "cnv_sv/cnvpytor": ["vcf"],
         "cnv_sv/expansionhunter": ["vcf", "stranger.vcf"],
         "cnv_sv/tiddit": ["vcf"],
-        "cnv_sv/svdb_merge": ["merged.vcf"],
+        "cnv_sv/svdb_query": ["svdb_query.vcf"],
     }
     output_files = [
         "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)

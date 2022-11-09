@@ -18,8 +18,32 @@ rule all:
 
 
 ruleorder: cnv_sv_manta_run_workflow_n > misc_bgzip
+ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: qc_mosdepth > misc_bgzip
 ruleorder: qc_mosdepth_bed > misc_bgzip
+
+
+module alignment:
+    snakefile:
+        github("hydra-genetics/alignment", path="workflow/Snakefile", tag=config["modules"]["alignment"],)
+    config:
+        config
+
+use rule samtools_sort from alignment as alignment_samtools_sort with:
+    input:
+        "cnv_sv/expansionhunter/{sample}_{type}_realigned.bam"
+    output:
+        "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam"
+    log:
+        "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.log"
+    benchmark:
+        repeat(
+            "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.benchmark.tsv",
+            config.get("samtools_sort", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule samtools_index from alignment as alignment_samtools_index
 
 
 module annotation:
@@ -89,12 +113,16 @@ use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
             "cnv_sv/cnvpytor/{sample}_{type}.vcf",
         ],
 
-use rule svdb_query from cnv_sv as cnv_sv_svdb_query
+
+use rule svdb_query from cnv_sv as cnv_sv_svdb_query with:
+    output:
+        vcf=temp("cnv_sv/svdb_query/{sample}_{type}.svdb_query.vcf"),
 
 
 use rule tiddit from cnv_sv as cnv_sv_tiddit with:
     input:
         bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        ref=config["reference"]["fasta"],
 
 
 module compression:
@@ -124,6 +152,16 @@ use rule samtools_view from compression as compression_samtools_view with:
 use rule spring from compression as compression_spring with:
     output:
         spring="compression/spring/{sample}_{flowcell}_{lane}_{barcode}_{type}.spring",
+
+
+module filtering:
+    snakefile:
+        github("hydra-genetics/filtering", path="workflow/Snakefile", tag="b7f4dc3")
+    config:
+        config
+
+
+use rule * from filtering as filtering_*
 
 
 module misc:

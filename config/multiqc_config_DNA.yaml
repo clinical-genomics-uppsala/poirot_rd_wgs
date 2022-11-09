@@ -14,6 +14,7 @@ extra_fn_clean_exts: ##from this until end
     - '.dup'
     - type: regex
       pattern: '_fastq[12]'
+#    - '_S'
 #extra_fn_clean_trim:   #if found in beginning or end
 #fn_ignore_dirs:
 #fn_ignore_files:

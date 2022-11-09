@@ -1,5 +1,5 @@
 
-rule addRef:
+rule vcf_addRef:
     input:
         vcf="parabricks/pbrun_deepvariant/{sample}.vcf",
         ref=config["reference"]["fasta"],
@@ -17,11 +17,11 @@ rule addRef:
         "( python ../scripts/ref_vcf.py {input.vcf} {input.ref} {output.vcf} ) &> {log}"
 
 
-rule changeM2MT:
+rule vcf_changeM2MT:
     input:
         "vcf_final/{sample}_ref.vcf",
     output:
-        temp("vcf_final/{sample}.vcf"),
+        vcf=temp("vcf_final/{sample}.vcf"),
     log:
         "vcf_final/{sample}_chrMT.log",
     resources:
