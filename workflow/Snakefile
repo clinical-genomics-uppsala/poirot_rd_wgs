@@ -109,7 +109,7 @@ use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
     input:
         vcfs=[
             "cnv_sv/tiddit/{sample}_{type}.vcf",
-            "cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSV.vcf.gz",
+            "cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz",
             "cnv_sv/cnvpytor/{sample}_{type}.vcf",
         ],
 
@@ -206,10 +206,15 @@ module parabricks:
         config
 
 
-use rule pbrun_fq2bam from parabricks as parabricks_fq2bam
+use rule pbrun_fq2bam from parabricks as parabricks_fq2bam with:
+    params:
+        extra=config.get("pbrun_deepvariant", {}).get("extra", ""),
+        num_gpus=4,
 
-
-use rule pbrun_deepvariant from parabricks as parabricks_deepvariant
+use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
+    params:
+        extra=config.get("pbrun_deepvariant", {}).get("extra", ""),
+        num_gpus=2,
 
 
 module prealignment:
