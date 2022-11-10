@@ -1,12 +1,12 @@
 title: "Clinical genomics multiQC report"
 subtitle: "Reference used: GRCh38"
-intro_text: "The MultiQC report summarise analysis results from WGS data."
+intro_text: "The MultiQC report summarise analysis results from WGS data that been analysed by the pipeline Poirot_RD-WGS (https://github.com/clinical-genomics-uppsala/Poirot_RD-WGS)."
 
 report_header_info:
-  - Contact E-mail: "jessika.nordin@scilifelab.se"
-  - Application Type: "Bioinformatic analysis of WGS"
+  - Contact E-mail: "jessika.nordin@scilifelab.uu.se"
+  - Application Type: "Bioinformatic analysis of WGS for rare diseases"
 
-show_analysis_paths: False
+show_analysis_paths: True
 
 decimalPoint_format: ','
 

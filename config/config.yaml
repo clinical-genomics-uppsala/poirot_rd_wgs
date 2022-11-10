@@ -127,6 +127,16 @@ multiqc:
         - "qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"
 
 
+parabricks_deepvariant:
+  extra: "--pb-model-file /data/parabricks/3.8.0-1/A30/deepvariant.eng"
+  num_gpus: "2"
+
+
+parabricks_fq2bam:
+  extra: ""
+  num_gpus: "4"
+
+
 peddy:
   container: "docker://hydragenetics/peddy:0.4.8"
   samples: "config/SampleSheet.csv"
