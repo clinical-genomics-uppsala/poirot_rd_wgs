@@ -140,7 +140,7 @@ parabricks_fq2bam:
 peddy:
   container: "docker://hydragenetics/peddy:0.4.8"
   samples: "config/SampleSheet.csv"
-  config: 'peddy_mqc.yaml'
+  config: "config/peddy_mqc.yaml"
   extra: "--sites hg38 "
 
 
