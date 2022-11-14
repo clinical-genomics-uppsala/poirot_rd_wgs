@@ -15,6 +15,8 @@ def comment_the_config_keys(config_dict):
 
 def get_trio_info(ped_filepath):
     '''
+
+
     '''
 
     ped_cols = ['family_id', 'sample_id', 'paternal_id',
@@ -55,6 +57,7 @@ def get_trio_info(ped_filepath):
 #     sorted(trio_relatedness_with_id_df.columns)]
 #
 #     return trio_relatedness_with_id_df
+
 
 def get_relatedness_df(peddy_rel_file_path,ped_df, trio_membership_dict):
     relatedness_df = pd.read_csv(peddy_rel_file_path)
