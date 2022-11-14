@@ -9,7 +9,6 @@ default_container: "docker://hydragenetics/common:0.1.1"
 
 
 programdir:
-        #dir: "/beegfs-storage//projects/wp3/nobackup/WGS/WGS_pilot_CGU202111/UJ-3091/Poirot_RD-WGS-develop/workflow"
   dir: "/home/padco251/expansionhunter/padraic_testing/Poirot_RD-WGS/workflow"
 
 modules:
@@ -22,7 +21,6 @@ modules:
  misc: "v0.1.0"
  snv_indels: "22b2723"
  stranger: "8c2dffa"
-#change qc to version
 
 reference:
   design_bed: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
@@ -36,6 +34,13 @@ reference:
 
 
 trimmer_software: "fastp_pe"
+
+cnvpytor:
+  container: "docker://kristinebilgrav/cnvpytor"
+
+config_manta_n:
+  container: "docker://hydragenetics/manta:1.6.0"
+  extra: ""
 
 crumble:
   container: "docker://hydragenetics/crumble:0.8.3"
@@ -61,6 +66,9 @@ glnexus:
   bedfile: "/data/ref_data/peddy/v0.4.8/GRCH38.bed"
   container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
 
+manta_run_workflow_n:
+  container: "docker://hydragenetics/manta:1.6.0"
+
 mosdepth:
  container: "docker://hydragenetics/mosdepth:0.3.2"
  by: "500"
@@ -72,7 +80,7 @@ mosdepth_bed:
 
 multiqc:
   container: "docker://hydragenetics/multiqc:1.11"
-  config: "Poirot_RD-WGS-develop/config/multiqc.config"
+  config: "config/multiqc.config"
   reports:
     DNA:
       included_unit_types: ['N']
@@ -167,11 +175,15 @@ stranger:
 svdb_merge:
  container: "docker://hydragenetics/svdb:2.5.0"
  cnv_callers:
+  - "cnvpytor"
   - "manta"
-  - "cnvnator"
+  - "tiddit"
 
 tabix:
  container: "docker://hydragenetics/common:0.1.0"
+
+tiddit:
+  container: "shub://J35P312/TIDDIT:latest"
 
 genepanels:
  - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/ALS.bed

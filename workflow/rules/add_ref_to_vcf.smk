@@ -8,7 +8,7 @@ rule addRef:
     log:
         "vcf_final/{sample}_add_ref.log",
     params:
-        config["programdir"]["dir"],
+        config["programdir"]["dirwr"],
     resources:
         mem_mb=config.get("multiqc", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
         mem_per_cpu=config.get("multiqc", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
@@ -16,7 +16,7 @@ rule addRef:
         threads=config.get("multiqc", {}).get("threads", config["default_resources"]["threads"]),
         time=config.get("multiqc", {}).get("time", config["default_resources"]["time"]),
     shell:
-        "( python {params}/scripts/ref_vcf.py {input.vcf} {input.ref} {output} ) &> {log}"
+        "( python ../scripts/ref_vcf.py {input.vcf} {input.ref} {output} ) &> {log}"
 
 
 rule changeM2MT:
