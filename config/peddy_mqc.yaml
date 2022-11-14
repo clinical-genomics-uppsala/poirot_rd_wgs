@@ -1,4 +1,3 @@
-
 peddy_rel_check:
   parent_id: peddy_section
   parent_name: "Peddy"
@@ -6,14 +5,15 @@ peddy_rel_check:
   id: 'peddy_rel_check_table'
   format: tsv
   plot_type: 'table'
-  section_name: 'Trio Relatedness Check'
-  description: 'Check the expected relatedeness of Trio samples made with Peddy'
+  section_name: 'Relatedness Check'
+  description: 'Report any unexpected relatedness results from the check of the pedigree relatedness against genotype based relatedness'
   pconfig:
-    namespace: 'peddy_rel_check_table'
+    namespace: 'Cust Data1'
   headers:
-    family_id:
-      title: family_id
-      description: id for the Trio taken from the sample sheet.
+    trio_id:
+      title: Trio ID
+      description: ID for the trio the sample pair belong to
+      hidden: False
     sample_a:
       title: sample_a
       description: First sample in the pair
@@ -52,18 +52,15 @@ peddy_rel_check:
     pedigree_parents:
       title: pedigree_parents
       description: Boolean indicating that this pair is a parent-child pair according to the ped file.
-      hidden: true
     pedigree_relatedness:
       title: pedigree_relatedness
       description: The relatedness reported in the ped file.
     parent_error:
       title: parent_error
-      description: Boolean indicating that the pedigree_parents and predicted_parents columns don’t match
-      hidden: true
+      description: Boolean indicating that the pedigree_parents and pedigree_relatedness columns don’t match
     predicted_parents:
       title: predicted_parents
       description: Boolean indicating that this pair is expected to be a parent-child pair according to the ibs0 (< 0.012) calculated from the genotypes.
-      hidden: true
     sample_duplication_error :
       title: sample_duplication_error
       description: Boolean indicating that rel > 0.75 and ibs0 < 0.012
@@ -73,7 +70,7 @@ peddy_rel_check:
       hidden: true
     rel_check_test:
       title: rel_test_check
-      description: Pass if pedigree_parents is equal to the predicted_parents column.
+      description: Fail if there if peddy report a parent_error or sample_duplication_error.
 
 peddy_sex_check:
   parent_id: peddy_section
