@@ -102,6 +102,21 @@ def get_in_gvcf(wildcards):
     return " -i ".join(gvcf_list)
 
 
+def get_peddy_sex(wildcards, peddy_sex_check):
+    sample = '{}_{}'.format(wildcards.sample, wildcards.type)
+    sex_df = pd.read_table(peddy_sex_check, sep=',').set_index("sample_id", drop=False)
+
+    sample_sex = sex_df.at[sample, 'predicted_sex']
+
+    return sample_sex
+
+
+def get_locus_str(loci):
+    with open(loci, 'r') as catfile:
+        loc_str = catfile.readline().rstrip()
+    return loc_str
+
+
 def compile_output_list(wildcards: snakemake.io.Wildcards):
     files = {
         "cnv_sv/cnvpytor": ["vcf"],
