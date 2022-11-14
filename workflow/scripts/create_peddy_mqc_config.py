@@ -4,6 +4,7 @@
 import pandas as pd
 import yaml
 import numpy as np
+import sys
 
 def comment_the_config_keys(config_dict):
 
@@ -82,30 +83,23 @@ def main():
 
     try:
         
-        # config = snakemake.config.get("peddy", '').get("config", '')
-        config = '../../config/peddy_mqc.yaml'
+        config = snakemake.config.get("peddy", '').get("config", '')
 
         with open(config, 'r') as report_configs:
             peddy_mqc_configs = yaml.load(report_configs, Loader=yaml.FullLoader)
 
-            # ped_file = snakemake.input.ped
-            ped_file = 'all.ped'
+            ped_file = snakemake.input.ped
             trio_dict = get_trio_info(ped_file)
 
-            # rel_check_df = get_relatedness_df(snakemake.input.peddy_rel_check, trio_dict)
-            rel_check_df = get_relatedness_df('peddy.ped_check.csv', trio_dict)
-
+            rel_check_df = get_relatedness_df(snakemake.input.peddy_rel_check, trio_dict)
             rel_check_df['trio_id'] = rel_check_df['sample_a'].apply(get_trio_id, args=(trio_dict,))
-            rel_check_df.sort_values(by=['trio_id'], inplace=True)
+            rel_check_df.sort_values(by=['trio_id'], inplace=True) 
             peddy_rel_config = peddy_mqc_configs.get('peddy_rel_check')
-            # write_peddy_mqc(rel_check_df, peddy_rel_config, snakemake.output.rel_check_mqc)
-            write_peddy_mqc(rel_check_df, peddy_rel_config, 'test_trio.txt')
+            write_peddy_mqc(rel_check_df, peddy_rel_config, snakemake.output.rel_check_mqc)
 
-            # sex_check_df = get_sex_check_df(snakemake.input.peddy_sex_check)
-            sex_check_df = get_sex_check_df('peddy.sex_check.csv')
+            sex_check_df = get_sex_check_df(snakemake.input.peddy_sex_check)
             peddy_sex_config = peddy_mqc_configs.get('peddy_sex_check')
-            write_peddy_mqc(sex_check_df, peddy_sex_config, 'test_sex.txt')
-            # write_peddy_mqc(sex_check_df, peddy_sex_config, snakemake.output.sex_check_mqc)
+            write_peddy_mqc(sex_check_df, peddy_sex_config, snakemake.output.sex_check_mqc)
 
     except FileNotFoundError:
         sys.exit('Path to peddy config file not found/specified in config.yaml')
