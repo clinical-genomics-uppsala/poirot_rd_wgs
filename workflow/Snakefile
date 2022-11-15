@@ -96,7 +96,15 @@ use rule manta_config_n from cnv_sv as cnv_sv_manta_config_n with:
         ref=config["reference"]["fasta"],
 
 
-use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n
+use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
+    output:
+        cand_si_vcf=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSmallIndels.vcf.gz"),
+        cand_si_tbi=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSmallIndels.vcf.gz.tbi"),
+        cand_sv_vcf=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSV.vcf.gz"),
+        cand_sv_tbi=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSV.vcf.gz.tbi"),
+        dip_sv_vcf=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz"),
+        dip_sv_tbi=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz.tbi"),
+        wrk_dir=temp(directory("cnv_sv/manta_run_workflow_n/{sample}/workspace")),
 
 
 use rule generate_reviewer_locus_list from cnv_sv as cnv_sv_generate_reviewer

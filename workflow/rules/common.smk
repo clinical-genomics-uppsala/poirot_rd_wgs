@@ -137,7 +137,7 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         for unit_type in get_unit_types(units, sample)
    ]
     output_files += [
-        "cnv_sv/manta_run_workflow_n/%s/results/variants/candidateSV.vcf.gz" % (sample) for sample in get_samples(samples)
+        "cnv_sv/manta_run_workflow_n/%s/results/variants/diploidSV.vcf.gz" % (sample) for sample in get_samples(samples)
     ]
     output_files += ["qc/multiqc/multiqc_DNA.html"]
     output_files += [
