@@ -13,8 +13,8 @@ rule vcf_addRef:
         partition=config.get("multiqc", {}).get("partition", config["default_resources"]["partition"]),
         threads=config.get("multiqc", {}).get("threads", config["default_resources"]["threads"]),
         time=config.get("multiqc", {}).get("time", config["default_resources"]["time"]),
-    shell:
-        "( python ../scripts/ref_vcf.py {input.vcf} {input.ref} {output.vcf} ) &> {log}"
+    script:
+        "../scripts/ref_vcf.py"
 
 
 rule vcf_changeM2MT:
