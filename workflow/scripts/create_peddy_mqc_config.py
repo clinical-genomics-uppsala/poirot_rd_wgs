@@ -94,6 +94,7 @@ def main():
             rel_check_df = get_relatedness_df(snakemake.input.peddy_rel_check, trio_dict)
             rel_check_df['trio_id'] = rel_check_df['sample_a'].apply(get_trio_id, args=(trio_dict,))
             rel_check_df.sort_values(by=['trio_id'], inplace=True) 
+            rel_check_df['sample_pair'] = rel_check_df[['sample_a', 'sample_b']].agg('_v_'.join, axis=1)
             peddy_rel_config = peddy_mqc_configs.get('peddy_rel_check')
             write_peddy_mqc(rel_check_df, peddy_rel_config, snakemake.output.rel_check_mqc)
 
