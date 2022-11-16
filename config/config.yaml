@@ -105,7 +105,7 @@ multiqc:
   container: "docker://hydragenetics/multiqc:1.11"
   reports:
     DNA:
-      config: "config/multiqc_config_dna.yaml"
+      config: "config/multiqc_config_DNA.yaml"
       included_unit_types: ["N"]
       qc_files:
         # - "prealignment/fastp_pe/{sample}_{flowcell}_{lane}_{barcode}_{type}_fastp.json"
