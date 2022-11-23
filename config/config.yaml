@@ -23,7 +23,7 @@ modules:
   misc: "v0.1.0"
   snv_indels: "22b2723"
   stranger: "8c2dffa"
-
+  
 
 reference:
   design_bed: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
@@ -51,7 +51,7 @@ cnvpytor_filter:
   pN_range: "0 0.5"
   Q0_range: "0 0.05"
   view: "1000"
-
+  
 
 crumble:
   container: "docker://hydragenetics/crumble:0.8.3"
@@ -89,6 +89,9 @@ manta_config_n:
 manta_run_workflow_n:
   container: "docker://hydragenetics/manta:1.6.0"
 
+
+manta_run_workflow_n:
+  container: "docker://hydragenetics/manta:1.6.0"
 
 mosdepth:
   container: "docker://hydragenetics/mosdepth:0.3.2"
