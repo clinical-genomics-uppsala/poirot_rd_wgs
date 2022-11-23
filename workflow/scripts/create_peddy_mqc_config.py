@@ -30,11 +30,11 @@ def get_trio_info(ped_filepath):
 def get_relatedness_df(peddy_rel_file_path, trio_dict):
     relatedness_df = pd.read_csv(peddy_rel_file_path)
 
-    relatedness_df["rel_check_test"] = np.where((relatedness_df.parent_error == True) |
-    (relatedness_df.sample_duplication_error == True), 'Fail', 'Pass')
+    relatedness_df["rel_check_test"] = np.where((relatedness_df.parent_error == True) | 
+    (relatedness_df.sample_duplication_error == True), 'Fail', 'Pass') 
 
     trio_idx = []
-    non_trio_idx = []
+    non_trio_idx = [] 
     for row in relatedness_df.itertuples():
         if trio_dict[row.sample_a] == trio_dict[row.sample_b]:
             trio_idx.append(row.Index) # get the indices of trio pairs
@@ -44,15 +44,15 @@ def get_relatedness_df(peddy_rel_file_path, trio_dict):
     if len(trio_idx) > 0: # check if there are any trios
         trio_rel_df = relatedness_df.iloc[trio_idx, :]
         non_trio_rel_df = relatedness_df.iloc[non_trio_idx , :]
-
-        error_rel_df = non_trio_rel_df[(non_trio_rel_df['parent_error'] == True) |
-            (non_trio_rel_df['sample_duplication_error'] == True)]
-
+        
+        error_rel_df = non_trio_rel_df[(non_trio_rel_df['parent_error'] == True) | 
+            (non_trio_rel_df['sample_duplication_error'] == True)] 
+        
         rel_df = pd.concat([trio_rel_df, error_rel_df ])
     else:
-        rel_df = relatedness_df[(relatedness_df['parent_error'] == True) | (relatedness_df['sample_duplication_error'] == True)]
+        rel_df = relatedness_df[(relatedness_df['parent_error'] == True) | (relatedness_df['sample_duplication_error'] == True)] 
 
-    return rel_df
+    return rel_df 
 
 
 def get_sex_check_df(sex_check_file_path):
@@ -82,7 +82,7 @@ def get_trio_id(sample_id, trio_dict):
 def main():
 
     try:
-
+        
         config = snakemake.config.get("peddy", '').get("config", '')
 
         with open(config, 'r') as report_configs:
@@ -93,7 +93,7 @@ def main():
 
             rel_check_df = get_relatedness_df(snakemake.input.peddy_rel_check, trio_dict)
             rel_check_df['trio_id'] = rel_check_df['sample_a'].apply(get_trio_id, args=(trio_dict,))
-            rel_check_df.sort_values(by=['trio_id'], inplace=True)
+            rel_check_df.sort_values(by=['trio_id'], inplace=True) 
 
             # create sample pair column as the first column to be used in  multiqc table
             rel_check_df['sample_pair'] = rel_check_df[['sample_a', 'sample_b']].agg('_v_'.join, axis=1)
