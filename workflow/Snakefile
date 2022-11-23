@@ -1,5 +1,5 @@
-__author__ = "Jessika Nordin"
-__copyright__ = "Copyright 2022, Jessika Nordin"
+__author__ = "Jessika Nordin, Padraic Corcoran"
+__copyright__ = "Copyright 2022"
 __email__ = "jessika.nordin@scilifelab.uu.se"
 __license__ = "GPL-3"
 
@@ -15,95 +15,13 @@ report: "report/workflow.rst"
 rule all:
     input:
         unpack(compile_output_list),
-        ["vcf_final/%s.vcf.gz.tbi" % sample for sample in get_samples(samples)],
-        # "qc/multiqc/multiqc_DNA.html",
-#        ["cnv_sv/manta_run_workflow_t/%s/results/variants/SV.vcf.gz" % sample for sample in get_samples(samples)],
 
 
+ruleorder: cnv_sv_manta_run_workflow_n > misc_bgzip
 ruleorder: parabricks_fq2bam > alignment_samtools_index
-# ruleorder: qc_mosdepth_bed > misc_bgzip
+ruleorder: qc_mosdepth > misc_bgzip
+ruleorder: qc_mosdepth_bed > misc_bgzip
 
-module compression:
-    snakefile:
-        github("hydra-genetics/compression", path="workflow/Snakefile", tag=config["modules"]["compression"],)
-    config:
-        config
-
-use rule * from compression as compression_*
-
-use rule crumble from compression as compression_crumble with:
-    output:
-        crum="compression/crumble/{file}.crumble.cram",
-
-use rule samtools_view from compression as compression_samtools_view with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{file}.bam",
-        bai="parabricks/pbrun_fq2bam/{file}.bam.bai",
-        ref=config.get("reference", {}).get("fasta", ""),
-
-use rule spring from compression as compression_spring with:
-    output:
-        spring="compression/spring/{sample}_{flowcell}_{lane}_{barcode}_{type}.spring",
-
-
-module prealignment:
-    snakefile:
-        github("hydra-genetics/prealignment", path="workflow/Snakefile", tag=config["modules"]["prealignment"],)
-    config:
-        config
-
-use rule * from prealignment as prealignment_*
-
-module parabricks:
-    snakefile:
-        github("hydra-genetics/parabricks", path="workflow/Snakefile", tag=config["modules"]["parabricks"],)
-    config:
-        config
-
-use rule pbrun_fq2bam from parabricks as parabricks_fq2bam
-
-use rule pbrun_deepvariant from parabricks as parabricks_deepvariant
-
-module snv_indels:
-    snakefile:
-        github("hydra-genetics/snv_indels", path="workflow/Snakefile", tag=config["modules"]["snv_indels"],)
-    config:
-        config
-
-use rule deepvariant from snv_indels as snv_indels_deepvariant with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
-        ref=config.get("reference", {}).get("fasta", ""),
-    output:
-        gvcf=temp("snv_indels/deepvariant/{sample}_{type}.g.vcf"),
-        vcf=temp("snv_indels/deepvariant/{sample}_{type}.vcf"),
-
-
-module cnv_sv:
-    snakefile:
-        #github("hydra-genetics/cnv_sv", path="workflow/Snakefile", tag=config["modules"]["cnv_sv
-        "/projects/wp3/nobackup/Workspace/padraic_testing/cnv_sv/workflow/Snakefile"
-    config:
-        config
-
-use rule * from cnv_sv exclude samtools_index as cnv_sv_*
-
-use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
-        ref=config.get("reference", {}).get("fasta", ""),
-        cat=config.get("expansionhunter", {}).get("variant_catalog", ""),
-        sex="qc/peddy/peddy.sex_check.csv"
-
-module annotation:
-    snakefile:
-        github("hydra-genetics/annotation", path="workflow/Snakefile", tag=config["modules"]["stranger"],)
-    config:
-        config
-
-use rule stranger from annotation as annotation_stranger
 
 module alignment:
     snakefile:
@@ -128,85 +46,130 @@ use rule samtools_sort from alignment as alignment_samtools_sort with:
 use rule samtools_index from alignment as alignment_samtools_index
 
 
-module qc:
+module annotation:
     snakefile:
-        github("hydra-genetics/qc", path="workflow/Snakefile", tag=config["modules"]["qc"],)
+        github(
+            "hydra-genetics/annotation",
+            path="workflow/Snakefile",
+            tag=config["modules"]["stranger"],
+        )
     config:
         config
 
-use rule fastqc from qc as qc_fastqc
 
-use rule mosdepth from qc as qc_mosdepth with:
+use rule stranger from annotation as annotation_stranger
+
+
+module cnv_sv:
+    snakefile:
+        github(
+            "hydra-genetics/cnv_sv",
+            path="workflow/Snakefile",
+            tag=config["modules"]["cnv_sv"],
+        )
+    config:
+        config
+
+
+use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter
+
+
+use rule cnvpytor_readdepth from cnv_sv as cnv_sv_cnvpytor_rd with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        vcf="parabricks/pbrun_deepvariant/{sample}.vcf",
+
+
+use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
     input:
         bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
         bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+        cat=config.get("expansionhunter", {}).get("variant_catalog", ""),
+        ref=config.get("reference", {}).get("fasta", ""),
+        sex="qc/peddy/peddy.sex_check.csv",
 
-use rule mosdepth_bed from qc as qc_mosdepth_bed with:
+
+use rule manta_config_n from cnv_sv as cnv_sv_manta_config_n with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
-        bed=config.get("reference", {}).get("design_bed", ""),
+        bam="parabricks/pbrun_fq2bam/{sample}_N.bam",
+        bai="parabricks/pbrun_fq2bam/{sample}_N.bam.bai",
+        ref=config["reference"]["fasta"],
+
+
+use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
     output:
-        bed=temp("qc/mosdepth_bed/{sample}_{type}.regions.bed.gz"),
-        bed_csi=temp("qc/mosdepth_bed/{sample}_{type}.regions.bed.gz.csi"),
-        glob=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.global.dist.txt"),
-        region=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.region.dist.txt"),
-        summary=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.summary.txt"),
+        cand_si_vcf=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSmallIndels.vcf.gz"),
+        cand_si_tbi=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSmallIndels.vcf.gz.tbi"),
+        cand_sv_vcf=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSV.vcf.gz"),
+        cand_sv_tbi=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSV.vcf.gz.tbi"),
+        dip_sv_vcf=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz"),
+        dip_sv_tbi=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz.tbi"),
+        wrk_dir=temp(directory("cnv_sv/manta_run_workflow_n/{sample}/workspace")),
 
-# use rule multiqc from qc as qc_multiqc
 
-use rule peddy from qc as qc_peddy with:
+use rule generate_reviewer_locus_list from cnv_sv as cnv_sv_generate_reviewer
+
+
+use rule reviewer from cnv_sv as cnv_sv_reviewer with:
+
+
+use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
     input:
-        vcf="qc/peddy/all.vcf.gz",
-        tbi="qc/peddy/all.vcf.gz.tbi",
-        ped="qc/peddy/all.ped",
+        vcfs=[
+            "cnv_sv/tiddit/{sample}_{type}.vcf",
+            "cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz",
+            "cnv_sv/cnvpytor/{sample}_{type}.vcf",
+        ],
 
-use rule picard_collect_alignment_summary_metrics from qc as qc_pic_align_sum_met with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        ref=config["reference"]["fasta"],
 
-use rule picard_collect_duplication_metrics from qc as qc_pic_dup_met with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-
-use rule picard_collect_gc_bias_metrics from qc as qc_pic_gc_met with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        ref=config["reference"]["fasta"],
-
-use rule picard_collect_hs_metrics from qc as qc_pic_hs_met with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        bait_intervals=config["reference"]["exome_intervals"],
-        target_intervals=config["reference"]["exome_intervals"],
-        reference=config["reference"]["fasta"],
-
-use rule picard_collect_insert_size_metrics from qc as qc_pic_ins_size with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-
-use rule picard_collect_multiple_metrics from qc as qc_pic_multi_met with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        ref=config["reference"]["fasta"],
-
-use rule picard_collect_wgs_metrics from qc as qc_pic_wgs_met with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        ref=config["reference"]["fasta"],
-        interval=config["reference"]["wgs_intervals"],
-
-use rule samtools_stats from qc as qc_samtools_stats with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-
-use rule samtools_idxstats from qc as qc_samtools_idxstats with:
-    input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+use rule svdb_query from cnv_sv as cnv_sv_svdb_query with:
     output:
-        "qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"
+        vcf=temp("cnv_sv/svdb_query/{sample}_{type}.svdb_query.vcf"),
+
+
+use rule tiddit from cnv_sv as cnv_sv_tiddit with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        ref=config["reference"]["fasta"],
+
+
+module compression:
+    snakefile:
+        github(
+            "hydra-genetics/compression",
+            path="workflow/Snakefile",
+            tag=config["modules"]["compression"],
+        )
+    config:
+        config
+
+
+use rule * from compression as compression_*
+
+
+use rule crumble from compression as compression_crumble
+
+
+use rule samtools_view from compression as compression_samtools_view with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{file}.bam",
+        bai="parabricks/pbrun_fq2bam/{file}.bam.bai",
+        ref=config.get("reference", {}).get("fasta", ""),
+
+
+use rule spring from compression as compression_spring with:
+    output:
+        spring="compression/spring/{sample}_{flowcell}_{lane}_{barcode}_{type}.spring",
+
+
+module filtering:
+    snakefile:
+        github("hydra-genetics/filtering", path="workflow/Snakefile", tag="b7f4dc3")
+    config:
+        config
+
+
+use rule * from filtering as filtering_*
 
 
 module misc:
@@ -215,11 +178,12 @@ module misc:
     config:
         config
 
+
 use rule samtools_index from misc as misc_samtools_index with:
     input:
         cram="{file}.crumble.cram",
     output:
-        crai="{file}.crumble.cram.crai",
+        crai=temp("{file}.crumble.cram.crai"),
     params:
         extra=config.get("extra", {}).get("extra", ""),
     log:
@@ -233,26 +197,165 @@ use rule samtools_index from misc as misc_samtools_index with:
         "{rule}: Index {wildcards.file}.crumble.cram file"
 
 
-# module cnv_sv:
-#     snakefile:
-#         github("hydra-genetics/cnv_sv", path="workflow/Snakefile", tag=config["modules"]["cnv_sv"],)
-#     config:
-#         config
-#
-# use rule manta from cnv_sv as cnv_sv_manta with:
-#     input:
-#         bam_n="parabricks/pbrun_fq2bam/{sample}_N.bam",
-#         bai_n="parabricks/pbrun_fq2bam/{sample}_N.bam.bai",
-#         ref=config["reference"]["fasta"],
-#
-# use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run
+use rule bgzip from misc as misc_bgzip
 
-# use rule gatk_cnv_collect_read_counts from cnv_sv as gatk_cnv with:
-#     input:
-#         bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-#         bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
-#         interval=config.get("reference", {}).get("design_intervals_gatk_cnv", ""),
-#
+
 use rule tabix from misc as misc_tabix
 
-use rule bgzip from misc as misc_bgzip
+
+module parabricks:
+    snakefile:
+        github(
+            "hydra-genetics/parabricks",
+            path="workflow/Snakefile",
+            tag=config["modules"]["parabricks"],
+        )
+    config:
+        config
+
+
+use rule pbrun_fq2bam from parabricks as parabricks_fq2bam with:
+    params:
+        extra=config.get("parabricks_fq2bam", {}).get("extra", ""),
+        in_fq=get_in_fq,
+        num_gpus=config.get("parabricks_fq2bam", {}).get("num_gpus", ""),
+
+use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
+    params:
+        extra=config.get("parabricks_deepvariant", {}).get("extra", ""),
+        num_gpus=config.get("parabricks_fq2bam", {}).get("num_gpus", ""),
+
+
+module prealignment:
+    snakefile:
+        github(
+            "hydra-genetics/prealignment",
+            path="workflow/Snakefile",
+            tag=config["modules"]["prealignment"],
+        )
+    config:
+        config
+
+
+use rule * from prealignment as prealignment_*
+
+
+module qc:
+    snakefile:
+        github(
+            "hydra-genetics/qc",
+            path="workflow/Snakefile",
+            tag=config["modules"]["qc"],
+        )
+    config:
+        config
+
+
+use rule fastqc from qc as qc_fastqc
+
+
+use rule mosdepth from qc as qc_mosdepth with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+
+
+use rule mosdepth_bed from qc as qc_mosdepth_bed with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+        bed=config.get("reference", {}).get("design_bed", ""),
+    output:
+        bed=temp("qc/mosdepth_bed/{sample}_{type}.regions.bed.gz"),
+        bed_csi=temp("qc/mosdepth_bed/{sample}_{type}.regions.bed.gz.csi"),
+        glob=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.global.dist.txt"),
+        pairbase=temp("qc/mosdepth_bed/{sample}_{type}.per-base.bed.gz"),
+        region=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.region.dist.txt"),
+        summary=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.summary.txt"),
+
+
+use rule multiqc from qc as qc_multiqc
+
+
+use rule peddy from qc as qc_peddy with:
+    input:
+        vcf="qc/peddy/all.vcf.gz",
+        tbi="qc/peddy/all.vcf.gz.tbi",
+        ped="qc/peddy/all.ped",
+
+
+use rule picard_collect_alignment_summary_metrics from qc as qc_pic_align_sum_met with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        ref=config["reference"]["fasta"],
+
+
+use rule picard_collect_duplication_metrics from qc as qc_pic_dup_met with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+
+
+use rule picard_collect_gc_bias_metrics from qc as qc_pic_gc_met with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        ref=config["reference"]["fasta"],
+
+
+use rule picard_collect_hs_metrics from qc as qc_pic_hs_met with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bait_intervals=config["reference"]["exome_intervals"],
+        target_intervals=config["reference"]["exome_intervals"],
+        reference=config["reference"]["fasta"],
+
+
+use rule picard_collect_insert_size_metrics from qc as qc_pic_ins_size with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+
+
+use rule picard_collect_multiple_metrics from qc as qc_pic_multi_met with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        ref=config["reference"]["fasta"],
+
+
+use rule picard_collect_wgs_metrics from qc as qc_pic_wgs_met with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        ref=config["reference"]["fasta"],
+        interval=config["reference"]["wgs_intervals"],
+
+
+use rule samtools_stats from qc as qc_samtools_stats with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+
+
+use rule samtools_idxstats from qc as qc_samtools_idxstats with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+    output:
+        temp("qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"),
+
+
+module snv_indels:
+    snakefile:
+        github(
+            "hydra-genetics/snv_indels",
+            path="workflow/Snakefile",
+            tag=config["modules"]["snv_indels"],
+        )
+    config:
+        config
+
+
+use rule deepvariant from snv_indels as snv_indels_deepvariant with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+        ref=config.get("reference", {}).get("fasta", ""),
+    output:
+        gvcf=temp("snv_indels/deepvariant/{sample}_{type}.g.vcf"),
+        vcf=temp("snv_indels/deepvariant/{sample}_{type}.vcf"),
