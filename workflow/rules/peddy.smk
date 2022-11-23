@@ -8,13 +8,13 @@ rule glnexus:
             "snv_indels/deepvariant/{}_{}.g.vcf".format(sample, t)
             for sample in get_samples(samples)
             for t in get_unit_types(units, sample)
-            ],
+        ],
     output:
         bcf=temp("qc/peddy/all.bcf"),
-        glnexus=temp(directory("GLnexus.DB"))
+        glnexus=temp(directory("GLnexus.DB")),
     params:
         extra=config.get("glnexus", {}).get("extra", ""),
-        in_gvcf=get_in_gvcf
+        in_gvcf=get_in_gvcf,
     log:
         "qc/peddy/all.bcf.log",
     benchmark:
@@ -41,9 +41,9 @@ rule bcftools_view:
     input:
         "qc/peddy/all.bcf",
     output:
-        "qc/peddy/all.vcf.gz",
+        temp("qc/peddy/all.vcf.gz"),
     log:
-        "qc/peddy/all.vcf.log"
+        "qc/peddy/all.vcf.log",
     benchmark:
         repeat(
             "qc/peddy/all.bcf.benchmark.tsv",
@@ -65,36 +65,35 @@ rule bcftools_view:
         """
 
 
-# rule create_ped:
-#     input:
-#         config["peddy"]["samples"],
-#     output:
-#         'qc/peddy/all.ped'
-#     log:
-#         'qc/peddy/all.ped'
-#     resources:
-#         mem_mb=config.get("create_ped", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-#         mem_per_cpu=config.get("create_ped", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-#         partition=config.get("create_ped", {}).get("partition", config["default_resources"]["partition"]),
-#         threads=config.get("create_ped", {}).get("threads", config["default_resources"]["threads"]),
-#         time=config.get("create_ped", {}).get("time", config["default_resources"]["time"]),
-#     container:
-#         config.get("create_ped", {}).get("container", config["default_container"])
-#     message:
-#         "{rule}: Create a peddy ped/FAM file from the SampleSheet.csv file"
-#     script:
-#         "../scripts/create_peddy_fam.py"
-
+rule create_ped:
+    input:
+        config["peddy"]["samples"],
+    output:
+        temp("qc/peddy/all.ped"),
+    log:
+        "qc/peddy/all.ped",
+    resources:
+        mem_mb=config.get("create_ped", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
+        mem_per_cpu=config.get("create_ped", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
+        partition=config.get("create_ped", {}).get("partition", config["default_resources"]["partition"]),
+        threads=config.get("create_ped", {}).get("threads", config["default_resources"]["threads"]),
+        time=config.get("create_ped", {}).get("time", config["default_resources"]["time"]),
+    container:
+        config.get("create_ped", {}).get("container", config["default_container"])
+    message:
+        "{rule}: Create a peddy ped/FAM file from the SampleSheet.csv file"
+    script:
+        "../scripts/create_peddy_fam.py"
 
 
 rule create_peddy_mqc_tsv:
     input:
-        peddy_rel_check = "qc/peddy/peddy_mqc.ped_check.csv",
-        peddy_sex_check = "qc/peddy/peddy_mqc.sex_check.csv",
-        ped="qc/peddy/all.ped"
+        peddy_rel_check="qc/peddy/peddy.ped_check.csv",
+        peddy_sex_check="qc/peddy/peddy.sex_check.csv",
+        ped="qc/peddy/all.ped",
     output:
-        rel_check_mqc="qc/peddy/peddy_rel_check_mqc.tsv",
-        sex_check_mqc="qc/peddy/peddy_sex_check_mqc.tsv"
+        rel_check_mqc=temp("qc/peddy/peddy_rel_check_mqc.tsv"),
+        sex_check_mqc=temp("qc/peddy/peddy_sex_check_mqc.tsv"),
     params:
         pre="qc/peddy/peddy_mqc",
     log:
@@ -102,7 +101,8 @@ rule create_peddy_mqc_tsv:
     benchmark:
         repeat(
             "qc/peddy/create_peddy_mqc_tsv.benchmark.tsv",
-            config.get("create_peddy_mqc_tsv", {}).get("benchmark_repeats", 1),)
+            config.get("create_peddy_mqc_tsv", {}).get("benchmark_repeats", 1),
+        )
     resources:
         mem_mb=config.get("create_peddy_mqc_tsv", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
         mem_per_cpu=config.get("create_peddy_mqc_tsv", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),

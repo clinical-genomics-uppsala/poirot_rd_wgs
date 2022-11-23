@@ -10,7 +10,6 @@ default_resources:
 deepvariant:
   threads: 10
 
-
 expansionhunter:
   threads: 16
 
@@ -35,15 +34,15 @@ mosdepth_bed:
 
 pbrun_fq2bam:
   gres: "--gres=gpu:4"
-  mem_mb: 163840
+  mem_mb: 770000
   mem_per_cpu: 4096
   partition: "GPU"
   threads: 40
   time: "20:00:00"
 
 pbrun_deepvariant:
-  gres: "--gres=gpu:2"
-  mem_mb: 81920
+  gres: "--gres=gpu:4"
+  mem_mb: 385000
   mem_per_cpu: 4096
   partition: "GPU"
   threads: 20
@@ -54,4 +53,7 @@ peddy:
 
 spring:
   mem_mb: 368640
+  threads: 8
+
+tiddit:
   threads: 8

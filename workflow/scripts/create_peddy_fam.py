@@ -2,7 +2,6 @@
 # coding: utf-8
 
 import pandas as pd
-import sys
 
 def get_ped_sex(sex):
 
