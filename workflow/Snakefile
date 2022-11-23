@@ -258,6 +258,14 @@ use rule mosdepth from qc as qc_mosdepth with:
     input:
         bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
         bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+    output:
+        bed=temp("qc/mosdepth/{sample}_{type}.regions.bed.gz"),
+        csi=temp("qc/mosdepth/{sample}_{type}.regions.bed.gz.csi"),
+        glob=temp("qc/mosdepth/{sample}_{type}.mosdepth.global.dist.txt"),
+        pairbase=temp("qc/mosdepth/{sample}_{type}.per-base.bed.gz"),
+        index=temp("qc/mosdepth/{sample}_{type}.per-base.bed.gz.csi"),
+        region=temp("qc/mosdepth/{sample}_{type}.mosdepth.region.dist.txt"),
+        summary=temp("qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"),
 
 
 use rule mosdepth_bed from qc as qc_mosdepth_bed with:
