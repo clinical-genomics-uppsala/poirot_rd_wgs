@@ -88,7 +88,7 @@ peddy_rel_check:
     rel_check_test:
       title: rel_test_check
       description: Fail if there if peddy reports a parent_error or sample_duplication_error.
-      hidden: False
+      hidden: False 
       placement: 1010
 
 peddy_sex_check:
