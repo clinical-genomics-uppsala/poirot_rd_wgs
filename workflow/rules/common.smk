@@ -124,6 +124,7 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         "cnv_sv/stranger": ["stranger.vcf"],
         "cnv_sv/tiddit": ["vcf"],
         "cnv_sv/svdb_query": ["svdb_query.vcf"],
+        "mitochondrial/gatk_split_multi_allelic_sites": ["vcf"]
     }
     output_files = [
         "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)

@@ -29,6 +29,7 @@ module alignment:
     config:
         config
 
+
 use rule samtools_sort from alignment as alignment_samtools_sort with:
     input:
         "cnv_sv/expansionhunter/{sample}_{type}_realigned.bam"
@@ -208,6 +209,25 @@ use rule bgzip from misc as misc_bgzip
 use rule tabix from misc as misc_tabix
 
 
+module mitochondrial:
+    snakefile:
+        github(
+            "hydra-genetics/mitochondrial",
+            path="workflow/Snakefile",
+            tag=config["modules"]["mitochondrial"],
+        )
+    config:
+        config
+
+
+use rule * from mitochondrial as mitochondrial_*
+
+use rule gatk_print_reads from mitochondrial as mitochondrial_gatk_print_reads with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+
+
 module parabricks:
     snakefile:
         github(
@@ -224,6 +244,7 @@ use rule pbrun_fq2bam from parabricks as parabricks_fq2bam with:
         extra=config.get("parabricks_fq2bam", {}).get("extra", ""),
         in_fq=get_in_fq,
         num_gpus=config.get("parabricks_fq2bam", {}).get("num_gpus", ""),
+
 
 use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
     params:

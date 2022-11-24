@@ -11,3 +11,4 @@ drmaa: "-p {resources.partition} -t {resources.time} -n {resources.threads} --me
 default-resources: [gres=""]
 drmaa-log-dir: "slurm"
 singularity-args: "--cleanenv --bind /beegfs-archive,/beegfs-scratch,/beegfs-storage --disable-cache"
+singularity-prefix: "/projects/wp4/nobackup/singularity_cache/"
