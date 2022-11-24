@@ -22,7 +22,7 @@ modules:
   qc: "develop"
   misc: "v0.1.0"
   snv_indels: "22b2723"
-  stranger: "8c2dffa"
+  annotation: "v0.2.0"
   
 
 reference:
