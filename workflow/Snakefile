@@ -29,11 +29,12 @@ module alignment:
     config:
         config
 
+
 use rule samtools_sort from alignment as alignment_samtools_sort with:
     input:
         "cnv_sv/expansionhunter/{sample}_{type}_realigned.bam"
     output:
-        "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam"
+        temp("cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam")
     log:
         "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.log"
     benchmark:
@@ -43,7 +44,7 @@ use rule samtools_sort from alignment as alignment_samtools_sort with:
         )
 
 
-use rule samtools_index from alignment as alignment_samtools_index
+use rule samtools_index from alignment as alignment_samtools_index 
 
 
 module annotation:
@@ -51,7 +52,7 @@ module annotation:
         github(
             "hydra-genetics/annotation",
             path="workflow/Snakefile",
-            tag=config["modules"]["stranger"],
+            tag=config["modules"]["annotation"],
         )
     config:
         config
@@ -97,6 +98,11 @@ use rule manta_config_n from cnv_sv as cnv_sv_manta_config_n with:
 
 
 use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_N.bam",
+        bai="parabricks/pbrun_fq2bam/{sample}_N.bam.bai",
+        ref=config["reference"]["fasta"],
+        scrpt="cnv_sv/manta_run_workflow_n/{sample}/runWorkflow.py",
     output:
         cand_si_vcf=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSmallIndels.vcf.gz"),
         cand_si_tbi=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSmallIndels.vcf.gz.tbi"),
@@ -110,7 +116,7 @@ use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
 use rule generate_reviewer_locus_list from cnv_sv as cnv_sv_generate_reviewer
 
 
-use rule reviewer from cnv_sv as cnv_sv_reviewer with:
+use rule reviewer from cnv_sv as cnv_sv_reviewer 
 
 
 use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
@@ -203,6 +209,25 @@ use rule bgzip from misc as misc_bgzip
 use rule tabix from misc as misc_tabix
 
 
+module mitochondrial:
+    snakefile:
+        github(
+            "hydra-genetics/mitochondrial",
+            path="workflow/Snakefile",
+            tag=config["modules"]["mitochondrial"],
+        )
+    config:
+        config
+
+
+use rule * from mitochondrial as mitochondrial_*
+
+use rule gatk_print_reads from mitochondrial as mitochondrial_gatk_print_reads with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+
+
 module parabricks:
     snakefile:
         github(
@@ -219,6 +244,7 @@ use rule pbrun_fq2bam from parabricks as parabricks_fq2bam with:
         extra=config.get("parabricks_fq2bam", {}).get("extra", ""),
         in_fq=get_in_fq,
         num_gpus=config.get("parabricks_fq2bam", {}).get("num_gpus", ""),
+
 
 use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
     params:

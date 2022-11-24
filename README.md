@@ -2,46 +2,54 @@
  Clinical Genomics Uppsala inheritance disease pipeline for WGS made as a snakemake workflow.
 
 
-The pipeline will be build one step at a time with step 1 and 2 being the most crucial. Where possible, hydra-genetics modules (https://github.com/hydra-genetics) will be used. Part of pipeline will not be in hydra-genetics from the beginning but will be changed into modules when there is time.
+The pipeline is built to analys WGS data. Where possible, hydra-genetics modules (https://github.com/hydra-genetics) is being used. The main parts are the same as the GMS nextflow pipeline https://github.com/nf-core/raredisease.
 
-**Steg 1: SNV and indel analysis**
 
-- GATK best practices to get analysis ready bam
-- deepVariant (+ GLNexus?) for calling
-- kinship and sex-check with peddy (maybe have an easy this many reads tells this story too, can find XXY and homozygote females)
-- coverage for gene panels
+**SNV and indel analysis**
 
-**Steg 2: CNV, and other SV: inversions, deletion and duplications for Moon**
+- fastq to BAM with bwa and marking duplicates (https://docs.nvidia.com/clara/parabricks/4.0.0/Documentation/ToolDocs/man_fq2bam.html#man-fq2bam)
+- deepVariant (+ GLNexus for peddy) for calling
 
-- manta
-- CNVnator
-- When these work and other parts of the pipeline it is possible to continue buildning this part. What is good right now? (Tiddit, CNVkit, delly, others?)
-- Combine the results from different callers: SVdb to one vcf-file
-  - SVdb will help remove false positives?
-- Region Of Homozygosity and UniParental Disomy
+
+**CNV, and other SV: inversions, deletion and duplications**
+
+- Manta
+- CNVpytor
+- tiddit
+- When possible, we will continue buildning this part, adding other callers maybe CNVkit and delly.
+- Combine the results from different callers: SVDB to one vcf-file
+  - SVDB will help remove false positives
+- To implement: Region Of Homozygosity and UniParental Disomy
   - AutoMap (https://github.com/mquinodo/AutoMap) and https://github.com/bjhall/upd
 
-**Steg 3: SMA**
+
+**Repeat expansions**
+
+- ExpansionHunter
+- annotater with STRanger
+- REViewer makes histogram with size distribution per sample
+
+
+**QC**
+
+- MultiQC report
+- To implement: coverage for gene panels
+- kinship and sex-check with peddy
+ - samtools idxstats helps with determining sex, can see XXY and females with highly homozygote chrX
+ 
+
+**To implement: SMA**
 
 - SMNCopyNumberCaller (https://github.com/Illumina/SMNCopyNumberCaller, https://www.nature.com/articles/s41436-020-0754-0?proof=t)
 - SMNca (https://onlinelibrary.wiley.com/doi/full/10.1002/humu.24120)
 - other ways to handle SMN1 och SMN2?
 
-**Steg 4: Repeat expansions**
 
-- ExpansionHunter
-- if annotation is needed: STRanger
-- histogram with size distribution per sample
-  - REViewer? Illumina
-- Fragile X
-
-**Steg 5: Mitochondria**
-
+**To implement: Mitochondria**
 - heteroplasmy (sensitivity) 
 
-**Steg 6: RNA**
 
-
+**To implement RNA**
 
 
 ---
@@ -50,4 +58,3 @@ The pipeline will be build one step at a time with step 1 and 2 being the most c
 
 - **Telomerecat is a tool for estimating the average telomere length (TL) for a paired end, whole genome sequencing (WGS) sample** (Panos kanske är intresserad av svaret)
 - Cyrius for good call of CYP2D6
-- What data is needed more than vcf? QC and figures.

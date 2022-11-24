@@ -120,9 +120,11 @@ def get_locus_str(loci):
 def compile_output_list(wildcards: snakemake.io.Wildcards):
     files = {
         "cnv_sv/cnvpytor": ["vcf"],
-        "cnv_sv/expansionhunter": ["vcf", "stranger.vcf"],
+        "cnv_sv/expansionhunter": ["vcf"],
+        "cnv_sv/stranger": ["stranger.vcf"],
         "cnv_sv/tiddit": ["vcf"],
         "cnv_sv/svdb_query": ["svdb_query.vcf"],
+        "mitochondrial/gatk_split_multi_allelic_sites": ["vcf"]
     }
     output_files = [
         "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)
