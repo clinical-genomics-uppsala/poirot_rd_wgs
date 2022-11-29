@@ -3,15 +3,15 @@ __copyright__ = "Copyright 2022"
 __email__ = "jessika.nordin@scilifelab.uu.se"
 __license__ = "GPL-3"
 
+
 rule mosdepth_bedtools:
     input:
-        perBase="qc/mosdepth/{sample}_{type}.per-base.bed.gz",
-        index="qc/mosdepth/{sample}_{type}.per-base.bed.gz.csi",
+        perBase="qc/mosdepth_bed/{sample}_{type}.per-base.bed.gz",
         bed=config["reference"]["coverage_bed"],
     output:
-        out.=temp("qc/mosdepth_bedtools/{sample}_{type}.mosdepth.lowCov.regions.txt"),
+        out=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.lowCov.regions.txt"),
     log:
-        "logs/qc/mosdepth_bedtools_{sample}_{type}.log",
+        "qc/mosdepth_bed/{sample}_{type}.lowCov.log",
     benchmark:
         repeat(
             "qc/mosdepth_bedtools/mosdepth_bedtools_{sample}_{type}.benchmark.tsv",
@@ -34,12 +34,13 @@ rule mosdepth_bedtools:
 
 rule create_cov_excel:
     input:
-        summary="qc/mosdepth/{sample}_{type}.mosdepth.summary.txt",
-        config=config["create_cov_excel"]["covLimits"],
+        summary="qc/mosdepth_bed/{sample}_{type}.mosdepth.summary.txt",
+        lowCov="qc/mosdepth_bed/{sample}_{type}.mosdepth.lowCov.regions.txt",
+        config="config/config.yaml",
     output:
-        out=temp("qc/create_cov_excel/{sample}_{type}.mosdepth.regions.txt"),
+        out=temp("qc/create_cov_excel/{sample}_{type}.coverage.xlsx"),
     log:
-        "logs/qc/create_cov_excel_{sample}_{type}.log",
+        "qc/create_cov_excel/{sample}_{type}.log",
     benchmark:
         repeat(
             "qc/create_cov_excel/create_cov_excel_{sample}_{type}.benchmark.tsv",
@@ -57,4 +58,4 @@ rule create_cov_excel:
     message:
         "{rule}: Get coverage analysis per gene into excel, with tab for each panel and one for all genes in bed"
     script:
-        "../scripts/create_excel.py {input.summary} {output.out} {input.config}"
+        "../scripts/create_excel.py"

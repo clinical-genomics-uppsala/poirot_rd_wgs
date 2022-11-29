@@ -55,6 +55,7 @@ cnvpytor_filter:
 
 
 create_cov_excel:
+  container: "/projects/wp2/nobackup/Twist_Myeloid/Containers/python3.6-pysam-xlsxwriter-yaml.simg"
   covLimits: "10 20 30"
 
 
@@ -102,7 +103,7 @@ manta_run_workflow_n:
 mosdepth:
   container: "docker://hydragenetics/mosdepth:0.3.2"
   by: "500"
-  extra: "--fast-mode "
+  extra: "--fast-mode --no-per-base "
 
 
 mosdepth_bed:

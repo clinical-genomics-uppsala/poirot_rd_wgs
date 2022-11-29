@@ -6,9 +6,9 @@ pip install hydra-genetics
 pip install snakemake
 pip install -r requirements.txt
 pip install pysam
-pip install --upgrade hydra_genetics
 module load slurm-drmaa
 module load bcbio-nextgen
+pip install --upgrade hydra_genetics
 pip install --upgrade snakemake
 pip install --upgrade pip
 pip install snakefmt
@@ -26,9 +26,7 @@ source venv/bin/activate
 #To run the pipeline with slurm or without slurm
 # -s where is the Snakefile, -d which is the working directory
 # units.tsv and sample.tsv should be in working directory
-
-snakemake --profile marvin -s workflow/Snakefile --configfile config/config.yaml --notemp
-
+snakemake --profile profiles/slurm/ -s workflow/Snakefile -d config/
 snakemake -n -s workflow/Snakefile -d config/ --use-singularity --singularity-args " -B /projects -B /beegfs-storage -B /scratch -B /data "
 snakemake --core 1 -s ../workflow/Snakefile --use-singularity --singularity-args " -B /projects -B /beegfs-storage -B /scratch -B /data "
 
@@ -57,7 +55,7 @@ singularity-args: "--cleanenv --bind /beegfs-archive,/beegfs-scratch,/beegfs-sto
 
 
 
-hydra-genetics create-input-files -d
+hydra-genetics create-input-files -d /projects/wp3/nobackup/WGS/delivery02326/RL-2047 -t N --tc 0.0
 
 #rule NAME:
 #    input: "path/to/inputfile", "path/to/other/inputfile"

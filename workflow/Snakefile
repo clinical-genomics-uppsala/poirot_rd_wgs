@@ -6,6 +6,7 @@ __license__ = "GPL-3"
 
 include: "rules/common.smk"
 include: "rules/add_ref_to_vcf.smk"
+include: "rules/coverage.smk"
 include: "rules/peddy.smk"
 
 
@@ -258,21 +259,13 @@ use rule mosdepth from qc as qc_mosdepth with:
     input:
         bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
         bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
-    output:
-        bed=temp("qc/mosdepth/{sample}_{type}.regions.bed.gz"),
-        csi=temp("qc/mosdepth/{sample}_{type}.regions.bed.gz.csi"),
-        glob=temp("qc/mosdepth/{sample}_{type}.mosdepth.global.dist.txt"),
-        pairbase=temp("qc/mosdepth/{sample}_{type}.per-base.bed.gz"),
-        index=temp("qc/mosdepth/{sample}_{type}.per-base.bed.gz.csi"),
-        region=temp("qc/mosdepth/{sample}_{type}.mosdepth.region.dist.txt"),
-        summary=temp("qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"),
 
 
 use rule mosdepth_bed from qc as qc_mosdepth_bed with:
     input:
         bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
         bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
-        bed=config.get("reference", {}).get("design_bed", ""),
+        bed=config.get("reference", {}).get("coverage_bed", ""),
     output:
         bed=temp("qc/mosdepth_bed/{sample}_{type}.regions.bed.gz"),
         bed_csi=temp("qc/mosdepth_bed/{sample}_{type}.regions.bed.gz.csi"),
@@ -280,6 +273,9 @@ use rule mosdepth_bed from qc as qc_mosdepth_bed with:
         pairbase=temp("qc/mosdepth_bed/{sample}_{type}.per-base.bed.gz"),
         region=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.region.dist.txt"),
         summary=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.summary.txt"),
+        thresholds=temp("qc/mosdepth_bed/{sample}_{type}.thresholds.bed.gz"),
+    params:
+        thresholds="10,20,30",
 
 
 use rule multiqc from qc as qc_multiqc

@@ -123,6 +123,7 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         "cnv_sv/expansionhunter": ["vcf", "stranger.vcf"],
         "cnv_sv/tiddit": ["vcf"],
         "cnv_sv/svdb_query": ["svdb_query.vcf"],
+        "qc/create_cov_excel": ["coverage.xlsx"],
     }
     output_files = [
         "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)

@@ -9,13 +9,13 @@ import gzip
 # Define sys.argvs
 mosdepth = snakemake.input[0]  # Summary file
 output = snakemake.output[0]
-configfile = snakemake.input[1]
+configfile = snakemake.input[2]
 
 
 with open(configfile, 'r') as file:
     config_list = yaml.load(file, Loader=yaml.FullLoader)
 
-runID = config_list['seqID']['sequencerun']  # sys.argv[5]
+#runID = config_list['seqID']['sequencerun']  # sys.argv[5]
 minCov = int(config_list['create_cov_excel']['covLimits'].split(' ')[0])
 medCov = int(config_list['create_cov_excel']['covLimits'].split(' ')[1])
 maxCov = int(config_list['create_cov_excel']['covLimits'].split(' ')[2])
@@ -38,7 +38,7 @@ italicFormat = workbook.add_format({'italic': True})
 redFormat = workbook.add_format({'font_color': 'red'})
 
 # Define sample based on annotated vcf
-sample = mosdepth.split("_")[0].split("/")[-1]
+sample = mosdepth.split("_")[1].split("/")[1]
 today = date.today()
 emptyList = ['', '', '', '', '', '']
 
@@ -49,8 +49,8 @@ emptyList = ['', '', '', '', '', '']
 #
 # worksheetVersions.write('A7', 'Containers used: ', tableHeadFormat)
 # containers = [clist for clist in config_list['singularitys'].items()]
-# row = 8
-# col = 0
+row = 8
+col = 0
 # for containerTuple in containers:
 #     container = list(containerTuple)
 #     worksheetVersions.write_row('A'+str(row), container)
@@ -71,8 +71,8 @@ with gzip.open(covRegionsFile, 'rt') as regionsfile:
     for lline in regionsfile:
         line = lline.strip().split('\t')
         gene = line[3].split("_")[0]
-        exon = line[3].split("_")[1]
-        transcript = line[3].split("transcript")[1]
+        exon = line[3].split("_")[3]
+        transcript = "NM_"+line[3].split("_")[2]
         covRow = [line[0], line[1], line[2], gene, exon, transcript, line[4]]
         tableLines.append(covRow)
         bedfile.append(line[0:4])
@@ -106,7 +106,6 @@ with gzip.open(covThresFile, 'rt') as thresfile:
         totalMinBreadth += int(line[4])
         totalMedBreadth += int(line[5])
         totalMaxBreadth += int(line[6])
-
         minBredth = round(int(line[4])/length, 4)
         medBreadth = round(int(line[5])/length, 4)
         maxBreadth = round(int(line[6])/length, 4)
@@ -139,6 +138,7 @@ with open(mosdepthPerBase, 'r') as file:
         line = lline.strip().split("\t")
         if int(line[3]) <= int(minCov):
             lowCovLines.append(line)
+
 # Sort based on coverage
 lowCovLines.sort(key=lambda x: x[3])
 for line in lowCovLines:
@@ -154,7 +154,7 @@ lowRegions = row - 6
 
 ''' Overview sheet (1) '''
 worksheetOver.write(0, 0, sample, headingFormat)
-worksheetOver.write(1, 0, "RunID: "+runID)
+#worksheetOver.write(1, 0, "RunID: "+runID)
 worksheetOver.write(2, 0, "Processing date: "+today.strftime("%B %d, %Y"))
 worksheetOver.write_row(3, 0, emptyList, lineFormat)
 
@@ -168,7 +168,7 @@ worksheetOver.write(7, 0, "Sheets:", tableHeadFormat)
 worksheetOver.write_url(8, 0, "internal:'Low Coverage'!A1", string='Positions with coverage lower than '+str(minCov)+'x')
 worksheetOver.write_url(9, 0, "internal: 'Coverage'!A1", string='Average coverage of all regions in bed')
 #worksheetOver.write_url(10, 0, "internal:'Version'!A1", string='Version Log')
-#worksheetOver.write_row(11, 0, emptyList, lineFormat)
+worksheetOver.write_row(11, 0, emptyList, lineFormat)
 worksheetOver.write_row(10, 0, emptyList, lineFormat)
 
 
