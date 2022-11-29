@@ -6,6 +6,7 @@ pip install hydra-genetics
 pip install snakemake
 pip install -r requirements.txt
 pip install pysam
+pip install XlsxWriter
 module load slurm-drmaa
 module load bcbio-nextgen
 pip install --upgrade hydra_genetics
