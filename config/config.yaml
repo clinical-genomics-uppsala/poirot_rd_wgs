@@ -26,16 +26,18 @@ modules:
 
 
 reference:
+  coverage_bed: "/projects/wp3/nobackup/Workspace/Jessika_playground/coverage/refseq_mane.bed"
   design_bed: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
   exome_bed: "/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
   exome_intervals: "/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"
   fasta: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta"
   fai: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.fai"
+  genepanels: "/projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/genepanels.list"
   genome_dir: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens_star"
   sites: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.known_indels.vcf.gz"
   wgs_intervals: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.interval_list"
-  coverage_bed: "/projects/wp3/nobackup/Workspace/Jessika_playground/coverage/refseq_mane.bed"
   #Created bed with https://github.com/zezzipa/UCSCtable2bed
+
 
 trimmer_software: "fastp_pe"
 
