@@ -27,14 +27,14 @@ modules:
   
 
 reference:
-  design_bed: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
-  exome_bed: "/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
-  exome_intervals: "/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"
-  fasta: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta"
-  fai: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.fai"
-  genome_dir: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens_star"
-  sites: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.known_indels.vcf.gz"
-  wgs_intervals: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.interval_list"
+  design_bed: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
+  exome_bed: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
+  exome_intervals: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"
+  fasta: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta"
+  fai: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.fai"
+  genome_dir: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens_star"
+  sites: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.known_indels.vcf.gz"
+  wgs_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.interval_list"
 
 
 trimmer_software: "fastp_pe"
@@ -238,14 +238,17 @@ mt_reference:
   blacklist: /beegfs-storage/data/ref_data/gatk_mito/blacklist_sites.hg38.chrM.bed
 
 
-parabricks_deepvariant:
-  extra: "--pb-model-file /data/parabricks/3.8.0-1/A30/deepvariant.eng"
-  num_gpus: "2"
-
-
-parabricks_fq2bam:
+pbrun_deepvariant:
+  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
+  deepvariant_model: "/beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng"
   extra: ""
-  num_gpus: "4"
+  
+
+
+pbrun_fq2bam:
+  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
+  extra: ""
+  
 
 
 peddy:

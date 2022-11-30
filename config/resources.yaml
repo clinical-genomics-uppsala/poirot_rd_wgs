@@ -61,18 +61,20 @@ mosdepth_bed:
   
 
 pbrun_fq2bam:
+  gpus: 4
   gres: "--gres=gpu:4"
-  mem_mb: 770000
-  mem_per_cpu: 4096
+  mem_mb: 655360
+  mem_per_cpu: 16384
   partition: "GPU"
   threads: 40
   time: "20:00:00"
 
 
 pbrun_deepvariant:
+  gpus: 2
   gres: "--gres=gpu:4"
-  mem_mb: 385000
-  mem_per_cpu: 4096
+  mem_mb: 327680
+  mem_per_cpu: 16384
   partition: "GPU"
   threads: 20
   time: "20:00:00"
