@@ -36,7 +36,6 @@ rule create_cov_excel:
     input:
         config="config/config.yaml",
         duplicationFile="parabricks/pbrun_fq2bam/{sample}_{type}.metrics",
-        genepanels=config.get("reference", {}).get("genepanels", ""),
         lowCov="qc/mosdepth_bed/{sample}_{type}.mosdepth.lowCov.regions.txt",
         summary="qc/mosdepth_bed/{sample}_{type}.mosdepth.summary.txt",
     output:
