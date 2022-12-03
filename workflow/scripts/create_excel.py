@@ -92,29 +92,30 @@ with gzip.open(covThresFile, 'rt') as thresfile:
         tableLinesTre.append(row)
 
 while i < len(tableLinesCov):
-	length = 0
-	cov=min=med=max=0
-	while (i < (len(tableLinesCov)-1)) and (tableLinesCov[i][0] == tableLinesCov[i+1][0]):
-		length = length + float(tableLinesCov[i][4])
-		cov = cov + (float(tableLinesCov[i][3])*float(tableLinesCov[i][4]))
-		min = min + float(tableLinesTre[i][2])
-		med = med + float(tableLinesTre[i][3])
-		max = max + float(tableLinesTre[i][4])
-		i = i + 1
-	if (i == (len(tableLinesCov) - 1)) or (tableLinesCov[i][0] != tableLinesCov[i+1][0]):
-		gene = tableLinesCov[i][0]
-		transcript = tableLinesCov[i][1]
-		length = length + float(tableLinesCov[i][4])
-		cov = cov + (float(tableLinesCov[i][3])*float(tableLinesCov[i][4]))
-		min = min + float(tableLinesTre[i][2])
-		med = med + float(tableLinesTre[i][3])
-		max = max + float(tableLinesTre[i][4])
-		minBredth = min/length
-		medBreadth = med/length
-		maxBreadth = max/length
-		covRow = [gene, transcript, round((cov/length), 2), round((minBredth*100), 1), round((medBreadth*100), 1), round((maxBreadth*100), 1)]
-		covtable.append(covRow)
-		i = i + 1
+    length = 0
+    cov=min=med=max=0
+    while (i < (len(tableLinesCov)-1)) and (tableLinesCov[i][0] == tableLinesCov[i+1][0]):
+        length = length + float(tableLinesCov[i][4])
+        cov = cov + (float(tableLinesCov[i][3])*float(tableLinesCov[i][4]))
+        min = min + float(tableLinesTre[i][2])
+        med = med + float(tableLinesTre[i][3])
+        max = max + float(tableLinesTre[i][4])
+        i = i + 1
+    if (i == (len(tableLinesCov) - 1)) or (tableLinesCov[i][0] != tableLinesCov[i+1][0]):
+        gene = tableLinesCov[i][0]
+        transcript = tableLinesCov[i][1]
+        length = length + float(tableLinesCov[i][4])
+        cov = cov + (float(tableLinesCov[i][3])*float(tableLinesCov[i][4]))
+        min = min + float(tableLinesTre[i][2])
+        med = med + float(tableLinesTre[i][3])
+        max = max + float(tableLinesTre[i][4])
+        minBredth = min/length
+        medBreadth = med/length
+        maxBreadth = max/length
+        covRow = [gene, transcript, round((cov/length), 2), round((minBredth*100), 1),
+            round((medBreadth*100), 1), round((maxBreadth*100), 1)]
+        covtable.append(covRow)
+        i = i + 1
 
 
 ''' Low coverage sheet '''
@@ -209,24 +210,26 @@ for line in panels:
                     break
                 else:
                     i = i + 1
-# #            while k < len(lowRegLines):
-# #                if lline.rstrip() == lowRegLines[k][0]:
-# #                    print(lowRegLines[k])
-# #                    lows.append(lowRegLines[k])
-# #                    k = k + 1
-# #                else:
-# #                    k = k + 1
+            while k < len(lowRegLines):
+                lowgene = lowRegLines[k][0].strip().split("_")
+                if lline.rstrip() == lowgene[0]:
+                    lows.append(lowRegLines[k])
+                    k = k + 1
+                else:
+                    k = k + 1
         tableArea = 'A6:F'+str(len(genes)+6)  # rows of full list
         headerListDict = [{'header': 'Gene'}, {'header': 'Transcript'}, {'header': 'Avg coverage'},
-        	{'header': str(minCov)+'x'}, {'header': str(medCov)+'x'}, {'header': str(maxCov)+'x'}]
+                            {'header': str(minCov)+'x'}, {'header': str(medCov)+'x'}, {'header': str(maxCov)+'x'}]
         worksheetpanel.add_table(tableArea, {'data': genes, 'columns': headerListDict, 'style': 'Table Style Light 1'})
-        worksheetpanel.write('A'+str(len(genes)+9), 'Regions of exons that is covered below '+str(minCov)+'x'+'.')
-#         tableArea2 = 'A'+str(len(genes)+10)+':F'+str(len(lows)+len(genes)+10)  # rows of full list
-#         headerListDict = [{'header': 'Gene name_transcript_exon'}, {'header': 'Chr'}, {'header': 'Start'},
-#             {'header': 'Stop'}, {'header': 'Coverage (x)'}]
-#         if lows != []:
-#             worksheetpanel.add_table(tableArea2, {'data': lows, 'columns': headerListDict, 'style': 'Table Style Light 1'})
-        worksheetOver.write_url((16+number), 0, "internal: '"+line+"'!A1", string='Coverage analysis of '+line+' gene panel')
+        if lows != []:
+            worksheetpanel.write('A'+str(len(genes)+9), 'Regions of exons that are covered below '+str(minCov)+'x'+'.')
+            tableArea2 = 'A'+str(len(genes)+10)+':F'+str(len(lows)+len(genes)+10)  # rows of full list
+            headerListDict2 = [{'header': 'Gene name_transcript_exon'}, {'header': 'Chr'}, {'header': 'Start'},
+                                {'header': 'Stop'}, {'header': 'Coverage (x)'}]
+            worksheetpanel.add_table(tableArea2, {'data': lows, 'columns': headerListDict2, 'style': 'Table Style Light 1'})
+        else:
+            worksheetpanel.write('A'+str(len(genes)+9), 'No regions of exons are covered under '+str(minCov)+'x'+'.')
+        worksheetOver.write_url((16+number), 0, "internal: '"+line+"'!A1", string=line)
 
 
 ''' Coverage sheet '''
@@ -237,7 +240,7 @@ worksheetCov.write('A3', 'Sample: '+str(sample))
 worksheetCov.write('A5', 'Averge coverage and coverage breadth of each gene in exon-bedfile')
 tableArea = 'A6:F'+str(len(covtable)+6)  # rows of full list
 headerListDict = [{'header': 'Gene'}, {'header': 'Transcript'}, {'header': 'Avg coverage'},
-	{'header': str(minCov)+'x'}, {'header': str(medCov)+'x'}, {'header': str(maxCov)+'x'}]
+                    {'header': str(minCov)+'x'}, {'header': str(medCov)+'x'}, {'header': str(maxCov)+'x'}]
 worksheetCov.add_table(tableArea, {'data': covtable, 'columns': headerListDict, 'style': 'Table Style Light 1'})
 
 
@@ -249,8 +252,8 @@ worksheetLowCov.write('A3', 'Sample: '+str(sample))
 worksheetLowCov.write('A5', 'Gene regions with coverage lower than '+str(minCov)+'x.')
 tableArea = 'A6:F'+str(len(lowRegLines)+6)  # rows of full list
 headerListDict = [{'header': 'Region Name'}, {'header': 'Chr'}, {'header': 'Start'},
-    {'header': 'Stop'}, {'header': 'Mean Coverage'}]
-worksheetCov.add_table(tableArea, {'data': lowRegLines, 'columns': headerListDict, 'style': 'Table Style Light 1'})
+                    {'header': 'Stop'}, {'header': 'Mean Coverage'}]
+worksheetLowCov.add_table(tableArea, {'data': lowRegLines, 'columns': headerListDict, 'style': 'Table Style Light 1'})
 
 
 workbook.close()
