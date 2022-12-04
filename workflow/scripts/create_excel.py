@@ -13,15 +13,6 @@ mosdepth = snakemake.input[3]  # Summary file
 output = snakemake.output[0]
 
 
-
-# Define sys.argvs
-mosdepth="qc/mosdepth_bed/28041_N.mosdepth.summary.txt"
-output = "qc/mosdepth_bed/28041_N.coverage.xlsx"
-configfile = "config/config.yaml"
-duplicationFile = "parabricks/pbrun_fq2bam/29893_N.metrics"
-genepanels="/projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/genepanels.list"
-
-
 ''' Create excel and overview tab '''
 workbook = xlsxwriter.Workbook(output)
 worksheetOver = workbook.add_worksheet('Overview')
@@ -223,7 +214,7 @@ for line in panels:
         worksheetpanel.add_table(tableArea, {'data': genes, 'columns': headerListDict, 'style': 'Table Style Light 1'})
         if lows != []:
             worksheetpanel.write('A'+str(len(genes)+9), 'Regions of exons that are covered below '+str(minCov)+'x'+'.')
-            tableArea2 = 'A'+str(len(genes)+10)+':F'+str(len(lows)+len(genes)+10)  # rows of full list
+            tableArea2 = 'A'+str(len(genes)+10)+':E'+str(len(lows)+len(genes)+10)  # rows of full list
             headerListDict2 = [{'header': 'Gene name_transcript_exon'}, {'header': 'Chr'}, {'header': 'Start'},
                                 {'header': 'Stop'}, {'header': 'Coverage (x)'}]
             worksheetpanel.add_table(tableArea2, {'data': lows, 'columns': headerListDict2, 'style': 'Table Style Light 1'})
@@ -250,7 +241,7 @@ worksheetLowCov.write('A1', 'Mosdepth coverage analysis', headingFormat)
 worksheetLowCov.write_row('A2', emptyList, lineFormat)
 worksheetLowCov.write('A3', 'Sample: '+str(sample))
 worksheetLowCov.write('A5', 'Gene regions with coverage lower than '+str(minCov)+'x.')
-tableArea = 'A6:F'+str(len(lowRegLines)+6)  # rows of full list
+tableArea = 'A6:E'+str(len(lowRegLines)+6)  # rows of full list
 headerListDict = [{'header': 'Region Name'}, {'header': 'Chr'}, {'header': 'Start'},
                     {'header': 'Stop'}, {'header': 'Mean Coverage'}]
 worksheetLowCov.add_table(tableArea, {'data': lowRegLines, 'columns': headerListDict, 'style': 'Table Style Light 1'})

@@ -120,11 +120,25 @@ def get_locus_str(loci):
 def compile_output_list(wildcards: snakemake.io.Wildcards):
     files = {
         "cnv_sv/cnvpytor": ["vcf"],
-        "cnv_sv/expansionhunter": ["vcf", "stranger.vcf"],
-        "cnv_sv/tiddit": ["vcf"],
+        "cnv_sv/expansionhunter": ["vcf"],
+        "cnv_sv/stranger": ["stranger.vcf"],
         "cnv_sv/svdb_query": ["svdb_query.vcf"],
+        "cnv_sv/tiddit": ["vcf"],
         "qc/create_cov_excel": ["coverage.xlsx"],
     }
+    output_files = [
+        "compression/spring/%s_%s_%s_%s_%s.spring" % (sample, flowcell, lane, barcode, t)
+        for sample in set(units["sample"])
+        for flowcell in set(units["flowcell"])
+        for lane in set(units["lane"])
+        for barcode in set(units["barcode"])
+        for t in set(units["type"])
+    ]
+    output_files = [
+        "compression/crumble/%s_%s.crumble.cram" % (sample, t)
+        for sample in get_samples(samples)
+        for t in get_unit_types(units, sample)
+    ]
     output_files = [
         "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)
         for prefix in files.keys()
@@ -136,7 +150,7 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         "cnv_sv/expansionhunter/reviewer/%s_%s/" % (sample, unit_type)
         for sample in get_samples(samples)
         for unit_type in get_unit_types(units, sample)
-   ]
+    ]
     output_files += [
         "cnv_sv/manta_run_workflow_n/%s/results/variants/diploidSV.vcf.gz" % (sample) for sample in get_samples(samples)
     ]

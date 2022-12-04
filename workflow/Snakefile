@@ -34,7 +34,7 @@ use rule samtools_sort from alignment as alignment_samtools_sort with:
     input:
         "cnv_sv/expansionhunter/{sample}_{type}_realigned.bam"
     output:
-        "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam"
+        temp("cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam")
     log:
         "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.log"
     benchmark:
@@ -52,7 +52,7 @@ module annotation:
         github(
             "hydra-genetics/annotation",
             path="workflow/Snakefile",
-            tag=config["modules"]["stranger"],
+            tag=config["modules"]["annotation"],
         )
     config:
         config
@@ -98,6 +98,11 @@ use rule manta_config_n from cnv_sv as cnv_sv_manta_config_n with:
 
 
 use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_N.bam",
+        bai="parabricks/pbrun_fq2bam/{sample}_N.bam.bai",
+        ref=config["reference"]["fasta"],
+        scrpt="cnv_sv/manta_run_workflow_n/{sample}/runWorkflow.py",
     output:
         cand_si_vcf=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSmallIndels.vcf.gz"),
         cand_si_tbi=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSmallIndels.vcf.gz.tbi"),
@@ -111,7 +116,7 @@ use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
 use rule generate_reviewer_locus_list from cnv_sv as cnv_sv_generate_reviewer
 
 
-use rule reviewer from cnv_sv as cnv_sv_reviewer with:
+use rule reviewer from cnv_sv as cnv_sv_reviewer
 
 
 use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
@@ -158,9 +163,7 @@ use rule samtools_view from compression as compression_samtools_view with:
         ref=config.get("reference", {}).get("fasta", ""),
 
 
-use rule spring from compression as compression_spring with:
-    output:
-        spring="compression/spring/{sample}_{flowcell}_{lane}_{barcode}_{type}.spring",
+use rule spring from compression as compression_spring
 
 
 module filtering:
@@ -220,6 +223,7 @@ use rule pbrun_fq2bam from parabricks as parabricks_fq2bam with:
         extra=config.get("parabricks_fq2bam", {}).get("extra", ""),
         in_fq=get_in_fq,
         num_gpus=config.get("parabricks_fq2bam", {}).get("num_gpus", ""),
+
 
 use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
     params:
