@@ -124,21 +124,9 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         "cnv_sv/stranger": ["stranger.vcf"],
         "cnv_sv/svdb_query": ["svdb_query.vcf"],
         "cnv_sv/tiddit": ["vcf"],
+        "compression/crumble": ["crumble.cram"],
         "qc/create_cov_excel": ["coverage.xlsx"],
     }
-    output_files = [
-        "compression/spring/%s_%s_%s_%s_%s.spring" % (sample, flowcell, lane, barcode, t)
-        for sample in set(units["sample"])
-        for flowcell in set(units["flowcell"])
-        for lane in set(units["lane"])
-        for barcode in set(units["barcode"])
-        for t in set(units["type"])
-    ]
-    output_files = [
-        "compression/crumble/%s_%s.crumble.cram" % (sample, t)
-        for sample in get_samples(samples)
-        for t in get_unit_types(units, sample)
-    ]
     output_files = [
         "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)
         for prefix in files.keys()
@@ -163,6 +151,14 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         "qc/peddy/peddy.html",
         "qc/peddy/peddy.vs.html",
         "qc/peddy/peddy.background_pca.json",
+    ]
+    output_files += [
+        "compression/spring/%s_%s_%s_%s_%s.spring" % (sample, flowcell, lane, barcode, t)
+        for sample in set(units["sample"])
+        for flowcell in set(units["flowcell"])
+        for lane in set(units["lane"])
+        for barcode in set(units["barcode"])
+        for t in set(units["type"])
     ]
     output_files += ["vcf_final/%s.vcf.gz.tbi" % (sample) for sample in get_samples(samples)]
     return output_files

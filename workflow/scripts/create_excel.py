@@ -191,7 +191,7 @@ for line in panels:
     number = number + 1
     genes = []
     lows = []
-    with open(panel, 'rt') as file:
+    with open(panel, 'rt', encoding='utf-8') as file:
         for lline in file:
             i = 0
             k = 0
