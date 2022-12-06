@@ -285,11 +285,7 @@ use rule mosdepth_bed from qc as qc_mosdepth_bed with:
 use rule multiqc from qc as qc_multiqc
 
 
-use rule peddy from qc as qc_peddy with:
-    input:
-        vcf="qc/peddy/all.vcf.gz",
-        tbi="qc/peddy/all.vcf.gz.tbi",
-        ped="qc/peddy/all.ped",
+use rule peddy from qc as qc_peddy
 
 
 use rule picard_collect_alignment_summary_metrics from qc as qc_pic_align_sum_met with:
