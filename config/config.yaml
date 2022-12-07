@@ -36,7 +36,6 @@ reference:
   genome_dir: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens_star"
   sites: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.known_indels.vcf.gz"
   wgs_intervals: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.interval_list"
-  #Created bed with https://github.com/zezzipa/UCSCtable2bed
 
 
 trimmer_software: "fastp_pe"
@@ -98,10 +97,6 @@ manta_run_workflow_n:
   container: "docker://hydragenetics/manta:1.6.0"
 
 
-manta_run_workflow_n:
-  container: "docker://hydragenetics/manta:1.6.0"
-
-
 mosdepth:
   container: "docker://hydragenetics/mosdepth:0.3.2"
   by: "500"
@@ -126,8 +121,6 @@ multiqc:
         - "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"
         - "qc/mosdepth/{sample}_{type}.mosdepth.region.dist.txt"
         - "qc/mosdepth/{sample}_{type}.mosdepth.global.dist.txt"
-        - "qc/mosdepth_bed/{sample}_{type}.mosdepth.summary.txt"
-        - "qc/mosdepth_bed/{sample}_{type}.per-base.bed.gz"
         - "qc/peddy/peddy_sex_check_mqc.tsv"
         - "qc/peddy/peddy_rel_check_mqc.tsv"
         - "qc/picard_collect_alignment_summary_metrics/{sample}_{type}.alignment_summary_metrics.txt"
