@@ -26,7 +26,7 @@ modules:
 
 
 reference:
-  coverage_bed: "/projects/wp3/nobackup/Workspace/Jessika_playground/coverage/refseq_mane.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
+  coverage_bed: "/projects/wp3/nobackup/Workspace/Jessika_playground/coverage/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
   design_bed: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
   exome_bed: "/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
   exome_intervals: "/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"

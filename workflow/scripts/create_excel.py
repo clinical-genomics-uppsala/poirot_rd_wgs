@@ -142,14 +142,14 @@ for line in lowCovLines:
 
 ''' Overview sheet (1) '''
 worksheetOver.write(0, 0, sample, headingFormat)
-#worksheetOver.write(1, 0, "RunID: "+runID)
-worksheetOver.write(2, 0, "Processing date: "+today.strftime("%B %d, %Y"))
-worksheetOver.write_row(3, 0, emptyList, lineFormat)
-worksheetOver.write(4, 0, "Created by: ")
-worksheetOver.write(4, 4, "Valid from: ")
-worksheetOver.write(5, 0, "Signed by: ")
-worksheetOver.write(5, 4, "Document nr: ")
-worksheetOver.write_row(6, 0, emptyList, lineFormat)
+worksheetOver.write(1, 0, "Bed-file from UCSC: "+bedfile)
+worksheetOver.write(3, 0, "Processing date: "+today.strftime("%B %d, %Y"))
+worksheetOver.write_row(4, 0, emptyList, lineFormat)
+worksheetOver.write(5, 0, "Created by: ")
+worksheetOver.write(5, 4, "Valid from: ")
+worksheetOver.write(6, 0, "Signed by: ")
+worksheetOver.write(6, 4, "Document nr: ")
+worksheetOver.write_row(7, 0, emptyList, lineFormat)
 
 # Add avg. cov and clonality
 cmdAvgCov = "grep total_region "+mosdepth+" | awk '{print $4}'"
