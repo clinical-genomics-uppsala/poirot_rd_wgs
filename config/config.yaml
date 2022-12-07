@@ -251,25 +251,3 @@ tabix:
 
 tiddit:
   container: "docker://hydragenetics/tiddit:3.3.2"
-
-
-#genepanels:
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/ALS.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Aortopatier.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Arytmier.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Bindvav.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/BRCA.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/CADASIL.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/EBS.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/EDS.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/epilepsi.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/HHT.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Ichtyos.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/kardio.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Kraniosynostos_v2.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/neuromuskular.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/neuropati.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Periodisk_paralys.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Rasopatier.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Sotos.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Trombocytopenier.bed

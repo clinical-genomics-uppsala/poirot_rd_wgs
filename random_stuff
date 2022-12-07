@@ -27,6 +27,11 @@ source venv/bin/activate
 #To run the pipeline with slurm or without slurm
 # -s where is the Snakefile, -d which is the working directory
 # units.tsv and sample.tsv should be in working directory
+
+
+snakemake --profile marvin -s workflow/Snakefile --configfile config/config.yaml --notemp
+
+
 snakemake --profile profiles/slurm/ -s workflow/Snakefile -d config/
 snakemake -n -s workflow/Snakefile -d config/ --use-singularity --singularity-args " -B /projects -B /beegfs-storage -B /scratch -B /data "
 snakemake --core 1 -s ../workflow/Snakefile --use-singularity --singularity-args " -B /projects -B /beegfs-storage -B /scratch -B /data "
