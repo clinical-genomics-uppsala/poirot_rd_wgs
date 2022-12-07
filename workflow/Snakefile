@@ -163,7 +163,7 @@ use rule samtools_view from compression as compression_samtools_view with:
         ref=config.get("reference", {}).get("fasta", ""),
 
 
-use rule spring from compression as compression_spring
+use rule spring from compression as compression_spring with:
     output:
         spring="compression/spring/{sample}_{flowcell}_{lane}_{barcode}_{type}.spring",
 

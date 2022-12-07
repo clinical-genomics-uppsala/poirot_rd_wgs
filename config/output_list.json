@@ -1,4 +1,4 @@
-# Write shich files that should be copied.
+# Write which files that should be copied.
 # "where file should go": {"name of rule": "tail of name", "file": "where should it come from", "types": ["N"]},
 
 {
