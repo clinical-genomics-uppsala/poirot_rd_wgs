@@ -30,6 +30,7 @@ module alignment:
     config:
         config
 
+
 use rule samtools_sort from alignment as alignment_samtools_sort with:
     input:
         "cnv_sv/expansionhunter/{sample}_{type}_realigned.bam"
