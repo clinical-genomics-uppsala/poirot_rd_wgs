@@ -133,6 +133,7 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         "cnv_sv/tiddit": ["vcf"],
         "compression/crumble": ["crumble.cram"],
         "qc/create_cov_excel": ["coverage.xlsx"],
+        "mitochondrial/gatk_split_multi_allelic_sites": ["vcf"]
     }
     output_files = [
         "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)
