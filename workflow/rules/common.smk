@@ -117,6 +117,13 @@ def get_locus_str(loci):
     return loc_str
 
 
+def get_spring_extra(wildcards: snakemake.io.Wildcards):
+    extra = config.get("spring", {}).get("extra", "")
+    if get_fastq_file(units, wildcards, "fastq1").endswith(".gz"):
+        extra = "%s %s" % (extra, "-g")
+    return extra
+
+
 def compile_output_list(wildcards: snakemake.io.Wildcards):
     files = {
         "cnv_sv/cnvpytor": ["vcf"],
@@ -134,13 +141,13 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         for unit_type in get_unit_types(units, sample)
         for suffix in files[prefix]
     ]
-#    output_files += [
-#        "cnv_sv/reviewer/%s_%s/" % (sample, unit_type)
-#        for sample in get_samples(samples)
-#        for unit_type in get_unit_types(units, sample)
-#    ]
     output_files += [
         "cnv_sv/manta_run_workflow_n/%s/results/variants/diploidSV.vcf.gz" % (sample) for sample in get_samples(samples)
+    ]
+    output_files += [
+        "cnv_sv/reviewer/%s_%s/" % (sample, unit_type)
+        for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
     ]
     output_files += ["qc/multiqc/multiqc_DNA.html"]
     output_files += [

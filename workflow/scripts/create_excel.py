@@ -12,10 +12,12 @@ duplicationFile = snakemake.input[1]
 mosdepth = snakemake.input[3]  # Summary file
 output = snakemake.output[0]
 
+# Define sample based on annotated vcf
+sample = mosdepth.split("_")[1].split("/")[1]
+today = date.today()
 
 ''' Create excel and overview tab '''
 workbook = xlsxwriter.Workbook(output)
-worksheetOver = workbook.add_worksheet('Overview')
 
 # Define formats to be used.
 headingFormat = workbook.add_format({'bold': True, 'font_size': 18})
@@ -35,9 +37,10 @@ maxCov = int(config_list['create_cov_excel']['covLimits'].split(' ')[2])
 bedfile = config_list["reference"]["coverage_bed"]
 genepanels = config_list["reference"]["genepanels"]
 
-# Define sample based on annotated vcf
-sample = mosdepth.split("_")[1].split("/")[1]
-today = date.today()
+worksheetOver = workbook.add_worksheet('Overview')
+worksheetOver.write(0, 0, sample, headingFormat)
+worksheetOver.write(1, 0, "Bed-file from UCSC: "+bedfile)
+
 emptyList = ['', '', '', '', '', '']
 row = 8
 col = 0
@@ -141,8 +144,6 @@ for line in lowCovLines:
 
 
 ''' Overview sheet (1) '''
-worksheetOver.write(0, 0, sample, headingFormat)
-worksheetOver.write(1, 0, "Bed-file from UCSC: "+bedfile)
 worksheetOver.write(3, 0, "Processing date: "+today.strftime("%B %d, %Y"))
 worksheetOver.write_row(4, 0, emptyList, lineFormat)
 worksheetOver.write(5, 0, "Created by: ")

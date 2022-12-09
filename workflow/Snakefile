@@ -114,7 +114,7 @@ use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
         wrk_dir=temp(directory("cnv_sv/manta_run_workflow_n/{sample}/workspace")),
 
 
-use rule generate_reviewer_locus_list from cnv_sv as cnv_sv_generate_reviewer
+use rule reviewer_genrate_locus_list from cnv_sv as cnv_sv_generate_reviewer
 
 
 use rule reviewer from cnv_sv as cnv_sv_reviewer
