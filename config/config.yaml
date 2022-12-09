@@ -234,8 +234,8 @@ svdb_merge:
 svdb_query:
   container: "docker://hydragenetics/svdb:2.6.0"
   db_string:
-    "--db /projects/wp3/nobackup/WGS/WGS_pilot_CGU202111/UJ-3091/Poirot_RD-WGS-develop/workflow/reference/SVDB.vcf,/data/ref_genomes/GRCh38/SweGenSVDBGRCh38/swegen_cnvnator_tiddit_manta.vcf,/data/ref_genomes/GRCh38/gnomAD/gnomad_v2.1_sv.sites.vcf.gz \
-    --in_frq FRQ,FRQ,AF --in_occ OCC,OCC,AC --out_frq Twist_AF,SweGen_AF,gnomAD_AF --out_occ Twist_OCC,SweGen_OCC,gnomAD_OCC "
+    "--db /data/ref_genomes/GRCh38/SweGenSVDBGRCh38/swegen_cnvnator_tiddit_manta.vcf,/data/ref_genomes/GRCh38/gnomAD/gnomad_v2.1_sv.sites.vcf.gz \
+    --in_frq FRQ,AF --in_occ OCC,AC --out_frq SweGen_AF,gnomAD_AF --out_occ SweGen_OCC,gnomAD_OCC "
 
 
 tabix:
