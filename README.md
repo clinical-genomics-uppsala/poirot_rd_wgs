@@ -23,6 +23,11 @@ The pipeline is built to analys WGS data. Where possible, hydra-genetics modules
   - AutoMap (https://github.com/mquinodo/AutoMap) and https://github.com/bjhall/upd
 
 
+**Mitochondria**
+
+- heteroplasmy (sensitivity) 
+
+
 **Repeat expansions**
 
 - ExpansionHunter
@@ -41,12 +46,7 @@ The pipeline is built to analys WGS data. Where possible, hydra-genetics modules
 **To implement: SMA**
 
 - SMNCopyNumberCaller (https://github.com/Illumina/SMNCopyNumberCaller, https://www.nature.com/articles/s41436-020-0754-0?proof=t)
-- SMNca (https://onlinelibrary.wiley.com/doi/full/10.1002/humu.24120)
-- other ways to handle SMN1 och SMN2?
-
-
-**To implement: Mitochondria**
-- heteroplasmy (sensitivity) 
+- Maybe look into: SMNca (https://onlinelibrary.wiley.com/doi/full/10.1002/humu.24120) and other ways to handle SMN1 och SMN2?
 
 
 **To implement RNA**
