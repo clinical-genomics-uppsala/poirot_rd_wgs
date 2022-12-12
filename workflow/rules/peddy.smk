@@ -71,7 +71,7 @@ rule create_ped:
     output:
         temp("qc/peddy/all.ped"),
     log:
-        "qc/peddy/all.ped",
+        "qc/peddy/all.ped.log",
     resources:
         mem_mb=config.get("create_ped", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
         mem_per_cpu=config.get("create_ped", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
