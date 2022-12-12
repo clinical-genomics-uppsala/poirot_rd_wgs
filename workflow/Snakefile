@@ -1,4 +1,4 @@
-__author__ = "Jessika Nordin, Padraic Corcoran"
+__author__ = "Jessika Nordin, Padraic Corcoran, Arielle R Munters"
 __copyright__ = "Copyright 2022"
 __email__ = "jessika.nordin@scilifelab.uu.se"
 __license__ = "GPL-3"
@@ -8,6 +8,7 @@ include: "rules/common.smk"
 include: "rules/add_ref_to_vcf.smk"
 include: "rules/coverage.smk"
 include: "rules/peddy.smk"
+include: "rules/sample_order_for_multiqc.smk"
 
 
 report: "report/workflow.rst"
@@ -45,7 +46,7 @@ use rule samtools_sort from alignment as alignment_samtools_sort with:
         )
 
 
-use rule samtools_index from alignment as alignment_samtools_index 
+use rule samtools_index from alignment as alignment_samtools_index
 
 
 module annotation:
@@ -304,7 +305,22 @@ use rule mosdepth_bed from qc as qc_mosdepth_bed with:
         thresholds="10,20,30",
 
 
-use rule multiqc from qc as qc_multiqc
+use rule multiqc from qc as qc_multiqc with:
+    input:
+        files=lambda wildcards: set(
+            [
+                file.format(sample=sample, type=u.type, lane=u.lane, flowcell=u.flowcell, barcode=u.barcode, read=read, ext=ext)
+                for file in config["multiqc"]["reports"][wildcards.report]["qc_files"]
+                for sample in get_samples(samples)
+                for u in units.loc[sample].dropna().itertuples()
+                if u.type in config["multiqc"]["reports"][wildcards.report]["included_unit_types"]
+                for read in ["fastq1", "fastq2"]
+                for ext in config.get("picard_collect_multiple_metrics", {}).get("output_ext", [""])
+            ]
+        ),
+        config=lambda wildcards: config["multiqc"]["reports"][wildcards.report]["config"],
+        sample_order="qc/multiqc/sample_order.tsv",
+        sample_replacement="qc/multiqc/sample_replacement.tsv",
 
 
 use rule peddy from qc as qc_peddy

@@ -214,6 +214,7 @@ multiqc:
   reports:
     DNA:
       config: "config/multiqc_config_DNA.yaml"
+      extra: "--replace-names qc/multiqc/sample_replacement.tsv --sample-names qc/multiqc/sample_order.tsv"
       included_unit_types: ["N"]
       qc_files:
         # - "prealignment/fastp_pe/{sample}_{flowcell}_{lane}_{barcode}_{type}_fastp.json"
@@ -305,6 +306,8 @@ picard_collect_wgs_metrics:
 reviewer:
   container: "docker://hydragenetics/reviewer:0.2.7"
 
+sample_order_for_multiqc:
+  sample_sheet: "config/SampleSheet.csv"
 
 samtools_stats:
   container: "docker://hydragenetics/common:0.1.1"
