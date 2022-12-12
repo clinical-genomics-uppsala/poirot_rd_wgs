@@ -15,6 +15,7 @@ programdir:
 
 modules:
   alignment: "v0.2.0"
+  annotation: "v0.2.0"
   compression: "v1.1.0"
   cnv_sv: "develop"
   parabricks: "v0.2.0"
@@ -23,15 +24,16 @@ modules:
   misc: "v0.1.0"
   mitochondrial: "4073c47"
   snv_indels: "22b2723"
-  annotation: "v0.2.0"
-  
+
 
 reference:
+  coverage_bed: "/data/ref_data/refseq/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
   design_bed: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
   exome_bed: "/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
   exome_intervals: "/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"
   fasta: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta"
   fai: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.fai"
+  genepanels: "/projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/genepanels.list"
   genome_dir: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens_star"
   sites: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.known_indels.vcf.gz"
   wgs_intervals: "/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.interval_list"
@@ -72,7 +74,12 @@ cnvpytor_filter:
   pN_range: "0 0.5"
   Q0_range: "0 0.05"
   view: "1000"
-  
+
+
+create_cov_excel:
+  container: "/projects/wp2/nobackup/Twist_Myeloid/Containers/python3.6-pysam-xlsxwriter-yaml.simg"
+  covLimits: "10 20 30"
+
 
 crumble:
   container: "docker://hydragenetics/crumble:0.8.3"
@@ -191,18 +198,15 @@ manta_run_workflow_n:
   container: "docker://hydragenetics/manta:1.6.0"
 
 
-manta_run_workflow_n:
-  container: "docker://hydragenetics/manta:1.6.0"
-
 mosdepth:
   container: "docker://hydragenetics/mosdepth:0.3.2"
   by: "500"
-  extra: "--fast-mode --no-per-base"
+  extra: "--fast-mode --no-per-base "
 
 
 mosdepth_bed:
   container: "docker://hydragenetics/mosdepth:0.3.2"
-  extra: "--fast-mode "
+  extra: ""
 
 
 multiqc:
@@ -218,8 +222,6 @@ multiqc:
         - "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"
         - "qc/mosdepth/{sample}_{type}.mosdepth.region.dist.txt"
         - "qc/mosdepth/{sample}_{type}.mosdepth.global.dist.txt"
-        - "qc/mosdepth_bed/{sample}_{type}.mosdepth.summary.txt"
-        - "qc/mosdepth_bed/{sample}_{type}.per-base.bed.gz"
         - "qc/peddy/peddy_sex_check_mqc.tsv"
         - "qc/peddy/peddy_rel_check_mqc.tsv"
         - "qc/picard_collect_alignment_summary_metrics/{sample}_{type}.alignment_summary_metrics.txt"
@@ -339,8 +341,8 @@ svdb_merge:
 svdb_query:
   container: "docker://hydragenetics/svdb:2.6.0"
   db_string:
-    "--db /projects/wp3/nobackup/WGS/WGS_pilot_CGU202111/UJ-3091/Poirot_RD-WGS-develop/workflow/reference/SVDB.vcf,/data/ref_genomes/GRCh38/SweGenSVDBGRCh38/swegen_cnvnator_tiddit_manta.vcf,/data/ref_genomes/GRCh38/gnomAD/gnomad_v2.1_sv.sites.vcf.gz \
-    --in_frq FRQ,FRQ,AF --in_occ OCC,OCC,AC --out_frq Twist_AF,SweGen_AF,gnomAD_AF --out_occ Twist_OCC,SweGen_OCC,gnomAD_OCC "
+    "--db /data/ref_genomes/GRCh38/SweGenSVDBGRCh38/swegen_cnvnator_tiddit_manta.vcf,/data/ref_genomes/GRCh38/gnomAD/gnomad_v2.1_sv.sites.vcf.gz \
+    --in_frq FRQ,AF --in_occ OCC,AC --out_frq SweGen_AF,gnomAD_AF --out_occ SweGen_OCC,gnomAD_OCC "
 
 
 tabix:
@@ -349,25 +351,3 @@ tabix:
 
 tiddit:
   container: "docker://hydragenetics/tiddit:3.3.2"
-
-
-#genepanels:
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/ALS.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Aortopatier.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Arytmier.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Bindvav.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/BRCA.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/CADASIL.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/EBS.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/EDS.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/epilepsi.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/HHT.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Ichtyos.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/kardio.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Kraniosynostos_v2.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/neuromuskular.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/neuropati.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Periodisk_paralys.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Rasopatier.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Sotos.bed
-# - /projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/Trombocytopenier.bed
