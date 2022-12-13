@@ -214,7 +214,7 @@ multiqc:
   reports:
     DNA:
       config: "config/multiqc_config_DNA.yaml"
-      extra: "--replace-names qc/multiqc/sample_replacement.tsv --sample-names qc/multiqc/sample_order.tsv"
+      extra: "--replace-names {input.sample_replacement} --sample-names {input.sample_order}"
       included_unit_types: ["N"]
       qc_files:
         # - "prealignment/fastp_pe/{sample}_{flowcell}_{lane}_{barcode}_{type}_fastp.json"
