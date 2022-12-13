@@ -1,5 +1,6 @@
 ---
 
+
 resources: "config/resources.yaml"
 samples: "config/samples.tsv"
 samples_with_trio_sex: "config/SampleSheet.tsv"
@@ -17,7 +18,7 @@ modules:
   alignment: "v0.2.0"
   annotation: "v0.2.0"
   compression: "v1.1.0"
-  cnv_sv: "develop"
+  cnv_sv: "e0c3a1c"
   parabricks: "v0.2.0"
   prealignment: "v0.5.0"
   qc: "develop"
@@ -318,6 +319,15 @@ samtools_idxstats:
 
 samtools:
   container: "docker://hydragenetics/common:0.1.1"
+  
+
+smn_caller:
+  container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
+  genome_version: '38'
+
+
+smn_charts:
+  container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
 
 
 spring:
@@ -351,3 +361,4 @@ tabix:
 
 tiddit:
   container: "docker://hydragenetics/tiddit:3.3.2"
+
