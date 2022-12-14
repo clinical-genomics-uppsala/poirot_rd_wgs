@@ -1,4 +1,4 @@
-title: "Clinical genomics multiQC report"
+title: "Clinical Genomics MultiQC Report"
 subtitle: "Reference used: GRCh38"
 intro_text: "The MultiQC report summarise analysis results from WGS data that been analysed by the pipeline Poirot_RD-WGS (https://github.com/clinical-genomics-uppsala/Poirot_RD-WGS)."
 
@@ -15,7 +15,8 @@ extra_fn_clean_exts: ##from this until end
     - type: regex
       pattern: '_fastq[12]'
 #    - '_S'
-#extra_fn_clean_trim:   #if found in beginning or end
+extra_fn_clean_trim:
+  - 'Sample_VE-3297_'
 #fn_ignore_dirs:
 #fn_ignore_files:
 
@@ -28,148 +29,141 @@ extra_fn_clean_exts: ##from this until end
 # https://github.com/ewels/MultiQC/blob/master/docs/customisation.md
 
 
-custom_content:
+custom_content: # Not working
   order:
-    - qc-stats
     - fastqc
     - fastp
     - mosdepth
+    - peddy
     - samtools
     - picard
 
-# table_columns_visible:
-#   Picard:
-#     PCT_PF_READS_ALIGNED: True
-#     FOLD_ENRICHMENT: False
-#     PCT_TARGET_BASES_30X: False
-#     summed_median: False
-#     summed_mean: False
-#     PERCENT_DUPLICATION: True
-#   Samtools:
-#     error_rate: False
-#     non-primary_alignments: False
-#     reads_mapped: False
-#     reads_mapped_percent: False
-#     reads_properly_paired_percent: False
-#     reads_MQ0_percent: False
-#     raw_total_sequences: False
-#   FastQC:
-#     percent_duplicates: False
-#     percent_gc: False
-#     avg_sequence_length: False
-#     percent_fails: False
-#     total_sequences: False
-#
-# multiqc_cgs:
-#   Picard:
-#     PF_READS_ALIGNED:
-#       title: "M Aligned reads"
-#       description: "Number of million reads in bam from Picard"
-#       format: "{:.1f}"
-#       shared_key: "read_count"
-#     PERCENT_DUPLICATION:
-#       title: "Duplicates [%]"
-#       description: "Duplicates [%] from Picard stats (MarkDuplicates)"
-#       min: 0
-#       max: 0.4
-#       scale: "RdYlGn-rev"
-#       format: "{:.1%}"
-#     PCT_SELECTED_BASES:
-#       title: "Bases on exon target [%]"
-#       description: "Bases on exon target [%] from Picard"
-#       min: 0.5
-#       max: 0.7
-#       scale: "RdYlGn"
-#       format: "{:.1%}"
-#     PCT_USABLE_BASES_ON_TARGET:
-#       title: "Usable bases [%]"
-#       format: "{:.0%}"
-#       description: "Bases aligned, on exon target, and dedup [%] from Picard"
-#       min: 0
-#       max: 0.2
-#       scale: "RdYlGn"
-#       format: "{:.1%}"
-#     PCT_TARGET_BASES_100X:
-#       title: "Exon target bases over 100X [%]"
-#       description: "Exon target bases over 100X [%] from Picard"
-#       min: 0.9
-#       max: 1.0
-#       scale: "RdYlGn"
-#       format: "{:.1%}"
-#     PCT_TARGET_BASES_500X:
-#       title: "Exon target bases over 500X [%]"
-#       description: "Exon target bases over 500X [%] from Picard"
-#       min: 0.0
-#       max: 1.0
-#       scale: "RdYlGn"
-#       format: "{:.1%}"
-#     MEAN_TARGET_COVERAGE:
-#       title: "Mean exon target coverage"
-#       description: "Mean exon target coverage from picard"
-#       format: "{:.1f}"
-#     MEDIAN_TARGET_COVERAGE:
-#       title: "Median exon target coverage"
-#       description: "Median exon target coverage from picard"
-#     MEDIAN_INSERT_SIZE:
-#       title: "Median insert size"
-#       description: "Median insert size from Picard"
-#       min: 70
-#       max: 200
-#       scale: "RdYlGn"
-#       format: "{:.1f}"
-#     STANDARD_DEVIATION:
-#       title: "Insert size s.d."
-#       description: "Insert size standard deviation from Picard"
-#       min: 0
-#       max: 150
-#       scale: "RdYlGn-rev"
-#       format: "{:.1f}"
-#     AT_DROPOUT:
-#       title: "AT-dropout [%]"
-#       description: "AT-dropout [%] from Picard"
-#       min: 0
-#       max: 5
-#       scale: "RdYlGn-rev"
-#       format: "{:.3f}"
-#     GC_DROPOUT:
-#       title: "GC-dropout [%]"
-#       description: "GC-dropout [%] from Picard"
-#       min: 0
-#       max: 10
-#       scale: "RdYlGn-rev"
-#       format: "{:.3f}"
-#     ZERO_CVG_TARGETS_PCT:
-#       title: "Target bases with zero coverage [%]"
-#       description: "Target bases with zero coverage [%] from Picard"
-#       min: 0
-#       max: 0.05
-#       scale: "RdYlGn-rev"
-#       format: "{:.2%}"
-#     FOLD_80_BASE_PENALTY:
-#       title: "FOLD-80"
-#       description: "FOLD-80 penalty from picard"
-#       min: 1
-#       max: 3
-#       scale: "RdYlGn-rev"
-#       format: "{:.1f}"
-#
-# table_columns_placement:
-#   Picard:
-#     PF_READS_ALIGNED: 900
-#     PCT_PF_READS_ALIGNED: 901
-#     PERCENT_DUPLICATION: 902
-#     PCT_PF_READS_ALIGNED: 910
-#     PERCENT_DUPLICATION: 920
-#     PCT_SELECTED_BASES: 930
-#     PCT_USABLE_BASES_ON_TARGET: 940
-#     PCT_TARGET_BASES_10X: 950
-#     PCT_TARGET_BASES_20X: 955
-#     PCT_TARGET_BASES_30X: 960
-#     MEAN_TARGET_COVERAGE: 970
-#     MEDIAN_TARGET_COVERAGE: 980
-#     MEDIAN_INSERT_SIZE: 990
-#     STANDARD_DEVIATION: 1000
-#     AT_DROPOUT: 1010
-#     GC_DROPOUT: 1020
-#     ZERO_CVG_TARGETS_PCT: 1030
-#     FOLD_80_BASE_PENALTY: 1040
+table_columns_visible:
+  FastQC:
+    percent_duplicates: False
+    percent_gc: False
+    avg_sequence_length: False
+    percent_fails: False
+    total_sequences: False
+  fastp:
+    pct_adapter: True
+    pct_surviving: False
+    after_filtering_gc_content: False
+    filtering_result_passed_filter_reads: False
+    after_filtering_q30_bases: False
+    after_filtering_q30_rate: False
+    pct_duplication: False
+  mosdepth:
+    median_coverage: True
+    mean_coverage: False
+    1_x_pc: False
+    5_x_pc: False
+    10_x_pc: True
+    20_x_pc: True
+    30_x_pc: True
+    50_x_pc: False
+  Peddy:
+    family_id: False
+    ancestry-prediction: False
+    ancestry-prob_het_check: False
+    sex_het_ratio: False
+    error_sex_check: True
+    predicted_sex_sex_check: True
+  Picard:
+    PCT_PF_READS_ALIGNED: False
+    summed_median: False
+    summed_mean: True
+    PERCENT_DUPLICATION: True
+    MEDIAN_COVERAGE: False
+    MEAN_COVERAGE: False
+    SD_COVERAGE: False
+    PCT_30X: False
+    PCT_TARGET_BASES_30X: False
+    FOLD_ENRICHMENT: False
+  Samtools:
+    error_rate: False
+    non-primary_alignments: False
+    reads_mapped: True
+    reads_mapped_percent: True
+    reads_properly_paired_percent: True
+    reads_MQ0_percent: False
+    raw_total_sequences: True
+
+# Patriks plug in, addera egna columner till general stats
+multiqc_cgs:
+  Picard:
+    FOLD_80_BASE_PENALTY:
+      title: "Fold80"
+      description: "Fold80 penalty from picard hs metrics"
+      min: 1
+      max: 3
+      scale: "RdYlGn-rev"
+      format: "{:.1f}"
+    PCT_SELECTED_BASES:
+      title: "Bases on Target"
+      description: "On+Near Bait Bases / PF Bases Aligned from Picard HsMetrics"
+      format: "{:.2%}"
+    ZERO_CVG_TARGETS_PCT:
+      title: "Target bases with zero coverage [%]"
+      description: "Target bases with zero coverage [%] from Picard"
+      min: 0
+      max: 100
+      scale: "RdYlGn-rev"
+      format: "{:.2%}"
+  Samtools:
+    average_quality:
+      title: "Average Quality"
+      description: "Ratio between the sum of base qualities and total length from Samtools stats"
+      min: 0
+      max: 60
+      scale: "RdYlGn"
+  mosdepth:
+     20_x_pc: #Cant get it to work
+        title: "20x percent"
+        description: "Fraction of genome with at least 20X coverage"
+        max: 100
+        min: 0
+        suffix: "%"
+        scale: "RdYlGn"
+
+# Galler alla kolumner oberoende pa module!
+table_columns_placement:
+  mosdepth:
+    median_coverage: 601
+    1_x_pc: 666
+    5_x_pc: 666
+    10_x_pc: 602
+    20_x_pc: 603
+    30_x_pc: 604
+    50_x_pc: 605
+  Samtools:
+    raw_total_sequences: 500
+    reads_mapped: 501
+    reads_mapped_percent: 502
+    reads_properly_paired_percent: 503
+    average_quality: 504
+    error_rate: 555
+    reads_MQ0_percent: 555
+    non-primary_alignments: 555
+  Peddy:
+    ancestry-prediction: 777
+    ancestry-prob_het_check: 777
+    sex_het_ratio: 777
+    error_sex_check: 701
+    predicted_sex_sex_check: 702
+    family_id: 703
+  Picard:
+    PCT_SELECTED_BASES: 801
+    FOLD_80_BASE_PENALTY: 802
+    PCT_PF_READS_ALIGNED: 888
+    summed_median: 888
+    PERCENT_DUPLICATION: 803
+    summed_mean: 804
+    STANDARD_DEVIATION: 805
+    ZERO_CVG_TARGETS_PCT: 888
+    MEDIAN_COVERAGE: 888
+    MEAN_COVERAGE: 888
+    SD_COVERAGE: 888
+    PCT_30X: 888
+    PCT_TARGET_BASES_30X: 888
+    FOLD_ENRICHMENT: 888
