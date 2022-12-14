@@ -215,10 +215,8 @@ multiqc:
   reports:
     DNA:
       config: "config/multiqc_config_DNA.yaml"
-      extra: "--replace-names {input.sample_replacement} --sample-names {input.sample_order}"
       included_unit_types: ["N"]
       qc_files:
-        # - "prealignment/fastp_pe/{sample}_{flowcell}_{lane}_{barcode}_{type}_fastp.json"
         - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq1_fastqc.zip"
         - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq2_fastqc.zip"
         - "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"

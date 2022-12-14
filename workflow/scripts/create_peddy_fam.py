@@ -38,6 +38,7 @@ def extract_trio_id(col):
 # df = pd.read_csv('config/SampleSheet.csv', header=13,
 #   dtype=str).set_index("Sample_ID", drop=False)
 
+# Might put in some kind of check that SampleSheet.csv is correct
 df = pd.read_csv(snakemake.input[0], header=13,
   dtype=str).set_index("Sample_ID", drop=False)
 

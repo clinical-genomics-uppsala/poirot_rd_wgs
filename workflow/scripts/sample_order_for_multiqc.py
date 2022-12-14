@@ -14,6 +14,8 @@ with open(snakemake.input.sample_sheet, 'r') as samplesheet:
         if line == "Sample_ID,Sample_Name,Description,index,I7_Index_ID,index2,I5_Index_ID,Sample_Project":
             header = True
 
+if len(samples) == 0:
+    raise Exception("No samples found, have the header in SampleSheet changed?")
 
 with open(snakemake.output.replacement, "w+") as tsv:
     tsv_writer = csv.writer(tsv, delimiter='\t')
