@@ -323,7 +323,12 @@ use rule multiqc from qc as qc_multiqc with:
         sample_order="qc/multiqc/sample_order.tsv",
         sample_replacement="qc/multiqc/sample_replacement.tsv",
     params:
-        extra=lambda wildcards, input: "--replace-names "+input.sample_replacement+" --sample-names "+input.sample_order,
+        extra=lambda wildcards, input: "--replace-names "
+        + input.sample_replacement
+        + " --sample-names "
+        + input.sample_order
+        + " -c "
+        + input.config,
 
 
 use rule peddy from qc as qc_peddy
