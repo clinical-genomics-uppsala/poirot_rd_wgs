@@ -41,7 +41,7 @@ rule create_cov_excel:
     output:
         out=temp("qc/create_cov_excel/{sample}_{type}.coverage.xlsx"),
     log:
-        "qc/create_cov_excel/{sample}_{type}.coverage.log",
+        "qc/create_cov_excel/{sample}_{type}.log",
     benchmark:
         repeat(
             "qc/create_cov_excel/create_cov_excel_{sample}_{type}.benchmark.tsv",
