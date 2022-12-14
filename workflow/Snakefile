@@ -232,12 +232,11 @@ use rule gatk_print_reads from mitochondrial as mitochondrial_gatk_print_reads w
 
 module parabricks:
     snakefile:
-        "/beegfs-storage/projects/wp3/nobackup/Workspace/padraic_testing/parabricks/workflow/Snakefile"
-        # github(
-        #     "hydra-genetics/parabricks",
-        #     path="workflow/Snakefile",
-        #     tag=config["modules"]["parabricks"],
-        # )
+        github(
+            "hydra-genetics/parabricks",
+            path="workflow/Snakefile",
+            tag=config["modules"]["parabricks"],
+        )
     config:
         config
 
