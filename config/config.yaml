@@ -1,13 +1,12 @@
 ---
 
-
 resources: "config/resources.yaml"
 samples: "config/samples.tsv"
 samples_with_trio_sex: "config/SampleSheet.tsv"
 units: "config/units.tsv"
 
 
-default_container: "docker://hydragenetics/common:0.1.3"
+default_container: "docker://hydragenetics/common:0.1.9"
 
 
 programdir:
@@ -99,7 +98,8 @@ expansionhunter:
 
 fastp_pe:
   container: "docker://hydragenetics/fastp:0.20.1"
-
+  # Default enabled trimming parameters for fastp. Specified for clarity.
+  extra: "--trim_poly_g --qualified_quality_phred 15 --unqualified_percent_limit 40 --n_base_limit 5 --length_required 15"
 
 fastqc:
   container: "docker://hydragenetics/fastqc:0.11.9"
@@ -215,10 +215,8 @@ multiqc:
   reports:
     DNA:
       config: "config/multiqc_config_DNA.yaml"
-      extra: "--replace-names {input.sample_replacement} --sample-names {input.sample_order}"
       included_unit_types: ["N"]
       qc_files:
-        # - "prealignment/fastp_pe/{sample}_{flowcell}_{lane}_{barcode}_{type}_fastp.json"
         - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq1_fastqc.zip"
         - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq2_fastqc.zip"
         - "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"
@@ -261,32 +259,26 @@ peddy:
 
 picard_collect_alignment_summary_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
-  threads: 6
 
 
 picard_collect_duplication_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
-  threads: 3
 
 
 picard_collect_gc_bias_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
-  threads: 6
 
 
 picard_collect_hs_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
-  threads: 6
 
 
 picard_collect_insert_size_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
-  threads: 3
 
 
 picard_collect_multiple_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
-  threads: 6
  # output_ext:
  # - "alignment_summary_metrics"
  # - "base_distribution_by_cycle_metrics"
@@ -301,28 +293,33 @@ picard_collect_multiple_metrics:
 
 picard_collect_wgs_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
-  threads: 6
 
 
 reviewer:
   container: "docker://hydragenetics/reviewer:0.2.7"
 
+
 sample_order_for_multiqc:
   sample_sheet: "config/SampleSheet.csv"
+
 
 samtools_stats:
   container: "docker://hydragenetics/common:0.1.1"
   threads: 3
+  params:
+    extra: " --threads 3 "
 
 
 samtools_idxstats:
   container: "docker://hydragenetics/common:0.1.1"
   threads: 3
+  params:
+    extra: " --threads 3 "
 
 
 samtools:
   container: "docker://hydragenetics/common:0.1.1"
-  
+
 
 smn_caller:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
@@ -364,4 +361,3 @@ tabix:
 
 tiddit:
   container: "docker://hydragenetics/tiddit:3.3.2"
-

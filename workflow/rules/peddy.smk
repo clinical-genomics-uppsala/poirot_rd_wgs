@@ -1,3 +1,7 @@
+___author__ = "Padraic Corcoran"
+__copyright__ = "Copyright 2022"
+__email__ = "padraic.corcoran@scilifelab.uu.se"
+__license__ = "GPL-3"
 
 
 rule glnexus:
