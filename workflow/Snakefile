@@ -73,6 +73,7 @@ module cnv_sv:
     config:
         config
 
+use rule * from cnv_sv as cnv_sv_*
 
 use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter
 
@@ -115,10 +116,10 @@ use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
         wrk_dir=temp(directory("cnv_sv/manta_run_workflow_n/{sample}/workspace")),
 
 
-use rule reviewer_genrate_locus_list from cnv_sv as cnv_sv_generate_reviewer
-
-
-use rule reviewer from cnv_sv as cnv_sv_reviewer
+use rule smn_manifest from cnv_sv as cnv_sv_smn_manifest with:
+    input:
+        bam="parabricks/pbrun_fq2bam/{sample}_N.bam",
+        bai="parabricks/pbrun_fq2bam/{sample}_N.bam.bai",
 
 
 use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
@@ -328,6 +329,7 @@ use rule multiqc from qc as qc_multiqc with:
         + input.sample_order
         + " -c "
         + input.config,
+
 
 use rule peddy from qc as qc_peddy
 

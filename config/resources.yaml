@@ -7,68 +7,32 @@ default_resources:
   mem_per_cpu: 6144
   partition: "core"
 
-
-bwa_mem_mito:
-  mem_mb: 6144
-  mem_per_cpu: 6144
-  threads: 2
-
-
 deepvariant:
   threads: 10
 
-
 expansionhunter:
   threads: 16
-
 
 fastp_pe:
   threads: 5
   mem_mb: 30720
   mem_per_cpu: 6144
 
-
 fastqc:
   threads: 2
   mem_mb: 12288
   mem_per_cpu: 6144
 
-
-gatk_mark_duplicates:
-  mem_mb: 4096
-  mem_per_cpu: 4096
-
-
-gatk_sam_to_fastq:
-  mem_mb: 5120
-  mem_per_cpu: 5120
-
-
-gatk_sort_sam:
-  mem_mb: 4096
-  mem_per_cpu: 4096
-
-
 glnexus:
   threads: 20
-
-
-manta_run_workflow_n:
-  threads: 4
-  time: "8:00:00"
-  mem_mb: 24576
-  mem_per_cpu: 6144
-
 
 mosdepth:
   mem_mb: 36864
   threads: 3
 
-
 mosdepth_bed:
   mem_mb: 36864
-  threads: 3
-
+  threads: 4
 
 pbrun_fq2bam:
   gres: "--gres=gpu:4"
@@ -78,7 +42,6 @@ pbrun_fq2bam:
   threads: 40
   time: "20:00:00"
 
-
 pbrun_deepvariant:
   gres: "--gres=gpu:4"
   mem_mb: 385000
@@ -87,15 +50,15 @@ pbrun_deepvariant:
   threads: 20
   time: "20:00:00"
 
-
 peddy:
   threads: 8
 
+smn_caller:
+  threads: 8
 
 spring:
   mem_mb: 368640
   threads: 8
-
 
 tiddit:
   threads: 8
