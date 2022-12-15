@@ -117,13 +117,6 @@ def get_locus_str(loci):
     return loc_str
 
 
-def get_spring_extra(wildcards: snakemake.io.Wildcards):
-    extra = config.get("spring", {}).get("extra", "")
-    if get_fastq_file(units, wildcards, "fastq1").endswith(".gz"):
-        extra = "%s %s" % (extra, "-g")
-    return extra
-
-
 def compile_output_list(wildcards: snakemake.io.Wildcards):
     files = {
         "cnv_sv/cnvpytor": ["vcf"],
@@ -162,11 +155,20 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
     ]
     output_files += [
         "compression/spring/%s_%s_%s_%s_%s.spring" % (sample, flowcell, lane, barcode, t)
-        for sample in set(units["sample"])
-        for flowcell in set(units["flowcell"])
-        for lane in set(units["lane"])
-        for barcode in set(units["barcode"])
-        for t in set(units["type"])
+        for sample in get_samples(samples)
+        for t in get_unit_types(units, sample)
+        for flowcell in set([
+            u.flowcell
+                for u in units.loc[(sample,t,)].dropna().itertuples()]
+        )
+        for barcode in set([
+            u.barcode
+                for u in units.loc[(sample,t,)].dropna().itertuples()]
+        )
+        for lane in set([
+            u.lane
+                for u in units.loc[(sample,t,)].dropna().itertuples()]
+        )
     ]
     output_files += ["vcf_final/%s.vcf.gz.tbi" % (sample) for sample in get_samples(samples)]
     return output_files
