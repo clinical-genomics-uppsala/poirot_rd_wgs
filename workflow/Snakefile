@@ -329,7 +329,7 @@ use rule multiqc from qc as qc_multiqc with:
         + input.sample_order
         + " -c "
         + input.config,
-        
+
 
 use rule peddy from qc as qc_peddy
 
