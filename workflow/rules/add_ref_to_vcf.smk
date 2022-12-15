@@ -1,3 +1,8 @@
+___author__ = "Jessika Nordin"
+__copyright__ = "Copyright 2022"
+__email__ = "jessika.nordin@scilifelab.uu.se"
+__license__ = "GPL-3"
+
 
 rule vcf_addRef:
     input:
@@ -17,7 +22,7 @@ rule vcf_addRef:
         "../scripts/ref_vcf.py"
 
 
-#vcf=temp("vcf_final/{sample}_ref.vcf"),
+# vcf=temp("vcf_final/{sample}_ref.vcf"),
 
 # rule vcf_changeM2MT:
 #     input:

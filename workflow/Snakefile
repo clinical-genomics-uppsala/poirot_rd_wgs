@@ -27,18 +27,22 @@ ruleorder: qc_mosdepth_bed > misc_bgzip
 
 module alignment:
     snakefile:
-        github("hydra-genetics/alignment", path="workflow/Snakefile", tag=config["modules"]["alignment"],)
+        github(
+            "hydra-genetics/alignment",
+            path="workflow/Snakefile",
+            tag=config["modules"]["alignment"],
+        )
     config:
         config
 
 
 use rule samtools_sort from alignment as alignment_samtools_sort with:
     input:
-        "cnv_sv/expansionhunter/{sample}_{type}_realigned.bam"
+        "cnv_sv/expansionhunter/{sample}_{type}_realigned.bam",
     output:
-        temp("cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam")
+        temp("cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam"),
     log:
-        "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.log"
+        "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.log",
     benchmark:
         repeat(
             "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.benchmark.tsv",
@@ -73,7 +77,9 @@ module cnv_sv:
     config:
         config
 
+
 use rule * from cnv_sv as cnv_sv_*
+
 
 use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter
 
@@ -224,6 +230,7 @@ module mitochondrial:
 
 
 use rule * from mitochondrial as mitochondrial_*
+
 
 use rule gatk_print_reads from mitochondrial as mitochondrial_gatk_print_reads with:
     input:

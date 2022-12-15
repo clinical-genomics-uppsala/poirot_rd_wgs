@@ -67,16 +67,16 @@ def get_in_gvcf(wildcards):
 
 
 def get_peddy_sex(wildcards, peddy_sex_check):
-    sample = '{}_{}'.format(wildcards.sample, wildcards.type)
-    sex_df = pd.read_table(peddy_sex_check, sep=',').set_index("sample_id", drop=False)
+    sample = "{}_{}".format(wildcards.sample, wildcards.type)
+    sex_df = pd.read_table(peddy_sex_check, sep=",").set_index("sample_id", drop=False)
 
-    sample_sex = sex_df.at[sample, 'predicted_sex']
+    sample_sex = sex_df.at[sample, "predicted_sex"]
 
     return sample_sex
 
 
 def get_locus_str(loci):
-    with open(loci, 'r') as catfile:
+    with open(loci, "r") as catfile:
         loc_str = catfile.readline().rstrip()
     return loc_str
 
@@ -91,7 +91,7 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         "cnv_sv/tiddit": ["vcf"],
         "compression/crumble": ["crumble.cram"],
         "qc/create_cov_excel": ["coverage.xlsx"],
-        "mitochondrial/gatk_split_multi_allelic_sites": ["vcf"]
+        "mitochondrial/gatk_split_multi_allelic_sites": ["vcf"],
     }
     output_files = [
         "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)
@@ -127,22 +127,48 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         "compression/spring/%s_%s_%s_%s_%s.spring" % (sample, flowcell, lane, barcode, t)
         for sample in get_samples(samples)
         for t in get_unit_types(units, sample)
-        for flowcell in set([
-            u.flowcell
-                for u in units.loc[(sample,t,)].dropna().itertuples()]
+        for flowcell in set(
+            [
+                u.flowcell
+                for u in units.loc[
+                    (
+                        sample,
+                        t,
+                    )
+                ]
+                .dropna()
+                .itertuples()
+            ]
         )
-        for barcode in set([
-            u.barcode
-                for u in units.loc[(sample,t,)].dropna().itertuples()]
+        for barcode in set(
+            [
+                u.barcode
+                for u in units.loc[
+                    (
+                        sample,
+                        t,
+                    )
+                ]
+                .dropna()
+                .itertuples()
+            ]
         )
-        for lane in set([
-            u.lane
-                for u in units.loc[(sample,t,)].dropna().itertuples()]
+        for lane in set(
+            [
+                u.lane
+                for u in units.loc[
+                    (
+                        sample,
+                        t,
+                    )
+                ]
+                .dropna()
+                .itertuples()
+            ]
         )
     ]
     output_files += ["vcf_final/%s.vcf.gz.tbi" % (sample) for sample in get_samples(samples)]
     return output_files
-
 
 
 ### Include copy all files we want to transfer
