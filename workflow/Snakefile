@@ -249,10 +249,23 @@ module parabricks:
         config
 
 
-use rule pbrun_fq2bam from parabricks as parabricks_fq2bam
+use rule pbrun_fq2bam from parabricks as parabricks_fq2bam with:
+    params:
+        extra=config.get("parabricks_fq2bam", {}).get("extra", ""),
+        in_fq=get_in_fq,
+        num_gpus=config.get("parabricks_fq2bam", {}).get("num_gpus", ""),
 
 
-use rule pbrun_deepvariant from parabricks as parabricks_deepvariant
+use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
+    params:
+        extra=config.get("parabricks_deepvariant", {}).get("extra", ""),
+        num_gpus=config.get("parabricks_fq2bam", {}).get("num_gpus", ""),
+
+
+# use rule pbrun_fq2bam from parabricks as parabricks_fq2bam
+#
+#
+# use rule pbrun_deepvariant from parabricks as parabricks_deepvariant
 
 
 module prealignment:

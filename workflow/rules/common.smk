@@ -57,6 +57,42 @@ def get_flowcell(units, wildcards):
     return flowcells.pop()
 
 
+def get_in_fastq(units, wildcards):
+    return expand(
+        "prealignment/merged/{{sample}}_{{type}}_{read}.fastq.gz",
+        read=["fastq1", "fastq2"],
+    )
+
+
+def get_input_fastq(units, wildcards):
+    return expand(
+        "prealignment/fastp_pe/{{sample}}_{flowcell_lane_barcode}_{{type}}_{read}.fastq.gz",
+        flowcell_lane_barcode=[
+            "{}_{}_{}".format(unit.flowcell, unit.lane, unit.barcode) for unit in get_units(units, wildcards, wildcards.type)
+        ],
+        read=["fastq1", "fastq2"],
+    )
+
+
+def get_in_fq(wildcards):
+    input_list = []
+    for unit in get_units(units, wildcards, wildcards.type):
+        prefix = "prealignment/fastp_pe/{}_{}_{}_{}_{}".format(unit.sample, unit.flowcell, unit.lane, unit.barcode, unit.type)
+        input_unit = "{}_fastq1.fastq.gz {}_fastq2.fastq.gz {}".format(
+            prefix,
+            prefix,
+            "'@RG\\tID:{}\\tSM:{}\\tPL:{}\\tPU:{}\\tLB:{}'".format(
+                "{}_{}.{}.{}".format(unit.sample, unit.type, unit.lane, unit.barcode),
+                "{}_{}".format(unit.sample, unit.type),
+                unit.platform,
+                "{}.{}.{}".format(unit.flowcell, unit.lane, unit.barcode),
+                "{}_{}".format(unit.sample, unit.type),
+            ),
+        )
+        input_list.append(input_unit)
+    return " --in-fq ".join(input_list)
+
+
 def get_in_gvcf(wildcards):
     gvcf_list = [
         "snv_indels/deepvariant/{}_{}.g.vcf".format(sample, t)
@@ -67,18 +103,25 @@ def get_in_gvcf(wildcards):
 
 
 def get_peddy_sex(wildcards, peddy_sex_check):
-    sample = "{}_{}".format(wildcards.sample, wildcards.type)
-    sex_df = pd.read_table(peddy_sex_check, sep=",").set_index("sample_id", drop=False)
+    sample = '{}_{}'.format(wildcards.sample, wildcards.type)
+    sex_df = pd.read_table(peddy_sex_check, sep=',').set_index("sample_id", drop=False)
 
-    sample_sex = sex_df.at[sample, "predicted_sex"]
+    sample_sex = sex_df.at[sample, 'predicted_sex']
 
     return sample_sex
 
 
 def get_locus_str(loci):
-    with open(loci, "r") as catfile:
+    with open(loci, 'r') as catfile:
         loc_str = catfile.readline().rstrip()
     return loc_str
+
+
+def get_spring_extra(wildcards: snakemake.io.Wildcards):
+    extra = config.get("spring", {}).get("extra", "")
+    if get_fastq_file(units, wildcards, "fastq1").endswith(".gz"):
+        extra = "%s %s" % (extra, "-g")
+    return extra
 
 
 def compile_output_list(wildcards: snakemake.io.Wildcards):

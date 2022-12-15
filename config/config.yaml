@@ -22,7 +22,7 @@ modules:
   prealignment: "v0.5.0"
   qc: "develop"
   misc: "v0.1.0"
-  mitochondrial: "4073c47"
+  mitochondrial: "main"
   snv_indels: "22b2723"
 
 
@@ -240,15 +240,26 @@ mt_reference:
   blacklist: /beegfs-storage/data/ref_data/gatk_mito/blacklist_sites.hg38.chrM.bed
 
 
-pbrun_deepvariant:
+parabricks_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-  deepvariant_model: "/beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng"
-  extra: ""
+  extra: " --pb-model-file /beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng "
+  num_gpus: "4"
 
 
-pbrun_fq2bam:
-  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
+parabricks_fq2bam:
   extra: ""
+  num_gpus: "4"
+
+
+# pbrun_deepvariant:
+#   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
+#   deepvariant_model: "/beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng"
+#   extra: ""
+#
+#
+# pbrun_fq2bam:
+#   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
+#   extra: ""
 
 
 peddy:
