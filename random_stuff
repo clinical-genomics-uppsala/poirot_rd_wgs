@@ -12,6 +12,7 @@ pip install --upgrade hydra_genetics
 pip install --upgrade snakemake
 pip install --upgrade pip
 pip install snakefmt
+pip install pycodestyle
 pip install drmaa
 
 

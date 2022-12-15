@@ -6,6 +6,7 @@ import yaml
 import numpy as np
 import sys
 
+
 def comment_the_config_keys(config_dict):
 
     commented_config = '\n'.join(
@@ -13,12 +14,13 @@ def comment_the_config_keys(config_dict):
 
     return commented_config
 
+
 def get_trio_info(ped_filepath):
 
     ped_cols = ['family_id', 'sample_id', 'paternal_id',
-    'maternal_id', 'sex', 'phenotype']
+                'maternal_id', 'sex', 'phenotype']
 
-    ped_df = pd.read_csv(ped_filepath, sep='\t', header=None, names=ped_cols )
+    ped_df = pd.read_csv(ped_filepath, sep='\t', header=None, names=ped_cols)
 
     trio_membership_dict = {}
     for row in ped_df.itertuples():
@@ -30,27 +32,28 @@ def get_trio_info(ped_filepath):
 def get_relatedness_df(peddy_rel_file_path, trio_dict):
     relatedness_df = pd.read_csv(peddy_rel_file_path)
 
-    relatedness_df["rel_check_test"] = np.where((relatedness_df.parent_error == True) | 
+    relatedness_df["rel_check_test"] = np.where((relatedness_df.parent_error == True) |
     (relatedness_df.sample_duplication_error == True), 'Fail', 'Pass')
 
     trio_idx = []
     non_trio_idx = []
     for row in relatedness_df.itertuples():
         if trio_dict[row.sample_a] == trio_dict[row.sample_b]:
-            trio_idx.append(row.Index) # get the indices of trio pairs
+            trio_idx.append(row.Index)  # get the indices of trio pairs
         else:
             non_trio_idx.append(row.Index)
 
-    if len(trio_idx) > 0: # check if there are any trios
+    if len(trio_idx) > 0:  # check if there are any trios
         trio_rel_df = relatedness_df.iloc[trio_idx, :]
-        non_trio_rel_df = relatedness_df.iloc[non_trio_idx , :]
+        non_trio_rel_df = relatedness_df.iloc[non_trio_idx, :]
 
-        error_rel_df = non_trio_rel_df[(non_trio_rel_df['parent_error'] == True) | 
+        error_rel_df = non_trio_rel_df[(non_trio_rel_df['parent_error'] == True) |
             (non_trio_rel_df['sample_duplication_error'] == True)]
 
-        rel_df = pd.concat([trio_rel_df, error_rel_df ])
+        rel_df = pd.concat([trio_rel_df, error_rel_df])
     else:
-        rel_df = relatedness_df[(relatedness_df['parent_error'] == True) | (relatedness_df['sample_duplication_error'] == True)]
+        rel_df = relatedness_df[(relatedness_df['parent_error'] == True) |
+        (relatedness_df['sample_duplication_error'] == True)]
 
     return rel_df
 
@@ -58,8 +61,8 @@ def get_relatedness_df(peddy_rel_file_path, trio_dict):
 def get_sex_check_df(sex_check_file_path):
     sex_check_df = pd.read_csv(sex_check_file_path)
     sex_check_df["sex_check_test"] = np.where(sex_check_df.error == False,
-    'Pass', 'Fail') # report peddy  error check as pass/fail for simplicity
-    sex_check_df.rename(columns={'sample_id':'Sample'}, inplace=True)
+        'Pass', 'Fail')  # report peddy  error check as pass/fail for simplicity
+    sex_check_df.rename(columns={'sample_id': 'Sample'}, inplace=True)
 
     return sex_check_df
 
@@ -67,9 +70,10 @@ def get_sex_check_df(sex_check_file_path):
 def write_peddy_mqc(peddy_df, peddy_config, outfile):
 
     with open(outfile, 'w') as outfile:
-        print(comment_the_config_keys(peddy_config),file=outfile)
+        print(comment_the_config_keys(peddy_config), file=outfile)
 
         peddy_df.to_csv(outfile, sep='\t', mode='a', index=False)
+
 
 def get_trio_id(sample_id, trio_dict):
 
