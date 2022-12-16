@@ -32,7 +32,7 @@ def get_trio_info(ped_filepath):
 def get_relatedness_df(peddy_rel_file_path, trio_dict):
     relatedness_df = pd.read_csv(peddy_rel_file_path)
 
-    relatedness_df["rel_check_test"] = np.where((relatedness_df.parent_error == True) |
+    relatedness_df["rel_check_test"] = np.where((relatedness_df.parent_error == True) | 
     (relatedness_df.sample_duplication_error == True), 'Fail', 'Pass')
 
     trio_idx = []
@@ -47,12 +47,12 @@ def get_relatedness_df(peddy_rel_file_path, trio_dict):
         trio_rel_df = relatedness_df.iloc[trio_idx, :]
         non_trio_rel_df = relatedness_df.iloc[non_trio_idx, :]
 
-        error_rel_df = non_trio_rel_df[(non_trio_rel_df['parent_error'] == True) |
+        error_rel_df = non_trio_rel_df[(non_trio_rel_df['parent_error'] == True) | 
             (non_trio_rel_df['sample_duplication_error'] == True)]
 
         rel_df = pd.concat([trio_rel_df, error_rel_df])
     else:
-        rel_df = relatedness_df[(relatedness_df['parent_error'] == True) |
+        rel_df = relatedness_df[(relatedness_df['parent_error'] == True) | 
         (relatedness_df['sample_duplication_error'] == True)]
 
     return rel_df
