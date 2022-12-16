@@ -7,6 +7,11 @@ default_resources:
   mem_per_cpu: 3072
   partition: "core"
 
+bwa_mem_mito:
+  mem_mb: 6144
+  mem_per_cpu: 3072
+  threads: 2
+
 deepvariant:
   threads: 10
 
@@ -20,6 +25,18 @@ fastp_pe:
 fastqc:
   threads: 10
   time: "02:00:00"
+
+gatk_mark_duplicates:
+  mem_mb: 4096
+  mem_per_cpu: 4096
+
+gatk_sam_to_fastq:
+  mem_mb: 5120
+  mem_per_cpu: 5120
+
+gatk_sort_sam:
+  mem_mb: 4096
+  mem_per_cpu: 4096
 
 glnexus:
   threads: 20
@@ -60,3 +77,4 @@ spring:
 
 tiddit:
   threads: 8
+  
