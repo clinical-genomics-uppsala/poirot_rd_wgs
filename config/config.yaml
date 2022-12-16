@@ -309,6 +309,8 @@ picard_collect_wgs_metrics:
 reviewer:
   container: "docker://hydragenetics/reviewer:0.2.7"
 
+sample_order_for_multiqc:
+  sample_sheet: "config/SampleSheet.csv"
 
 samtools_stats:
   container: "docker://hydragenetics/common:0.1.1"
