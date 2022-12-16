@@ -6,6 +6,7 @@ __license__ = "GPL-3"
 
 include: "rules/common.smk"
 include: "rules/add_ref_to_vcf.smk"
+include: "rules/concat_vcfs.smk"
 include: "rules/coverage.smk"
 include: "rules/peddy.smk"
 include: "rules/sample_order_for_multiqc.smk"
