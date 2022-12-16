@@ -23,7 +23,7 @@ modules:
   prealignment: "v0.5.0"
   qc: "develop"
   misc: "v0.1.0"
-  mitochondrial: "main"
+  mitochondrial: "v0.1.0"
   snv_indels: "22b2723"
 
 
