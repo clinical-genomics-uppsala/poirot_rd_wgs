@@ -213,7 +213,7 @@ for line in panels:
         headerListDict = [{'header': 'Gene'}, {'header': 'Transcript'}, {'header': 'Avg coverage'},
                             {'header': str(minCov)+'x'}, {'header': str(medCov)+'x'}, {'header': str(maxCov)+'x'}]
         worksheetpanel.add_table(tableArea, {'data': genes, 'columns': headerListDict, 'style': 'Table Style Light 1'})
-        if lows ! = []:
+        if lows != []:
             worksheetpanel.write('A'+str(len(genes)+9), 'Regions of exons that are covered below '+str(minCov)+'x'+'.')
             tableArea2 = 'A'+str(len(genes)+10)+':E'+str(len(lows)+len(genes)+10)  # rows of full list
             headerListDict2 = [{'header': 'Gene name_transcript_exon'}, {'header': 'Chr'}, {'header': 'Start'},

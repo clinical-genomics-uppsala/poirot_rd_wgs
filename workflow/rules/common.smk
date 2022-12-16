@@ -57,42 +57,6 @@ def get_flowcell(units, wildcards):
     return flowcells.pop()
 
 
-def get_in_fastq(units, wildcards):
-    return expand(
-        "prealignment/merged/{{sample}}_{{type}}_{read}.fastq.gz",
-        read=["fastq1", "fastq2"],
-    )
-
-
-def get_input_fastq(units, wildcards):
-    return expand(
-        "prealignment/fastp_pe/{{sample}}_{flowcell_lane_barcode}_{{type}}_{read}.fastq.gz",
-        flowcell_lane_barcode=[
-            "{}_{}_{}".format(unit.flowcell, unit.lane, unit.barcode) for unit in get_units(units, wildcards, wildcards.type)
-        ],
-        read=["fastq1", "fastq2"],
-    )
-
-
-def get_in_fq(wildcards):
-    input_list = []
-    for unit in get_units(units, wildcards, wildcards.type):
-        prefix = "prealignment/fastp_pe/{}_{}_{}_{}_{}".format(unit.sample, unit.flowcell, unit.lane, unit.barcode, unit.type)
-        input_unit = "{}_fastq1.fastq.gz {}_fastq2.fastq.gz {}".format(
-            prefix,
-            prefix,
-            "'@RG\\tID:{}\\tSM:{}\\tPL:{}\\tPU:{}\\tLB:{}'".format(
-                "{}_{}.{}.{}".format(unit.sample, unit.type, unit.lane, unit.barcode),
-                "{}_{}".format(unit.sample, unit.type),
-                unit.platform,
-                "{}.{}.{}".format(unit.flowcell, unit.lane, unit.barcode),
-                "{}_{}".format(unit.sample, unit.type),
-            ),
-        )
-        input_list.append(input_unit)
-    return " --in-fq ".join(input_list)
-
-
 def get_in_gvcf(wildcards):
     gvcf_list = [
         "snv_indels/deepvariant/{}_{}.g.vcf".format(sample, t)

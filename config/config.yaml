@@ -240,26 +240,15 @@ mt_reference:
   blacklist: /beegfs-storage/data/ref_data/gatk_mito/blacklist_sites.hg38.chrM.bed
 
 
-parabricks_deepvariant:
+pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-  extra: " --pb-model-file /beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng "
-  num_gpus: "4"
-
-
-parabricks_fq2bam:
+  deepvariant_model: "/beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng"
   extra: ""
-  num_gpus: "4"
 
 
-# pbrun_deepvariant:
-#   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-#   deepvariant_model: "/beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng"
-#   extra: ""
-#
-#
-# pbrun_fq2bam:
-#   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-#   extra: ""
+pbrun_fq2bam:
+  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
+  extra: ""
 
 
 peddy:
