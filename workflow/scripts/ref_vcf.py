@@ -6,7 +6,7 @@ vcf_in = VariantFile(snakemake.input[0])  # dosen't matter if bgziped or not. Au
 
 # Add reference_description descriptions to new header
 new_header = vcf_in.header
-#new_header.add_line("reference="+ sys.argv[2])
+# new_header.add_line("reference="+ sys.argv[2])
 new_header.add_line("##reference=" + snakemake.input[1])
 
 # start new vcf with the new_header
@@ -17,4 +17,4 @@ for record in vcf_in.fetch():
     vcf_out.write(record)
 
 
-#import pdb; pdb.set_trace()
+# import pdb; pdb.set_trace()

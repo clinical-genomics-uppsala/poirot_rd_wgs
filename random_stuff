@@ -6,20 +6,15 @@ pip install hydra-genetics
 pip install snakemake
 pip install -r requirements.txt
 pip install pysam
-pip install XlsxWriter
 module load slurm-drmaa
 module load bcbio-nextgen
 pip install --upgrade hydra_genetics
 pip install --upgrade snakemake
 pip install --upgrade pip
 pip install snakefmt
+pip install pycodestyle
 pip install drmaa
-#
-#vim /projects/wp3/nobackup/Workspace/WGS_pipeline_GPU_test/venv/lib/python3.8/site-packages/hydra_genetics/utils/units.py
-#rm [str]
 
-#Open your virtual environment
-source venv/bin/activate
 
 # Make a new line based on hydra genetics by:
 # hydra-genetics create-module
@@ -32,120 +27,31 @@ source venv/bin/activate
 snakemake --profile marvin -s workflow/Snakefile --configfile config/config.yaml --notemp
 
 
-snakemake --profile profiles/slurm/ -s workflow/Snakefile -d config/
 snakemake -n -s workflow/Snakefile -d config/ --use-singularity --singularity-args " -B /projects -B /beegfs-storage -B /scratch -B /data "
 snakemake --core 1 -s ../workflow/Snakefile --use-singularity --singularity-args " -B /projects -B /beegfs-storage -B /scratch -B /data "
 
 
-snakemake --cores 2 -s /projects/wp3/nobackup/Workspace/WGS_pipeline_GPU_test/Poirot_test/workflow/Snakefile --use-singularity --singularity-args " -B /projects -B /beegfs-storage -B /scratch -B /data "
-
-
-snakemake -n -s /projects/wp3/nobackup/Workspace/WGS_pipeline_GPU_test/Poirot_RD-WGS/workflow/Snakefile --use-singularity --singularity-args " -B /projects -B /beegfs-storage -B /scratch -B /data "
-
-snakemake -n --configfile Poirot_RD-WGS-develop/config/config.yaml -s Poirot_RD-WGS-develop/workflow/Snakefile --use-singularity --singularity-args " -B /projects -B /beegfs-storage -B /scratch -B /data " --notemp
-
-
-jobs: 100
-keep-going: True
-restart-times: 1
-rerun-incomplete: True
-max-jobs-per-second: 100
-max-status-checks-per-second: 100
-use-singularity: True
-snakefile: "/projects/wp3/nobackup/WGS/WGS_pilot_CGU202111/UJ-3091/Poirot_RD-WGS-develop/workflow/Snakefile"
-configfile: "/projects/wp3/nobackup/WGS/WGS_pilot_CGU202111/UJ-3091/Poirot_RD-WGS-develop/config/config.yaml"
-drmaa: "-p {resources.partition} -t {resources.time} -n {resources.threads} --mem={resources.mem_mb} --mem-per-cpu={resources.mem_per_cpu} {resources.gres} -J {rule} -A wp4 -e slurm/{rule}_%j.err -o slurm/{rule}_%j.out --nodes=1-1"
-default-resources: [gres=""]
-drmaa-log-dir: "slurm"
-singularity-args: "--cleanenv --bind /beegfs-archive,/beegfs-scratch,/beegfs-storage --disable-cache"
-
+#Check snakemake code (snakefmt)
+snakefmt --compact-diff -l 130 workflow/
+#Check python code (pycodestyle)
+pycodestyle --max-line-length=130 --statistics workflow/scripts/
+#Run pytest
+python -m pytest workflow/scripts/XXX_test.py
+#Lint
+cd .tests/integration
+snakemake --lint -s ../../workflow/Snakefile --configfile config.yaml
+#Dryrun
+cd .tests/integration
+snakemake -n -s ../../workflow/Snakefile --configfile config.yaml
+#Testrun
+cd .tests/integration
+snakemake -c 2 --use-conda -s ../../workflow/Snakefile --configfile config.yaml
+snakemake -s ../../workflow/Snakefile -j 2 --use-singularity --singularity-args "-e --cleanenv" --configfile config.yaml
 
 
 hydra-genetics create-input-files -d /projects/wp3/nobackup/WGS/delivery02326/RL-2047 -t N --tc 0.0
-
-#rule NAME:
-#    input: "path/to/inputfile", "path/to/other/inputfile"
-#    output: "path/to/outputfile", "path/to/another/outputfile"
-#    shell: "somecommand {input} {output}"
-
 
 
 snakemake -np call/all.vcf
 snakemake --cores 1 call/all.vcf
 snakemake --dag call/all.vcf | dot -Tsvg > dag.svg
-
-
-
-# rule deepvariant_germline:
-#     input:
-#         ref="/data/ref_genomes/GRCh38/broad/Homo_sapiens_assembly38.fasta",
-#         fq1="/projects/wp3/nobackup/Workspace/WGS_pipeline_GPU_test/NA12878_chr21.R1.fq",
-#         fq2="/projects/wp3/nobackup/Workspace/WGS_pipeline_GPU_test/NA12878_chr21.R2.fq",
-#     output:
-#         bam="/projects/wp3/nobackup/Workspace/WGS_pipeline_GPU_test/NA12878_chr21.bam",
-#         vcf="/projects/wp3/nobackup/Workspace/WGS_pipeline_GPU_test/NA12878.vcf",
-#     log:
-#         "NA12878.pb.fq2vcf.log",
-#     params:
-#         n=2,
-#         dir="/scratch/wp3/GPU",
-#     conda:
-#         "../envs/parabricks.yaml",
-#     shell: "pbrun deepvariant_germline --ref {input.ref} --in-fq {input.fq1} {input.fq2} \
-#         --out-bam {output.bam} --out-variants {output.vcf} \
-#         --tmp-dir {params.dir} --num-gpus {params.n} &> {log}"
-
-
-rule bwa_map:
-    input:
-        ref=config['genomic_ref'],
-        fq1="/projects/wp3/nobackup/WGS/MGI/V300043112_WGS_20201023/fastq/{sample}_R1.fastq.gz",
-        fq2="/projects/wp3/nobackup/WGS/MGI/V300043112_WGS_20201023/fastq/{sample}_R2.fastq.gz"
-    output:
-        "mapped_reads/{sample}.bam"
-    shell:
-        "bwa mem {input.ref} {input.fq1} {input.fq2} | samtools view -Sb - > {output}"
-
-
-rule samtools_sort:
-    input:
-        "mapped_reads/{sample}.bam"
-    output:
-        "sorted_reads/{sample}.bam"
-    shell:
-        "samtools sort -T sorted_reads/{wildcards.sample}.bam "
-        "-O bam {input} > {output}"
-
-
-rule samtools_index:
-    input:
-        "sorted_reads/{sample}.bam"
-    output:
-        "sorted_reads/{sample}.bam.bai"
-    shell:
-        "samtools index {input}"
-
-
-rule deepvariant:
-    input:
-        ref = config['genomic_ref'],
-        reads = "sorted_reads/{sample}.bam"
-    output:
-        ovcf = 'deepvariant/{sample}.vcf.gz',
-        ogvcf = 'deepvariant/{sample}.g.vcf.gz',
-        ird = directory('intermediate/{sample}')
-    threads:
-        8
-    singularity:
-        config['images']['deepvariant']
-    log:
-        '{sample}/log.txt'
-    shell:
-        "/opt/deepvariant/bin/run_deepvariant \
-        --model_type=WGS \
-        --ref={input.ref} \
-        --reads={input.reads} \
-        --output_vcf={output.ovcf} \
-        --output_gvcf={output.ogvcf} \
-        --intermediate_results_dir {output.ird} \
-        --num_shards={threads} > {log} 2>&1"

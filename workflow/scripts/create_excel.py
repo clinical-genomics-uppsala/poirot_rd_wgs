@@ -1,4 +1,4 @@
-#!/bin/python3.6
+# !/bin/python3.6
 import sys
 import xlsxwriter
 from datetime import date
@@ -30,7 +30,7 @@ redFormat = workbook.add_format({'font_color': 'red'})
 with open(configfile, 'r') as file:
     config_list = yaml.load(file, Loader=yaml.FullLoader)
 
-#runID = config_list['seqID']['sequencerun']  # sys.argv[5]
+# runID = config_list['seqID']['sequencerun'] # sys.argv[5]
 minCov = int(config_list['create_cov_excel']['covLimits'].split(' ')[0])
 medCov = int(config_list['create_cov_excel']['covLimits'].split(' ')[1])
 maxCov = int(config_list['create_cov_excel']['covLimits'].split(' ')[2])
@@ -82,12 +82,12 @@ with gzip.open(covThresFile, 'rt') as thresfile:
         totalMinBreadth += int(line[4])
         totalMedBreadth += int(line[5])
         totalMaxBreadth += int(line[6])
-        row = [[line[3]],line[0:3],min,med,max,length]
+        row = [[line[3]], line[0:3], min, med, max, length]
         tableLinesTre.append(row)
 
 while i < len(tableLinesCov):
     length = 0
-    cov=min=med=max=0
+    cov = min = med = max = 0
     while (i < (len(tableLinesCov)-1)) and (tableLinesCov[i][0] == tableLinesCov[i+1][0]):
         length = length + float(tableLinesCov[i][4])
         cov = cov + (float(tableLinesCov[i][3])*float(tableLinesCov[i][4]))
@@ -107,7 +107,7 @@ while i < len(tableLinesCov):
         medBreadth = med/length
         maxBreadth = max/length
         covRow = [gene, transcript, round((cov/length), 2), round((minBredth*100), 1),
-            round((medBreadth*100), 1), round((maxBreadth*100), 1)]
+                    round((medBreadth*100), 1), round((maxBreadth*100), 1)]
         covtable.append(covRow)
         i = i + 1
 
@@ -127,18 +127,18 @@ with open(mosdepthPerBase, 'r') as file:
 for line in lowCovLines:
     for bedline in bedfile:
         if line[0] == bedline[0] and int(line[1]) >= int(bedline[1]) and int(line[2]) <= int(bedline[2]):
-            lowregion=[bedline[3],line[0],line[1],line[2],line[3]]
+            lowregion = [bedline[3], line[0], line[1], line[2], line[3]]
             lowRegLines.append(lowregion)
         elif line[0] == bedline[0] and int(line[1]) < int(bedline[1]) and int(line[2]) >= int(bedline[1]):
             if int(line[2]) >= int(bedline[2]):
-                lowregion=[bedline[3],line[0],bedline[1],bedline[2],line[3]]
+                lowregion = [bedline[3], line[0], bedline[1], bedline[2], line[3]]
                 lowRegLines.append(lowregion)
                 break
             else:
-                lowregion=[bedline[3],line[0],bedline[1],line[2],line[3]]
+                lowregion = [bedline[3], line[0], bedline[1], line[2], line[3]]
                 lowRegLines.append(lowregion)
         elif line[0] == bedline[0] and int(line[1]) < int(bedline[2]) and int(line[2]) > int(bedline[2]):
-            lowregion=[bedline[3],line[0],line[1],bedline[2],line[3]]
+            lowregion = [bedline[3], line[0], line[1], bedline[2], line[3]]
             lowRegLines.append(lowregion)
             break
 
@@ -172,7 +172,7 @@ worksheetOver.write(12, 0, str(len(lowRegLines)))  # From Cov sheet
 worksheetOver.write(14, 0, "Sheets:", tableHeadFormat)
 worksheetOver.write_url(15, 0, "internal:'Low Coverage'!A1", string='Positions with coverage lower than '+str(minCov)+'x')
 worksheetOver.write_url(16, 0, "internal: 'Coverage'!A1", string='Average coverage of all regions in bed')
-#worksheetOver.write_url(10, 0, "internal:'Version'!A1", string='Version Log')
+# worksheetOver.write_url(10, 0, "internal:'Version'!A1", string = 'Version Log')
 
 
 ''' Genepanel sheets '''
@@ -230,7 +230,7 @@ worksheetCov.write('A1', 'Average coverage and coverage breadth per gene', headi
 worksheetCov.write_row('A2', emptyList, lineFormat)
 worksheetCov.write('A3', 'Sample: '+str(sample))
 worksheetCov.write('A5', 'Averge coverage and coverage breadth of each gene in exon-bedfile')
-tableArea = 'A6:F'+str(len(covtable)+6)  # rows of full list
+tableArea = 'A6:F'+str(len(covtable)+6)   # rows of full list
 headerListDict = [{'header': 'Gene'}, {'header': 'Transcript'}, {'header': 'Avg coverage'},
                     {'header': str(minCov)+'x'}, {'header': str(medCov)+'x'}, {'header': str(maxCov)+'x'}]
 worksheetCov.add_table(tableArea, {'data': covtable, 'columns': headerListDict, 'style': 'Table Style Light 1'})

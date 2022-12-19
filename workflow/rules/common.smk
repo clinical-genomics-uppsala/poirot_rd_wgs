@@ -55,7 +55,7 @@ def get_flowcell(units, wildcards):
     if len(flowcells) > 1:
         raise ValueError("Sample type combination from different sequence flowcells")
     return flowcells.pop()
-    
+
 
 def get_in_gvcf(wildcards):
     gvcf_list = [
@@ -92,13 +92,13 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
     files = {
         "cnv_sv/cnvpytor": ["vcf"],
         "cnv_sv/expansionhunter": ["vcf"],
-        "cnv_sv/smn_caller": ["tsv"],        
+        "cnv_sv/smn_caller": ["tsv"],
         "cnv_sv/stranger": ["stranger.vcf"],
         "cnv_sv/svdb_query": ["svdb_query.vcf"],
         "cnv_sv/tiddit": ["vcf"],
         "compression/crumble": ["crumble.cram"],
         "qc/create_cov_excel": ["coverage.xlsx"],
-        "mitochondrial/gatk_select_variants_final": ["vcf"]
+        "mitochondrial/gatk_select_variants_final": ["vcf"],
     }
     output_files = [
         "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)
@@ -132,15 +132,50 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
     ]
     output_files += [
         "compression/spring/%s_%s_%s_%s_%s.spring" % (sample, flowcell, lane, barcode, t)
-        for sample in set(units["sample"])
-        for flowcell in set(units["flowcell"])
-        for lane in set(units["lane"])
-        for barcode in set(units["barcode"])
-        for t in set(units["type"])
+        for sample in get_samples(samples)
+        for t in get_unit_types(units, sample)
+        for flowcell in set(
+            [
+                u.flowcell
+                for u in units.loc[
+                    (
+                        sample,
+                        t,
+                    )
+                ]
+                .dropna()
+                .itertuples()
+            ]
+        )
+        for barcode in set(
+            [
+                u.barcode
+                for u in units.loc[
+                    (
+                        sample,
+                        t,
+                    )
+                ]
+                .dropna()
+                .itertuples()
+            ]
+        )
+        for lane in set(
+            [
+                u.lane
+                for u in units.loc[
+                    (
+                        sample,
+                        t,
+                    )
+                ]
+                .dropna()
+                .itertuples()
+            ]
+        )
     ]
     output_files += ["vcf_final/%s.vcf.gz.tbi" % (sample) for sample in get_samples(samples)]
     return output_files
-
 
 
 ### Include copy all files we want to transfer

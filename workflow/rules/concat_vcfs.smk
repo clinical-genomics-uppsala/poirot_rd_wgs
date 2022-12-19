@@ -33,7 +33,7 @@ rule exclude_chrM:
         "(bcftools view "
         "-t ^chrM "
         "{input.deepvariant_vcf} "
-        "-o {output.vcf}) &> {log}" 
+        "-o {output.vcf}) &> {log}"
 
 
 rule bcftools_concat:
@@ -67,5 +67,3 @@ rule bcftools_concat:
         "{input.deepvariant_vcf} "
         "{input.mutect2_vcf} "
         "-o {output.vcf}) &> {log}"
-
-
