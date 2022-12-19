@@ -250,7 +250,7 @@ module parabricks:
         config
 
 
-use rule pbrun_fq2bam from parabricks as parabricks_fq2bam
+use rule pbrun_fq2bam from parabricks as parabricks_fq2bam 
 
 
 use rule pbrun_deepvariant from parabricks as parabricks_deepvariant
