@@ -32,8 +32,8 @@ def get_trio_info(ped_filepath):
 def get_relatedness_df(peddy_rel_file_path, trio_dict):
     relatedness_df = pd.read_csv(peddy_rel_file_path)
 
-    relatedness_df["rel_check_test"] = np.where((relatedness_df.parent_error == True) | 
-    (relatedness_df.sample_duplication_error == True), 'Fail', 'Pass')
+    relatedness_df["rel_check_test"] = np.where((relatedness_df.parent_error) |
+                                                (relatedness_df.sample_duplication_error), 'Fail', 'Pass')
 
     trio_idx = []
     non_trio_idx = []
@@ -47,21 +47,21 @@ def get_relatedness_df(peddy_rel_file_path, trio_dict):
         trio_rel_df = relatedness_df.iloc[trio_idx, :]
         non_trio_rel_df = relatedness_df.iloc[non_trio_idx, :]
 
-        error_rel_df = non_trio_rel_df[(non_trio_rel_df['parent_error'] == True) | 
-            (non_trio_rel_df['sample_duplication_error'] == True)]
+        error_rel_df = non_trio_rel_df[(non_trio_rel_df['parent_error']) |
+                                       (non_trio_rel_df['sample_duplication_error'])]
 
         rel_df = pd.concat([trio_rel_df, error_rel_df])
     else:
-        rel_df = relatedness_df[(relatedness_df['parent_error'] == True) | 
-        (relatedness_df['sample_duplication_error'] == True)]
+        rel_df = relatedness_df[(relatedness_df['parent_error']) |
+                                (relatedness_df['sample_duplication_error'])]
 
     return rel_df
 
 
 def get_sex_check_df(sex_check_file_path):
     sex_check_df = pd.read_csv(sex_check_file_path)
-    sex_check_df["sex_check_test"] = np.where(sex_check_df.error == False,
-        'Pass', 'Fail')  # report peddy  error check as pass/fail for simplicity
+    sex_check_df["sex_check_test"] = np.where(~sex_check_df.error,
+                                              'Pass', 'Fail')  # report peddy  error check as pass/fail for simplicity
     sex_check_df.rename(columns={'sample_id': 'Sample'}, inplace=True)
 
     return sex_check_df
