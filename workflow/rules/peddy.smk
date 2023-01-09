@@ -113,6 +113,8 @@ rule create_peddy_mqc_tsv:
         partition=config.get("create_peddy_mqc_tsv", {}).get("partition", config["default_resources"]["partition"]),
         threads=config.get("create_peddy_mqc_tsv", {}).get("threads", config["default_resources"]["threads"]),
         time=config.get("create_peddy_mqc_tsv", {}).get("time", config["default_resources"]["time"]),
+    container:
+        config.get("create_peddy_mqc_tsv", {}).get("container", config["default_container"])
     message:
         "{rule}: Create multiqc custom content embedded config tsv files from peddy sex_check and ped_check files"
     script:
