@@ -159,7 +159,7 @@ avgCov = subprocess.run(cmdAvgCov, stdout=subprocess.PIPE, shell='TRUE').stdout.
 cmdDupl = 'grep -A1 PERCENT '+duplicationFile+' | tail -1 | cut -f9'
 duplicateLevel = subprocess.run(cmdDupl, stdout=subprocess.PIPE, shell='TRUE').stdout.decode('utf-8').strip()
 
-worksheetOver.write_row(8, 0, ['DNAnr', 'Avg. coverage (x)', 'Duplicationlevel ()%)',
+worksheetOver.write_row(8, 0, ['DNAnr', 'Avg. coverage (x)', 'Duplicationlevel (%)',
                                str(minCov)+'x (%)', str(medCov)+'x (%)', str(maxCov)+'x (%)'], tableHeadFormat)
 worksheetOver.write_row(9, 0, [sample, avgCov, str(round(float(duplicateLevel)*100, 2)),
                                str(round(float(totalMinBreadth/totalLength)*100, 1)),
