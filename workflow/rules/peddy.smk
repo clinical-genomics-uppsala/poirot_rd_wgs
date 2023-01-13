@@ -9,7 +9,7 @@ rule glnexus:
         # gvcf=expand("parabricks/pbrun_deepvariant/{sample}.g.vcf", sample=get_samples(samples)),
         # gvcf=expand("qc/peddy/{sample}_{type}.g.vcf", sample=get_samples(samples)),
         gvcf=[
-            "snv_indels/deepvariant/{}_{}.g.vcf".format(sample, t)
+            "snv_indels/deepvariant_peddy/{}_{}.g.vcf".format(sample, t)
             for sample in get_samples(samples)
             for t in get_unit_types(units, sample)
         ],

@@ -88,6 +88,42 @@ def get_spring_extra(wildcards: snakemake.io.Wildcards):
     return extra
 
 
+def get_bam_input(wildcards, use_wildcard=True, sample_type=True):
+
+
+    if use_wildcard and sample_type is True:
+        sample_str = "{}_{}".format(wildcards.sample, wildcards.type)
+    elif use_wildcard and sample_type is not True:
+        sample_str = "{}_{}".format(wildcards.sample, 'N')
+    elif not use_wildcard:
+        sample_str = wildcards.file
+
+    aligner = config.get("aligner", None)
+    if aligner == "bwa_gpu":
+        bam_input = "parabricks/pbrun_fq2bam/{}.bam".format(sample_str)
+    elif aligner == "bwa_cpu":
+        bam_input = "alignment/samtools_merge_bam/{}.bam".format(sample_str)
+    else:
+        sys.exit("valid options for alinger: bwa_gpu or bwa_cpu")
+    
+    bai_input = "{}.bai".format(bam_input)
+
+    return (bam_input, bai_input)
+
+
+def get_vcf_input(wildcards):
+
+    caller = config.get("snp_caller", None)
+    if caller == "deepvariant_gpu":
+        vcf_input = "parabricks/pbrun_deepvariant/{}.vcf".format(wildcards.sample)
+    elif caller == "deepvariant_cpu":
+        vcf_input = "snv_indels/deepvariant/{}_N.vcf".format(wildcards.sample)
+    else:
+        sys.exit("valid options for alinger: deepvariant_gpu or deepvariant_cpu")
+
+    return vcf_input
+
+
 def compile_output_list(wildcards: snakemake.io.Wildcards):
     files = {
         "cnv_sv/cnvpytor": ["vcf"],

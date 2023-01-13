@@ -6,7 +6,7 @@ __license__ = "GPL-3"
 
 rule vcf_addRef:
     input:
-        vcf="parabricks/pbrun_deepvariant/{sample}.vcf",
+        vcf=lambda wildcards: get_vcf_input(wildcards),
         ref=config["reference"]["fasta"],
     output:
         vcf=temp("vcf_final/{sample}_ref.vcf"),
