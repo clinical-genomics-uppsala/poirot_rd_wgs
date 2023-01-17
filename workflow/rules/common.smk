@@ -59,26 +59,11 @@ def get_flowcell(units, wildcards):
 
 def get_in_gvcf(wildcards):
     gvcf_list = [
-        "snv_indels/deepvariant/{}_{}.g.vcf".format(sample, t)
+        "snv_indels/deepvariant_peddy/{}_{}.g.vcf".format(sample, t)
         for sample in get_samples(samples)
         for t in get_unit_types(units, sample)
     ]
     return " -i ".join(gvcf_list)
-
-
-def get_peddy_sex(wildcards, peddy_sex_check):
-    sample = "{}_{}".format(wildcards.sample, wildcards.type)
-    sex_df = pd.read_table(peddy_sex_check, sep=",").set_index("sample_id", drop=False)
-
-    sample_sex = sex_df.at[sample, "predicted_sex"]
-
-    return sample_sex
-
-
-def get_locus_str(loci):
-    with open(loci, "r") as catfile:
-        loc_str = catfile.readline().rstrip()
-    return loc_str
 
 
 def get_spring_extra(wildcards: snakemake.io.Wildcards):
