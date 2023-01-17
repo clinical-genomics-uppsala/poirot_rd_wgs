@@ -10,21 +10,17 @@ units: "config/units.tsv"
 default_container: "docker://hydragenetics/common:0.1.9"
 
 
-# programdir:
-#   dir: "/home/padco251/expansionhunter/padraic_testing/Poirot_RD-WGS/workflow"
-
-
 modules:
-  alignment: "v0.2.0"
+  alignment: "v0.3.0"
   annotation: "v0.2.0"
   compression: "v1.1.0"
   cnv_sv: "e0c3a1c"
   parabricks: "add_parabricks4"
   prealignment: "v0.5.0"
-  qc: "develop"
+  qc: "68b30bf"
   misc: "v0.1.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "22b2723"
+  snv_indels: "1f7416e"
 
 
 reference:
@@ -41,6 +37,18 @@ reference:
 
 
 trimmer_software: "fastp_pe"
+
+
+aligner: "bwa_cpu" # "bwa_cpu"
+snp_caller: "deepvariant_cpu" # "deepvariant_cpu"
+
+bwa_mem:
+  container: "docker://hydragenetics/bwa:0.7.15"
+  amb: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.amb"
+  ann: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.ann"
+  bwt: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.bwt"
+  pac: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.pac"
+  sa: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.sa"
 
 
 bwa_mem_mito:
@@ -88,6 +96,10 @@ crumble:
 
 
 deepvariant:
+  container: "docker://google/deepvariant:1.4.0"
+
+
+deepvariant_peddy:
   container: "docker://google/deepvariant:1.4.0"
   extra: "--regions=reference/GRCH38.bed"
 
@@ -244,8 +256,7 @@ mt_reference:
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
   deepvariant_model: "reference/deepvariant.eng"
-  extra: ""
-
+  extra: "--disable-use-window-selector-model " ## For consistency with deepvariant cpu. Also increases accuracy.
 
 
 pbrun_fq2bam:
@@ -297,6 +308,8 @@ picard_collect_multiple_metrics:
 picard_collect_wgs_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
 
+picard_mark_duplicates:
+  container: "docker://hydragenetics/picard:2.25.4"
 
 reviewer:
   container: "docker://hydragenetics/reviewer:0.2.7"
