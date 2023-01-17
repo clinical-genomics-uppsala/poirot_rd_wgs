@@ -89,7 +89,7 @@ use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter
 use rule cnvpytor_readdepth from cnv_sv as cnv_sv_cnvpytor_rd with:
     input:
         bam=lambda wildcards: get_bam_input(wildcards)[0],
-        vcf="parabricks/pbrun_deepvariant/{sample}.vcf",
+        vcf=lambda wildcards: get_vcf_input(wildcards),
 
 
 use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
@@ -103,15 +103,15 @@ use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
 
 use rule manta_config_n from cnv_sv as cnv_sv_manta_config_n with:
     input:
-        bam=lambda wildcards: get_bam_input(wildcards, sample_type=False)[0],
-        bai=lambda wildcards: get_bam_input(wildcards, sample_type=False)[1],
+        bam=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
+        bai=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
         ref=config["reference"]["fasta"],
 
 
 use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
     input:
-        bam=lambda wildcards: get_bam_input(wildcards, sample_type=False)[0],
-        bai=lambda wildcards: get_bam_input(wildcards, sample_type=False)[1],
+        bam=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
+        bai=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
         ref=config["reference"]["fasta"],
         scrpt="cnv_sv/manta_run_workflow_n/{sample}/runWorkflow.py",
     output:
@@ -169,8 +169,8 @@ use rule crumble from compression as compression_crumble
 
 use rule samtools_view from compression as compression_samtools_view with:
     input:
-        bam=lambda wildcards: get_bam_input(wildcards, use_wildcard=False)[0],
-        bai=lambda wildcards: get_bam_input(wildcards, use_wildcard=False)[1],
+        bam=lambda wildcards: get_bam_input(wildcards, use_sample_wildcard=False)[0],
+        bai=lambda wildcards: get_bam_input(wildcards, use_sample_wildcard=False)[1],
         ref=config.get("reference", {}).get("fasta", ""),
 
 
@@ -256,8 +256,8 @@ use rule pbrun_fq2bam from parabricks as parabricks_fq2bam
 
 use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
     input:
-        bam=lambda wildcards: get_bam_input(wildcards, sample_type=False)[0],
-        bai=lambda wildcards: get_bam_input(wildcards, sample_type=False)[1],
+        bam=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
+        bai=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
         fasta=config.get("reference", {}).get("fasta", ""),
         model=config.get("pbrun_deepvariant", {}).get("deepvariant_model", ""),
 
