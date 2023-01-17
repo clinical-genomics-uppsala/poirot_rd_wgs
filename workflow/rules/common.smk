@@ -88,23 +88,24 @@ def get_spring_extra(wildcards: snakemake.io.Wildcards):
     return extra
 
 
-def get_bam_input(wildcards, use_wildcard=True, sample_type=True):
+def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True):
 
-
-    if use_wildcard and sample_type is True:
+    if use_sample_wildcard and use_type_wildcard is True:
         sample_str = "{}_{}".format(wildcards.sample, wildcards.type)
-    elif use_wildcard and sample_type is not True:
+    elif use_sample_wildcard and use_type_wildcard is not True:
         sample_str = "{}_{}".format(wildcards.sample, 'N')
-    elif not use_wildcard:
+    else:
         sample_str = wildcards.file
 
     aligner = config.get("aligner", None)
-    if aligner == "bwa_gpu":
+    if aligner is None:
+        sys.exit("aligner missing from config, valid options: bwa_gpu or bwa_cpu")
+    elif aligner == "bwa_gpu":
         bam_input = "parabricks/pbrun_fq2bam/{}.bam".format(sample_str)
     elif aligner == "bwa_cpu":
         bam_input = "alignment/samtools_merge_bam/{}.bam".format(sample_str)
     else:
-        sys.exit("valid options for alinger: bwa_gpu or bwa_cpu")
+        sys.exit("valid options for aligner are: bwa_gpu or bwa_cpu")
     
     bai_input = "{}.bai".format(bam_input)
 
@@ -114,12 +115,14 @@ def get_bam_input(wildcards, use_wildcard=True, sample_type=True):
 def get_vcf_input(wildcards):
 
     caller = config.get("snp_caller", None)
-    if caller == "deepvariant_gpu":
+    if caller is None:
+        sys.exit("snp_caller missing from config, valid options: deepvariant_gpu or deepvariant_cpu")
+    elif caller == "deepvariant_gpu":
         vcf_input = "parabricks/pbrun_deepvariant/{}.vcf".format(wildcards.sample)
     elif caller == "deepvariant_cpu":
         vcf_input = "snv_indels/deepvariant/{}_N.vcf".format(wildcards.sample)
     else:
-        sys.exit("valid options for alinger: deepvariant_gpu or deepvariant_cpu")
+        sys.exit("Invalid options for snp_caller, valid options are: deepvariant_gpu or deepvariant_cpu")
 
     return vcf_input
 
