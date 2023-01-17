@@ -37,7 +37,6 @@ module alignment:
         config
 
 
-
 use rule * from alignment as alignment_*
 
 
@@ -420,9 +419,9 @@ use rule deepvariant from snv_indels as snv_indels_deepvariant with:
     benchmark:
         repeat(
             "snv_indels/deepvariant/{sample}_{type}.output.benchmark.tsv",
-            config.get("deepvariant", {}).get("benchmark_repeats", 1)
+            config.get("deepvariant", {}).get("benchmark_repeats", 1),
         )
-    message: 
+    message:
         "Call variants with deepvariant on {wildcards.sample}_{wildcards.type}"
 
 
@@ -442,7 +441,7 @@ use rule deepvariant_gvcf from snv_indels as snv_indels_deepvariant_peddy with:
     benchmark:
         repeat(
             "snv_indels/deepvariant_peddy/{sample}_{type}.output.benchmark.tsv",
-            config.get("deepvariant_peddy", {}).get("benchmark_repeats", 1)
+            config.get("deepvariant_peddy", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("deepvariant_peddy", {}).get("threads", config["default_resources"]["threads"])
     resources:
@@ -451,8 +450,5 @@ use rule deepvariant_gvcf from snv_indels as snv_indels_deepvariant_peddy with:
         partition=config.get("deepvariant_peddy", {}).get("partition", config["default_resources"]["partition"]),
         threads=config.get("deepvariant_peddy", {}).get("threads", config["default_resources"]["threads"]),
         time=config.get("deepvariant_peddy", {}).get("time", config["default_resources"]["time"]),
-    message: 
+    message:
         "Call variants with deepvariant on {wildcards.sample}_{wildcards.type}"
-
-
-

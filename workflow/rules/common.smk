@@ -78,7 +78,7 @@ def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True):
     if use_sample_wildcard and use_type_wildcard is True:
         sample_str = "{}_{}".format(wildcards.sample, wildcards.type)
     elif use_sample_wildcard and use_type_wildcard is not True:
-        sample_str = "{}_{}".format(wildcards.sample, 'N')
+        sample_str = "{}_{}".format(wildcards.sample, "N")
     else:
         sample_str = wildcards.file
 
@@ -91,7 +91,7 @@ def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True):
         bam_input = "alignment/samtools_merge_bam/{}.bam".format(sample_str)
     else:
         sys.exit("valid options for aligner are: bwa_gpu or bwa_cpu")
-    
+
     bai_input = "{}.bai".format(bam_input)
 
     return (bam_input, bai_input)
