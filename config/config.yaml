@@ -17,7 +17,7 @@ modules:
   cnv_sv: "e0c3a1c"
   parabricks: "add_parabricks4"
   prealignment: "v0.5.0"
-  qc: "develop"
+  qc: "68b30bf"
   misc: "v0.1.0"
   mitochondrial: "v0.1.0"
   snv_indels: "1f7416e"
