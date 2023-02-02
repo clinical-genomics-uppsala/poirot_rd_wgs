@@ -8,6 +8,7 @@ include: "rules/common.smk"
 include: "rules/add_ref_to_vcf.smk"
 include: "rules/concat_vcfs.smk"
 include: "rules/coverage.smk"
+include: "rules/cp_results.smk"
 include: "rules/peddy.smk"
 include: "rules/sample_order_for_multiqc.smk"
 
@@ -21,6 +22,8 @@ rule all:
 
 
 ruleorder: cnv_sv_manta_run_workflow_n > misc_bgzip
+ruleorder: misc_samtools_index > cp_crai_all
+ruleorder: misc_tabix > cp_tbi_all
 ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: qc_mosdepth > misc_bgzip
 ruleorder: qc_mosdepth_bed > misc_bgzip

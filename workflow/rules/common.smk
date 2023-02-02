@@ -90,15 +90,15 @@ def get_spring_extra(wildcards: snakemake.io.Wildcards):
 
 def compile_output_list(wildcards: snakemake.io.Wildcards):
     files = {
-        "cnv_sv/cnvpytor": ["vcf"],
-        "cnv_sv/expansionhunter": ["vcf"],
+        "cnv_sv/cnvpytor": ["vcf.gz"],
+        "cnv_sv/expansionhunter": ["vcf.gz"],
         "cnv_sv/smn_caller": ["tsv"],
-        "cnv_sv/stranger": ["stranger.vcf"],
-        "cnv_sv/svdb_query": ["svdb_query.vcf"],
-        "cnv_sv/tiddit": ["vcf"],
-        "compression/crumble": ["crumble.cram"],
+        "cnv_sv/stranger": ["stranger.vcf.gz"],
+        "cnv_sv/svdb_query": ["svdb_query.vcf.gz"],
+        "cnv_sv/tiddit": ["vcf.gz"],
+        "compression/crumble": ["crumble.cram.crai"],
         "qc/create_cov_excel": ["coverage.xlsx"],
-        "mitochondrial/gatk_select_variants_final": ["vcf"],
+        "mitochondrial/gatk_select_variants_final": ["vcf.g"],
     }
     output_files = [
         "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)
@@ -121,6 +121,7 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         for unit_type in get_unit_types(units, sample)
     ]
     output_files += ["qc/multiqc/multiqc_DNA.html"]
+    output_files += ["results/multiqc_DNA.html"]
     output_files += [
         "qc/peddy/peddy.peddy.ped",
         "qc/peddy/peddy.ped_check.csv",
@@ -175,6 +176,128 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         )
     ]
     output_files += ["vcf_final/%s.vcf.gz.tbi" % (sample) for sample in get_samples(samples)]
+    output_files += [
+        "results/%s/spring/%s_%s_%s_%s_%s.spring" % (sample, sample, flowcell, lane, barcode, t)
+        for sample in get_samples(samples)
+        for t in get_unit_types(units, sample)
+        for flowcell in set(
+            [
+                u.flowcell
+                for u in units.loc[
+                    (
+                        sample,
+                        t,
+                    )
+                ]
+                .dropna()
+                .itertuples()
+            ]
+        )
+        for barcode in set(
+            [
+                u.barcode
+                for u in units.loc[
+                    (
+                        sample,
+                        t,
+                    )
+                ]
+                .dropna()
+                .itertuples()
+            ]
+        )
+        for lane in set(
+            [
+                u.lane
+                for u in units.loc[
+                    (
+                        sample,
+                        t,
+                    )
+                ]
+                .dropna()
+                .itertuples()
+            ]
+        )
+    ]
+
+    output_files += [
+	   "results/%s/cnv_sv/%s_%s.cnvpytor_filtered.vcf.gz" % (sample, sample, unit_type)
+       for sample in get_samples(samples)
+       for unit_type in get_unit_types(units, sample)
+    ]
+    output_files += [
+	   "results/%s/cnv_sv/%s_%s.cnvpytor.vcf.gz" % (sample, sample, unit_type)
+       for sample in get_samples(samples)
+       for unit_type in get_unit_types(units, sample)
+    ]
+    output_files += [
+    	"results/%s/cnv_sv/%s_%s.tiddit.vcf.gz" % (sample, sample, unit_type)
+        for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
+    ]
+    output_files += [
+    	"results/%s/cnv_sv/%s_%s.manta_diploidSV.vcf.gz" % (sample, sample, unit_type)
+        for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
+    ]
+    output_files += [
+    	"results/%s/cnv_sv/%s_%s.svdb_merged.vcf.gz" % (sample, sample, unit_type)
+        for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
+    ]
+    output_files += [
+    	"results/%s/%s_%s.contamination.html" % (sample, sample, unit_type)
+        for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
+    ]
+    output_files += [
+    	"results/%s/expansionhunter_reviewer/" % (sample)
+    	for sample in get_samples(samples)
+    ]
+    output_files += [
+    	"results/%s/%s_%s.expansionhunter_stranger.vcf.gz" % (sample, sample, unit_type)
+        for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
+    ]
+    output_files += [
+    	"results/%s/%s_%s.coverage_analysis.xlsx" % (sample, sample, unit_type)
+        for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
+    ]
+    output_files += [
+    	"results/%s/SMNCopyNumberCaller/%s_%s.smn_charts.pdf" % (sample, sample, unit_type)
+        for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
+    ]
+    output_files += [
+    	"results/%s/SMNCopyNumberCaller/%s_%s.smn_caller.tsv" % (sample, sample, unit_type)
+        for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
+    ]
+    output_files += [
+    	"results/%s/SMNCopyNumberCaller/%s_%s.smn_caller.json" % (sample, sample, unit_type)
+        for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
+    ]
+    output_files += [
+    	"results/%s/%s_%s.crumble.cram.crai" % (sample, sample, unit_type)
+        for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
+    ]
+    output_files += [
+    	"results/%s/%s_%s.crumble.cram" % (sample, sample, unit_type)
+        for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
+    ]
+    output_files += [
+    	"results/%s/%s_snv_indels.vcf.gz.tbi" % (sample, sample)
+        for sample in get_samples(samples)
+    ]
+    output_files += [
+    	"results/%s/%s_snv_indels.vcf.gz" % (sample, sample)
+        for sample in get_samples(samples)
+    ]
     return output_files
 ### Include copy all files we want to transfer
 # def compile_output_list(wildcards):
