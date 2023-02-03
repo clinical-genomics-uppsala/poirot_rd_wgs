@@ -20,7 +20,7 @@ modules:
   qc: "68b30bf"
   misc: "v0.1.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "1f7416e"
+  snv_indels: "ed989df"
 
 
 reference:
@@ -38,8 +38,8 @@ reference:
 
 trimmer_software: "fastp_pe"
 
-aligner: "bwa_gpu" # "bwa_cpu"
-snp_caller: "deepvariant_gpu" # "deepvariant_cpu"
+aligner: "bwa_cpu" # "bwa_cpu"
+snp_caller: "deepvariant_cpu" # "deepvariant_cpu"
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
@@ -92,15 +92,26 @@ crumble:
   container: "docker://hydragenetics/crumble:0.8.3"
   extra: "-O CRAM"
 
-
-deepvariant:
+deepvariant_call_variants:
   container: "docker://hydragenetics/deepvariant:1.4.0"
+  model_dir: "/opt/models/wgs"
 
-
-deepvariant_peddy:
+deepvariant_make_examples:
   container: "docker://hydragenetics/deepvariant:1.4.0"
-  extra: "--regions=/beegfs-storage/data/ref_data/peddy/v0.4.8/GRCH38.bed"
+  model: "WGS"
 
+deepvariant_make_examples_peddy:
+  container: "docker://hydragenetics/deepvariant:1.4.0"
+  model: "WGS"
+  extra: "--regions /beegfs-storage/data/ref_data/peddy/v0.4.8/GRCH38.bed "
+
+deepvariant_postprocess_variants:
+  container: "docker://hydragenetics/deepvariant:1.4.0"
+  vcf_type: "vcf"
+
+deepvariant_postprocess_variants_peddy:
+  container: "docker://hydragenetics/deepvariant:1.4.0"
+  vcf_type: "gvcf"
 
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"

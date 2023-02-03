@@ -22,12 +22,18 @@ bwa_mem_mito:
   mem_per_cpu: 3072
   threads: 2
 
-deepvariant:
-  threads: 40
-  time: "24:00:00"
+deepvariant_call_variants:
+  threads: 20
 
-deepvariant_peddy:
-  threads: 10
+deepvariant_make_examples:
+  threads: 40
+
+deepvariant_make_examples_peddy:
+  threads: 40
+
+deepvariant_postprocess_variants:
+  mem_mb: 36864
+  mem_per_cpu: 36864
 
 expansionhunter:
   threads: 16

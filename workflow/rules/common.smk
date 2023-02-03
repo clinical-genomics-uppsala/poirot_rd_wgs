@@ -73,7 +73,7 @@ def get_spring_extra(wildcards: snakemake.io.Wildcards):
     return extra
 
 
-def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True):
+def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True, by_chr=False):
 
     if use_sample_wildcard and use_type_wildcard is True:
         sample_str = "{}_{}".format(wildcards.sample, wildcards.type)
@@ -88,7 +88,10 @@ def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True):
     elif aligner == "bwa_gpu":
         bam_input = "parabricks/pbrun_fq2bam/{}.bam".format(sample_str)
     elif aligner == "bwa_cpu":
-        bam_input = "alignment/samtools_merge_bam/{}.bam".format(sample_str)
+        if by_chr: # if a bam for single chromosome is needed
+            bam_input = "alignment/picard_mark_duplicates/{}_{}.bam".format(sample_str, wildcards.chr)
+        else:
+            bam_input = "alignment/samtools_merge_bam/{}.bam".format(sample_str)
     else:
         sys.exit("valid options for aligner are: bwa_gpu or bwa_cpu")
 
@@ -110,6 +113,71 @@ def get_vcf_input(wildcards):
         sys.exit("Invalid options for snp_caller, valid options are: deepvariant_gpu or deepvariant_cpu")
 
     return vcf_input
+
+
+def combine_extra_args(extra_args: dict):
+    args = []
+    for key in sorted(extra_args):
+        value = extra_args[key]
+        if value is None:
+            continue
+        if isinstance(value, bool):
+            added_arg = "" if value else "no"
+            added_arg += key
+            args.extend(["--{}".format(added_arg)])
+        else:
+            args.extend(["--{} {}".format(key, value)])
+
+    args_str = " ".join(args)
+
+    return args_str
+
+
+def get_make_example_args(wildcards: snakemake.io.Wildcards, output: list, name: str, vcf: str):
+
+    model_type = config.get(name, {}).get("model", "WGS")
+    special_args = {}
+    if model_type == "WGS" or model_type == "WES":
+        special_args["channels"] = "insert_size"
+    elif model_type == "PACBIO":
+        special_args = {}
+        special_args["add_hp_channel"] = True
+        special_args["alt_aligned_pileup"] = "diff_channels"
+        special_args["max_reads_per_partition"] = 600
+        special_args["min_mapping_quality"] = 1
+        special_args["parse_sam_aux_fields"] = True
+        special_args["partition_size"] = 25000
+        special_args["phase_reads"] = True
+        special_args["pileup_image_width"] = 199
+        special_args["realign_reads"] = False
+        special_args["sort_by_haplotypes"] = True
+        special_args["track_ref_reads"] = True
+        special_args["vsc_min_fraction_indels"] = 0.12
+
+    special_args_str = combine_extra_args(special_args)
+    extra = "{} {}".format(config.get(name, {}).get("extra", ""), special_args_str)
+
+    if vcf == "gvcf":
+        threads = config.get(name, {}).get("threads", config["default_resources"]["threads"])
+        gvcf_path = " --gvcf {}/gvcf.tfrecord@{}.gz".format(output[0], threads)
+        extra = "{} {}".format(extra, gvcf_path)
+
+    return extra
+
+
+def get_postprocess_variants_args(
+    wildcards: snakemake.io.Wildcards, input: snakemake.io.Namedlist, output: snakemake.io.Namedlist,
+    me_config: str, extra: str):
+
+    if len(output) == 2:
+        threads = config.get(me_config, {}).get("threads", config["default_resources"]["threads"])
+        gvcf_tfrecord = "{}/gvcf.tfrecord@{}.gz".format(input[0], threads)
+        gvcf_in = "--nonvariant_site_tfrecord_path {}".format(gvcf_tfrecord)
+        gvcf_out = " --gvcf_outfile {}".format(output.gvcf)
+        extra = "{} {} {}".format(extra, gvcf_in, gvcf_out)
+
+    return extra
+
 
 
 def compile_output_list(wildcards: snakemake.io.Wildcards):
