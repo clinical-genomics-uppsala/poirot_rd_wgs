@@ -20,7 +20,7 @@ modules:
   qc: "68b30bf"
   misc: "v0.1.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "ed989df"
+  snv_indels: "72fd295"
 
 
 reference:
