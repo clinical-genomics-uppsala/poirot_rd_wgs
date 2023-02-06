@@ -88,7 +88,7 @@ def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True, b
     elif aligner == "bwa_gpu":
         bam_input = "parabricks/pbrun_fq2bam/{}.bam".format(sample_str)
     elif aligner == "bwa_cpu":
-        if by_chr: # if a bam for single chromosome is needed
+        if by_chr:  # if a bam for single chromosome is needed
             bam_input = "alignment/picard_mark_duplicates/{}_{}.bam".format(sample_str, wildcards.chr)
         else:
             bam_input = "alignment/samtools_merge_bam/{}.bam".format(sample_str)
@@ -166,8 +166,8 @@ def get_make_example_args(wildcards: snakemake.io.Wildcards, output: list, name:
 
 
 def get_postprocess_variants_args(
-    wildcards: snakemake.io.Wildcards, input: snakemake.io.Namedlist, output: snakemake.io.Namedlist,
-    me_config: str, extra: str):
+    wildcards: snakemake.io.Wildcards, input: snakemake.io.Namedlist, output: snakemake.io.Namedlist, me_config: str, extra: str
+):
 
     if len(output) == 2:
         threads = config.get(me_config, {}).get("threads", config["default_resources"]["threads"])
@@ -177,7 +177,6 @@ def get_postprocess_variants_args(
         extra = "{} {} {}".format(extra, gvcf_in, gvcf_out)
 
     return extra
-
 
 
 def compile_output_list(wildcards: snakemake.io.Wildcards):
