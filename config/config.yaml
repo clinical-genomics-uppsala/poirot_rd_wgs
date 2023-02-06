@@ -364,3 +364,10 @@ tabix:
 
 tiddit:
   container: "docker://hydragenetics/tiddit:3.3.2"
+
+
+vep:
+  container: "docker://hydragenetics/vep:105"
+  vep_cache:  ""
+  mode: "--database"
+  extra: " --assembly GRCh38 --check_existing --pick --af --af_1kg --af_gnomad --max_af "
