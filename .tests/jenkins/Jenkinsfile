@@ -1,0 +1,45 @@
+def isPullRequest = false
+
+pipeline {
+  agent { label 'marvin-clone' }
+  stages {
+    stage('First stage') {
+      steps {
+        script {
+          isPullRequest = env.CHANGE_ID != null
+        }
+        sh 'printenv'
+      }
+    }
+    stage('VAL') {
+      when {
+          anyOf {
+                 expression { isPullRequest == false && env.BRANCH_NAME == 'develop' }
+          }
+      }
+      steps {
+        sshagent(['jenkins']) {
+          sh '''#!/bin/bash
+                virtualenv venv -p python3.8
+                source venv/bin/activate
+                pip install -r requirements.txt
+                mkdir -p VALDEV/slurm_out
+                cp -r config VALDEV/
+                cp .tests/jenkins/units_VALDEV.tsv VALDEV/units.tsv
+                cp .tests/jenkins/samples_VALDEV.tsv VALDEV/samples.tsv
+                cp .tests/jenkins/resources.yaml VALDEV/config/resources.yaml
+                cp .tests/jenkins/config.yaml VALDEV/config/resources.yaml
+                #cp .tests/jenkins/test_input_VALDEV.tsv VALDEV/test_input.tsv
+                module load singularity
+                module load slurm-drmaa
+                cd VALDEV
+                snakemake -s ../workflow/Snakefile --profile ../.tests/jenkins/profile --configfile config/config.yaml -w 60
+                #git clone https://github.com/clinical-genomics-uppsala/validation_workflow.git
+                #module load nextflow
+                #nextflow run validation_workflow/validate_result.nf
+             '''
+         }
+       }
+    }
+  }
+}
