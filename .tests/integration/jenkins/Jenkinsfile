@@ -1,0 +1,28 @@
+def isPullRequest = false
+
+pipeline {
+  agent { label 'marvin-clone' }
+  stages {
+    stage('First stage') {
+      steps {
+        script {
+          isPullRequest = env.CHANGE_ID != null
+        }
+        sh 'printenv'
+      }
+    }
+    stage('VAL') {
+    //   when {
+    //       anyOf {
+    //              expression { isPullRequest == false && env.BRANCH_NAME == 'develop' }
+    //       }
+    //   }
+      steps {
+        sshagent(['jenkins']) {
+          sh '''#!/bin/bash
+                echo 'test'
+             '''
+         }
+       }
+    }
+  }}
