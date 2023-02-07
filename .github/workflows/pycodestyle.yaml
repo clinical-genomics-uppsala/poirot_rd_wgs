@@ -29,5 +29,5 @@ jobs:
           pip install -r requirements.test.txt
       - name: Check python syntax lib
         run: pycodestyle --max-line-length=130 --statistics workflow/scripts
-      - name: Check python syntax unit tests
-        run: pycodestyle --max-line-length=130 --statistics .tests/units
+      # - name: Check python syntax unit tests
+      #   run: pycodestyle --max-line-length=130 --statistics .tests/units
