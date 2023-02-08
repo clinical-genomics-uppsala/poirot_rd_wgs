@@ -37,7 +37,10 @@ module alignment:
         config
 
 
-use rule samtools_sort from alignment as alignment_samtools_sort with:
+use rule * from alignment as alignment_*
+
+
+use rule samtools_sort from alignment as alignment_samtools_sort_eh_bam with:
     input:
         "cnv_sv/expansionhunter/{sample}_{type}_realigned.bam",
     output:
@@ -49,9 +52,6 @@ use rule samtools_sort from alignment as alignment_samtools_sort with:
             "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.benchmark.tsv",
             config.get("samtools_sort", {}).get("benchmark_repeats", 1),
         )
-
-
-use rule samtools_index from alignment as alignment_samtools_index
 
 
 module annotation:
@@ -87,14 +87,14 @@ use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter
 
 use rule cnvpytor_readdepth from cnv_sv as cnv_sv_cnvpytor_rd with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        vcf="parabricks/pbrun_deepvariant/{sample}.vcf",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        vcf=lambda wildcards: get_vcf_input(wildcards),
 
 
 use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
         cat=config.get("expansionhunter", {}).get("variant_catalog", ""),
         ref=config.get("reference", {}).get("fasta", ""),
         sex="qc/peddy/peddy.sex_check.csv",
@@ -102,15 +102,15 @@ use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
 
 use rule manta_config_n from cnv_sv as cnv_sv_manta_config_n with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_N.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_N.bam.bai",
+        bam=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
+        bai=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
         ref=config["reference"]["fasta"],
 
 
 use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_N.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_N.bam.bai",
+        bam=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
+        bai=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
         ref=config["reference"]["fasta"],
         scrpt="cnv_sv/manta_run_workflow_n/{sample}/runWorkflow.py",
     output:
@@ -125,8 +125,8 @@ use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
 
 use rule smn_manifest from cnv_sv as cnv_sv_smn_manifest with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_N.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_N.bam.bai",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
 
 
 use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
@@ -145,7 +145,7 @@ use rule svdb_query from cnv_sv as cnv_sv_svdb_query with:
 
 use rule tiddit from cnv_sv as cnv_sv_tiddit with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
         ref=config["reference"]["fasta"],
 
 
@@ -168,8 +168,8 @@ use rule crumble from compression as compression_crumble
 
 use rule samtools_view from compression as compression_samtools_view with:
     input:
-        bam="parabricks/pbrun_fq2bam/{file}.bam",
-        bai="parabricks/pbrun_fq2bam/{file}.bam.bai",
+        bam=lambda wildcards: get_bam_input(wildcards, use_sample_wildcard=False)[0],
+        bai=lambda wildcards: get_bam_input(wildcards, use_sample_wildcard=False)[1],
         ref=config.get("reference", {}).get("fasta", ""),
 
 
@@ -235,8 +235,8 @@ use rule * from mitochondrial as mitochondrial_*
 
 use rule gatk_print_reads from mitochondrial as mitochondrial_gatk_print_reads with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
 
 
 module parabricks:
@@ -253,7 +253,12 @@ module parabricks:
 use rule pbrun_fq2bam from parabricks as parabricks_fq2bam
 
 
-use rule pbrun_deepvariant from parabricks as parabricks_deepvariant
+use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
+        bai=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
+        fasta=config.get("reference", {}).get("fasta", ""),
+        model=config.get("pbrun_deepvariant", {}).get("deepvariant_model", ""),
 
 
 module prealignment:
@@ -286,14 +291,14 @@ use rule fastqc from qc as qc_fastqc
 
 use rule mosdepth from qc as qc_mosdepth with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
 
 
 use rule mosdepth_bed from qc as qc_mosdepth_bed with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
         bed=config.get("reference", {}).get("coverage_bed", ""),
     output:
         bed=temp("qc/mosdepth_bed/{sample}_{type}.regions.bed.gz"),
@@ -337,24 +342,24 @@ use rule peddy from qc as qc_peddy
 
 use rule picard_collect_alignment_summary_metrics from qc as qc_pic_align_sum_met with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
         ref=config["reference"]["fasta"],
 
 
 use rule picard_collect_duplication_metrics from qc as qc_pic_dup_met with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
 
 
 use rule picard_collect_gc_bias_metrics from qc as qc_pic_gc_met with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
         ref=config["reference"]["fasta"],
 
 
 use rule picard_collect_hs_metrics from qc as qc_pic_hs_met with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
         bait_intervals=config["reference"]["exome_intervals"],
         target_intervals=config["reference"]["exome_intervals"],
         reference=config["reference"]["fasta"],
@@ -362,31 +367,31 @@ use rule picard_collect_hs_metrics from qc as qc_pic_hs_met with:
 
 use rule picard_collect_insert_size_metrics from qc as qc_pic_ins_size with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
 
 
 use rule picard_collect_multiple_metrics from qc as qc_pic_multi_met with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
         ref=config["reference"]["fasta"],
 
 
 use rule picard_collect_wgs_metrics from qc as qc_pic_wgs_met with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
         ref=config["reference"]["fasta"],
         interval=config["reference"]["wgs_intervals"],
 
 
 use rule samtools_stats from qc as qc_samtools_stats with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
 
 
 use rule samtools_idxstats from qc as qc_samtools_idxstats with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
     output:
         temp("qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"),
 
@@ -402,11 +407,112 @@ module snv_indels:
         config
 
 
-use rule deepvariant from snv_indels as snv_indels_deepvariant with:
+use rule deepvariant_make_examples from snv_indels as snv_indels_deepvariant_make_examples with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
         ref=config.get("reference", {}).get("fasta", ""),
     output:
-        gvcf=temp("snv_indels/deepvariant/{sample}_{type}.g.vcf"),
+        examples_dir=temp(directory("snv_indels/deepvariant/{sample}_{type}/")),
+    log:
+        "snv_indels/deepvariant/{sample}_{type}_make_examples.output.log",
+    benchmark:
+        repeat(
+            "snv_indels/deepvariant/{sample}_{type}_make_examples.output.benchmark.tsv",
+            config.get("deepvariant_make_examples", {}).get("benchmark_repeats", 1),
+        )
+    message:
+        "Call variants with deepvariant on {wildcards.sample}_{wildcards.type}"
+
+
+use rule deepvariant_call_variants from snv_indels as snv_indels_deepvariant_call_variants with:
+    input:
+        examples_dir="snv_indels/deepvariant/{sample}_{type}/",
+    output:
+        outfile=temp("snv_indels/deepvariant/{sample}_{type}/call_variants_output.tfrecord.gz"),
+    log:
+        "snv_indels/deepvariant/{sample}_{type}_call_variants.output.log",
+    benchmark:
+        repeat(
+            "snv_indels/deepvariant/{sample}_{type}_call_variants.output.benchmark.tsv",
+            config.get("deepvariant_call_variants", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule deepvariant_postprocess_variants from snv_indels as snv_indels_deepvariant_postprocess_variants with:
+    input:
+        infile="snv_indels/deepvariant/{sample}_{type}/call_variants_output.tfrecord.gz",
+        ref=config.get("reference", {}).get("fasta", ""),
+    output:
         vcf=temp("snv_indels/deepvariant/{sample}_{type}.vcf"),
+    log:
+        "snv_indels/deepvariant/{sample}_{type}_postprocess_variants.output.log",
+    benchmark:
+        repeat(
+            "snv_indels/deepvariant/{sample}_{type}_postprocess_variants.output.benchmark.tsv",
+            config.get("deepvariant_postprocess_variants", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule deepvariant_make_examples from snv_indels as snv_indels_deepvariant_make_examples_peddy with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
+        ref=config.get("reference", {}).get("fasta", ""),
+    params:
+        extra=lambda wildcards, output: get_make_example_args(
+            wildcards,
+            output,
+            "deepvariant_make_examples_peddy",
+            config.get("deepvariant_postprocess_variants_peddy", {}).get("vcf_type", "vcf"),
+        ),
+        seq_num=config.get("deepvariant_make_examples", {}).get("threads", config["default_resources"]["threads"]) - 1,
+        mkdir=lambda wildcards, output: "mkdir -p {}".format(output.examples_dir),
+    output:
+        examples_dir=temp(directory("snv_indels/deepvariant_peddy/{sample}_{type}/")),
+    log:
+        "snv_indels/deepvariant_peddy/{sample}_{type}_make_examples.output.log",
+    benchmark:
+        repeat(
+            "snv_indels/deepvariant_peddy/{sample}_{type}_make_examples.output.benchmark.tsv",
+            config.get("deepvariant_make_examples_peddy", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule deepvariant_call_variants from snv_indels as snv_indels_deepvariant_call_variants_peddy with:
+    input:
+        examples_dir="snv_indels/deepvariant_peddy/{sample}_{type}/",
+    output:
+        outfile=temp("snv_indels/deepvariant_peddy/{sample}_{type}/call_variants_output.tfrecord.gz"),
+    log:
+        "snv_indels/deepvariant_peddy/{sample}_{type}_call_variants.output.log",
+    benchmark:
+        repeat(
+            "snv_indels/deepvariant_peddy/{sample}_{type}_call_variants.output.benchmark.tsv",
+            config.get("deepvariant_call_variants", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule deepvariant_postprocess_variants from snv_indels as snv_indels_deepvariant_postprocess_variants_peddy with:
+    input:
+        examples_dir="snv_indels/deepvariant_peddy/{sample}_{type}/",
+        infile="snv_indels/deepvariant_peddy/{sample}_{type}/call_variants_output.tfrecord.gz",
+        ref=config.get("reference", {}).get("fasta", ""),
+    params:
+        extra=lambda wildcards, input, output: get_postprocess_variants_args(
+            wildcards,
+            input,
+            output,
+            "deepvariant_make_examples",
+            config.get("deepvariant_postprocess_variants", {}).get("extra", ""),
+        ),
+    output:
+        gvcf=temp("snv_indels/deepvariant_peddy/{sample}_{type}.g.vcf"),
+        vcf=temp("snv_indels/deepvariant_peddy/{sample}_{type}.vcf"),
+    log:
+        "snv_indels/deepvariant_peddy/{sample}_{type}_postprocess_variants.output.log",
+    benchmark:
+        repeat(
+            "snv_indels/deepvariant_peddy/{sample}_{type}_postprocess_variants.output.benchmark.tsv",
+            config.get("deepvariant_postprocess_variants_peddy", {}).get("benchmark_repeats", 1),
+        )

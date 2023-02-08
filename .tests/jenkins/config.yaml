@@ -24,7 +24,7 @@ modules:
 
 
 reference:
-  coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
+  coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_20221123_chr21.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
   design_bed: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
   exome_bed: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
   exome_intervals: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"
@@ -38,8 +38,8 @@ reference:
 
 trimmer_software: "fastp_pe"
 
-aligner: "bwa_cpu" # "bwa_cpu" or "bwa_gpu"
-snp_caller: "deepvariant_cpu" # "deepvariant_cpu" or "deepvariant_gpu"
+aligner: "bwa_cpu" # "bwa_cpu"
+snp_caller: "deepvariant_cpu" # "deepvariant_cpu"
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
@@ -49,6 +49,9 @@ bwa_mem:
   pac: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.pac"
   sa: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.sa"
 
+bwa_mem_merge:
+  extra: "-c -p"
+    
 bwa_mem_mito:
   container: "docker://hydragenetics/bwa_mem:0.7.17"
   extra: "-K 100000000 -v3 -Y "
@@ -99,6 +102,7 @@ deepvariant_call_variants:
 deepvariant_make_examples:
   container: "docker://hydragenetics/deepvariant:1.4.0"
   model: "WGS"
+  extra: "--regions chr21"
 
 deepvariant_make_examples_peddy:
   container: "docker://hydragenetics/deepvariant:1.4.0"
@@ -229,7 +233,6 @@ mosdepth:
 
 mosdepth_bed:
   container: "docker://hydragenetics/mosdepth:0.3.2"
-  extra: ""
 
 
 multiqc:
@@ -265,7 +268,7 @@ mt_reference:
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
   deepvariant_model: "/beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng"
-  extra: "--disable-use-window-selector-model " ## For consistency with deepvariant cpu. Also increases accuracy. 
+  extra: "--disable-use-window-selector-model " ## For consistency with deepvariant cpu. Also increases accuracy.
 
 
 pbrun_fq2bam:
@@ -378,7 +381,7 @@ svdb_merge:
 svdb_query:
   container: "docker://hydragenetics/svdb:2.6.0"
   db_string:
-    "--db /data/ref_genomes/GRCh38/SweGenSVDBGRCh38/swegen_cnvnator_tiddit_manta.vcf,/data/ref_genomes/GRCh38/gnomAD/gnomad_v2.1_sv.sites.vcf.gz \
+    "--db /beegfs-storage/data/ref_genomes/GRCh38/SweGenSVDBGRCh38/swegen_cnvnator_tiddit_manta.vcf,/beegfs-storage/data/ref_genomes/GRCh38/gnomAD/gnomad_v2.1_sv.sites.vcf.gz \
     --in_frq FRQ,AF --in_occ OCC,AC --out_frq SweGen_AF,gnomAD_AF --out_occ SweGen_OCC,gnomAD_OCC "
 
 

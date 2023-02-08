@@ -1,21 +1,18 @@
 ---
 
+
 default_resources:
   threads: 1
   time: "12:00:00"
-  mem_mb: 6144
-  mem_per_cpu: 6144
+  mem_mb: 3800
+  mem_per_cpu: 3800
   partition: "core"
 
 bwa_mem:
-  mem_mb: 122880
-  mem_per_cpu: 6144
-  threads: 20
-
-bwa_mem_merge:
-  mem_mb: 61440
-  mem_per_cpu: 6144
-  threads: 10
+  mem_mb: 15200
+  mem_per_cpu: 1900
+  threads: 8
+  time: "8:00:00"
 
 bwa_mem_mito:
   mem_mb: 6144
@@ -23,24 +20,26 @@ bwa_mem_mito:
   threads: 2
 
 deepvariant_call_variants:
-  threads: 20
+  mem_mb: 6144
+  threads: 8
 
 deepvariant_make_examples:
-  threads: 40
+  mem_mb: 6144
+  threads: 8
 
 deepvariant_make_examples_peddy:
-  threads: 40
+  mem_mb: 6144
+  threads: 8
 
 deepvariant_postprocess_variants:
-  mem_mb: 36864
-  mem_per_cpu: 36864
+  mem_mb: 6144
 
 expansionhunter:
-  threads: 16
+  threads: 8
 
 fastp_pe:
-  threads: 5
-  mem_mb: 30720
+  threads: 1
+  mem_mb: 6144
   mem_per_cpu: 6144
 
 fastqc:
@@ -73,52 +72,17 @@ gatk_sort_sam:
   mem_per_cpu: 4096
 
 glnexus:
-  threads: 20
-
-mosdepth:
-  mem_mb: 36864
-  threads: 4
-
-mosdepth_bed:
-  mem_mb: 36864
-  threads: 4
-
-pbrun_fq2bam:
-  gres: "--gres=gpu:4"
-  mem_mb: 655360
-  mem_per_cpu: 16384
-  partition: "GPU"
-  threads: 40
-  time: "20:00:00"
-
-pbrun_deepvariant:
-  gres: "--gres=gpu:4"
-  mem_mb: 655360
-  mem_per_cpu: 16384
-  partition: "GPU"
-  threads: 40
-  time: "20:00:00"
-  
-peddy:
   threads: 8
 
-samtools_sort:
-  mem_mb: 61440
-  mem_per_cpu: 6144
-  threads: 10
-
-samtools_view:
-  mem_mb: 61440
-  mem_per_cpu: 6144
-  threads: 10
+peddy:
+  threads: 4
 
 smn_caller:
   threads: 8
 
 spring:
-  mem_mb: 368640
+  mem_mb: 24576
   threads: 8
 
 tiddit:
   threads: 8
-  
