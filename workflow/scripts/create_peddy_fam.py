@@ -41,8 +41,7 @@ def extract_trio_id(col):
 # dtype=str).set_index("Sample_ID", drop=False)
 
 # Might put in some kind of check that SampleSheet.csv is correct
-df = pd.read_csv(snakemake.input[0], header=13,
-                dtype=str).set_index("Sample_ID", drop=False)
+df = pd.read_csv(snakemake.input[0], header=13, dtype=str).set_index("Sample_ID", drop=False)
 
 
 df["Sex"] = df.Description.apply(extract_sex)
@@ -88,4 +87,4 @@ with open(snakemake.output[0], 'w') as pedfile:
 
         sex = get_ped_sex(sample.Sex)
         print(family_id, sample_id, paternal_id, maternal_id,
-                sex, phenotype, sep='\t', file=pedfile )
+              sex, phenotype, sep='\t', file=pedfile)

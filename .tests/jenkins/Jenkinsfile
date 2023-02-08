@@ -36,9 +36,11 @@ pipeline {
                 #git clone https://github.com/clinical-genomics-uppsala/validation_workflow.git
                 #module load nextflow
                 #nextflow run validation_workflow/validate_result.nf
+
              '''
          }
        }
     }
   }
 }
+
