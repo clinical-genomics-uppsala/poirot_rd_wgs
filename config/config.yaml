@@ -106,6 +106,10 @@ fastqc:
   container: "docker://hydragenetics/fastqc:0.11.9"
 
 
+filter_vcf:
+  germline: "config/config_hard_filter_germline.yaml"
+
+
 gatk_collect_wgs_metrics:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
   coverage_cap: 100000
@@ -247,7 +251,6 @@ pbrun_deepvariant:
   extra: ""
 
 
-
 pbrun_fq2bam:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
   extra: ""
@@ -368,6 +371,6 @@ tiddit:
 
 vep:
   container: "docker://hydragenetics/vep:105"
-  vep_cache:  ""
-  mode: "--database"
-  extra: " --assembly GRCh38 --check_existing --pick --af --af_1kg --af_gnomad --max_af "
+  vep_cache:  "/data/ref_genomes/VEP/"
+  mode: --offline --cache
+  extra: " --assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --af --af_1kg --af_gnomad --max_af "

@@ -1,0 +1,5 @@
+filters:
+  germline:
+    description: "Hard filter germline"
+    expression: "(VEP:gnomAD_AF < 0.05)"
+    soft_filter: "False"

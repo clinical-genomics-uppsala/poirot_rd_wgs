@@ -177,6 +177,7 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
     ]
     output_files += ["vcf_final/%s.vcf.gz.tbi" % (sample) for sample in get_samples(samples)]
     output_files += ["vcf_final/%s.vep_annotated.vcf.gz.tbi" % (sample) for sample in get_samples(samples)]
+    output_files += ["vcf_final/%s.vep_annotated.filter.germline.vcf.gz.tbi" % (sample) for sample in get_samples(samples)]
     output_files += [
         "results/%s/spring/%s_%s_%s_%s_%s.spring" % (sample, sample, flowcell, lane, barcode, t)
         for sample in get_samples(samples)

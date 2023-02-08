@@ -71,19 +71,7 @@ module annotation:
 use rule stranger from annotation as annotation_stranger
 
 
-use rule vep from annotation as annotation_vep with:
-    input:
-        vcf="vcf_final/{sample}.vcf.gz",
-        tabix="vcf_final/{sample}.vcf.gz.tbi",
-        cache=config["vep"]["vep_cache"],
-        fasta=config["reference"]["fasta"],
-    output:
-        vcf=temp("vcf_final/{sample}.vep_annotated.vcf"),
-    log:
-        "vcf_final/{sample}.vep_annotated.vcf.log",
-    benchmark:
-        repeat("vcf_final/{sample}.vep_annotated.vcf.benchmark.tsv", config.get("vep", {}).get("benchmark_repeats", 1))
-    threads: config.get("vep", {}).get("threads", config["default_resources"]["threads"])
+use rule vep from annotation as annotation_vep
 
 
 module cnv_sv:
