@@ -349,7 +349,7 @@ rule cp_reviewer:
     input:
         "cnv_sv/reviewer/{sample}_N/",
     output:
-        "results/{sample}/expansionhunter_reviewer/",
+        directory("results/{sample}/expansionhunter_reviewer/"),
     params:
         extra=config.get("cp_reviewer", {}).get("extra", ""),
     log:
