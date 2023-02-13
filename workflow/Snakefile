@@ -88,6 +88,24 @@ module cnv_sv:
 use rule * from cnv_sv as cnv_sv_*
 
 
+use rule automap from cnv_sv as cnv_sv_automap with:
+    input:
+        vcf="parabricks/pbrun_deepvariant/{sample}.vcf",
+    output:
+        pdf=temp("cnv_sv/automap/{sample}/{sample}.HomRegions.pdf"),
+        tsv=temp("cnv_sv/automap/{sample}/{sample}.HomRegions.tsv"),
+        dir=temp("cnv_sv/automap/{sample}/"),
+    log:
+        "cnv_sv/automap/{sample}.output.log",
+    benchmark:
+        repeat(
+            "cnv_sv/automap/{sample}.output.benchmark.tsv",
+            config.get("automap", {}).get("benchmark_repeats", 1)
+        )
+    message:
+        "{rule}: Finding ROH regions cnv_sv/{rule}/{wildcards.sample}.input"
+
+
 use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter
 
 
@@ -142,12 +160,29 @@ use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
             "cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz",
             "cnv_sv/cnvpytor/{sample}_{type}.vcf",
         ],
+    output:
+        vcf=temp("cnv_sv/svdb_merge/{sample}_{type}.merged.vcf"),
+    log:
+        "cnv_sv/svdb_merge/{sample}_{type}.merged.vcf.log",
+    benchmark:
+        repeat(
+            "cnv_sv/svdb_merge/{sample}_{type}.merged.benchmark.tsv",
+            config.get("svdb_merge", {}).get("benchmark_repeats", 1),
+        )
 
 
 use rule svdb_query from cnv_sv as cnv_sv_svdb_query with:
+    input:
+        vcf="cnv_sv/svdb_merge/{sample}_{type}.merged.vcf",
     output:
         vcf=temp("cnv_sv/svdb_query/{sample}_{type}.svdb_query.vcf"),
-
+    log:
+        "cnv_sv/svdb_query/{sample}_{type}.svdb_query.log",
+    benchmark:
+        repeat(
+            "cnv_sv/svdb_query/{sample}_{type}.svdb_query.benchmark.tsv",
+            config.get("svdb_query", {}).get("benchmark_repeats", 1),
+        )
 
 use rule tiddit from cnv_sv as cnv_sv_tiddit with:
     input:
