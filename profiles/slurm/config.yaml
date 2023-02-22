@@ -13,3 +13,4 @@ drmaa-log-dir: "slurm"
 singularity-args: "--cleanenv --bind /beegfs-archive,/beegfs-scratch,/beegfs-storage --disable-cache --nv"
 singularity-prefix: "/projects/wp4/nobackup/singularity_cache/"
 
+# Tips är att lägga till något liknande detta i singularity-kommandot: -B /beegfs-scratch/wp4/Twist_Solid_tmp:/tmp

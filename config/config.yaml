@@ -43,6 +43,13 @@ reference:
 trimmer_software: "fastp_pe"
 
 
+automap:
+  container: "docker://hydragenetics/automap:1.2"
+  build: "hg38"
+  extra: "--DP 10 --minsize 3 --chrX"
+  outdir: "cnv_sv/automap"
+
+
 bwa_mem_mito:
   container: "docker://hydragenetics/bwa_mem:0.7.17"
   extra: "-K 100000000 -v3 -Y"

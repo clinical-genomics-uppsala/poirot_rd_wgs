@@ -116,6 +116,10 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
+        "cnv_sv/automap/%s/%s.HomRegions.tsv" % (sample,sample)
+        for sample in get_samples(samples)
+    ]
+    output_files += [
         "cnv_sv/smn_charts/smn_%s_%s.pdf" % (sample, unit_type)
         for sample in get_samples(samples)
         for unit_type in get_unit_types(units, sample)
