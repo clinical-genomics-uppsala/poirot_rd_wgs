@@ -90,24 +90,7 @@ use rule * from cnv_sv as cnv_sv_*
 
 use rule automap from cnv_sv as cnv_sv_automap with:
     input:
-        vcf="vcf_final/{sample}.vcf",
-    output:
-        pdf=temp("cnv_sv/automap/{sample}/{sample}.HomRegions.pdf"),
-        tsv=temp("cnv_sv/automap/{sample}/{sample}.HomRegions.tsv"),
-        dir=temp("cnv_sv/automap/{sample}/"),
-    params:
-        extra=config.get("automap", {}).get("extra", ""),
-        build=config.get("automap", {}).get("build", ""),
-        outdir=config.get("automap", {}).get("out_dir", ""),
-    log:
-        "cnv_sv/automap/{sample}.output.log",
-    benchmark:
-        repeat(
-            "cnv_sv/automap/{sample}.output.benchmark.tsv",
-            config.get("automap", {}).get("benchmark_repeats", 1)
-        )
-    message:
-        "{rule}: Finding ROH regions cnv_sv/{rule}/{wildcards.sample}.input"
+        vcf="vcf_final/{sample}_{type}.vcf",
 
 
 use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter

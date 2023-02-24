@@ -19,7 +19,7 @@ modules:
   annotation: "v0.2.0"
   compression: "v1.1.0"
   cnv_sv: "e0c3a1c"
-  parabricks: "add_parabricks4"
+  parabricks: "fix_type"
   prealignment: "v0.5.0"
   qc: "develop"
   misc: "v0.1.0"
