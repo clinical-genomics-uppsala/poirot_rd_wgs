@@ -6,14 +6,14 @@ __license__ = "GPL-3"
 
 rule exclude_chrM:
     input:
-        deepvariant_vcf="vcf_final/{sample}_ref.vcf",
+        deepvariant_vcf="vcf_final/{sample}_{type}_ref.vcf",
     output:
-        vcf=temp("vcf_final/{sample}.no_ChrM.vcf"),
+        vcf=temp("vcf_final/{sample}_{type}.no_ChrM.vcf"),
     log:
-        "vcf_final/{sample}.no_ChrM.vcf.log",
+        "vcf_final/{sample}_{type}.no_ChrM.vcf.log",
     benchmark:
         repeat(
-            "vcf_final/{sample}.no_ChrM.vcf.benchmark.tsv",
+            "vcf_final/{sample}_{type}.no_ChrM.vcf.benchmark.tsv",
             config.get("exclude_chrM", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("exclude_chrM", {}).get("threads", config["default_resources"]["threads"])
@@ -38,15 +38,15 @@ rule exclude_chrM:
 
 rule bcftools_concat:
     input:
-        deepvariant_vcf="vcf_final/{sample}.no_ChrM.vcf",
+        deepvariant_vcf="vcf_final/{sample}_{type}.no_ChrM.vcf",
         mutect2_vcf="mitochondrial/gatk_select_variants_final/{sample}_N.vcf",
     output:
-        vcf=temp("vcf_final/{sample}.vcf"),
+        vcf=temp("vcf_final/{sample}_{type}.vcf"),
     log:
-        "vcf_final/{sample}.vcf.log",
+        "vcf_final/{sample}_{type}.vcf.log",
     benchmark:
         repeat(
-            "vcf_final/{sample}.vcf.benchmark.tsv",
+            "vcf_final/{sample}_{type}.vcf.benchmark.tsv",
             config.get("bcftools_concat", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("bcftools_concat", {}).get("threads", config["default_resources"]["threads"])

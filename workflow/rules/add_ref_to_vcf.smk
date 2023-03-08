@@ -6,15 +6,15 @@ __license__ = "GPL-3"
 
 rule vcf_addRef:
     input:
-        vcf="parabricks/pbrun_deepvariant/{sample}.vcf",
+        vcf="parabricks/pbrun_deepvariant/{sample}_{type}.vcf",
         ref=config["reference"]["fasta"],
     output:
-        vcf=temp("vcf_final/{sample}_ref.vcf"),
+        vcf=temp("vcf_final/{sample}_{type}_ref.vcf"),
     log:
-        "vcf_final/{sample}_add_ref.log",
+        "vcf_final/{sample}_{type}_ref.log",
     benchmark:
         repeat(
-            "vcf_final/{sample}_ref.vcf.benchmark.tsv",
+            "vcf_final/{sample}_{type}_ref.vcf.benchmark.tsv",
             config.get("vcf_addRef", {}).get("benchmark_repeats", 1),
         )
     resources:

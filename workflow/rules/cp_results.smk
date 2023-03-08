@@ -6,7 +6,7 @@ __license__ = "GPL-3"
 
 rule cp_vcf_all:
     input:
-        "vcf_final/{sample}.vcf.gz",
+        "vcf_final/{sample}_{type}.vcf.gz",
     output:
         "results/{sample}/{sample}_snv_indels.vcf.gz",
     params:
@@ -37,7 +37,7 @@ rule cp_vcf_all:
 
 rule cp_tbi_all:
     input:
-        "vcf_final/{sample}.vcf.gz.tbi",
+        "vcf_final/{sample}_{type}.vcf.gz.tbi",
     output:
         "results/{sample}/{sample}_snv_indels.vcf.gz.tbi",
     params:
@@ -68,16 +68,16 @@ rule cp_tbi_all:
 
 rule cp_cram_all:
     input:
-        "compression/crumble/{sample}_N.crumble.cram",
+        "compression/crumble/{sample}_{type}.crumble.cram",
     output:
-        "results/{sample}/{sample}_N.crumble.cram",
+        "results/{sample}/{sample}_{type}.crumble.cram",
     params:
         extra=config.get("cp_cram_all", {}).get("extra", ""),
     log:
-        "results/logs/{sample}.cram.log",
+        "results/logs/{sample}_{type}.cram.log",
     benchmark:
         repeat(
-            "results/benchmark/{sample}.cram.benchmark.tsv",
+            "results/benchmark/{sample}_{type}.cram.benchmark.tsv",
             config.get("cp_results", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("cp_results", {}).get("threads", config["default_resources"]["threads"])
@@ -99,16 +99,16 @@ rule cp_cram_all:
 
 rule cp_crai_all:
     input:
-        "compression/crumble/{sample}_N.crumble.cram.crai",
+        "compression/crumble/{sample}_{type}.crumble.cram.crai",
     output:
-        "results/{sample}/{sample}_N.crumble.cram.crai",
+        "results/{sample}/{sample}_{type}.crumble.cram.crai",
     params:
         extra=config.get("cp_cram_all", {}).get("extra", ""),
     log:
-        "results/logs/{sample}.cram_index.log",
+        "results/logs/{sample}_{type}.cram_index.log",
     benchmark:
         repeat(
-            "results/benchmark/{sample}.cram_index.benchmark.tsv",
+            "results/benchmark/{sample}_{type}.cram_index.benchmark.tsv",
             config.get("cp_results", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("cp_results", {}).get("threads", config["default_resources"]["threads"])
@@ -194,14 +194,14 @@ rule cp_smn_json:
     input:
         "cnv_sv/smn_caller/{sample}_{type}.json",
     output:
-        "results/{sample}/SMNCopyNumberCaller/{sample}_{type}.smn_caller.json",
+        "results/{sample}/SMNCopyNumberCaller/{sample}.smn_caller.json",
     params:
         extra=config.get("cp_smn_json", {}).get("extra", ""),
     log:
-        "results/logs/{sample}_{type}.smn_json.log",
+        "results/logs/{sample}.smn_json.log",
     benchmark:
         repeat(
-            "results/benchmark/{sample}_{type}.smn_json.benchmark.tsv",
+            "results/benchmark/{sample}.smn_json.benchmark.tsv",
             config.get("cp_results", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("cp_results", {}).get("threads", config["default_resources"]["threads"])
@@ -225,14 +225,14 @@ rule cp_smn_tsv:
     input:
         "cnv_sv/smn_caller/{sample}_{type}.tsv",
     output:
-        "results/{sample}/SMNCopyNumberCaller/{sample}_{type}.smn_caller.tsv",
+        "results/{sample}/SMNCopyNumberCaller/{sample}.smn_caller.tsv",
     params:
         extra=config.get("cp_smn_tsv", {}).get("extra", ""),
     log:
-        "results/logs/{sample}_{type}.smn_tsv.log",
+        "results/logs/{sample}.smn_tsv.log",
     benchmark:
         repeat(
-            "results/benchmark/{sample}_{type}.smn_tsv.benchmark.tsv",
+            "results/benchmark/{sample}.smn_tsv.benchmark.tsv",
             config.get("cp_results", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("cp_results", {}).get("threads", config["default_resources"]["threads"])
@@ -256,14 +256,14 @@ rule cp_smn_pdf:
     input:
         "cnv_sv/smn_charts/smn_{sample}_{type}.pdf",
     output:
-        "results/{sample}/SMNCopyNumberCaller/{sample}_{type}.smn_charts.pdf",
+        "results/{sample}/SMNCopyNumberCaller/{sample}.smn_charts.pdf",
     params:
         extra=config.get("cp_smn_pdf", {}).get("extra", ""),
     log:
-        "results/logs/{sample}_{type}.smn_pdf.log",
+        "results/logs/{sample}.smn_pdf.log",
     benchmark:
         repeat(
-            "results/benchmark/{sample}_{type}.smn_pdf.benchmark.tsv",
+            "results/benchmark/{sample}.smn_pdf.benchmark.tsv",
             config.get("cp_results", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("cp_results", {}).get("threads", config["default_resources"]["threads"])
@@ -287,14 +287,14 @@ rule cp_coverage:
     input:
         "qc/create_cov_excel/{sample}_{type}.coverage.xlsx",
     output:
-        "results/{sample}/{sample}_{type}.coverage_analysis.xlsx",
+        "results/{sample}/{sample}.coverage_analysis.xlsx",
     params:
         extra=config.get("cp_coverage", {}).get("extra", ""),
     log:
-        "results/logs/{sample}_{type}.coverage.log",
+        "results/logs/{sample}.coverage.log",
     benchmark:
         repeat(
-            "results/benchmark/{sample}_{type}.coverage.benchmark.tsv",
+            "results/benchmark/{sample}.coverage.benchmark.tsv",
             config.get("cp_results", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("cp_results", {}).get("threads", config["default_resources"]["threads"])
@@ -318,14 +318,14 @@ rule cp_stranger:
     input:
         "cnv_sv/stranger/{sample}_{type}.stranger.vcf.gz",
     output:
-        "results/{sample}/{sample}_{type}.expansionhunter_stranger.vcf.gz",
+        "results/{sample}/{sample}.expansionhunter_stranger.vcf.gz",
     params:
         extra=config.get("cp_stranger", {}).get("extra", ""),
     log:
-        "results/logs/{sample}_{type}.stranger.log",
+        "results/logs/{sample}.stranger.log",
     benchmark:
         repeat(
-            "results/benchmark/{sample}_{type}.stranger.benchmark.tsv",
+            "results/benchmark/{sample}.stranger.benchmark.tsv",
             config.get("cp_results", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("cp_results", {}).get("threads", config["default_resources"]["threads"])
@@ -347,7 +347,7 @@ rule cp_stranger:
 
 rule cp_reviewer:
     input:
-        "cnv_sv/reviewer/{sample}_N/",
+        "cnv_sv/reviewer/{sample}_{type}/",
     output:
         directory("results/{sample}/expansionhunter_reviewer/"),
     params:
@@ -380,14 +380,14 @@ rule cp_contamination:
     input:
         "mitochondrial/haplocheck/{sample}_{type}.contamination.html",
     output:
-        "results/{sample}/{sample}_{type}.contamination.html",
+        "results/{sample}/{sample}.contamination.html",
     params:
         extra=config.get("cp_contamination", {}).get("extra", ""),
     log:
-        "results/logs/{sample}_{type}.contamination.log",
+        "results/logs/{sample}.contamination.log",
     benchmark:
         repeat(
-            "results/benchmark/{sample}_{type}.contamination.benchmark.tsv",
+            "results/benchmark/{sample}.contamination.benchmark.tsv",
             config.get("cp_results", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("cp_results", {}).get("threads", config["default_resources"]["threads"])
@@ -411,14 +411,14 @@ rule cp_merge:
     input:
         "cnv_sv/svdb_merge/{sample}_{type}.merged.vcf.gz",
     output:
-        "results/{sample}/cnv_sv/{sample}_{type}.svdb_merged.vcf.gz",
+        "results/{sample}/cnv_sv/{sample}}.svdb_merged.vcf.gz",
     params:
         extra=config.get("cp_merge", {}).get("extra", ""),
     log:
-        "results/logs/{sample}_{type}.merge.log",
+        "results/logs/{sample}.merge.log",
     benchmark:
         repeat(
-            "results/benchmark/{sample}_{type}.merge.benchmark.tsv",
+            "results/benchmark/{sample}.merge.benchmark.tsv",
             config.get("cp_results", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("cp_results", {}).get("threads", config["default_resources"]["threads"])
@@ -442,7 +442,7 @@ rule cp_manta:
     input:
         "cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz",
     output:
-        "results/{sample}/cnv_sv/{sample}_N.manta_diploidSV.vcf.gz",
+        "results/{sample}/cnv_sv/{sample}.manta_diploidSV.vcf.gz",
     params:
         extra=config.get("cp_manta", {}).get("extra", ""),
     log:
@@ -473,14 +473,14 @@ rule cp_tiddit:
     input:
         "cnv_sv/tiddit/{sample}_{type}.vcf.gz",
     output:
-        "results/{sample}/cnv_sv/{sample}_{type}.tiddit.vcf.gz",
+        "results/{sample}/cnv_sv/{sample}.tiddit.vcf.gz",
     params:
         extra=config.get("cp_tiddit", {}).get("extra", ""),
     log:
-        "results/logs/{sample}_{type}.tiddit.log",
+        "results/logs/{sample}.tiddit.log",
     benchmark:
         repeat(
-            "results/benchmark/{sample}_{type}.tiddit.benchmark.tsv",
+            "results/benchmark/{sample}.tiddit.benchmark.tsv",
             config.get("cp_results", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("cp_results", {}).get("threads", config["default_resources"]["threads"])
@@ -504,14 +504,14 @@ rule cp_cnvpytor:
     input:
         "cnv_sv/cnvpytor/{sample}_{type}.vcf.gz",
     output:
-        "results/{sample}/cnv_sv/{sample}_{type}.cnvpytor.vcf.gz",
+        "results/{sample}/cnv_sv/{sample}.cnvpytor.vcf.gz",
     params:
         extra=config.get("cp_cnvpytor", {}).get("extra", ""),
     log:
-        "results/logs/{sample}_{type}.cnvpytor.log",
+        "results/logs/{sample}.cnvpytor.log",
     benchmark:
         repeat(
-            "results/benchmark/{sample}_{type}.cnvpytor.benchmark.tsv",
+            "results/benchmark/{sample}.cnvpytor.benchmark.tsv",
             config.get("cp_results", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("cp_results", {}).get("threads", config["default_resources"]["threads"])
@@ -535,14 +535,14 @@ rule cp_cnvpytor_filter:
     input:
         "cnv_sv/cnvpytor/{sample}_{type}.filtered.vcf.gz",
     output:
-        "results/{sample}/cnv_sv/{sample}_{type}.cnvpytor_filtered.vcf.gz",
+        "results/{sample}/cnv_sv/{sample}.cnvpytor_filtered.vcf.gz",
     params:
         extra=config.get("cp_cnvpytor_filter", {}).get("extra", ""),
     log:
-        "results/logs/{sample}_{type}.cnvpytor_filter.log",
+        "results/logs/{sample}.cnvpytor_filter.log",
     benchmark:
         repeat(
-            "results/benchmark/{sample}_{type}.cnvpytor_filter.benchmark.tsv",
+            "results/benchmark/{sample}.cnvpytor_filter.benchmark.tsv",
             config.get("cp_results", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("cp_results", {}).get("threads", config["default_resources"]["threads"])

@@ -18,10 +18,10 @@ modules:
   alignment: "v0.2.0"
   annotation: "v0.2.0"
   compression: "v1.1.0"
-  cnv_sv: "e0c3a1c"
-  parabricks: "add_parabricks4"
+  cnv_sv: "feat_automap"
+  parabricks: "develop"
   prealignment: "v0.5.0"
-  qc: "develop"
+  qc: "v0.3.0"
   misc: "v0.1.0"
   mitochondrial: "v0.1.0"
   snv_indels: "22b2723"
@@ -377,6 +377,7 @@ tiddit:
 
 
 vep:
-  container: "docker://hydragenetics/vep:108"
+  container: "docker://ensemblorg/ensembl-vep:release_109.3"
   vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
   extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol --af --af_1kg --af_gnomad --max_af"
+  threads: 4
