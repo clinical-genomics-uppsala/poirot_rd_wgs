@@ -18,7 +18,7 @@ modules:
   alignment: "v0.2.0"
   annotation: "v0.2.0"
   compression: "v1.1.0"
-  cnv_sv: "e0c3a1c"
+  cnv_sv: "feat_automap"
   parabricks: "fix_type"
   prealignment: "v0.5.0"
   qc: "develop"
@@ -96,7 +96,7 @@ crumble:
 
 deepvariant:
   container: "docker://google/deepvariant:1.4.0"
-  extra: "--regions=/data/ref_data/peddy/v0.4.8/GRCH38.bed"
+  extra: "--regions=/data/ref_data/peddy/v0.4.8/GRCH38.bed --gvcf"
 
 
 expansionhunter:
@@ -377,6 +377,6 @@ tiddit:
 
 
 vep:
-  container: "docker://hydragenetics/vep:108"
+  container: "docker://ensemblorg/ensembl-vep:release_109.3"
   vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
   extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol --af --af_1kg --af_gnomad --max_af"
