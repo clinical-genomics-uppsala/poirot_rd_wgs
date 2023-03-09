@@ -99,6 +99,9 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         "compression/crumble": ["crumble.cram.crai"],
         "qc/create_cov_excel": ["coverage.xlsx"],
         "mitochondrial/gatk_select_variants_final": ["vcf"],
+        "vcf_final": ["vcf.gz.tbi"],
+        "vcf_final": ["vep_annotated.vcf.gz.tbi"],
+        "vcf_final": ["vep_annotated.filter.germline.vcf.gz.tbi"],
     }
     output_files = [
         "%s/%s_%s.%s" % (prefix, sample, unit_type, suffix)
@@ -116,8 +119,9 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
-        "cnv_sv/automap/%s/%s.HomRegions.tsv" % (sample,sample)
+        "cnv_sv/automap/%s_%s/%s_%s.HomRegions.tsv" % (sample, unit_type, sample, unit_type)
         for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
         "cnv_sv/smn_charts/smn_%s_%s.pdf" % (sample, unit_type)
@@ -179,18 +183,6 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
             ]
         )
     ]
-    output_files += ["vcf_final/%s_%s.pass.vcf.gz.tbi" % (sample, unit_type)
-        for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
-    output_files += ["vcf_final/%s_%s.vcf.gz.tbi" % (sample, unit_type)
-        for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
-    output_files += ["vcf_final/%s_%s.vep_annotated.vcf.gz.tbi" % (sample, unit_type)
-        for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
-    output_files += ["vcf_final/%s_%s.vep_annotated.filter.germline.vcf.gz.tbi" % (sample, unit_type)
-        for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
     output_files += [
         "results/%s/spring/%s_%s_%s_%s_%s.spring" % (sample, sample, flowcell, lane, barcode, t)
         for sample in get_samples(samples)
@@ -237,73 +229,60 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
     ]
 
     output_files += [
-	   "results/%s/cnv_sv/%s_%s.cnvpytor_filtered.vcf.gz" % (sample, sample, unit_type)
+	   "results/%s/cnv_sv/%s.cnvpytor_filtered.vcf.gz" % (sample, sample)
        for sample in get_samples(samples)
-       for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
-	   "results/%s/cnv_sv/%s_%s.cnvpytor.vcf.gz" % (sample, sample, unit_type)
+	   "results/%s/cnv_sv/%s.cnvpytor.vcf.gz" % (sample, sample)
        for sample in get_samples(samples)
-       for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
-    	"results/%s/cnv_sv/%s_%s.tiddit.vcf.gz" % (sample, sample, unit_type)
+    	"results/%s/cnv_sv/%s.tiddit.vcf.gz" % (sample, sample)
         for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
-    	"results/%s/cnv_sv/%s_%s.manta_diploidSV.vcf.gz" % (sample, sample, unit_type)
+    	"results/%s/cnv_sv/%s.manta_diploidSV.vcf.gz" % (sample, sample)
         for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
-    	"results/%s/cnv_sv/%s_%s.svdb_merged.vcf.gz" % (sample, sample, unit_type)
+    	"results/%s/cnv_sv/%s.svdb_merged.vcf.gz" % (sample, sample)
         for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
-    	"results/%s/%s_%s.contamination.html" % (sample, sample, unit_type)
+    	"results/%s/%s.contamination.html" % (sample, sample)
         for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
     	"results/%s/expansionhunter_reviewer/" % (sample)
     	for sample in get_samples(samples)
     ]
     output_files += [
-    	"results/%s/%s_%s.expansionhunter_stranger.vcf.gz" % (sample, sample, unit_type)
+    	"results/%s/%s.expansionhunter_stranger.vcf.gz" % (sample, sample)
         for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
-    	"results/%s/%s_%s.coverage_analysis.xlsx" % (sample, sample, unit_type)
+    	"results/%s/%s.coverage_analysis.xlsx" % (sample, sample)
         for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
-    	"results/%s/SMNCopyNumberCaller/%s_%s.smn_charts.pdf" % (sample, sample, unit_type)
+    	"results/%s/SMNCopyNumberCaller/%s.smn_charts.pdf" % (sample, sample)
         for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
-    	"results/%s/SMNCopyNumberCaller/%s_%s.smn_caller.tsv" % (sample, sample, unit_type)
+    	"results/%s/SMNCopyNumberCaller/%s.smn_caller.tsv" % (sample, sample)
         for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
-    	"results/%s/SMNCopyNumberCaller/%s_%s.smn_caller.json" % (sample, sample, unit_type)
+    	"results/%s/SMNCopyNumberCaller/%s.smn_caller.json" % (sample, sample)
         for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
-    	"results/%s/%s_%s.crumble.cram.crai" % (sample, sample, unit_type)
+    	"results/%s/%s.crumble.cram.crai" % (sample, sample)
         for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
-    	"results/%s/%s_%s.crumble.cram" % (sample, sample, unit_type)
+    	"results/%s/%s.crumble.cram" % (sample, sample)
         for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
     	"results/%s/%s_snv_indels.vcf.gz.tbi" % (sample, sample)

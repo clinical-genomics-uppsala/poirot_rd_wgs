@@ -35,11 +35,11 @@ rule vcf_addRef:
 
 # rule vcf_changeM2MT:
 #     input:
-#         "vcf_final/{sample}_ref.vcf",
+#         "vcf_final/{sample}_{type}_ref.vcf",
 #     output:
-#         vcf=temp("vcf_final/{sample}.vcf"),
+#         vcf=temp("vcf_final/{sample}_{type}.vcf"),
 #     log:
-#         "vcf_final/{sample}_chrMT.log",
+#         "vcf_final/{sample}_{type}_chrMT.log",
 #     resources:
 #         mem_mb=config.get("vcf_changeM2MT", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
 #         mem_per_cpu=config.get("vcf_changeM2MT", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),

@@ -411,7 +411,7 @@ rule cp_merge:
     input:
         "cnv_sv/svdb_merge/{sample}_{type}.merged.vcf.gz",
     output:
-        "results/{sample}/cnv_sv/{sample}}.svdb_merged.vcf.gz",
+        "results/{sample}/cnv_sv/{sample}.svdb_merged.vcf.gz",
     params:
         extra=config.get("cp_merge", {}).get("extra", ""),
     log:
