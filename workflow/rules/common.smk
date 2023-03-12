@@ -100,7 +100,6 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         "qc/create_cov_excel": ["coverage.xlsx"],
         "mitochondrial/gatk_select_variants_final": ["vcf"],
         "vcf_final": ["vcf.gz.tbi"],
-        "vcf_final": ["vep_annotated.vcf.gz.tbi"],
         "vcf_final": ["vep_annotated.filter.germline.vcf.gz.tbi"],
     }
     output_files = [

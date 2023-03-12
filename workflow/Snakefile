@@ -6,7 +6,7 @@ __license__ = "GPL-3"
 
 include: "rules/common.smk"
 include: "rules/add_ref_to_vcf.smk"
-include: "rules/bcftools.smk"
+#include: "rules/bcftools.smk"
 include: "rules/concat_vcfs.smk"
 include: "rules/coverage.smk"
 include: "rules/cp_results.smk"
@@ -23,6 +23,7 @@ rule all:
 
 
 ruleorder: cnv_sv_manta_run_workflow_n > misc_bgzip
+ruleorder: filtering_bcftools_view > misc_bgzip
 ruleorder: misc_samtools_index > cp_crai_all
 ruleorder: misc_tabix > cp_tbi_all
 ruleorder: parabricks_fq2bam > alignment_samtools_index
@@ -76,8 +77,8 @@ use rule vep from annotation as annotation_vep with:
     input:
         cache=config.get("vep", {}).get("vep_cache", ""),
         fasta=config["reference"]["fasta"],
-        tabix="vcf_final/{sample}_{type}.pass.vcf.gz.tbi",
-        vcf="vcf_final/{sample}_{type}.pass.vcf.gz",
+        tabix="vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz.tbi",
+        vcf="vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz",
     output:
         vcf=temp("vcf_final/{sample}_{type}.vep_annotated.vcf"),
     log:
@@ -220,12 +221,20 @@ use rule spring from compression as compression_spring with:
 
 module filtering:
     snakefile:
-        github("hydra-genetics/filtering", path="workflow/Snakefile", tag="b7f4dc3")
+        github("hydra-genetics/filtering", path="workflow/Snakefile",  tag=config["modules"]["filtering"])
     config:
         config
 
 
 use rule * from filtering as filtering_*
+
+
+use rule bcftools_view from filtering as filtering_bcftools_view with:
+    output:
+        vcf=temp("{file}.bcftools_view_pass.vcf.gz"),
+    params:
+        extra=config.get("bcftools_view_pass", {}).get("extra", ""),
+        out_type=config.get("bcftools_view_pass", {}).get("out_type", ""),
 
 
 module misc:

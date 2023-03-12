@@ -19,6 +19,7 @@ modules:
   annotation: "v0.2.0"
   compression: "v1.1.0"
   cnv_sv: "feat_automap"
+  filtering: "feat_bcftoolsview"
   parabricks: "develop"
   prealignment: "v0.5.0"
   qc: "v0.3.0"
@@ -48,6 +49,11 @@ automap:
   build: "hg38"
   extra: "--DP 10 --minsize 3 --chrX"
   outdir: "cnv_sv/automap"
+
+
+bcftools_view_pass:
+  extra: "--apply-filter PASS "
+  out_type: "z"
 
 
 bwa_mem_mito:

@@ -3,4 +3,5 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - bcftools=1.15
+  - bcftools==1.14
+  - snakemake-wrapper-utils==0.2
