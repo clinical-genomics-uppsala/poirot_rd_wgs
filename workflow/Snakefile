@@ -231,7 +231,7 @@ use rule * from filtering as filtering_*
 
 use rule bcftools_view from filtering as filtering_bcftools_view with:
     output:
-        vcf=temp("{file}.bcftools_view_pass.vcf.gz"),
+        vcf=temp("vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz"),
     params:
         extra=config.get("bcftools_view_pass", {}).get("extra", ""),
         out_type=config.get("bcftools_view_pass", {}).get("out_type", ""),
@@ -459,3 +459,17 @@ use rule deepvariant from snv_indels as snv_indels_deepvariant with:
     output:
         gvcf=temp("snv_indels/deepvariant/{sample}_{type}.g.vcf"),
         vcf=temp("snv_indels/deepvariant/{sample}_{type}.vcf"),
+
+
+use rule fix_af from snv_indels as snv_indels_fix_af with:
+    input:
+        vcf="parabricks/pbrun_deepvariant/{sample}_{type}.vcf",
+    output:
+        vcf=temp("parabricks/pbrun_deepvariant/{sample}_{type}.fix_af.vcf"),
+    log:
+        "parabricks/pbrun_deepvariant/{sample}_{type}.fix_af.vcf.log",
+    benchmark:
+        repeat(
+            "parabricks/pbrun_deepvariant/{sample}_{type}.fix_af.vcf.benchmark.tsv",
+            config.get("fix_af", {}).get("benchmark_repeats", 1),
+        )
