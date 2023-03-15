@@ -99,7 +99,6 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         "compression/crumble": ["crumble.cram.crai"],
         "qc/create_cov_excel": ["coverage.xlsx"],
         "mitochondrial/gatk_select_variants_final": ["vcf"],
-        "vcf_final": ["vcf.gz.tbi"],
         "vcf_final": ["vep_annotated.filter.germline.vcf.gz.tbi"],
     }
     output_files = [
@@ -289,6 +288,14 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
     ]
     output_files += [
     	"results/%s/%s_snv_indels.vcf.gz" % (sample, sample)
+        for sample in get_samples(samples)
+    ]
+    output_files += [
+    	"results/%s/%s_snv_indels.filtered.vcf.gz.tbi" % (sample, sample)
+        for sample in get_samples(samples)
+    ]
+    output_files += [
+    	"results/%s/%s_snv_indels.filtered.vcf.gz" % (sample, sample)
         for sample in get_samples(samples)
     ]
     return output_files

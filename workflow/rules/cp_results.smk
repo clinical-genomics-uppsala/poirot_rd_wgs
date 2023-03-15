@@ -6,7 +6,7 @@ __license__ = "GPL-3"
 
 rule cp_vcf_all:
     input:
-        "vcf_final/{sample}_{type}.vcf.gz",
+        "vcf_final/{sample}_N.vcf.gz",
     output:
         "results/{sample}/{sample}_snv_indels.vcf.gz",
     params:
@@ -37,9 +37,71 @@ rule cp_vcf_all:
 
 rule cp_tbi_all:
     input:
-        "vcf_final/{sample}_{type}.vcf.gz.tbi",
+        "vcf_final/{sample}_N.vcf.gz.tbi",
     output:
         "results/{sample}/{sample}_snv_indels.vcf.gz.tbi",
+    params:
+        extra=config.get("cp_tbi_all", {}).get("extra", ""),
+    log:
+        "results/logs/{sample}.snv_indels_index.log",
+    benchmark:
+        repeat(
+            "results/benchmark/{sample}.snv_indels_index.benchmark.tsv",
+            config.get("cp_results", {}).get("benchmark_repeats", 1),
+        )
+    threads: config.get("cp_results", {}).get("threads", config["default_resources"]["threads"])
+    resources:
+        mem_mb=config.get("cp_results", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
+        mem_per_cpu=config.get("cp_results", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
+        partition=config.get("cp_results", {}).get("partition", config["default_resources"]["partition"]),
+        threads=config.get("cp_results", {}).get("threads", config["default_resources"]["threads"]),
+        time=config.get("cp_results", {}).get("time", config["default_resources"]["time"]),
+    container:
+        config.get("cp_results", {}).get("container", config["default_container"])
+    conda:
+        "../envs/cp_results.yaml"
+    message:
+        "{rule}: Move index for snv_indel final vcf file to result folder for transfer to hospital"
+    shell:
+        "cp {input} {output}"
+
+
+rule cp_vcf_filt:
+    input:
+        "vcf_final/{sample}_N.vep_annotated.filter.germline.vcf.gz",
+    output:
+        "results/{sample}/{sample}_snv_indels.filtered.vcf.gz",
+    params:
+        extra=config.get("cp_results", {}).get("extra", ""),
+    log:
+        "results/logs/{sample}.snv_indels.log",
+    benchmark:
+        repeat(
+            "results/benchmark/{sample}.snv_indels.benchmark.tsv",
+            config.get("cp_vcf_all", {}).get("benchmark_repeats", 1),
+        )
+    threads: config.get("cp_results", {}).get("threads", config["default_resources"]["threads"])
+    resources:
+        mem_mb=config.get("cp_results", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
+        mem_per_cpu=config.get("cp_results", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
+        partition=config.get("cp_results", {}).get("partition", config["default_resources"]["partition"]),
+        threads=config.get("cp_results", {}).get("threads", config["default_resources"]["threads"]),
+        time=config.get("cp_results", {}).get("time", config["default_resources"]["time"]),
+    container:
+        config.get("cp_results", {}).get("container", config["default_container"])
+    conda:
+        "../envs/cp_results.yaml"
+    message:
+        "{rule}: Move snv_indel final vcf file to result folder for transfer to hospital"
+    shell:
+        "cp {input} {output}"
+
+
+rule cp_tbi_filt:
+    input:
+        "vcf_final/{sample}_N.vep_annotated.filter.germline.vcf.gz.tbi",
+    output:
+        "results/{sample}/{sample}_snv_indels.filtered.vcf.gz.tbi",
     params:
         extra=config.get("cp_tbi_all", {}).get("extra", ""),
     log:
@@ -192,7 +254,7 @@ rule cp_spring:
 
 rule cp_smn_json:
     input:
-        "cnv_sv/smn_caller/{sample}_{type}.json",
+        "cnv_sv/smn_caller/{sample}_N.json",
     output:
         "results/{sample}/SMNCopyNumberCaller/{sample}.smn_caller.json",
     params:
@@ -223,7 +285,7 @@ rule cp_smn_json:
 
 rule cp_smn_tsv:
     input:
-        "cnv_sv/smn_caller/{sample}_{type}.tsv",
+        "cnv_sv/smn_caller/{sample}_N.tsv",
     output:
         "results/{sample}/SMNCopyNumberCaller/{sample}.smn_caller.tsv",
     params:
@@ -254,7 +316,7 @@ rule cp_smn_tsv:
 
 rule cp_smn_pdf:
     input:
-        "cnv_sv/smn_charts/smn_{sample}_{type}.pdf",
+        "cnv_sv/smn_charts/smn_{sample}_N.pdf",
     output:
         "results/{sample}/SMNCopyNumberCaller/{sample}.smn_charts.pdf",
     params:
@@ -285,7 +347,7 @@ rule cp_smn_pdf:
 
 rule cp_coverage:
     input:
-        "qc/create_cov_excel/{sample}_{type}.coverage.xlsx",
+        "qc/create_cov_excel/{sample}_N.coverage.xlsx",
     output:
         "results/{sample}/{sample}.coverage_analysis.xlsx",
     params:
@@ -316,7 +378,7 @@ rule cp_coverage:
 
 rule cp_stranger:
     input:
-        "cnv_sv/stranger/{sample}_{type}.stranger.vcf.gz",
+        "cnv_sv/stranger/{sample}_N.stranger.vcf.gz",
     output:
         "results/{sample}/{sample}.expansionhunter_stranger.vcf.gz",
     params:
@@ -347,7 +409,7 @@ rule cp_stranger:
 
 rule cp_reviewer:
     input:
-        "cnv_sv/reviewer/{sample}_{type}/",
+        "cnv_sv/reviewer/{sample}_N/",
     output:
         directory("results/{sample}/expansionhunter_reviewer/"),
     params:
@@ -378,7 +440,7 @@ rule cp_reviewer:
 
 rule cp_contamination:
     input:
-        "mitochondrial/haplocheck/{sample}_{type}.contamination.html",
+        "mitochondrial/haplocheck/{sample}_N.contamination.html",
     output:
         "results/{sample}/{sample}.contamination.html",
     params:
@@ -409,7 +471,7 @@ rule cp_contamination:
 
 rule cp_merge:
     input:
-        "cnv_sv/svdb_merge/{sample}_{type}.merged.vcf.gz",
+        "cnv_sv/svdb_merge/{sample}_N.merged.vcf.gz",
     output:
         "results/{sample}/cnv_sv/{sample}.svdb_merged.vcf.gz",
     params:
@@ -471,7 +533,7 @@ rule cp_manta:
 
 rule cp_tiddit:
     input:
-        "cnv_sv/tiddit/{sample}_{type}.vcf.gz",
+        "cnv_sv/tiddit/{sample}_N.vcf.gz",
     output:
         "results/{sample}/cnv_sv/{sample}.tiddit.vcf.gz",
     params:
@@ -502,7 +564,7 @@ rule cp_tiddit:
 
 rule cp_cnvpytor:
     input:
-        "cnv_sv/cnvpytor/{sample}_{type}.vcf.gz",
+        "cnv_sv/cnvpytor/{sample}_N.vcf.gz",
     output:
         "results/{sample}/cnv_sv/{sample}.cnvpytor.vcf.gz",
     params:
@@ -533,7 +595,7 @@ rule cp_cnvpytor:
 
 rule cp_cnvpytor_filter:
     input:
-        "cnv_sv/cnvpytor/{sample}_{type}.filtered.vcf.gz",
+        "cnv_sv/cnvpytor/{sample}_N.filtered.vcf.gz",
     output:
         "results/{sample}/cnv_sv/{sample}.cnvpytor_filtered.vcf.gz",
     params:

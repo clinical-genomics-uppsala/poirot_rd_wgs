@@ -53,7 +53,7 @@ automap:
 
 bcftools_view_pass:
   extra: "--apply-filter PASS "
-  out_type: "v"
+  out_type: "z"
 
 
 bwa_mem_mito:

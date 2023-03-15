@@ -6,7 +6,6 @@ __license__ = "GPL-3"
 
 include: "rules/common.smk"
 include: "rules/add_ref_to_vcf.smk"
-#include: "rules/bcftools.smk"
 include: "rules/concat_vcfs.smk"
 include: "rules/coverage.smk"
 include: "rules/cp_results.smk"
@@ -23,6 +22,7 @@ rule all:
 
 
 ruleorder: cnv_sv_manta_run_workflow_n > misc_bgzip
+ruleorder: cp_tbi_filt > misc_tabix
 ruleorder: filtering_bcftools_view > misc_bgzip
 ruleorder: misc_samtools_index > cp_crai_all
 ruleorder: misc_tabix > cp_tbi_all
@@ -77,8 +77,8 @@ use rule vep from annotation as annotation_vep with:
     input:
         cache=config.get("vep", {}).get("vep_cache", ""),
         fasta=config["reference"]["fasta"],
-        tabix="vcf_final/{sample}_{type}.bcftools_view_pass.fix_af.vcf.gz.tbi",
-        vcf="vcf_final/{sample}_{type}.bcftools_view_pass.fix_af.vcf.gz",
+        tabix="vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz.tbi",
+        vcf="vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz",
     output:
         vcf=temp("vcf_final/{sample}_{type}.vep_annotated.vcf"),
     log:
@@ -231,7 +231,7 @@ use rule * from filtering as filtering_*
 
 use rule bcftools_view from filtering as filtering_bcftools_view with:
     output:
-        vcf=temp("vcf_final/pbrun_deepvariant/{sample}_{type}.bcftools_view_pass.vcf"),
+        vcf=temp("vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz"),
     params:
         extra=config.get("bcftools_view_pass", {}).get("extra", ""),
         out_type=config.get("bcftools_view_pass", {}).get("out_type", ""),
@@ -463,13 +463,26 @@ use rule deepvariant from snv_indels as snv_indels_deepvariant with:
 
 use rule fix_af from snv_indels as snv_indels_fix_af with:
     input:
-        vcf="vcf_final/pbrun_deepvariant/{sample}_{type}.bcftools_view_pass.vcf",
+        vcf="parabricks/pbrun_deepvariant/{sample}_{type}.vcf",
     output:
-        vcf=temp("vcf_final/{sample}_{type}.bcftools_view_pass.fix_af.vcf"),
+        vcf=temp("parabricks/pbrun_deepvariant/{sample}_{type}.fix_af.vcf"),
     log:
         "parabricks/pbrun_deepvariant/{sample}_{type}.fix_af.vcf.log",
     benchmark:
         repeat(
             "parabricks/pbrun_deepvariant/{sample}_{type}.fix_af.vcf.benchmark.tsv",
+            config.get("fix_af", {}).get("benchmark_repeats", 1),
+        )
+
+use rule fix_af from snv_indels as snv_indels_chrM_fix_af with:
+    input:
+        vcf="mitochondrial/gatk_select_variants_final/{sample}_{type}.vcf",
+    output:
+        vcf=temp("mitochondrial/gatk_select_variants_final/{sample}_{type}.fix_af.vcf"),
+    log:
+        "mitochondrial/gatk_select_variants_final/{sample}_{type}.fix_af.vcf.log",
+    benchmark:
+        repeat(
+            "mitochondrial/gatk_select_variants_final/{sample}_{type}.fix_af.vcf.benchmark.tsv",
             config.get("fix_af", {}).get("benchmark_repeats", 1),
         )
