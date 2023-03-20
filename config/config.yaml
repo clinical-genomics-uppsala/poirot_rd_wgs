@@ -25,7 +25,7 @@ modules:
   qc: "v0.3.0"
   misc: "v0.1.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "fix-af_fix"
+  snv_indels: "develop"
 
 
 reference:

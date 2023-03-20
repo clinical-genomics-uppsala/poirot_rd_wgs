@@ -275,12 +275,14 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         for sample in get_samples(samples)
     ]
     output_files += [
-    	"results/%s/%s.crumble.cram.crai" % (sample, sample)
+    	"results/%s/%s_%s.crumble.cram.crai" % (sample, sample, unit_type)
         for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
-    	"results/%s/%s.crumble.cram" % (sample, sample)
+    	"results/%s/%s_%s.crumble.cram" % (sample, sample, unit_type)
         for sample in get_samples(samples)
+        for unit_type in get_unit_types(units, sample)
     ]
     output_files += [
     	"results/%s/%s_snv_indels.vcf.gz.tbi" % (sample, sample)
