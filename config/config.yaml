@@ -51,10 +51,12 @@ automap:
   outdir: "cnv_sv/automap"
 
 
+bcftools_view_biallelic:
+  extra: "-m2 -M2 -v snps"
+
+
 bcftools_view_pass:
   extra: "--apply-filter PASS "
-  out_type: "z"
-
 
 bwa_mem_mito:
   container: "docker://hydragenetics/bwa_mem:0.7.17"

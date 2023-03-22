@@ -229,12 +229,19 @@ module filtering:
 use rule * from filtering as filtering_*
 
 
-use rule bcftools_view from filtering as filtering_bcftools_view with:
+use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
     output:
         vcf=temp("vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz"),
     params:
         extra=config.get("bcftools_view_pass", {}).get("extra", ""),
         out_type=config.get("bcftools_view_pass", {}).get("out_type", ""),
+
+use rule bcftools_view from filtering as filtering_bcftools_view_biallelic with:
+    output:
+        vcf=temp("vcf_final/{sample}_{type}.bcftools_view_biallelic.vcf.gz"),
+    params:
+        extra=config.get("bcftools_view_biallelic", {}).get("extra", ""),
+        out_type=config.get("bcftools_view_biallelic", {}).get("out_type", ""),
 
 
 module misc:
