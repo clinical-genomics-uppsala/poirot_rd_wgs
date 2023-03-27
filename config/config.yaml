@@ -25,7 +25,7 @@ modules:
   qc: "v0.3.0"
   misc: "v0.1.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "develop"
+  snv_indels: "72fd295"
 
 
 reference:
@@ -57,6 +57,7 @@ bcftools_view_biallelic:
 
 bcftools_view_pass:
   extra: "--apply-filter PASS "
+
 
 bwa_mem_mito:
   container: "docker://hydragenetics/bwa_mem:0.7.17"
@@ -102,9 +103,30 @@ crumble:
   extra: "-O CRAM"
 
 
-deepvariant:
-  container: "docker://google/deepvariant:1.4.0"
-  extra: "--regions=/data/ref_data/peddy/v0.4.8/GRCH38.bed"
+deepvariant_call_variants:
+  container: "docker://hydragenetics/deepvariant:1.4.0"
+  model_dir: "/opt/models/wgs"
+
+
+deepvariant_make_examples:
+  container: "docker://hydragenetics/deepvariant:1.4.0"
+  model: "WGS"
+
+
+deepvariant_make_examples_peddy:
+  container: "docker://hydragenetics/deepvariant:1.4.0"
+  model: "WGS"
+  extra: "--regions /beegfs-storage/data/ref_data/peddy/v0.4.8/GRCH38.bed "
+
+
+deepvariant_postprocess_variants:
+  container: "docker://hydragenetics/deepvariant:1.4.0"
+  vcf_type: "vcf"
+
+
+deepvariant_postprocess_variants_peddy:
+  container: "docker://hydragenetics/deepvariant:1.4.0"
+  vcf_type: "gvcf"
 
 
 expansionhunter:

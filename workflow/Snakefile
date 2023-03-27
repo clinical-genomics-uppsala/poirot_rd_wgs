@@ -231,17 +231,16 @@ use rule * from filtering as filtering_*
 
 use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
     output:
-        vcf=temp("vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz"),
+        vcf=temp("{file}.bcftools_view_pass.vcf.gz"),
     params:
         extra=config.get("bcftools_view_pass", {}).get("extra", ""),
-        out_type=config.get("bcftools_view_pass", {}).get("out_type", ""),
 
-use rule bcftools_view from filtering as filtering_bcftools_view_biallelic with:
-    output:
-        vcf=temp("vcf_final/{sample}_{type}.bcftools_view_biallelic.vcf.gz"),
-    params:
-        extra=config.get("bcftools_view_biallelic", {}).get("extra", ""),
-        out_type=config.get("bcftools_view_biallelic", {}).get("out_type", ""),
+
+#use rule bcftools_view from filtering as filtering_bcftools_view_biallelic with:
+#    output:
+#        vcf=temp("{file}.bcftools_view_biallelic.vcf.gz"),
+#    params:
+#        extra=config.get("bcftools_view_biallelic", {}).get("extra", ""),
 
 
 module misc:
@@ -458,14 +457,115 @@ module snv_indels:
         config
 
 
-use rule deepvariant from snv_indels as snv_indels_deepvariant with:
+use rule deepvariant_make_examples from snv_indels as snv_indels_deepvariant_make_examples with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        bai="parabricks/pbrun_fq2bam/{sample}_{type}.bam.bai",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
         ref=config.get("reference", {}).get("fasta", ""),
     output:
-        gvcf=temp("snv_indels/deepvariant/{sample}_{type}.g.vcf"),
+        examples_dir=temp(directory("snv_indels/deepvariant/{sample}_{type}/")),
+    log:
+        "snv_indels/deepvariant/{sample}_{type}_make_examples.output.log",
+    benchmark:
+        repeat(
+            "snv_indels/deepvariant/{sample}_{type}_make_examples.output.benchmark.tsv",
+            config.get("deepvariant_make_examples", {}).get("benchmark_repeats", 1),
+        )
+    message:
+        "Call variants with deepvariant on {wildcards.sample}_{wildcards.type}"
+
+
+use rule deepvariant_call_variants from snv_indels as snv_indels_deepvariant_call_variants with:
+    input:
+        examples_dir="snv_indels/deepvariant/{sample}_{type}/",
+    output:
+        outfile=temp("snv_indels/deepvariant/{sample}_{type}/call_variants_output.tfrecord.gz"),
+    log:
+        "snv_indels/deepvariant/{sample}_{type}_call_variants.output.log",
+    benchmark:
+        repeat(
+            "snv_indels/deepvariant/{sample}_{type}_call_variants.output.benchmark.tsv",
+            config.get("deepvariant_call_variants", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule deepvariant_postprocess_variants from snv_indels as snv_indels_deepvariant_postprocess_variants with:
+    input:
+        infile="snv_indels/deepvariant/{sample}_{type}/call_variants_output.tfrecord.gz",
+        ref=config.get("reference", {}).get("fasta", ""),
+    output:
         vcf=temp("snv_indels/deepvariant/{sample}_{type}.vcf"),
+    log:
+        "snv_indels/deepvariant/{sample}_{type}_postprocess_variants.output.log",
+    benchmark:
+        repeat(
+            "snv_indels/deepvariant/{sample}_{type}_postprocess_variants.output.benchmark.tsv",
+            config.get("deepvariant_postprocess_variants", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule deepvariant_make_examples from snv_indels as snv_indels_deepvariant_make_examples_peddy with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
+        ref=config.get("reference", {}).get("fasta", ""),
+    params:
+        extra=lambda wildcards, output: get_make_example_args(
+            wildcards,
+            output,
+            "deepvariant_make_examples_peddy",
+            config.get("deepvariant_postprocess_variants_peddy", {}).get("vcf_type", "vcf"),
+        ),
+        seq_num=config.get("deepvariant_make_examples", {}).get("threads", config["default_resources"]["threads"]) - 1,
+        mkdir=lambda wildcards, output: "mkdir -p {}".format(output.examples_dir),
+    output:
+        examples_dir=temp(directory("snv_indels/deepvariant_peddy/{sample}_{type}/")),
+    log:
+        "snv_indels/deepvariant_peddy/{sample}_{type}_make_examples.output.log",
+    benchmark:
+        repeat(
+            "snv_indels/deepvariant_peddy/{sample}_{type}_make_examples.output.benchmark.tsv",
+            config.get("deepvariant_make_examples_peddy", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule deepvariant_call_variants from snv_indels as snv_indels_deepvariant_call_variants_peddy with:
+    input:
+        examples_dir="snv_indels/deepvariant_peddy/{sample}_{type}/",
+    output:
+        outfile=temp("snv_indels/deepvariant_peddy/{sample}_{type}/call_variants_output.tfrecord.gz"),
+    log:
+        "snv_indels/deepvariant_peddy/{sample}_{type}_call_variants.output.log",
+    benchmark:
+        repeat(
+            "snv_indels/deepvariant_peddy/{sample}_{type}_call_variants.output.benchmark.tsv",
+            config.get("deepvariant_call_variants", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule deepvariant_postprocess_variants from snv_indels as snv_indels_deepvariant_postprocess_variants_peddy with:
+    input:
+        examples_dir="snv_indels/deepvariant_peddy/{sample}_{type}/",
+        infile="snv_indels/deepvariant_peddy/{sample}_{type}/call_variants_output.tfrecord.gz",
+        ref=config.get("reference", {}).get("fasta", ""),
+    params:
+        extra=lambda wildcards, input, output: get_postprocess_variants_args(
+            wildcards,
+            input,
+            output,
+            "deepvariant_make_examples",
+            config.get("deepvariant_postprocess_variants", {}).get("extra", ""),
+        ),
+    output:
+        gvcf=temp("snv_indels/deepvariant_peddy/{sample}_{type}.g.vcf"),
+        vcf=temp("snv_indels/deepvariant_peddy/{sample}_{type}.vcf"),
+    log:
+        "snv_indels/deepvariant_peddy/{sample}_{type}_postprocess_variants.output.log",
+    benchmark:
+        repeat(
+            "snv_indels/deepvariant_peddy/{sample}_{type}_postprocess_variants.output.benchmark.tsv",
+            config.get("deepvariant_postprocess_variants_peddy", {}).get("benchmark_repeats", 1),
+        )
 
 
 use rule fix_af from snv_indels as snv_indels_fix_af with:
