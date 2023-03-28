@@ -19,7 +19,7 @@ modules:
   annotation: "v0.2.0"
   compression: "v1.1.0"
   cnv_sv: "develop"
-  filtering: "develop"
+  filtering: "bcftools_dep"
   parabricks: "develop"
   prealignment: "v0.5.0"
   qc: "v0.3.0"
@@ -347,21 +347,21 @@ sample_order_for_multiqc:
 
 
 samtools_stats:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
   threads: 3
   params:
     extra: " --threads 3 "
 
 
 samtools_idxstats:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
   threads: 3
   params:
     extra: " --threads 3 "
 
 
 samtools:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
 
 
 smn_caller:
@@ -399,7 +399,7 @@ svdb_query:
 
 
 tabix:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
 
 
 tiddit:
