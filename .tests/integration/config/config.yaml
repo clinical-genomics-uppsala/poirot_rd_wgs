@@ -3,15 +3,15 @@
 
 resources: "config/resources.yaml"
 samples: "config/samples.tsv"
-samples_with_trio_sex: "config/SampleSheet.csv"
+samples_with_trio_sex: "config/SampleSheet.tsv"
 units: "config/units.tsv"
 
 
 default_container: "docker://hydragenetics/common:0.1.9"
 
 
-# programdir:
-#   dir: "/home/padco251/expansionhunter/padraic_testing/Poirot_RD-WGS/workflow"
+programdir:
+  dir: "/home/padco251/expansionhunter/padraic_testing/Poirot_RD-WGS/workflow"
 
 
 modules:
@@ -29,19 +29,26 @@ modules:
 
 
 reference:
-  coverage_bed: "reference/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
-  design_bed: "reference/homo_sapiens.wgs.bed"
-  exome_bed: "reference/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
-  exome_intervals: "reference/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"
-  fasta: "reference/homo_sapiens.fasta"
-  fai: "reference/homo_sapiens.fasta.fai"
-  genepanels: "reference/genepanels.list"
-  genome_dir: "reference/homo_sapiens_star"
-  sites: "reference/homo_sapiens.known_indels.vcf.gz"
-  wgs_intervals: "reference/homo_sapiens.wgs.interval_list"
+  coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
+  design_bed: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
+  exome_bed: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
+  exome_intervals: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"
+  fasta: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta"
+  fai: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.fai"
+  genepanels: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/genepanels.list"
+  genome_dir: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens_star"
+  sites: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.known_indels.vcf.gz"
+  wgs_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.interval_list"
 
 
 trimmer_software: "fastp_pe"
+
+
+automap:
+  container: "docker://hydragenetics/automap:1.2"
+  build: "hg38"
+  extra: "--DP 10 --minsize 3 --chrX"
+  outdir: "cnv_sv/automap"
 
 
 bcftools_view_biallelic:
@@ -58,20 +65,20 @@ bwa_mem_mito:
   container: "docker://hydragenetics/bwa_mem:0.7.17"
   extra: "-K 100000000 -v3 -Y"
   amb:
-    mt: "reference/Homo_sapiens_assembly38.chrM.fasta.amb"
-    mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.amb"
+    mt: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.amb"
+    mt_shifted: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.amb"
   ann:
-    mt: "reference/Homo_sapiens_assembly38.chrM.fasta.ann"
-    mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.ann"
+    mt: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.ann"
+    mt_shifted: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.ann"
   bwt:
-    mt: "reference/Homo_sapiens_assembly38.chrM.fasta.bwt"
-    mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.bwt"
+    mt: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.bwt"
+    mt_shifted: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.bwt"
   pac:
-    mt: "reference/Homo_sapiens_assembly38.chrM.fasta.pac"
-    mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.pac"
+    mt: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.pac"
+    mt_shifted: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.pac"
   sa:
-    mt: "reference/Homo_sapiens_assembly38.chrM.fasta.sa"
-    mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.sa"
+    mt: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.sa"
+    mt_shifted: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.sa"
 
 
 cnvpytor_readdepth:
@@ -98,14 +105,35 @@ crumble:
   extra: "-O CRAM"
 
 
-deepvariant:
-  container: "docker://google/deepvariant:1.4.0"
-  extra: "--regions=reference/GRCH38.bed"
+deepvariant_call_variants:
+  container: "docker://hydragenetics/deepvariant:1.4.0"
+  model_dir: "/opt/models/wgs"
+
+
+deepvariant_make_examples:
+  container: "docker://hydragenetics/deepvariant:1.4.0"
+  model: "WGS"
+
+
+deepvariant_make_examples_peddy:
+  container: "docker://hydragenetics/deepvariant:1.4.0"
+  model: "WGS"
+  extra: "--regions /beegfs-storage/data/ref_data/peddy/v0.4.8/GRCH38.bed "
+
+
+deepvariant_postprocess_variants:
+  container: "docker://hydragenetics/deepvariant:1.4.0"
+  vcf_type: "vcf"
+
+
+deepvariant_postprocess_variants_peddy:
+  container: "docker://hydragenetics/deepvariant:1.4.0"
+  vcf_type: "gvcf"
 
 
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
-  variant_catalog: "reference/variant_catalog.json"
+  variant_catalog: "/data/ref_data/expansionhunter/v5.0.0/grch38/variant_catalog.json"
 
 
 fastp_pe:
@@ -115,6 +143,10 @@ fastp_pe:
 
 fastqc:
   container: "docker://hydragenetics/fastqc:0.11.9"
+
+
+filter_vcf:
+  germline: "config/config_hard_filter_germline.yaml"
 
 
 gatk_collect_wgs_metrics:
@@ -137,7 +169,7 @@ gatk_left_align_and_trim_variants:
 
 gatk_lift_over_vcf:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
-  shift_back_chain: "reference/ShiftBack.chain"
+  shift_back_chain: "/data/ref_data/gatk_mito/ShiftBack.chain"
 
 
 gatk_mark_duplicates:
@@ -159,8 +191,8 @@ gatk_merge_stats:
 gatk_mutect2:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
   interval:
-    mt: "reference/non_control_region.chrM.interval_list"
-    mt_shifted: "reference/control_region_shifted.chrM.interval_list"
+    mt: "/data/ref_data/gatk_mito/non_control_region.chrM.interval_list"
+    mt_shifted: "/data/ref_data/gatk_mito/control_region_shifted.chrM.interval_list"
   max_reads_per_alignment_start: 75
 
 
@@ -194,7 +226,7 @@ gatk_variant_filtration:
 
 
 glnexus:
-  bedfile: "reference/GRCH38.bed"
+  bedfile: "/data/ref_data/peddy/v0.4.8/GRCH38.bed"
   container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.3"
 
 
@@ -247,16 +279,15 @@ multiqc:
 
 
 mt_reference:
-  mt: "reference/Homo_sapiens_assembly38.chrM.fasta"
-  mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta"
-  blacklist: reference/blacklist_sites.hg38.chrM.bed
+  mt: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta"
+  mt_shifted: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta"
+  blacklist: /data/ref_data/gatk_mito/blacklist_sites.hg38.chrM.bed
 
 
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-  deepvariant_model: "reference/deepvariant.eng"
+  deepvariant_model: "/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng"
   extra: ""
-
 
 
 pbrun_fq2bam:
@@ -318,21 +349,21 @@ sample_order_for_multiqc:
 
 
 samtools_stats:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
   threads: 3
   params:
     extra: " --threads 3 "
 
 
 samtools_idxstats:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
   threads: 3
   params:
     extra: " --threads 3 "
 
 
 samtools:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
 
 
 smn_caller:
@@ -350,7 +381,7 @@ spring:
 
 stranger:
   container: "docker://hydragenetics/stranger:0.8.1"
-  catalog: "reference/variant_catalog_grch38.json"
+  catalog: "/data/ref_data/stranger/v0.8.1/variant_catalog_grch38.json"
 
 
 svdb_merge:
@@ -370,7 +401,7 @@ svdb_query:
 
 
 tabix:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
 
 
 tiddit:
