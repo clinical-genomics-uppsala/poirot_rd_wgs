@@ -25,7 +25,7 @@ ruleorder: cnv_sv_manta_run_workflow_n > misc_bgzip
 ruleorder: cp_crai_all > misc_samtools_index
 ruleorder: cp_vcf_filt > misc_bgzip
 ruleorder: cp_tbi_filt > misc_tabix
-ruleorder: filtering_bcftools_view > misc_bgzip
+ruleorder: filtering_bcftools_view_pass > misc_bgzip
 ruleorder: misc_tabix > cp_tbi_all
 ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: qc_mosdepth > misc_bgzip
