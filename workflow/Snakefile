@@ -184,6 +184,7 @@ use rule svdb_query from cnv_sv as cnv_sv_svdb_query with:
             config.get("svdb_query", {}).get("benchmark_repeats", 1),
         )
 
+
 use rule tiddit from cnv_sv as cnv_sv_tiddit with:
     input:
         bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
@@ -221,7 +222,7 @@ use rule spring from compression as compression_spring with:
 
 module filtering:
     snakefile:
-        github("hydra-genetics/filtering", path="workflow/Snakefile",  tag=config["modules"]["filtering"])
+        github("hydra-genetics/filtering", path="workflow/Snakefile", tag=config["modules"]["filtering"])
     config:
         config
 
@@ -236,7 +237,7 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
         extra=config.get("bcftools_view_pass", {}).get("extra", ""),
 
 
-#use rule bcftools_view from filtering as filtering_bcftools_view_biallelic with:
+# use rule bcftools_view from filtering as filtering_bcftools_view_biallelic with:
 #    output:
 #        vcf=temp("{file}.bcftools_view_biallelic.vcf.gz"),
 #    params:
