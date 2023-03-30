@@ -10,12 +10,8 @@ units: "config/units.tsv"
 default_container: "docker://hydragenetics/common:0.1.9"
 
 
-programdir:
-  dir: "/home/padco251/expansionhunter/padraic_testing/Poirot_RD-WGS/workflow"
-
-
 modules:
-  alignment: "v0.2.0"
+  alignment: "v0.3.0"
   annotation: "v0.3.0"
   compression: "v1.1.0"
   cnv_sv: "32957b1"
@@ -44,6 +40,10 @@ reference:
 trimmer_software: "fastp_pe"
 
 
+aligner: "bwa_cpu" # "bwa_cpu" or "bwa_gpu"
+snp_caller: "deepvariant_cpu" # "deepvariant_cpu" or "deepvariant_gpu"
+
+
 automap:
   container: "docker://hydragenetics/automap:1.2"
   build: "hg38"
@@ -59,6 +59,15 @@ bcftools_view_biallelic:
 bcftools_view_pass:
   container: "docker://hydragenetics/common:0.2.0"
   extra: "--apply-filter PASS "
+
+
+bwa_mem:
+  container: "docker://hydragenetics/bwa:0.7.15"
+  amb: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.amb"
+  ann: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.ann"
+  bwt: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.bwt"
+  pac: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.pac"
+  sa: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.sa"
 
 
 bwa_mem_mito:
@@ -286,8 +295,8 @@ mt_reference:
 
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-  deepvariant_model: "/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng"
-  extra: ""
+  deepvariant_model: "/beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng"
+  extra: "--disable-use-window-selector-model " ## For consistency with deepvariant cpu. Also increases accuracy.
 
 
 pbrun_fq2bam:
@@ -338,6 +347,10 @@ picard_collect_multiple_metrics:
 
 picard_collect_wgs_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
+
+
+picard_mark_duplicates:
+  container: "docker://hydragenetics/picard:2.25.4"
 
 
 reviewer:

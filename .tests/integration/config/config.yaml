@@ -29,19 +29,22 @@ modules:
 
 
 reference:
-  coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
-  design_bed: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
-  exome_bed: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
-  exome_intervals: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"
-  fasta: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta"
-  fai: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.fai"
-  genepanels: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/genepanels.list"
-  genome_dir: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens_star"
-  sites: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.known_indels.vcf.gz"
-  wgs_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.interval_list"
+  coverage_bed: "reference/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
+  design_bed: "reference/homo_sapiens.wgs.bed"
+  exome_bed: "reference/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
+  exome_intervals: "reference/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"
+  fasta: "reference/homo_sapiens.fasta"
+  fai: "reference/homo_sapiens.fasta.fai"
+  genepanels: "reference/genepanels.list"
+  genome_dir: "reference/homo_sapiens_star"
+  sites: "reference/homo_sapiens.known_indels.vcf.gz"
+  wgs_intervals: "reference/homo_sapiens.wgs.interval_list"
 
 
 trimmer_software: "fastp_pe"
+
+aligner: "bwa_cpu" # "bwa_cpu"
+snp_caller: "deepvariant_cpu" # "deepvariant_cpu"
 
 
 automap:
@@ -61,24 +64,33 @@ bcftools_view_pass:
   extra: "--apply-filter PASS "
 
 
+bwa_mem:
+  container: "docker://hydragenetics/bwa:0.7.15"
+  amb: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.amb"
+  ann: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.ann"
+  bwt: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.bwt"
+  pac: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.pac"
+  sa: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.sa"
+
+
 bwa_mem_mito:
   container: "docker://hydragenetics/bwa_mem:0.7.17"
   extra: "-K 100000000 -v3 -Y"
   amb:
-    mt: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.amb"
-    mt_shifted: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.amb"
+    mt: "reference/Homo_sapiens_assembly38.chrM.fasta.amb"
+    mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.amb"
   ann:
-    mt: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.ann"
-    mt_shifted: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.ann"
+    mt: "reference/Homo_sapiens_assembly38.chrM.fasta.ann"
+    mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.ann"
   bwt:
-    mt: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.bwt"
-    mt_shifted: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.bwt"
+    mt: "reference/Homo_sapiens_assembly38.chrM.fasta.bwt"
+    mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.bwt"
   pac:
-    mt: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.pac"
-    mt_shifted: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.pac"
+    mt: "reference/Homo_sapiens_assembly38.chrM.fasta.pac"
+    mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.pac"
   sa:
-    mt: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.sa"
-    mt_shifted: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.sa"
+    mt: "reference/Homo_sapiens_assembly38.chrM.fasta.sa"
+    mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.sa"
 
 
 cnvpytor_readdepth:
@@ -286,8 +298,8 @@ mt_reference:
 
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-  deepvariant_model: "/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng"
-  extra: ""
+  deepvariant_model: "reference/deepvariant.eng"
+  extra: "--disable-use-window-selector-model " ## For consistency with deepvariant cpu. Also increases accuracy.
 
 
 pbrun_fq2bam:
@@ -338,6 +350,10 @@ picard_collect_multiple_metrics:
 
 picard_collect_wgs_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
+
+
+picard_mark_duplicates:
+  container: "docker://hydragenetics/picard:2.25.4"
 
 
 reviewer:
