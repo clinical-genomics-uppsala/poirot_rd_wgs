@@ -581,6 +581,7 @@ use rule fix_af from snv_indels as snv_indels_fix_af with:
             config.get("fix_af", {}).get("benchmark_repeats", 1),
         )
 
+
 use rule fix_af from snv_indels as snv_indels_chrM_fix_af with:
     input:
         vcf="mitochondrial/gatk_select_variants_final/{sample}_{type}.vcf",
