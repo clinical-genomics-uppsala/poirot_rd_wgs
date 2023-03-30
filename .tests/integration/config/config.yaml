@@ -44,6 +44,16 @@ reference:
 trimmer_software: "fastp_pe"
 
 
+bcftools_view_biallelic:
+  container: "docker://hydragenetics/common:0.2.0"
+  extra: "-m2 -M2 -v snps"
+
+
+bcftools_view_pass:
+  container: "docker://hydragenetics/common:0.2.0"
+  extra: "--apply-filter PASS "
+
+
 bwa_mem_mito:
   container: "docker://hydragenetics/bwa_mem:0.7.17"
   extra: "-K 100000000 -v3 -Y"
@@ -365,3 +375,10 @@ tabix:
 
 tiddit:
   container: "docker://hydragenetics/tiddit:3.3.2"
+
+
+vep:
+  container: "docker://ensemblorg/ensembl-vep:release_109.3"
+  vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
+  extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol --af --af_1kg --af_gnomad --max_af"
+  threads: 4
