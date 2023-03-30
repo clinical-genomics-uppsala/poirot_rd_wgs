@@ -16,16 +16,16 @@ default_container: "docker://hydragenetics/common:0.1.9"
 
 modules:
   alignment: "v0.2.0"
-  annotation: "v0.2.0"
+  annotation: "v0.3.0"
   compression: "v1.1.0"
-  cnv_sv: "e0c3a1c"
+  cnv_sv: "32957b1"
   filtering: "6e95284"
   parabricks: "1410021"
   prealignment: "v0.5.0"
-  qc: "develop"
-  misc: "v0.1.0"
+  qc: "v0.3.0"
+  misc: "v0.2.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "22b2723"
+  snv_indels: "72fd295"
 
 
 reference:
