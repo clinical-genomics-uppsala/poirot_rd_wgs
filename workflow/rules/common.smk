@@ -253,8 +253,8 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
     output_files = ["results/%s/%s_snv_indels.filtered.vcf.gz.tbi" % (sample, sample) for sample in get_samples(samples)]
     output_files = ["results/%s/%s_snv_indels.filtered.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
     return output_files
- ### Include copy all files we want to transfer
- # def compile_output_list(wildcards):
+### Include copy all files we want to transfer
+# def compile_output_list(wildcards):
 #     output_files = []
 #     types = set([unit.type for unit in units.itertuples()])
 #     for output in output_json:
