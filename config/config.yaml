@@ -39,16 +39,9 @@ reference:
 
 trimmer_software: "fastp_pe"
 
-aligner: "bwa_cpu" # "bwa_cpu" or "bwa_gpu"
-snp_caller: "deepvariant_cpu" # "deepvariant_cpu" or "deepvariant_gpu"
+aligner: "bwa_gpu" # "bwa_cpu" or "bwa_gpu"
+snp_caller: "deepvariant_gpu" # "deepvariant_cpu" or "deepvariant_gpu"
 
-bwa_mem:
-  container: "docker://hydragenetics/bwa:0.7.15"
-  amb: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.amb"
-  ann: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.ann"
-  bwt: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.bwt"
-  pac: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.pac"
-  sa: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.sa"
 
 aligner: "bwa_cpu" # "bwa_cpu" or "bwa_gpu"
 snp_caller: "deepvariant_cpu" # "deepvariant_cpu" or "deepvariant_gpu"
