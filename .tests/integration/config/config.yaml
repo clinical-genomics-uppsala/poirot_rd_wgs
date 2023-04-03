@@ -3,19 +3,15 @@
 
 resources: "config/resources.yaml"
 samples: "config/samples.tsv"
-samples_with_trio_sex: "config/SampleSheet.tsv"
+samples_with_trio_sex: "config/SampleSheet.csv"
 units: "config/units.tsv"
 
 
 default_container: "docker://hydragenetics/common:0.1.9"
 
 
-programdir:
-  dir: "/home/padco251/expansionhunter/padraic_testing/Poirot_RD-WGS/workflow"
-
-
 modules:
-  alignment: "v0.2.0"
+  alignment: "v0.3.0"
   annotation: "v0.3.0"
   compression: "v1.1.0"
   cnv_sv: "32957b1"
@@ -43,6 +39,7 @@ reference:
 
 trimmer_software: "fastp_pe"
 
+
 aligner: "bwa_cpu" # "bwa_cpu"
 snp_caller: "deepvariant_cpu" # "deepvariant_cpu"
 
@@ -66,11 +63,11 @@ bcftools_view_pass:
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
-  amb: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.amb"
-  ann: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.ann"
-  bwt: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.bwt"
-  pac: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.pac"
-  sa: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.sa"
+  amb: "reference/Homo_sapiens_assembly38.chrM.fasta.amb"
+  ann: "reference/Homo_sapiens_assembly38.chrM.fast.ann"
+  bwt: "reference/Homo_sapiens_assembly38.chrM.fasta.bwt"
+  pac: "reference/Homo_sapiens_assembly38.chrM.fasta.pac"
+  sa: "reference/Homo_sapiens_assembly38.chrM.fasta.sa"
 
 
 bwa_mem_mito:
@@ -130,7 +127,7 @@ deepvariant_make_examples:
 deepvariant_make_examples_peddy:
   container: "docker://hydragenetics/deepvariant:1.4.0"
   model: "WGS"
-  extra: "--regions /beegfs-storage/data/ref_data/peddy/v0.4.8/GRCH38.bed "
+  extra: "--regions reference/peddy/v0.4.8/GRCH38.bed "
 
 
 deepvariant_postprocess_variants:
@@ -145,13 +142,14 @@ deepvariant_postprocess_variants_peddy:
 
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
-  variant_catalog: "/data/ref_data/expansionhunter/v5.0.0/grch38/variant_catalog.json"
+  variant_catalog: "reference/variant_catalog.json"
 
 
 fastp_pe:
   container: "docker://hydragenetics/fastp:0.20.1"
   # Default enabled trimming parameters for fastp. Specified for clarity.
   extra: "--trim_poly_g --qualified_quality_phred 15 --unqualified_percent_limit 40 --n_base_limit 5 --length_required 15"
+
 
 fastqc:
   container: "docker://hydragenetics/fastqc:0.11.9"
@@ -181,7 +179,7 @@ gatk_left_align_and_trim_variants:
 
 gatk_lift_over_vcf:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
-  shift_back_chain: "/data/ref_data/gatk_mito/ShiftBack.chain"
+  shift_back_chain: "reference/ShiftBack.chain"
 
 
 gatk_mark_duplicates:
@@ -203,8 +201,8 @@ gatk_merge_stats:
 gatk_mutect2:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
   interval:
-    mt: "/data/ref_data/gatk_mito/non_control_region.chrM.interval_list"
-    mt_shifted: "/data/ref_data/gatk_mito/control_region_shifted.chrM.interval_list"
+    mt: "reference/non_control_region.chrM.interval_list"
+    mt_shifted: "reference/control_region_shifted.chrM.interval_list"
   max_reads_per_alignment_start: 75
 
 
@@ -238,7 +236,7 @@ gatk_variant_filtration:
 
 
 glnexus:
-  bedfile: "/data/ref_data/peddy/v0.4.8/GRCH38.bed"
+  bedfile: "reference/GRCH38.bed"
   container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.3"
 
 
@@ -291,9 +289,9 @@ multiqc:
 
 
 mt_reference:
-  mt: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta"
-  mt_shifted: "/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta"
-  blacklist: /data/ref_data/gatk_mito/blacklist_sites.hg38.chrM.bed
+  mt: "reference/Homo_sapiens_assembly38.chrM.fasta"
+  mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta"
+  blacklist: reference/blacklist_sites.hg38.chrM.bed
 
 
 pbrun_deepvariant:
@@ -397,7 +395,7 @@ spring:
 
 stranger:
   container: "docker://hydragenetics/stranger:0.8.1"
-  catalog: "/data/ref_data/stranger/v0.8.1/variant_catalog_grch38.json"
+  catalog: "reference/variant_catalog_grch38.json"
 
 
 svdb_merge:
@@ -412,9 +410,8 @@ svdb_merge:
 svdb_query:
   container: "docker://hydragenetics/svdb:2.6.0"
   db_string:
-    "--db /data/ref_genomes/GRCh38/SweGenSVDBGRCh38/swegen_cnvnator_tiddit_manta.vcf,/data/ref_genomes/GRCh38/gnomAD/gnomad_v2.1_sv.sites.vcf.gz \
-    --in_frq FRQ,AF --in_occ OCC,AC --out_frq SweGen_AF,gnomAD_AF --out_occ SweGen_OCC,gnomAD_OCC "
-
+    "--db reference/gnomad_v2.1_sv.sites.vcf.gz \
+    --in_frq AF --in_occ AC --out_frq gnomAD_AF --out_occ gnomAD_OCC "
 
 tabix:
   container: "docker://hydragenetics/common:0.1.9"
@@ -426,6 +423,6 @@ tiddit:
 
 vep:
   container: "docker://ensemblorg/ensembl-vep:release_109.3"
-  vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
+  vep_cache: "reference/ref_genomes/VEP/"
   extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol --af --af_1kg --af_gnomad --max_af"
   threads: 4
