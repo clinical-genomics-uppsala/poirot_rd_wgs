@@ -425,6 +425,6 @@ tiddit:
 
 vep:
   container: "docker://ensemblorg/ensembl-vep:release_109.3"
-  vep_cache: "reference/ref_genomes/VEP/"
+  vep_cache: "reference/VEP/"
   extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol --af --af_1kg --af_gnomad --max_af"
   threads: 4
