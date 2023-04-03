@@ -51,9 +51,6 @@ automap:
   outdir: "cnv_sv/automap"
 
 
-bcftools_view_biallelic:
-  container: "docker://hydragenetics/common:0.2.0"
-  extra: "-m2 -M2 -v snps"
 
 
 bcftools_view_pass:
