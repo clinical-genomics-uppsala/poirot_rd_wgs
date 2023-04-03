@@ -63,11 +63,11 @@ bcftools_view_pass:
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
-  amb: "reference/Homo_sapiens_assembly38.chrM.fasta.amb"
-  ann: "reference/Homo_sapiens_assembly38.chrM.fast.ann"
-  bwt: "reference/Homo_sapiens_assembly38.chrM.fasta.bwt"
-  pac: "reference/Homo_sapiens_assembly38.chrM.fasta.pac"
-  sa: "reference/Homo_sapiens_assembly38.chrM.fasta.sa"
+  amb: "reference/homo_sapiens.fasta.amb"
+  ann: "reference/homo_sapiens.fasta.ann"
+  bwt: "reference/homo_sapiens.fasta.bwt"
+  pac: "reference/homo_sapiens.fasta.pac"
+  sa: "reference/homo_sapiens.fasta.sa"
 
 
 bwa_mem_mito:
