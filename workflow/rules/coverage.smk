@@ -35,7 +35,7 @@ rule mosdepth_bedtools:
 rule create_cov_excel:
     input:
         config="config/config.yaml",
-        duplicationFile="parabricks/pbrun_fq2bam/{sample}_{type}.metrics",
+        duplicationFile="qc/picard_collect_duplication_metrics/{sample}_{type}.duplication_metrics.txt",
         lowCov="qc/mosdepth_bed/{sample}_{type}.mosdepth.lowCov.regions.txt",
         summary="qc/mosdepth_bed/{sample}_{type}.mosdepth.summary.txt",
     output:

@@ -10,7 +10,7 @@ configfile: "config/config.yaml"
 drmaa: "-p {resources.partition} -t {resources.time} -n {resources.threads} --mem={resources.mem_mb} --mem-per-cpu={resources.mem_per_cpu} {resources.gres} -J {rule} -A wp4 -e slurm/{rule}_%j.err -o slurm/{rule}_%j.out --nodes=1-1"
 default-resources: [gres=""]
 drmaa-log-dir: "slurm"
-singularity-args: "--cleanenv --bind /beegfs-archive,/beegfs-scratch,/beegfs-storage --disable-cache --nv"
+singularity-args: "--cleanenv --bind /beegfs-archive,/beegfs-scratch,/beegfs-storage -B /beegfs-scratch/wp4/poirot_rd_wgs_tmp:/tmp --disable-cache --nv"
 singularity-prefix: "/projects/wp4/nobackup/singularity_cache/"
 
 # Tips är att lägga till något liknande detta i singularity-kommandot: -B /beegfs-scratch/wp4/Twist_Solid_tmp:/tmp

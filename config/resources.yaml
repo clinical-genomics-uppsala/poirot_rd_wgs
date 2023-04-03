@@ -7,13 +7,33 @@ default_resources:
   mem_per_cpu: 6144
   partition: "core"
 
+bwa_mem:
+  mem_mb: 122880
+  mem_per_cpu: 6144
+  threads: 20
+
+bwa_mem_merge:
+  mem_mb: 61440
+  mem_per_cpu: 6144
+  threads: 10
+
 bwa_mem_mito:
   mem_mb: 6144
   mem_per_cpu: 3072
   threads: 2
 
-deepvariant:
-  threads: 10
+deepvariant_call_variants:
+  threads: 20
+
+deepvariant_make_examples:
+  threads: 40
+
+deepvariant_make_examples_peddy:
+  threads: 40
+
+deepvariant_postprocess_variants:
+  mem_mb: 36864
+  mem_per_cpu: 36864
 
 expansionhunter:
   threads: 16
@@ -81,6 +101,16 @@ pbrun_deepvariant:
 
 peddy:
   threads: 8
+
+samtools_sort:
+  mem_mb: 61440
+  mem_per_cpu: 6144
+  threads: 10
+
+samtools_view:
+  mem_mb: 61440
+  mem_per_cpu: 6144
+  threads: 10
 
 smn_caller:
   threads: 8

@@ -47,7 +47,7 @@ module alignment:
 use rule * from alignment as alignment_*
 
 
-use rule samtools_sort from alignment as alignment_samtools_sort with:
+use rule samtools_sort from alignment as alignment_samtools_sort_eh_bam with:
     input:
         "cnv_sv/expansionhunter/{sample}_{type}_realigned.bam",
     output:
@@ -113,8 +113,8 @@ use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter
 
 use rule cnvpytor_readdepth from cnv_sv as cnv_sv_cnvpytor_rd with:
     input:
-        bam="parabricks/pbrun_fq2bam/{sample}_{type}.bam",
-        vcf="parabricks/pbrun_deepvariant/{sample}_{type}.vcf",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        vcf=lambda wildcards: get_vcf_input(wildcards),
 
 
 use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
@@ -602,3 +602,4 @@ use rule fix_af from snv_indels as snv_indels_chrM_fix_af with:
             "mitochondrial/gatk_select_variants_final/{sample}_{type}.fix_af.vcf.benchmark.tsv",
             config.get("fix_af", {}).get("benchmark_repeats", 1),
         )
+
