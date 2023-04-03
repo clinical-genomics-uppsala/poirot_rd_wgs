@@ -602,4 +602,3 @@ use rule fix_af from snv_indels as snv_indels_chrM_fix_af with:
             "mitochondrial/gatk_select_variants_final/{sample}_{type}.fix_af.vcf.benchmark.tsv",
             config.get("fix_af", {}).get("benchmark_repeats", 1),
         )
-
