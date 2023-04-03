@@ -12,13 +12,14 @@ default_container: "docker://hydragenetics/common:0.1.9"
 
 modules:
   alignment: "v0.3.0"
-  annotation: "v0.2.0"
+  annotation: "v0.3.0"
   compression: "v1.1.0"
-  cnv_sv: "e0c3a1c"
-  parabricks: "add_parabricks4"
+  cnv_sv: "32957b1"
+  filtering: "6e95284"
+  parabricks: "1410021"
   prealignment: "v0.5.0"
-  qc: "68b30bf"
-  misc: "v0.1.0"
+  qc: "v0.3.0"
+  misc: "v0.2.0"
   mitochondrial: "v0.1.0"
   snv_indels: "72fd295"
 
@@ -38,8 +39,26 @@ reference:
 
 trimmer_software: "fastp_pe"
 
-aligner: "bwa_cpu" # "bwa_cpu" or "bwa_gpu"
-snp_caller: "deepvariant_cpu" # "deepvariant_cpu" or "deepvariant_gpu"
+aligner: "bwa_gpu" # "bwa_cpu" or "bwa_gpu"
+snp_caller: "deepvariant_gpu" # "deepvariant_cpu" or "deepvariant_gpu"
+
+
+automap:
+  container: "docker://hydragenetics/automap:1.2"
+  build: "hg38"
+  extra: "--DP 10 --minsize 3 --chrX"
+  outdir: "cnv_sv/automap"
+
+
+bcftools_view_biallelic:
+  container: "docker://hydragenetics/common:0.2.0"
+  extra: "-m2 -M2 -v snps"
+
+
+bcftools_view_pass:
+  container: "docker://hydragenetics/common:0.2.0"
+  extra: "--apply-filter PASS "
+
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
@@ -48,6 +67,7 @@ bwa_mem:
   bwt: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.bwt"
   pac: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.pac"
   sa: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.sa"
+
 
 bwa_mem_mito:
   container: "docker://hydragenetics/bwa_mem:0.7.17"
@@ -105,9 +125,11 @@ deepvariant_make_examples_peddy:
   model: "WGS"
   extra: "--regions /beegfs-storage/data/ref_data/peddy/v0.4.8/GRCH38.bed "
 
+
 deepvariant_postprocess_variants:
   container: "docker://hydragenetics/deepvariant:1.4.0"
   vcf_type: "vcf"
+
 
 deepvariant_postprocess_variants_peddy:
   container: "docker://hydragenetics/deepvariant:1.4.0"
@@ -125,6 +147,10 @@ fastp_pe:
 
 fastqc:
   container: "docker://hydragenetics/fastqc:0.11.9"
+
+
+filter_vcf:
+  germline: "config/config_hard_filter_germline.yaml"
 
 
 gatk_collect_wgs_metrics:
@@ -268,6 +294,7 @@ pbrun_deepvariant:
   extra: "--disable-use-window-selector-model " ## For consistency with deepvariant cpu. Also increases accuracy. 
 
 
+
 pbrun_fq2bam:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
   extra: ""
@@ -331,21 +358,21 @@ sample_order_for_multiqc:
 
 
 samtools_stats:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
   threads: 3
   params:
     extra: " --threads 3 "
 
 
 samtools_idxstats:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
   threads: 3
   params:
     extra: " --threads 3 "
 
 
 samtools:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
 
 
 smn_caller:
@@ -383,8 +410,15 @@ svdb_query:
 
 
 tabix:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
 
 
 tiddit:
   container: "docker://hydragenetics/tiddit:3.3.2"
+
+
+vep:
+  container: "docker://ensemblorg/ensembl-vep:release_109.3"
+  vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
+  extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol --af --af_1kg --af_gnomad --max_af"
+  threads: 4

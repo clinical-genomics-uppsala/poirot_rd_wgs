@@ -14,7 +14,7 @@ peddy_rel_check:
     sample_pair:
       title: Sample Pair
       description: The pair if samples being compared.
-      hidden: False
+      hidden: True
       placement: 900
     trio_id:
       title: Trio ID
@@ -24,12 +24,12 @@ peddy_rel_check:
     sample_a:
       title: sample_a
       description: First sample in the pair
-      hidden: True
+      hidden: False
       placement: 920
     sample_b:
       title: sample_b
       description: Second sample in the pair
-      hidden: True
+      hidden: False
       placement: 930
     rel:
       title: relatedness
@@ -63,30 +63,30 @@ peddy_rel_check:
     pedigree_parents:
       title: pedigree_parents
       description: Boolean indicating that this pair is a parent-child pair according to the ped file.
-      hidden: False
+      hidden: True
     pedigree_relatedness:
       title: pedigree_relatedness
       description: The relatedness reported in the ped file.
-      hidden: False
+      hidden: True
       placement: 950
     parent_error:
       title: parent_error
       description: Boolean indicating that the pedigree_parents and pedigree_relatedness columns don’t match
-      hidden: False
+      hidden: True
     predicted_parents:
       title: predicted_parents
       description: Boolean indicating that this pair is expected to be a parent-child pair according to the ibs0 (< 0.012) calculated from the genotypes.
-      hidden: False
+      hidden: True
     sample_duplication_error :
       title: sample_duplication_error
       description: Boolean indicating that rel > 0.75 and ibs0 < 0.012
-      hidden: False
+      hidden: True
     rel_difference:
       title: rel_difference
       description: Difference between the pedigree relatedness and the relatedness calculated from the genotypes.
       hidden: True
     rel_check_test:
-      title: rel_test_check
+      title: Expected relatedness
       description: Fail if there if peddy reports a parent_error or sample_duplication_error.
       hidden: False
       placement: 1010

@@ -12,13 +12,14 @@ default_container: "docker://hydragenetics/common:0.1.9"
 
 modules:
   alignment: "v0.3.0"
-  annotation: "v0.2.0"
+  annotation: "v0.3.0"
   compression: "v1.1.0"
-  cnv_sv: "e0c3a1c"
-  parabricks: "add_parabricks4"
+  cnv_sv: "32957b1"
+  filtering: "6e95284"
+  parabricks: "1410021"
   prealignment: "v0.5.0"
-  qc: "68b30bf"
-  misc: "v0.1.0"
+  qc: "v0.3.0"
+  misc: "v0.2.0"
   mitochondrial: "v0.1.0"
   snv_indels: "72fd295"
 
@@ -42,13 +43,28 @@ trimmer_software: "fastp_pe"
 aligner: "bwa_cpu" # "bwa_cpu"
 snp_caller: "deepvariant_cpu" # "deepvariant_cpu"
 
+
+automap:
+  container: "docker://hydragenetics/automap:1.2"
+  build: "hg38"
+  extra: "--DP 10 --minsize 3 --chrX"
+  outdir: "cnv_sv/automap"
+
+
+
+
+bcftools_view_pass:
+  container: "docker://hydragenetics/common:0.2.0"
+  extra: "--apply-filter PASS "
+
+
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
-  amb: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.amb"
-  ann: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.ann"
-  bwt: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.bwt"
-  pac: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.pac"
-  sa: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.sa"
+  amb: "reference/homo_sapiens.fasta.amb"
+  ann: "reference/homo_sapiens.fasta.ann"
+  bwt: "reference/homo_sapiens.fasta.bwt"
+  pac: "reference/homo_sapiens.fasta.pac"
+  sa: "reference/homo_sapiens.fasta.sa"
 
 
 bwa_mem_mito:
@@ -99,34 +115,45 @@ deepvariant_call_variants:
   container: "docker://hydragenetics/deepvariant:1.4.0"
   model_dir: "/opt/models/wgs"
 
+
 deepvariant_make_examples:
   container: "docker://hydragenetics/deepvariant:1.4.0"
   model: "WGS"
+
 
 deepvariant_make_examples_peddy:
   container: "docker://hydragenetics/deepvariant:1.4.0"
   model: "WGS"
   extra: "--regions reference/peddy/v0.4.8/GRCH38.bed "
 
+
 deepvariant_postprocess_variants:
   container: "docker://hydragenetics/deepvariant:1.4.0"
   vcf_type: "vcf"
+
 
 deepvariant_postprocess_variants_peddy:
   container: "docker://hydragenetics/deepvariant:1.4.0"
   vcf_type: "gvcf"
 
+
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
   variant_catalog: "reference/variant_catalog.json"
+
 
 fastp_pe:
   container: "docker://hydragenetics/fastp:0.20.1"
   # Default enabled trimming parameters for fastp. Specified for clarity.
   extra: "--trim_poly_g --qualified_quality_phred 15 --unqualified_percent_limit 40 --n_base_limit 5 --length_required 15"
 
+
 fastqc:
   container: "docker://hydragenetics/fastqc:0.11.9"
+
+
+filter_vcf:
+  germline: "config/config_hard_filter_germline.yaml"
 
 
 gatk_collect_wgs_metrics:
@@ -322,6 +349,10 @@ picard_collect_wgs_metrics:
 picard_mark_duplicates:
   container: "docker://hydragenetics/picard:2.25.4"
 
+picard_mark_duplicates:
+  container: "docker://hydragenetics/picard:2.25.4"
+
+
 reviewer:
   container: "docker://hydragenetics/reviewer:0.2.7"
 
@@ -331,21 +362,21 @@ sample_order_for_multiqc:
 
 
 samtools_stats:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
   threads: 3
   params:
     extra: " --threads 3 "
 
 
 samtools_idxstats:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
   threads: 3
   params:
     extra: " --threads 3 "
 
 
 samtools:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
 
 
 smn_caller:
@@ -378,13 +409,19 @@ svdb_merge:
 svdb_query:
   container: "docker://hydragenetics/svdb:2.6.0"
   db_string:
-    "--db /data/ref_genomes/GRCh38/SweGenSVDBGRCh38/swegen_cnvnator_tiddit_manta.vcf,/data/ref_genomes/GRCh38/gnomAD/gnomad_v2.1_sv.sites.vcf.gz \
-    --in_frq FRQ,AF --in_occ OCC,AC --out_frq SweGen_AF,gnomAD_AF --out_occ SweGen_OCC,gnomAD_OCC "
-
+    "--db reference/gnomad_v2.1_sv.sites.vcf.gz \
+    --in_frq AF --in_occ AC --out_frq gnomAD_AF --out_occ gnomAD_OCC "
 
 tabix:
-  container: "docker://hydragenetics/common:0.1.1"
+  container: "docker://hydragenetics/common:0.1.9"
 
 
 tiddit:
   container: "docker://hydragenetics/tiddit:3.3.2"
+
+
+vep:
+  container: "docker://ensemblorg/ensembl-vep:release_109.3"
+  vep_cache: "reference/VEP/"
+  extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol --af --af_1kg --af_gnomad --max_af"
+  threads: 4

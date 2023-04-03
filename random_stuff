@@ -33,16 +33,21 @@ snakemake --core 1 -s ../workflow/Snakefile --use-singularity --singularity-args
 
 #Check snakemake code (snakefmt)
 snakefmt --compact-diff -l 130 workflow/
+
 #Check python code (pycodestyle)
 pycodestyle --max-line-length=130 --statistics workflow/scripts/
+
 #Run pytest
 python -m pytest workflow/scripts/XXX_test.py
+
 #Lint
 cd .tests/integration
 snakemake --lint -s ../../workflow/Snakefile --configfile config.yaml
+
 #Dryrun
 cd .tests/integration
 snakemake -n -s ../../workflow/Snakefile --configfile config.yaml
+
 #Testrun
 cd .tests/integration
 snakemake -c 2 --use-conda -s ../../workflow/Snakefile --configfile config.yaml

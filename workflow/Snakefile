@@ -8,6 +8,7 @@ include: "rules/common.smk"
 include: "rules/add_ref_to_vcf.smk"
 include: "rules/concat_vcfs.smk"
 include: "rules/coverage.smk"
+include: "rules/cp_results.smk"
 include: "rules/peddy.smk"
 include: "rules/sample_order_for_multiqc.smk"
 
@@ -21,6 +22,12 @@ rule all:
 
 
 ruleorder: cnv_sv_manta_run_workflow_n > misc_bgzip
+ruleorder: cp_crai_all > misc_samtools_index
+ruleorder: cp_vcf_filt > misc_bgzip
+ruleorder: cp_tbi_filt > misc_tabix
+ruleorder: filtering_bcftools_view_pass > misc_bgzip
+ruleorder: filtering_filter_vcf > misc_bgzip
+ruleorder: misc_tabix > cp_tbi_all
 ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: qc_mosdepth > misc_bgzip
 ruleorder: qc_mosdepth_bed > misc_bgzip
@@ -68,6 +75,20 @@ module annotation:
 use rule stranger from annotation as annotation_stranger
 
 
+use rule vep from annotation as annotation_vep with:
+    input:
+        cache=config.get("vep", {}).get("vep_cache", ""),
+        fasta=config["reference"]["fasta"],
+        tabix="vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz.tbi",
+        vcf="vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz",
+    output:
+        vcf=temp("vcf_final/{sample}_{type}.vep_annotated.vcf"),
+    log:
+        "vcf_final/{sample}_{type}.vep_annotated.vcf.log",
+    benchmark:
+        repeat("vcf_final/{sample}_{type}.vep_annotated.vcf.benchmark.tsv", config.get("vep", {}).get("benchmark_repeats", 1))
+
+
 module cnv_sv:
     snakefile:
         github(
@@ -80,6 +101,11 @@ module cnv_sv:
 
 
 use rule * from cnv_sv as cnv_sv_*
+
+
+use rule automap from cnv_sv as cnv_sv_automap with:
+    input:
+        vcf="vcf_final/{sample}_{type}.vcf",
 
 
 use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter
@@ -136,11 +162,29 @@ use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
             "cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz",
             "cnv_sv/cnvpytor/{sample}_{type}.vcf",
         ],
+    output:
+        vcf=temp("cnv_sv/svdb_merge/{sample}_{type}.merged.vcf"),
+    log:
+        "cnv_sv/svdb_merge/{sample}_{type}.merged.vcf.log",
+    benchmark:
+        repeat(
+            "cnv_sv/svdb_merge/{sample}_{type}.merged.benchmark.tsv",
+            config.get("svdb_merge", {}).get("benchmark_repeats", 1),
+        )
 
 
 use rule svdb_query from cnv_sv as cnv_sv_svdb_query with:
+    input:
+        vcf="cnv_sv/svdb_merge/{sample}_{type}.merged.vcf",
     output:
         vcf=temp("cnv_sv/svdb_query/{sample}_{type}.svdb_query.vcf"),
+    log:
+        "cnv_sv/svdb_query/{sample}_{type}.svdb_query.log",
+    benchmark:
+        repeat(
+            "cnv_sv/svdb_query/{sample}_{type}.svdb_query.benchmark.tsv",
+            config.get("svdb_query", {}).get("benchmark_repeats", 1),
+        )
 
 
 use rule tiddit from cnv_sv as cnv_sv_tiddit with:
@@ -180,12 +224,26 @@ use rule spring from compression as compression_spring with:
 
 module filtering:
     snakefile:
-        github("hydra-genetics/filtering", path="workflow/Snakefile", tag="b7f4dc3")
+        github("hydra-genetics/filtering", path="workflow/Snakefile", tag=config["modules"]["filtering"])
     config:
         config
 
 
 use rule * from filtering as filtering_*
+
+
+use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
+    output:
+        vcf=temp("{file}.bcftools_view_pass.vcf.gz"),
+    params:
+        extra=config.get("bcftools_view_pass", {}).get("extra", ""),
+
+
+# use rule bcftools_view from filtering as filtering_bcftools_view_biallelic with:
+#    output:
+#        vcf=temp("{file}.bcftools_view_biallelic.vcf.gz"),
+#    params:
+#        extra=config.get("bcftools_view_biallelic", {}).get("extra", ""),
 
 
 module misc:
@@ -515,4 +573,32 @@ use rule deepvariant_postprocess_variants from snv_indels as snv_indels_deepvari
         repeat(
             "snv_indels/deepvariant_peddy/{sample}_{type}_postprocess_variants.output.benchmark.tsv",
             config.get("deepvariant_postprocess_variants_peddy", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule fix_af from snv_indels as snv_indels_fix_af with:
+    input:
+        vcf="parabricks/pbrun_deepvariant/{sample}_{type}.vcf",
+    output:
+        vcf=temp("parabricks/pbrun_deepvariant/{sample}_{type}.fix_af.vcf"),
+    log:
+        "parabricks/pbrun_deepvariant/{sample}_{type}.fix_af.vcf.log",
+    benchmark:
+        repeat(
+            "parabricks/pbrun_deepvariant/{sample}_{type}.fix_af.vcf.benchmark.tsv",
+            config.get("fix_af", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule fix_af from snv_indels as snv_indels_chrM_fix_af with:
+    input:
+        vcf="mitochondrial/gatk_select_variants_final/{sample}_{type}.vcf",
+    output:
+        vcf=temp("mitochondrial/gatk_select_variants_final/{sample}_{type}.fix_af.vcf"),
+    log:
+        "mitochondrial/gatk_select_variants_final/{sample}_{type}.fix_af.vcf.log",
+    benchmark:
+        repeat(
+            "mitochondrial/gatk_select_variants_final/{sample}_{type}.fix_af.vcf.benchmark.tsv",
+            config.get("fix_af", {}).get("benchmark_repeats", 1),
         )

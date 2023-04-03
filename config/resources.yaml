@@ -98,7 +98,7 @@ pbrun_deepvariant:
   partition: "GPU"
   threads: 40
   time: "20:00:00"
-  
+
 peddy:
   threads: 8
 
@@ -121,4 +121,6 @@ spring:
 
 tiddit:
   threads: 8
-  
+
+vep:
+  threads: 4
