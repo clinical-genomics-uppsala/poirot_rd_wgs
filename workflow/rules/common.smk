@@ -29,6 +29,9 @@ validate(config, schema="../schemas/resources.schema.yaml")
 samples = pandas.read_table(config["samples"], dtype=str).set_index("sample", drop=False)
 validate(samples, schema="../schemas/samples.schema.yaml")
 
+if samples[~pandas.isnull(samples.trio_member)].shape[0] % 3 != 0:
+        sys.exit('Not all members of the trios are available in the Sample Sheet')
+
 ### Read and validate units file
 units = (
     pandas.read_table(config["units"], dtype=str)
@@ -57,13 +60,13 @@ def get_flowcell(units, wildcards):
     return flowcells.pop()
 
 
-def get_in_gvcf(wildcards):
-    gvcf_list = [
-        "snv_indels/deepvariant_peddy/{}_{}.g.vcf".format(sample, t)
-        for sample in get_samples(samples)
-        for t in get_unit_types(units, sample)
-    ]
-    return " -i ".join(gvcf_list)
+# def get_in_gvcf(wildcards):
+#     gvcf_list = [
+#         "snv_indels/deepvariant_peddy/{}_{}.g.vcf".format(sample, t)
+#         for sample in get_samples(samples)
+#         for t in get_unit_types(units, sample)
+#     ]
+#     return " -i ".join(gvcf_list)
 
 
 def get_spring_extra(wildcards: snakemake.io.Wildcards):
@@ -106,77 +109,80 @@ def get_vcf_input(wildcards):
     if caller is None:
         sys.exit("snp_caller missing from config, valid options: deepvariant_gpu or deepvariant_cpu")
     elif caller == "deepvariant_gpu":
-        vcf_input = "parabricks/pbrun_deepvariant/{}.vcf".format(wildcards.sample)
+        vcf_input = "parabricks/pbrun_deepvariant/{}_{}.vcf".format(wildcards.sample, wildcards.type)
     elif caller == "deepvariant_cpu":
-        vcf_input = "snv_indels/deepvariant/{}_N.vcf".format(wildcards.sample)
+        vcf_input = "snv_indels/deepvariant/{}_{}.vcf".format(wildcards.sample, wildcards.type)
     else:
         sys.exit("Invalid options for snp_caller, valid options are: deepvariant_gpu or deepvariant_cpu")
 
     return vcf_input
 
 
-def combine_extra_args(extra_args: dict):
-    args = []
-    for key in sorted(extra_args):
-        value = extra_args[key]
-        if value is None:
-            continue
-        if isinstance(value, bool):
-            added_arg = "" if value else "no"
-            added_arg += key
-            args.extend(["--{}".format(added_arg)])
-        else:
-            args.extend(["--{} {}".format(key, value)])
+def get_gvcf_list(wildcards):
 
-    args_str = " ".join(args)
+    caller = config.get("snp_caller", None)
+    if caller is None:
+        sys.exit("snp_caller missing from config, valid options: deepvariant_gpu or deepvariant_cpu")
+    elif caller == "deepvariant_gpu":
+        gvcf_path = "parabricks/pbrun_deepvariant"
+    elif caller == "deepvariant_cpu":
+        gvcf_path = "snv_indels/deepvariant"
+    else:
+        sys.exit("Invalid options for snp_caller, valid options are: deepvariant_gpu or deepvariant_cpu")
 
-    return args_str
+    gvcf_list = [
+        "{}/{}_{}.g.vcf".format(gvcf_path, sample, t)
+        for sample in get_samples(samples)
+        for t in get_unit_types(units, sample)
+    ]
+    
+
+    return gvcf_list
 
 
-def get_make_example_args(wildcards: snakemake.io.Wildcards, output: list, name: str, vcf: str):
+def get_in_gvcf(wildcards):
+    gvcf_list = get_gvcf_list(wildcards)
+    return " -i ".join(gvcf_list)
 
-    model_type = config.get(name, {}).get("model", "WGS")
-    special_args = {}
-    if model_type == "WGS" or model_type == "WES":
-        special_args["channels"] = "insert_size"
-    elif model_type == "PACBIO":
-        special_args = {}
-        special_args["add_hp_channel"] = True
-        special_args["alt_aligned_pileup"] = "diff_channels"
-        special_args["max_reads_per_partition"] = 600
-        special_args["min_mapping_quality"] = 1
-        special_args["parse_sam_aux_fields"] = True
-        special_args["partition_size"] = 25000
-        special_args["phase_reads"] = True
-        special_args["pileup_image_width"] = 199
-        special_args["realign_reads"] = False
-        special_args["sort_by_haplotypes"] = True
-        special_args["track_ref_reads"] = True
-        special_args["vsc_min_fraction_indels"] = 0.12
 
-    special_args_str = combine_extra_args(special_args)
-    extra = "{} {}".format(config.get(name, {}).get("extra", ""), special_args_str)
-
-    if vcf == "gvcf":
-        threads = config.get(name, {}).get("threads", config["default_resources"]["threads"])
-        gvcf_path = " --gvcf {}/gvcf.tfrecord@{}.gz".format(output[0], threads)
-        extra = "{} {}".format(extra, gvcf_path)
-
+def get_spring_extra(wildcards: snakemake.io.Wildcards):
+    extra = config.get("spring", {}).get("extra", "")
+    if get_fastq_file(units, wildcards, "fastq1").endswith(".gz"):
+        extra = "%s %s" % (extra, "-g")
     return extra
 
 
-def get_postprocess_variants_args(
-    wildcards: snakemake.io.Wildcards, input: snakemake.io.Namedlist, output: snakemake.io.Namedlist, me_config: str, extra: str
-):
+def get_parent_bams(wildcards):
+    aligner = config.get("aligner", None)
 
-    if len(output) == 2:
-        threads = config.get(me_config, {}).get("threads", config["default_resources"]["threads"])
-        gvcf_tfrecord = "{}/gvcf.tfrecord@{}.gz".format(input[0], threads)
-        gvcf_in = "--nonvariant_site_tfrecord_path {}".format(gvcf_tfrecord)
-        gvcf_out = " --gvcf_outfile {}".format(output.gvcf)
-        extra = "{} {} {}".format(extra, gvcf_in, gvcf_out)
+    if aligner is None:
+        sys.exit("aligner missing from config, valid options: bwa_gpu or bwa_cpu")
+    elif aligner == "bwa_gpu":
+        bam_path = "parabricks/pbrun_fq2bam"
+    elif aligner == "bwa_cpu":
+        bam_path = "alignment/samtools_merge_bam"
 
-    return extra
+    proband_sample = samples[samples.index == wildcards.sample]
+    trio_id = proband_sample.at[wildcards.sample, "trioid"]
+
+    mother_sample = samples[(samples.trio_member == "mother") & (samples.trioid == trio_id)].index[0]
+    mother_bam = "{}/{}_{}.bam".format(bam_path, mother_sample, list(get_unit_types(units, mother_sample))[0])
+
+    father_sample = samples[(samples.trio_member == "father") & (samples.trioid == trio_id)].index[0]
+    father_bam = "{}/{}_{}.bam".format(bam_path, father_sample, list(get_unit_types(units, father_sample))[0])
+
+    bam_list = [mother_bam, father_bam]
+
+
+    return bam_list
+
+
+
+def get_glnexus_input(wildcards, input):
+   
+    gvcf_input =  "-i {}".format(" -i ".join(input.gvcfs))
+   
+    return gvcf_input
 
 
 def compile_output_list(wildcards: snakemake.io.Wildcards):
@@ -199,27 +205,27 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         for unit_type in get_unit_types(units, sample)
         for suffix in files[prefix]
     ]
-    output_files = [
+    output_files += [
         "cnv_sv/manta_run_workflow_n/%s/results/variants/diploidSV.vcf.gz" % (sample) for sample in get_samples(samples)
     ]
-    output_files = [
+    output_files += [
         "cnv_sv/reviewer/%s_%s/" % (sample, unit_type)
         for sample in get_samples(samples)
         for unit_type in get_unit_types(units, sample)
     ]
-    output_files = [
+    output_files += [
         "cnv_sv/automap/%s_%s/%s_%s.HomRegions.tsv" % (sample, unit_type, sample, unit_type)
         for sample in get_samples(samples)
         for unit_type in get_unit_types(units, sample)
     ]
-    output_files = [
+    output_files += [
         "cnv_sv/smn_charts/smn_%s_%s.pdf" % (sample, unit_type)
         for sample in get_samples(samples)
         for unit_type in get_unit_types(units, sample)
     ]
-    output_files = ["qc/multiqc/multiqc_DNA.html"]
-    output_files = ["results/multiqc_DNA.html"]
-    output_files = [
+    output_files += ["qc/multiqc/multiqc_DNA.html"]
+    output_files += ["results/multiqc_DNA.html"]
+    output_files += [
         "qc/peddy/peddy.peddy.ped",
         "qc/peddy/peddy.ped_check.csv",
         "qc/peddy/peddy.sex_check.csv",
@@ -228,7 +234,22 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         "qc/peddy/peddy.vs.html",
         "qc/peddy/peddy.background_pca.json",
     ]
-    output_files = [
+
+    files = {
+        "snv_indels/glnexus": ["vcf.gz"],
+        "cnv_sv/upd": ["upd_regions.bed"],
+    }
+    output_files += [
+        "%s/%s_%s.%s" % (prefix, sample, unit_type,suffix)
+        for prefix in files.keys()
+        for sample in samples[samples.trio_member == 'proband'].index
+        for unit_type in get_unit_types(units, sample)
+        for suffix in files[prefix]
+    ]
+
+   #output_files += ["snv_indels/deeptrio/61743_N/child.g.vcf","snv_indels/deeptrio/61743_N/parent1.g.vcf"]
+
+    output_files += [
         "compression/spring/%s_%s_%s_%s_%s.spring" % (sample, flowcell, lane, barcode, t)
         for sample in get_samples(samples)
         for t in get_unit_types(units, sample)
@@ -272,77 +293,77 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
             ]
         )
     ]
-    output_files = [
-        "results/%s/spring/%s_%s_%s_%s_%s.spring" % (sample, sample, flowcell, lane, barcode, t)
-        for sample in get_samples(samples)
-        for t in get_unit_types(units, sample)
-        for flowcell in set(
-            [
-                u.flowcell
-                for u in units.loc[
-                    (
-                        sample,
-                        t,
-                    )
-                ]
-                .dropna()
-                .itertuples()
-            ]
-        )
-        for barcode in set(
-            [
-                u.barcode
-                for u in units.loc[
-                    (
-                        sample,
-                        t,
-                    )
-                ]
-                .dropna()
-                .itertuples()
-            ]
-        )
-        for lane in set(
-            [
-                u.lane
-                for u in units.loc[
-                    (
-                        sample,
-                        t,
-                    )
-                ]
-                .dropna()
-                .itertuples()
-            ]
-        )
-    ]
+    # output_files = [
+    #     "results/%s/spring/%s_%s_%s_%s_%s.spring" % (sample, sample, flowcell, lane, barcode, t)
+    #     for sample in get_samples(samples)
+    #     for t in get_unit_types(units, sample)
+    #     for flowcell in set(
+    #         [
+    #             u.flowcell
+    #             for u in units.loc[
+    #                 (
+    #                     sample,
+    #                     t,
+    #                 )
+    #             ]
+    #             .dropna()
+    #             .itertuples()
+    #         ]
+    #     )
+    #     for barcode in set(
+    #         [
+    #             u.barcode
+    #             for u in units.loc[
+    #                 (
+    #                     sample,
+    #                     t,
+    #                 )
+    #             ]
+    #             .dropna()
+    #             .itertuples()
+    #         ]
+    #     )
+    #     for lane in set(
+    #         [
+    #             u.lane
+    #             for u in units.loc[
+    #                 (
+    #                     sample,
+    #                     t,
+    #                 )
+    #             ]
+    #             .dropna()
+    #             .itertuples()
+    #         ]
+    #     )
+    # ]
 
-    output_files = ["results/%s/cnv_sv/%s.cnvpytor_filtered.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
-    output_files = ["results/%s/cnv_sv/%s.cnvpytor.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
-    output_files = ["results/%s/cnv_sv/%s.tiddit.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
-    output_files = ["results/%s/cnv_sv/%s.manta_diploidSV.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
-    output_files = ["results/%s/cnv_sv/%s.svdb_merged.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
-    output_files = ["results/%s/%s.contamination.html" % (sample, sample) for sample in get_samples(samples)]
-    output_files = ["results/%s/expansionhunter_reviewer/" % (sample) for sample in get_samples(samples)]
-    output_files = ["results/%s/%s.expansionhunter_stranger.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
-    output_files = ["results/%s/%s.coverage_analysis.xlsx" % (sample, sample) for sample in get_samples(samples)]
-    output_files = ["results/%s/SMNCopyNumberCaller/%s.smn_charts.pdf" % (sample, sample) for sample in get_samples(samples)]
-    output_files = ["results/%s/SMNCopyNumberCaller/%s.smn_caller.tsv" % (sample, sample) for sample in get_samples(samples)]
-    output_files = ["results/%s/SMNCopyNumberCaller/%s.smn_caller.json" % (sample, sample) for sample in get_samples(samples)]
-    output_files = [
-        "results/%s/%s_%s.crumble.cram.crai" % (sample, sample, unit_type)
-        for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
-    ]
-    output_files = [
-        "results/%s/%s_%s.crumble.cram" % (sample, sample, unit_type)
-        for sample in get_samples(samples)
-        for unit_type in get_unit_types(units, sample)
-    ]
-    output_files = ["results/%s/%s_snv_indels.vcf.gz.tbi" % (sample, sample) for sample in get_samples(samples)]
-    output_files = ["results/%s/%s_snv_indels.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
-    output_files = ["results/%s/%s_snv_indels.filtered.vcf.gz.tbi" % (sample, sample) for sample in get_samples(samples)]
-    output_files = ["results/%s/%s_snv_indels.filtered.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
+    # output_files = ["results/%s/cnv_sv/%s.cnvpytor_filtered.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
+    # output_files = ["results/%s/cnv_sv/%s.cnvpytor.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
+    # output_files = ["results/%s/cnv_sv/%s.tiddit.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
+    # output_files = ["results/%s/cnv_sv/%s.manta_diploidSV.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
+    # output_files = ["results/%s/cnv_sv/%s.svdb_merged.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
+    # output_files = ["results/%s/%s.contamination.html" % (sample, sample) for sample in get_samples(samples)]
+    # output_files = ["results/%s/expansionhunter_reviewer/" % (sample) for sample in get_samples(samples)]
+    # output_files = ["results/%s/%s.expansionhunter_stranger.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
+    # output_files = ["results/%s/%s.coverage_analysis.xlsx" % (sample, sample) for sample in get_samples(samples)]
+    # output_files = ["results/%s/SMNCopyNumberCaller/%s.smn_charts.pdf" % (sample, sample) for sample in get_samples(samples)]
+    # output_files = ["results/%s/SMNCopyNumberCaller/%s.smn_caller.tsv" % (sample, sample) for sample in get_samples(samples)]
+    # output_files = ["results/%s/SMNCopyNumberCaller/%s.smn_caller.json" % (sample, sample) for sample in get_samples(samples)]
+    # output_files = [
+    #     "results/%s/%s_%s.crumble.cram.crai" % (sample, sample, unit_type)
+    #     for sample in get_samples(samples)
+    #     for unit_type in get_unit_types(units, sample)
+    # ]
+    # output_files = [
+    #     "results/%s/%s_%s.crumble.cram" % (sample, sample, unit_type)
+    #     for sample in get_samples(samples)
+    #     for unit_type in get_unit_types(units, sample)
+    # ]
+    # output_files = ["results/%s/%s_snv_indels.vcf.gz.tbi" % (sample, sample) for sample in get_samples(samples)]
+    # output_files = ["results/%s/%s_snv_indels.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
+    # output_files = ["results/%s/%s_snv_indels.filtered.vcf.gz.tbi" % (sample, sample) for sample in get_samples(samples)]
+    # output_files = ["results/%s/%s_snv_indels.filtered.vcf.gz" % (sample, sample) for sample in get_samples(samples)]
     return output_files
 ### Include copy all files we want to transfer
 # def compile_output_list(wildcards):
