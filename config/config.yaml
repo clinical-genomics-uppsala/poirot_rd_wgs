@@ -300,7 +300,7 @@ mt_reference:
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
   deepvariant_model: "/beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng"
-  extra: "--disable-use-window-selector-model " ## For consistency with deepvariant cpu. Also increases accuracy. 
+  extra: "--disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
 
 
 
