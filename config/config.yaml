@@ -6,6 +6,7 @@ samples: "config/samples.tsv"
 samples_with_trio_sex: "config/SampleSheet.tsv"
 units: "config/units.tsv"
 
+output: "config/output_list.json"
 
 default_container: "docker://hydragenetics/common:0.2.0"
 
@@ -113,18 +114,18 @@ crumble:
   extra: "-O CRAM"
 
 deeptrio_call_variants:
-  container: "docker://google/deepvariant:deeptrio-1.4.0"
+  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu"
   model:
     child: "/opt/models/deeptrio/wes/child/model.ckpt" # path to model in the deepvariant container
     parent: "/opt/models/deeptrio/wes/parent/model.ckpt"
 
 deeptrio_make_examples:
-  container: "docker://google/deepvariant:deeptrio-1.4.0" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
+  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
   extra: "--channels insert_size --pileup_image_height_child 60 --pileup_image_height_parent 40 "
   n_shards: 80
 
 deeptrio_postprocess_variants:
-  container: "docker://google/deepvariant:deeptrio-1.4.0"
+  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu"
 
 deepvariant_call_variants:
   container: "docker://hydragenetics/deepvariant:1.4.0" #"docker://hydragenetics/deepvariant:1.4.0"

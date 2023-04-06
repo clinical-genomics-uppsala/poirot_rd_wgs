@@ -8,7 +8,6 @@ include: "rules/common.smk"
 include: "rules/add_ref_to_vcf.smk"
 include: "rules/concat_vcfs.smk"
 include: "rules/coverage.smk"
-include: "rules/cp_results.smk"
 include: "rules/peddy.smk"
 include: "rules/sample_order_for_multiqc.smk"
 
@@ -21,20 +20,14 @@ rule all:
         unpack(compile_output_list),
 
 
-# ruleorder: cnv_sv_manta_run_workflow_n > misc_bgzip
-ruleorder: cp_crai_all > misc_samtools_index
-# ruleorder: cp_vcf_filt > misc_bgzip
-#ruleorder: cp_tbi_filt > misc_tabix
+ruleorder: _copy_crumble_crai > misc_samtools_index
+ruleorder: _copy_snv_indels_tbi > snv_indels_tabix
+ruleorder: _copy_snv_indels_filtered_tbi > snv_indels_tabix
 ruleorder: snv_indels_bcftools_view
 ruleorder: filtering_bcftools_view_pass > snv_indels_bgzip
 ruleorder: filtering_filter_vcf > snv_indels_bgzip
 ruleorder: filtering_filter_vcf > snv_indels_bcftools_view
-#ruleorder: misc_tabix > cp_tbi_all
 ruleorder: parabricks_fq2bam > alignment_samtools_index
-# ruleorder: snv_indels_tabix > misc_tabix
-# ruleorder: snv_indels_bcftools_view > snv_indels_bgzip
-#ruleorder: qc_mosdepth > misc_bgzip
-#ruleorder: qc_mosdepth_bed > misc_bgzip
 
 
 module alignment:
@@ -289,12 +282,6 @@ use rule samtools_index from misc as misc_samtools_index with:
         )
     message:
         "{rule}: Index {wildcards.file}.crumble.cram file"
-
-
-# use rule bgzip from misc as misc_bgzip
-
-
-# use rule tabix from misc as misc_tabix
 
 
 module mitochondrial:
@@ -605,70 +592,6 @@ use rule vt_decompose from snv_indels as snv_indels_vt_decompose with:
         vcf="snv_indels/glnexus/{sample}_{type}.vcf.gz",
     output:
         vcf=temp("snv_indels/{caller}/{sample}_{type}.decomposed.vcf.gz"),
-
-
-# use rule deepvariant_make_examples from snv_indels as snv_indels_deepvariant_make_examples_peddy with:
-#     input:
-#         bam=lambda wildcards: get_bam_input(wildcards)[0],
-#         bai=lambda wildcards: get_bam_input(wildcards)[1],
-#         ref=config.get("reference", {}).get("fasta", ""),
-#     params:
-#         extra=lambda wildcards, output: get_make_example_args(
-#             wildcards,
-#             output,
-#             "deepvariant_make_examples_peddy",
-#             config.get("deepvariant_postprocess_variants_peddy", {}).get("vcf_type", "vcf"),
-#         ),
-#         seq_num=config.get("deepvariant_make_examples", {}).get("threads", config["default_resources"]["threads"]) - 1,
-#         mkdir=lambda wildcards, output: "mkdir -p {}".format(output.examples_dir),
-#     output:
-#         examples_dir=temp(directory("snv_indels/deepvariant_peddy/{sample}_{type}/")),
-#     log:
-#         "snv_indels/deepvariant_peddy/{sample}_{type}_make_examples.output.log",
-#     benchmark:
-#         repeat(
-#             "snv_indels/deepvariant_peddy/{sample}_{type}_make_examples.output.benchmark.tsv",
-#             config.get("deepvariant_make_examples_peddy", {}).get("benchmark_repeats", 1),
-#         )
-
-
-# use rule deepvariant_call_variants from snv_indels as snv_indels_deepvariant_call_variants_peddy with:
-#     input:
-#         examples_dir="snv_indels/deepvariant_peddy/{sample}_{type}/",
-#     output:
-#         outfile=temp("snv_indels/deepvariant_peddy/{sample}_{type}/call_variants_output.tfrecord.gz"),
-#     log:
-#         "snv_indels/deepvariant_peddy/{sample}_{type}_call_variants.output.log",
-#     benchmark:
-#         repeat(
-#             "snv_indels/deepvariant_peddy/{sample}_{type}_call_variants.output.benchmark.tsv",
-#             config.get("deepvariant_call_variants", {}).get("benchmark_repeats", 1),
-#         )
-
-
-# use rule deepvariant_postprocess_variants from snv_indels as snv_indels_deepvariant_postprocess_variants_peddy with:
-#     input:
-#         examples_dir="snv_indels/deepvariant_peddy/{sample}_{type}/",
-#         infile="snv_indels/deepvariant_peddy/{sample}_{type}/call_variants_output.tfrecord.gz",
-#         ref=config.get("reference", {}).get("fasta", ""),
-#     params:
-#         extra=lambda wildcards, input, output: get_postprocess_variants_args(
-#             wildcards,
-#             input,
-#             output,
-#             "deepvariant_make_examples",
-#             config.get("deepvariant_postprocess_variants", {}).get("extra", ""),
-#         ),
-#     output:
-#         gvcf=temp("snv_indels/deepvariant_peddy/{sample}_{type}.g.vcf"),
-#         vcf=temp("snv_indels/deepvariant_peddy/{sample}_{type}.vcf"),
-#     log:
-#         "snv_indels/deepvariant_peddy/{sample}_{type}_postprocess_variants.output.log",
-#     benchmark:
-#         repeat(
-#             "snv_indels/deepvariant_peddy/{sample}_{type}_postprocess_variants.output.benchmark.tsv",
-#             config.get("deepvariant_postprocess_variants_peddy", {}).get("benchmark_repeats", 1),
-#         )
 
 
 use rule fix_af from snv_indels as snv_indels_fix_af with:
