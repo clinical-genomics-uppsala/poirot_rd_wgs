@@ -247,8 +247,6 @@ def compile_output_list(wildcards: snakemake.io.Wildcards):
         for suffix in files[prefix]
     ]
 
-   #output_files += ["snv_indels/deeptrio/61743_N/child.g.vcf","snv_indels/deeptrio/61743_N/parent1.g.vcf"]
-
     output_files += [
         "compression/spring/%s_%s_%s_%s_%s.spring" % (sample, flowcell, lane, barcode, t)
         for sample in get_samples(samples)
