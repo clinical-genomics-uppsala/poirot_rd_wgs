@@ -234,7 +234,7 @@ def generate_copy_code(workflow, output_json):
             code += f'@workflow.output("{output_file}")\n'
             code += f'@workflow.log("logs/{rule_name}_{result_file}.log")\n'
             code += f'@workflow.container("{copy_container}")\n'
-            code += f'@workflow.conda("../env/copy_result.yaml")\n'
+            code += f'@workflow.conda("../envs/copy_result.yaml")\n'
             code += f'@workflow.resources(time = "{time}", threads = {threads}, mem_mb = {mem_mb}, mem_per_cpu = {mem_per_cpu}, partition = "{partition}")\n'
             code += '@workflow.shellcmd("cp {input} {output}")\n\n'
             code += "@workflow.run\n"
