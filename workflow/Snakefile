@@ -466,12 +466,11 @@ use rule samtools_idxstats from qc as qc_samtools_idxstats with:
 
 module snv_indels:
     snakefile:
-        # github(
-        #     "hydra-genetics/snv_indels",
-        #     path="workflow/Snakefile",
-        #     tag=config["modules"]["snv_indels"],
-        # )
-        "/beegfs-storage/projects/wp3/nobackup/Workspace/padraic_testing/snv_indels/workflow/Snakefile"
+        github(
+            "hydra-genetics/snv_indels",
+            path="workflow/Snakefile",
+            tag=config["modules"]["snv_indels"],
+        )
     config:
         config
 
@@ -596,9 +595,9 @@ use rule vt_decompose from snv_indels as snv_indels_vt_decompose with:
 
 use rule fix_af from snv_indels as snv_indels_fix_af with:
     input:
-        vcf="parabricks/pbrun_deepvariant/{sample}_{type}.vcf",
+        vcf="vcf_final/{sample}_{type}_ref.vcf",
     output:
-        vcf=temp("parabricks/pbrun_deepvariant/{sample}_{type}.fix_af.vcf"),
+        vcf=temp("vcf_final/{sample}_{type}.fix_af.vcf"),
     log:
         "parabricks/pbrun_deepvariant/{sample}_{type}.fix_af.vcf.log",
     benchmark:
