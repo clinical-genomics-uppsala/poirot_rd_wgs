@@ -261,7 +261,6 @@ def generate_copy_code(workflow, output_json):
                 '\tshell ( "(cp -r {input[0]} {output[0]}) &> {log}" , bench_record=bench_record, bench_iteration=bench_iteration)\n\n'
             )
     
-    print(code)
     exec(compile(code, "result_to_copy", "exec"), workflow.globals)
 
 
