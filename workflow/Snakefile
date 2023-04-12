@@ -88,11 +88,14 @@ use rule vep from annotation as annotation_vep with:
 
 use rule vep from annotation as annotation_vep_trio with:
     input:
-        cache=config.get("vep", {}).get("vep_cache", ""),
+        cache=config.get("vep_trio", {}).get("vep_cache", ""),
         fasta=config["reference"]["fasta"],
         vcf="snv_indels/glnexus/{sample}_{type}.decomposed.vcf.gz",
     output:
         vcf=temp("snv_indels/glnexus/{sample}_{type}.vep_annotated.vcf"),
+    params:
+        extra=config.get("vep_trio", {}).get("extra", "--pick"),
+        mode=config.get("vep_trio", {}).get("mode", "--offline --cache"),
     log:
         "snv_indels/glnexus/{sample}_{type}.vep_annotated.vcf.log",
     benchmark:
@@ -220,7 +223,7 @@ module compression:
 use rule * from compression as compression_*
 
 
-use rule crumble from compression as compression_crumble
+# use rule crumble from compression as compression_crumble
 
 
 use rule samtools_view from compression as compression_samtools_view with:
@@ -230,9 +233,9 @@ use rule samtools_view from compression as compression_samtools_view with:
         ref=config.get("reference", {}).get("fasta", ""),
 
 
-use rule spring from compression as compression_spring with:
-    output:
-        spring=temp("compression/spring/{sample}_{flowcell}_{lane}_{barcode}_{type}.spring"),
+# use rule spring from compression as compression_spring with:
+#     output:
+#         spring=temp("compression/spring/{sample}_{flowcell}_{lane}_{barcode}_{type}.spring"),
 
 
 module filtering:
@@ -476,34 +479,6 @@ module snv_indels:
 
 use rule * from snv_indels as snv_indels_*
 
-# use rule bcftools_view from snv_indels as snv_indels_bcftools_view_peddy with:
-#     input:
-#         bcf="qc/peddy/all.bcf"
-#     output:
-#         vcf="qc/peddy/all.vcf.gz"
-#     log:
-#         "qc/peddy/all.vcf.gz.log"
-#     benchmark:
-#         repeat(
-#             "all.vcf.gz.benchmark.tsv",
-#             config.get("bcftools_view", {}).get("benchmark_repeats", 1),
-#         )
-
-
-# use rule bcftools_view from snv_indels as snv_indels_bcftools_view_trio with:
-#     input:
-#         bcf="snv_indels/{sample}_{type}.bcf",
-#     output:
-#         vcf=temp("snv_indels/{sample}_{type}.vcf.gz"),
-#     log:
-#         "snv_indels/{sample}_{type}.vcf.gz.log",
-#     params:
-#         extra=config.get("bcftools", {}).get("extra", ""),
-#     benchmark:
-#         repeat(
-#             "snv_indels/{sample}_{type}.vcf.gz.benchmark.tsv",
-#             config.get("bcftools_view", {}).get("benchmark_repeats", 1),
-#         )
 
 use rule deeptrio_make_examples from snv_indels as snv_indels_deeptrio_make_examples with:
     input:
@@ -595,7 +570,7 @@ use rule vt_decompose from snv_indels as snv_indels_vt_decompose with:
 
 use rule fix_af from snv_indels as snv_indels_fix_af with:
     input:
-        vcf="vcf_final/{sample}_{type}_ref.vcf",
+        vcf=lambda wildcards: get_vcf_input(wildcards),
     output:
         vcf=temp("vcf_final/{sample}_{type}.fix_af.vcf"),
     log:

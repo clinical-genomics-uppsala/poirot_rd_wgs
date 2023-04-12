@@ -6,7 +6,7 @@ __license__ = "GPL-3"
 
 rule vcf_addRef:
     input:
-        vcf=lambda wildcards: get_vcf_input(wildcards),
+        vcf="vcf_final/{sample}_{type}.fix_af.vcf",
         ref=config["reference"]["fasta"],
     output:
         vcf=temp("vcf_final/{sample}_{type}_ref.vcf"),

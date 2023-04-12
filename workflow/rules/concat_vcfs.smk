@@ -6,7 +6,7 @@ __license__ = "GPL-3"
 
 rule exclude_chrM:
     input:
-        deepvariant_vcf="vcf_final/{sample}_{type}.fix_af.vcf",
+        deepvariant_vcf="vcf_final/{sample}_{type}_ref.vcf",
     output:
         vcf=temp("vcf_final/{sample}_{type}.no_ChrM.vcf"),
     log:

@@ -17,7 +17,9 @@
   "results/{sample}/SMNCopyNumberCaller/{sample}.smn_caller.json": {"name": "_copy_smn_json", "file": "cnv_sv/smn_caller/{sample}_N.json", "types": ["N"]},
   "results/{sample}/automap/{sample}.HomRegions.tsv": {"name": "_copy_automap_tsv", "file": "cnv_sv/automap/{sample}_N/{sample}_N.HomRegions.tsv", "types": ["N"]},
   "results/{sample}/automap/{sample}.HomRegions.pdf": {"name": "_copy_automap_pdf", "file": "cnv_sv/automap/{sample}_N/{sample}_N.HomRegions.pdf", "types": ["N"]},
+  "results/{sample}/expansionhunter_reviewer": {"name": "_copy_reviewer", "file": "cnv_sv/reviewer/{sample}_N/", "types": ["N"]},
   "results/{sample}/{sample}_N.crumble.cram": {"name": "_copy_crumble_cram", "file": "compression/crumble/{sample}_N.crumble.cram", "types": ["N"]},
   "results/{sample}/{sample}_N.crumble.cram.crai": {"name": "_copy_crumble_crai", "file": "compression/crumble/{sample}_N.crumble.cram.crai", "types": ["N"]},
   "results/multiqc_DNA.html": {"name": "_copy_multiqc_html", "file": "qc/multiqc/multiqc_DNA.html", "types": ["N"]}
+
 }

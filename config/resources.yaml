@@ -22,12 +22,14 @@ bwa_mem_mito:
   mem_per_cpu: 3072
   threads: 2
 
+
 deeptrio_call_variants:
-  gres: "--gres=gpu:1"
-  mem_mb: 163840
-  mem_per_cpu: 16384
-  partition: "GPU"
-  threads: 10
+  # gres: "--gres=gpu:1"
+  # mem_mb: 163840
+  # mem_per_cpu: 16384
+  # partition: "GPU"
+  threads: 20
+  time: "48:00:00"
 
 deeptrio_make_examples:
   threads: 1
@@ -37,6 +39,7 @@ deeptrio_postprocess_variants:
   mem_per_cpu: 36864
 
 deepvariant_call_variants:
+  time: "24:00:00"
   threads: 20
 
 deepvariant_call_variants:
