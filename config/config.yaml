@@ -22,7 +22,7 @@ modules:
   qc: "v0.3.0"
   misc: "v0.2.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "5518412"
+  snv_indels: "842a5a8"
 
 
 reference:
@@ -114,9 +114,9 @@ crumble:
   extra: "-O CRAM"
 
 deeptrio_call_variants:
-  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu"
+  container: "docker://google/deepvariant:deeptrio-1.4.0" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
   model:
-    child: "/opt/models/deeptrio/wes/child/model.ckpt" # path to model in the deepvariant container
+    child: "/opt/models/deeptrio/wes/child/model.ckpt" 
     parent: "/opt/models/deeptrio/wes/parent/model.ckpt"
 
 deeptrio_make_examples:
@@ -125,7 +125,7 @@ deeptrio_make_examples:
   n_shards: 80
 
 deeptrio_postprocess_variants:
-  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu"
+  container: "docker://google/deepvariant:deeptrio-1.4.0"
 
 deepvariant_call_variants:
   container: "docker://hydragenetics/deepvariant:1.4.0" #"docker://hydragenetics/deepvariant:1.4.0"
@@ -240,7 +240,7 @@ glnexus:
 glnexus_peddy:
   container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
   configfile: "DeepVariantWGS"
-  extra: "--bed /beegfs-storage/data/ref_data/peddy/v0.4.8/GRCH38.bed"
+  extra: "--bed /beegfs-storage/data/ref_data/peddy/v0.4.8/GRCH38.bed "
 
 
 haplocheck:
@@ -430,4 +430,12 @@ vep:
   container: "docker://ensemblorg/ensembl-vep:release_109.3"
   vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
   extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol --af --af_1kg --af_gnomad --max_af"
-  threads: 4
+
+
+vep_trio:
+  container: "docker://ensemblorg/ensembl-vep:release_109.3"
+  vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
+  extra: "--assembly GRCh38 --check_existing --pick --max_af --buffer_size 50000"
+
+vt_decompose:
+  container: "docker://hydragenetics/vt:2015.11.10"
