@@ -8,6 +8,7 @@ include: "rules/common.smk"
 include: "rules/add_ref_to_vcf.smk"
 include: "rules/concat_vcfs.smk"
 include: "rules/coverage.smk"
+include: "rules/cp_results.smk"
 include: "rules/peddy.smk"
 include: "rules/sample_order_for_multiqc.smk"
 
@@ -23,12 +24,12 @@ rule all:
 ruleorder: _copy_crumble_crai > misc_samtools_index
 ruleorder: _copy_snv_indels_tbi > snv_indels_tabix
 ruleorder: _copy_snv_indels_filtered_tbi > snv_indels_tabix
-ruleorder: snv_indels_bcftools_view
+# ruleorder: snv_indels_bcftools_view
 ruleorder: filtering_bcftools_view_pass > snv_indels_bgzip
 ruleorder: filtering_filter_vcf > snv_indels_bgzip
 ruleorder: filtering_filter_vcf > snv_indels_bcftools_view
 ruleorder: parabricks_fq2bam > alignment_samtools_index
-
+ruleorder: cnv_sv_svdb_merge > snv_indels_bcftools_concat
 
 module alignment:
     snakefile:
@@ -233,9 +234,9 @@ use rule samtools_view from compression as compression_samtools_view with:
         ref=config.get("reference", {}).get("fasta", ""),
 
 
-# use rule spring from compression as compression_spring with:
-#     output:
-#         spring=temp("compression/spring/{sample}_{flowcell}_{lane}_{barcode}_{type}.spring"),
+use rule spring from compression as compression_spring with:
+    output:
+        spring=temp("results/{sample}/spring/{sample}_{flowcell}_{lane}_{barcode}_{type}.spring"),
 
 
 module filtering:
