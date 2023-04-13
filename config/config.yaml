@@ -114,7 +114,7 @@ crumble:
   extra: "-O CRAM"
 
 deeptrio_call_variants:
-  container: "docker://google/deepvariant:deeptrio-1.4.0" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
+  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
   model:
     child: "/opt/models/deeptrio/wes/child/model.ckpt" 
     parent: "/opt/models/deeptrio/wes/parent/model.ckpt"
@@ -125,7 +125,7 @@ deeptrio_make_examples:
   n_shards: 80
 
 deeptrio_postprocess_variants:
-  container: "docker://google/deepvariant:deeptrio-1.4.0"
+  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu"
 
 deepvariant_call_variants:
   container: "docker://hydragenetics/deepvariant:1.4.0" #"docker://hydragenetics/deepvariant:1.4.0"
@@ -425,6 +425,9 @@ tabix:
 tiddit:
   container: "docker://hydragenetics/tiddit:3.3.2"
 
+upd:
+  container: "docker://hydragenetics/upd:0.1.1"
+  extra: "--vep "
 
 vep:
   container: "docker://ensemblorg/ensembl-vep:release_109.3"
