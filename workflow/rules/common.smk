@@ -46,7 +46,7 @@ with open(config["output"]) as output:
 
 ### Set wildcard constraints
 wildcard_constraints:
-    barcode="[A-Z]",
+    barcode="[A-Z+]",
     chr="[^_]",
     flowcell="[A-Z0-9]",
     lane="L[0-9]",
@@ -192,19 +192,6 @@ def compile_output_list(wildcards):
     output_files = []
     types = set([unit.type for unit in units.itertuples()])
     for output, values in output_json.items():
-        # if values["name"] == "_copy_spring":
-        #     output_files += set(
-        #         [
-        #             output.format(sample=sample, flowcell=flowcell, lane=lane, barcode=barcode, type=unit_type)
-        #             for sample in get_samples(samples)
-        #             for unit_type in get_unit_types(units, sample)
-        #             for flowcell in set([u.flowcell for u in units.loc[(sample,unit_type,)].dropna().itertuples()])
-        #             for barcode in set([u.barcode for u in units.loc[(sample,unit_type,)].dropna().itertuples()])
-        #             for lane in set([u.lane for u in units.loc[(sample,unit_type,)].dropna().itertuples()])
-        #             if unit_type in set(output_json[output]["types"]).intersection(types)
-        #         ]
-        #     )
-
         if values["name"] == "_copy_upd_regions_bed":
             output_files += set(
                 [
@@ -217,10 +204,14 @@ def compile_output_list(wildcards):
         else:
             output_files += set(
                 [
-                    output.format(sample=sample, type=unit_type)
+                    output.format(sample=sample, flowcell=flowcell, lane=lane, barcode=barcode, type=unit_type)
                     for sample in get_samples(samples)
                     for unit_type in get_unit_types(units, sample)
-                    if unit_type in set(output_json[output]["types"]).intersection(types)
+                    if unit_type in set(output_json[output]["types"])
+                    for flowcell in set([u.flowcell for u in units.loc[(sample, unit_type)].dropna().itertuples()])
+                    for barcode in set([u.barcode for u in units.loc[(sample, unit_type)].dropna().itertuples()])
+                    for lane in set([u.lane for u in units.loc[(sample, unit_type)].dropna().itertuples()])
+                    
                 ]
             )
 
@@ -260,7 +251,8 @@ def generate_copy_code(workflow, output_json):
                 "__is_snakemake_rule_func=True):\n"
                 '\tshell ( "(cp -r {input[0]} {output[0]}) &> {log}" , bench_record=bench_record, bench_iteration=bench_iteration)\n\n'
             )
-    
+
+
     exec(compile(code, "result_to_copy", "exec"), workflow.globals)
 
 
