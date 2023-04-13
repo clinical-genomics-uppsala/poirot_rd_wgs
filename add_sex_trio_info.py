@@ -58,7 +58,7 @@ def main():
     df = pd.read_csv(sys.argv[1], header=13,
                      dtype=str).set_index("Sample_ID", drop=False)
     trio_df = extract_trio_info(df.Sample_ID, df.Description)
-    samples = pd.read_table("config/samples.tsv", dtype=str)
+    samples = pd.read_table("samples.tsv", dtype=str)
     merged_df = samples.merge(trio_df, on="sample", validate="one_to_one")
     merged_df.to_csv(path_or_buf="config/samples.tsv", sep='\t', index=False)
 
