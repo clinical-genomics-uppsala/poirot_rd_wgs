@@ -22,7 +22,7 @@ modules:
   qc: "v0.3.0"
   misc: "v0.2.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "842a5a8"
+  snv_indels: "develop"
 
 
 reference:
@@ -115,9 +115,10 @@ crumble:
 
 deeptrio_call_variants:
   container: "docker://google/deepvariant:deeptrio-1.4.0-gpu" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
+  extra: "--call_variants_extra_args=\"config_string='gpu_options: {allow_growth: True}'\""
   model:
-    child: "/opt/models/deeptrio/wes/child/model.ckpt" 
-    parent: "/opt/models/deeptrio/wes/parent/model.ckpt"
+    child: "/opt/models/deeptrio/wgs/child/model.ckpt" 
+    parent: "/opt/models/deeptrio/wgs/parent/model.ckpt"
 
 deeptrio_make_examples:
   container: "docker://google/deepvariant:deeptrio-1.4.0-gpu" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
@@ -298,14 +299,14 @@ mt_reference:
 
 
 pbrun_deepvariant:
-  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.1-1"
+  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
   deepvariant_model: "/beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng"
   extra: "--disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
 
 
 
 pbrun_fq2bam:
-  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.1-1"
+  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
   extra: ""
 
 
