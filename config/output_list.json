@@ -20,6 +20,6 @@
   "results/{sample}/expansionhunter_reviewer": {"name": "_copy_reviewer", "file": "cnv_sv/reviewer/{sample}_N/", "types": ["N"]},
   "results/{sample}/{sample}_N.crumble.cram": {"name": "_copy_crumble_cram", "file": "compression/crumble/{sample}_N.crumble.cram", "types": ["N"]},
   "results/{sample}/{sample}_N.crumble.cram.crai": {"name": "_copy_crumble_crai", "file": "compression/crumble/{sample}_N.crumble.cram.crai", "types": ["N"]},
-  "results/{sample}/spring/{sample}_{flowcell}_{lane}_{barcode}_{type}.spring":  {"name": "_copy_spring", "file": "compression/spring/{sample}_{flowcell}_{lane}_{barcode}_{type}.spring", "types": ["N"]},
+  "results/{sample}/spring/{sample}_{type}_{flowcell}_{lane}_{barcode}.spring":  {"name": "_copy_spring", "file": "compression/spring/{sample}_{type}_{flowcell}_{lane}_{barcode}.spring", "types": ["N"]},
   "results/multiqc_DNA.html": {"name": "_copy_multiqc_html", "file": "qc/multiqc/multiqc_DNA.html", "types": ["N"]}
 }

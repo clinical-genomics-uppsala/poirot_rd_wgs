@@ -23,7 +23,7 @@ bwa_mem_mito:
   threads: 2
 
 deeptrio_call_variants:
-  gres: "--gres=gpu:1"
+  gres: "--gres=gpu:1" ## Booking 2 GPUs and 20 cpus works on CGU GPU node (1 GPU and 10 threads not currently working)
   partition: "GPU"
   threads: 10
 
@@ -35,7 +35,6 @@ deeptrio_postprocess_variants:
   mem_per_cpu: 36864
 
 deepvariant_call_variants:
-  time: "24:00:00"
   threads: 20
   mem_mb: 6144
   mem_per_cpu: 6144
