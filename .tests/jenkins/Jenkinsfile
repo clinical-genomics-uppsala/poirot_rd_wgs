@@ -25,8 +25,8 @@ pipeline {
                 pip install -r requirements.txt
                 mkdir -p VALDEV/slurm_out
                 cp -r config VALDEV/
-                cp .tests/jenkins/units_VALDEV.tsv VALDEV/units.tsv
-                cp .tests/jenkins/samples_VALDEV.tsv VALDEV/samples.tsv
+                cp .tests/jenkins/units_VALDEV.tsv VALDEV/config/units.tsv
+                cp .tests/jenkins/samples_VALDEV.tsv VALDEV/config/samples.tsv
                 cp .tests/jenkins/config.yaml VALDEV/config/config.yaml
                 cp .tests/jenkins/resources.yaml VALDEV/config/resources.yaml
                 #cp .tests/jenkins/test_input_VALDEV.tsv VALDEV/test_input.tsv
