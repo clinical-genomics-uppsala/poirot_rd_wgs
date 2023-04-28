@@ -6,22 +6,23 @@ samples: "config/samples.tsv"
 samples_with_trio_sex: "config/SampleSheet.tsv"
 units: "config/units.tsv"
 
+output: "config/output_list.json"
 
-default_container: "docker://hydragenetics/common:0.1.9"
+default_container: "docker://hydragenetics/common:0.2.0"
 
 
 modules:
-  alignment: "v0.3.0"
+  alignment: "v0.4.0"
   annotation: "v0.3.0"
   compression: "v1.1.0"
-  cnv_sv: "32957b1"
+  cnv_sv: "develop"
   filtering: "6e95284"
-  parabricks: "1410021"
-  prealignment: "v0.5.0"
+  parabricks: "64b250a"
+  prealignment: "v1.1.0"
   qc: "v0.3.0"
   misc: "v0.2.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "72fd295"
+  snv_indels: "develop"
 
 
 reference:
@@ -104,7 +105,7 @@ cnvpytor_filter:
 
 
 create_cov_excel:
-  container: "/projects/wp2/nobackup/Twist_Myeloid/Containers/python3.6-pysam-xlsxwriter-yaml.simg"
+  container: "/projects/wp2/nobackup/Twist_Myeloid/Containers/python3.9-0.1.0.sif"
   covLimits: "10 20 30"
 
 
@@ -112,33 +113,37 @@ crumble:
   container: "docker://hydragenetics/crumble:0.8.3"
   extra: "-O CRAM"
 
+deeptrio_call_variants:
+  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
+  # extra: "--config_string 'gpu_options: {allow_growth: True}'"
+  model:
+    child: "/opt/models/deeptrio/wgs/child/model.ckpt" 
+    parent: "/opt/models/deeptrio/wgs/parent/model.ckpt"
+
+deeptrio_make_examples:
+  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
+  extra: "--channels insert_size --pileup_image_height_child 60 --pileup_image_height_parent 40 "
+  n_shards: 80
+
+deeptrio_postprocess_variants:
+  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu"
+
 deepvariant_call_variants:
-  container: "docker://hydragenetics/deepvariant:1.4.0"
-  model_dir: "/opt/models/wgs"
+  container: "docker://hydragenetics/deepvariant:1.4.0" #"docker://hydragenetics/deepvariant:1.4.0"
+  model: "/opt/models/wes/model.ckpt" # path to model in the deepvariant container
 
 deepvariant_make_examples:
   container: "docker://hydragenetics/deepvariant:1.4.0"
-  model: "WGS"
-
-deepvariant_make_examples_peddy:
-  container: "docker://hydragenetics/deepvariant:1.4.0"
-  model: "WGS"
-  extra: "--regions /beegfs-storage/data/ref_data/peddy/v0.4.8/GRCH38.bed "
-
+  extra: "--channels insert_size"
+  n_shards: 80
 
 deepvariant_postprocess_variants:
-  container: "docker://hydragenetics/deepvariant:1.4.0"
-  vcf_type: "vcf"
-
-
-deepvariant_postprocess_variants_peddy:
   container: "docker://hydragenetics/deepvariant:1.4.0"
   vcf_type: "gvcf"
 
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
   variant_catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_grch38.json"
-
 
 fastp_pe:
   container: "docker://hydragenetics/fastp:0.20.1"
@@ -230,8 +235,13 @@ gatk_variant_filtration:
 
 
 glnexus:
-  bedfile: "/beegfs-storage/data/ref_data/peddy/v0.4.8/GRCH38.bed"
-  container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.3"
+  container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
+  configfile: "DeepVariantWGS"
+
+glnexus_peddy:
+  container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
+  configfile: "DeepVariantWGS"
+  extra: "--bed /beegfs-storage/data/ref_data/peddy/v0.4.8/GRCH38.bed "
 
 
 haplocheck:
@@ -291,7 +301,7 @@ mt_reference:
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
   deepvariant_model: "/beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng"
-  extra: "--disable-use-window-selector-model " ## For consistency with deepvariant cpu. Also increases accuracy. 
+  extra: "--disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
 
 
 
@@ -416,9 +426,20 @@ tabix:
 tiddit:
   container: "docker://hydragenetics/tiddit:3.3.2"
 
+upd:
+  container: "docker://hydragenetics/upd:0.1.1"
+  extra: "--vep "
 
 vep:
   container: "docker://ensemblorg/ensembl-vep:release_109.3"
   vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
   extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol --af --af_1kg --af_gnomad --max_af"
-  threads: 4
+
+
+vep_trio:
+  container: "docker://ensemblorg/ensembl-vep:release_109.3"
+  vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
+  extra: "--assembly GRCh38 --check_existing --pick --max_af --buffer_size 50000"
+
+vt_decompose:
+  container: "docker://hydragenetics/vt:2015.11.10"
