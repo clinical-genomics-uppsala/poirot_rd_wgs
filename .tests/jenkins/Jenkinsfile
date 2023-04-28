@@ -24,6 +24,7 @@ pipeline {
                 source venv/bin/activate
                 pip install -r requirements.txt
                 mkdir -p VALDEV/slurm_out
+                cp -r config VALDEV/
                 cp .tests/jenkins/units_VALDEV.tsv VALDEV/units.tsv
                 cp .tests/jenkins/samples_VALDEV.tsv VALDEV/samples.tsv
                 cp .tests/jenkins/config.yaml VALDEV/config/config.yaml
