@@ -30,6 +30,7 @@ ruleorder: filtering_filter_vcf > snv_indels_bcftools_view
 ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: cnv_sv_svdb_merge > snv_indels_bcftools_concat
 
+
 module alignment:
     snakefile:
         github(
@@ -100,9 +101,9 @@ use rule vep from annotation as annotation_vep_trio with:
         "snv_indels/glnexus/{sample}_{type}.vep_annotated.vcf.log",
     benchmark:
         repeat(
-            "snv_indels/glnexus/{sample}_{type}.vep_annotated.vcf.benchmark.tsv", 
-            config.get("vep", {}).get("benchmark_repeats", 1)
-            )
+            "snv_indels/glnexus/{sample}_{type}.vep_annotated.vcf.benchmark.tsv",
+            config.get("vep", {}).get("benchmark_repeats", 1),
+        )
 
 
 module cnv_sv:
@@ -477,6 +478,7 @@ module snv_indels:
     config:
         config
 
+
 use rule * from snv_indels as snv_indels_*
 
 
@@ -493,7 +495,9 @@ use rule deepvariant_make_examples from snv_indels as snv_indels_deepvariant_mak
         bai=lambda wildcards: get_bam_input(wildcards)[1],
         ref=config.get("reference", {}).get("fasta", ""),
     output:
-        examples=temp(f"snv_indels/deepvariant/{{sample}}_{{type}}/make_examples.tfrecord-{{shard}}-of-{config.get('deepvariant_make_examples').get('n_shards', 10):05}.gz"),
+        examples=temp(
+            f"snv_indels/deepvariant/{{sample}}_{{type}}/make_examples.tfrecord-{{shard}}-of-{config.get('deepvariant_make_examples').get('n_shards', 10):05}.gz"
+        ),
     log:
         "snv_indels/deepvariant/{sample}_{type}/make_examples_{shard}.output.log",
     benchmark:
@@ -505,9 +509,11 @@ use rule deepvariant_make_examples from snv_indels as snv_indels_deepvariant_mak
 
 use rule deepvariant_call_variants from snv_indels as snv_indels_deepvariant_call_variants with:
     input:
-        examples=expand("snv_indels/deepvariant/{{sample}}_{{type}}/make_examples.tfrecord-{shard}-of-{nshards:05}.gz",
-            shard = [f"{x:05}" for x in range(config.get('deepvariant_make_examples').get('n_shards', 10))],
-            nshards=config.get('deepvariant_make_examples').get('n_shards', 10)),       
+        examples=expand(
+            "snv_indels/deepvariant/{{sample}}_{{type}}/make_examples.tfrecord-{shard}-of-{nshards:05}.gz",
+            shard=[f"{x:05}" for x in range(config.get("deepvariant_make_examples").get("n_shards", 10))],
+            nshards=config.get("deepvariant_make_examples").get("n_shards", 10),
+        ),
     output:
         outfile=temp("snv_indels/deepvariant/{sample}_{type}/call_variants_output.tfrecord.gz"),
     log:
@@ -524,10 +530,10 @@ use rule deepvariant_postprocess_variants from snv_indels as snv_indels_deepvari
         call_variants_record="snv_indels/deepvariant/{sample}_{type}/call_variants_output.tfrecord.gz",
         gvcf_records=expand(
             "snv_indels/deepvariant/{{sample}}_{{type}}_{{chr}}/gvcf.tfrecord-{shard}-of-{nshards:05}.gz",
-            shard=[f"{x:05}" for x in range(config.get("deepvariant_make_examples", {}).get("n_shards", 2))],
-            nshards=config.get("deepvariant_make_examples").get("n_shards", 2),
-        )
-        if config.get("deepvariant_postprocess_variants", {}).get("vcf_type", "vcf") == "gvcf"
+                shard=[f"{x:05}" for x in range(config.get("deepvariant_make_examples", {}).get("n_shards", 2))],
+                nshards=config.get("deepvariant_make_examples").get("n_shards", 2),
+            )
+            if config.get("deepvariant_postprocess_variants", {}).get("vcf_type", "vcf") == "gvcf"
         else [],
         ref=config.get("reference", {}).get("fasta", ""),
     output:
@@ -551,7 +557,7 @@ use rule glnexus from snv_indels as snv_indels_glnexus_peddy with:
     params:
         extra=config.get("glnexus_peddy", {}).get("extra", ""),
         glnexus_config=config.get("glnexus_peddy", {}).get("configfile", ""),
-        in_gvcf=lambda wildcards, input: get_glnexus_input(wildcards, input)
+        in_gvcf=lambda wildcards, input: get_glnexus_input(wildcards, input),
     log:
         "qc/peddy/all.bcf.log",
     benchmark:

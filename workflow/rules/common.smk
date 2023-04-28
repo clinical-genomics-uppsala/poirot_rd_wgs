@@ -30,7 +30,7 @@ samples = pandas.read_table(config["samples"], dtype=str).set_index("sample", dr
 validate(samples, schema="../schemas/samples.schema.yaml")
 
 if samples[~pandas.isnull(samples.trio_member)].shape[0] % 3 != 0:
-        sys.exit('Not all members of the trios are available in the Sample Sheet')
+    sys.exit("Not all members of the trios are available in the Sample Sheet")
 
 ### Read and validate units file
 units = (
@@ -43,6 +43,7 @@ validate(units, schema="../schemas/units.schema.yaml")
 ## read the output json
 with open(config["output"]) as output:
     output_json = json.load(output)
+
 
 ### Set wildcard constraints
 wildcard_constraints:
@@ -134,11 +135,8 @@ def get_gvcf_list(wildcards):
         sys.exit("Invalid options for snp_caller, valid options are: deepvariant_gpu or deepvariant_cpu")
 
     gvcf_list = [
-        "{}/{}_{}.g.vcf".format(gvcf_path, sample, t)
-        for sample in get_samples(samples)
-        for t in get_unit_types(units, sample)
+        "{}/{}_{}.g.vcf".format(gvcf_path, sample, t) for sample in get_samples(samples) for t in get_unit_types(units, sample)
     ]
-    
 
     return gvcf_list
 
@@ -176,15 +174,13 @@ def get_parent_bams(wildcards):
 
     bam_list = [mother_bam, father_bam]
 
-
     return bam_list
 
 
-
 def get_glnexus_input(wildcards, input):
-   
-    gvcf_input =  "-i {}".format(" -i ".join(input.gvcfs))
-   
+
+    gvcf_input = "-i {}".format(" -i ".join(input.gvcfs))
+
     return gvcf_input
 
 
@@ -196,7 +192,7 @@ def compile_output_list(wildcards):
             output_files += set(
                 [
                     output.format(sample=sample, type=unit_type)
-                    for sample in samples[samples.trio_member == 'proband'].index
+                    for sample in samples[samples.trio_member == "proband"].index
                     for unit_type in get_unit_types(units, sample)
                     if unit_type in set(output_json[output]["types"]).intersection(types)
                 ]
@@ -211,7 +207,6 @@ def compile_output_list(wildcards):
                     for flowcell in set([u.flowcell for u in units.loc[(sample, unit_type)].dropna().itertuples()])
                     for barcode in set([u.barcode for u in units.loc[(sample, unit_type)].dropna().itertuples()])
                     for lane in set([u.lane for u in units.loc[(sample, unit_type)].dropna().itertuples()])
-                    
                 ]
             )
 
@@ -234,7 +229,7 @@ def generate_copy_code(workflow, output_json):
             code += f'@workflow.rule(name="{rule_name}")\n'
             code += f'@workflow.input("{input_file}")\n'
             code += f'@workflow.output("{output_file}")\n'
-            if rule_name == "_copy_reviewer": # handle rules that have directory as output
+            if rule_name == "_copy_reviewer":  # handle rules that have directory as output
                 result_file = "{sample}"
             else:
                 result_file = os.path.basename(output_file)
@@ -252,9 +247,7 @@ def generate_copy_code(workflow, output_json):
                 '\tshell ( "(cp -r {input[0]} {output[0]}) &> {log}" , bench_record=bench_record, bench_iteration=bench_iteration)\n\n'
             )
 
-
     exec(compile(code, "result_to_copy", "exec"), workflow.globals)
 
 
 generate_copy_code(workflow, output_json)
-
