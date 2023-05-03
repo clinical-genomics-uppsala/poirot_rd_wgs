@@ -210,6 +210,7 @@ def compile_output_list(wildcards):
                 ]
             )
 
+
     return list(set(output_files))
 
 
@@ -231,11 +232,12 @@ def generate_copy_code(workflow, output_json):
             code += f'@workflow.output("{output_file}")\n'
             if rule_name == "_copy_reviewer":  # handle rules that have directory as output
                 result_file = "{sample}"
+                output_file = f"directory({output_file})"
             else:
                 result_file = os.path.basename(output_file)
             code += f'@workflow.log("logs/{rule_name}_{result_file}.log")\n'
             code += f'@workflow.container("{copy_container}")\n'
-            code += f'@workflow.conda("../envs/copy_result.yaml")\n'
+            #code += f'@workflow.conda("../envs/copy_result.yaml")\n'
             code += f'@workflow.resources(time = "{time}", threads = {threads}, mem_mb = {mem_mb}, mem_per_cpu = {mem_per_cpu}, partition = "{partition}")\n'
             code += '@workflow.shellcmd("cp -r {input} {output}")\n\n'
             code += "@workflow.run\n"
