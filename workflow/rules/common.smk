@@ -57,28 +57,6 @@ wildcard_constraints:
 
 
 ### Functions
-def get_flowcell(units, wildcards):
-    flowcells = set([u.flowcell for u in get_units(units, wildcards)])
-    if len(flowcells) > 1:
-        raise ValueError("Sample type combination from different sequence flowcells")
-    return flowcells.pop()
-
-
-# def get_in_gvcf(wildcards):
-#     gvcf_list = [
-#         "snv_indels/deepvariant_peddy/{}_{}.g.vcf".format(sample, t)
-#         for sample in get_samples(samples)
-#         for t in get_unit_types(units, sample)
-#     ]
-#     return " -i ".join(gvcf_list)
-
-
-# def get_spring_extra(wildcards: snakemake.io.Wildcards):
-#     extra = config.get("spring", {}).get("extra", "")
-#     if get_fastq_file(units, wildcards, "fastq1").endswith(".gz"):
-#         extra = "%s %s" % (extra, "-g")
-#     return extra
-
 
 def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True, by_chr=False):
 
