@@ -7,16 +7,16 @@ units: "config/units.tsv"
 
 output: "config/output_list.json"
 
-default_container: "docker://hydragenetics/common:0.2.0"
+default_container: "docker://hydragenetics/common:0.3.0"
 
 
 modules:
   alignment: "v0.4.0"
   annotation: "v0.3.0"
-  compression: "v1.1.0"
-  cnv_sv: "v0.4.0"
+  compression: "3f79698"
+  cnv_sv: "feeb98e"
   filtering: "v0.2.0"
-  parabricks: "v0.3.0"
+  parabricks: "v1.0.0"
   prealignment: "v1.1.0"
   qc: "v0.4.0"
   misc: "v0.2.0"
