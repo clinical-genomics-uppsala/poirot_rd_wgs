@@ -6,11 +6,14 @@ import subprocess
 import yaml
 import gzip
 
-# Define sys.argvs
+# Specify input files
 configfile = snakemake.input[0]
-duplicationFile = snakemake.input[1]
-mosdepth = snakemake.input[3]  # Summary file
-output = snakemake.output[0]
+duplicationFile = snakemake.input.duplication_file
+mosdepth = snakemake.input.summary
+covRegionsFile = snakemake.input.cov_regions
+covThresFile = snakemake.input.cov_thresh
+mosdepthPerBase = snakemake.input.low_cov
+output = snakemake.output.out
 
 # Define sample based on annotated vcf
 sample = mosdepth.split("_")[1].split("/")[1]
@@ -47,8 +50,7 @@ col = 0
 
 
 ''' Coverage and threshold sheet '''
-covRegionsFile = mosdepth.replace(".mosdepth.summary.txt", ".regions.bed.gz")
-covThresFile = mosdepth.replace('.mosdepth.summary.txt', '.thresholds.bed.gz')
+print('Generating Coverage and threshold sheet')
 tableLinesCov = []
 tableLinesTre = []
 totalMinBreadth = 0
@@ -113,10 +115,10 @@ while i < len(tableLinesCov):
 
 
 ''' Low coverage sheet '''
+print('Generating Low Coverage sheet')
 row = 6  # 0 index
 lowCovLines = []
 lowRegLines = []
-mosdepthPerBase = mosdepth.replace(".mosdepth.summary.txt", ".mosdepth.lowCov.regions.txt")
 
 with open(mosdepthPerBase, 'r') as file:
     for lline in file:
@@ -144,6 +146,7 @@ for line in lowCovLines:
 
 
 ''' Overview sheet (1) '''
+print('Generating Overview sheet')
 worksheetOver.write(3, 0, "Processing date: "+today.strftime("%B %d, %Y"))
 worksheetOver.write_row(4, 0, emptyList, lineFormat)
 worksheetOver.write(5, 0, "Created by: ")
@@ -159,7 +162,7 @@ avgCov = subprocess.run(cmdAvgCov, stdout=subprocess.PIPE, shell='TRUE').stdout.
 cmdDupl = 'grep -A1 PERCENT '+duplicationFile+' | tail -1 | cut -f9'
 duplicateLevel = subprocess.run(cmdDupl, stdout=subprocess.PIPE, shell='TRUE').stdout.decode('utf-8').strip()
 
-worksheetOver.write_row(8, 0, ['DNAnr', 'Avg. coverage (x)', 'Duplicationlevel (%)',
+worksheetOver.write_row(8, 0, ['DNAnr', 'Avg. coverage (x)', 'Duplicationlevel ()%)',
                                str(minCov)+'x (%)', str(medCov)+'x (%)', str(maxCov)+'x (%)'], tableHeadFormat)
 worksheetOver.write_row(9, 0, [sample, avgCov, str(round(float(duplicateLevel)*100, 2)),
                                str(round(float(totalMinBreadth/totalLength)*100, 1)),
@@ -176,6 +179,7 @@ worksheetOver.write_url(16, 0, "internal: 'Coverage'!A1", string='Average covera
 
 
 ''' Genepanel sheets '''
+print('Generating Gene panel sheet')
 panels = []
 with open(genepanels, 'rt') as file:
     for lline in file:
@@ -192,6 +196,7 @@ for line in panels:
     number = number + 1
     genes = []
     lows = []
+    print(panel)
     with open(panel, 'rt', encoding='utf-8') as file:
         for lline in file:
             i = 0

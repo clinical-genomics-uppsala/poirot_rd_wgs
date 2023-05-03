@@ -57,31 +57,9 @@ wildcard_constraints:
 
 
 ### Functions
-def get_flowcell(units, wildcards):
-    flowcells = set([u.flowcell for u in get_units(units, wildcards)])
-    if len(flowcells) > 1:
-        raise ValueError("Sample type combination from different sequence flowcells")
-    return flowcells.pop()
-
-
-# def get_in_gvcf(wildcards):
-#     gvcf_list = [
-#         "snv_indels/deepvariant_peddy/{}_{}.g.vcf".format(sample, t)
-#         for sample in get_samples(samples)
-#         for t in get_unit_types(units, sample)
-#     ]
-#     return " -i ".join(gvcf_list)
-
-
-# def get_spring_extra(wildcards: snakemake.io.Wildcards):
-#     extra = config.get("spring", {}).get("extra", "")
-#     if get_fastq_file(units, wildcards, "fastq1").endswith(".gz"):
-#         extra = "%s %s" % (extra, "-g")
-#     return extra
 
 
 def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True, by_chr=False):
-
     if use_sample_wildcard and use_type_wildcard is True:
         sample_str = "{}_{}".format(wildcards.sample, wildcards.type)
     elif use_sample_wildcard and use_type_wildcard is not True:
@@ -108,7 +86,6 @@ def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True, b
 
 
 def get_vcf_input(wildcards):
-
     caller = config.get("snp_caller", None)
     if caller is None:
         sys.exit("snp_caller missing from config, valid options: deepvariant_gpu or deepvariant_cpu")
@@ -123,7 +100,6 @@ def get_vcf_input(wildcards):
 
 
 def get_gvcf_list(wildcards):
-
     caller = config.get("snp_caller", None)
     if caller is None:
         sys.exit("snp_caller missing from config, valid options: deepvariant_gpu or deepvariant_cpu")
@@ -178,7 +154,6 @@ def get_parent_bams(wildcards):
 
 
 def get_glnexus_input(wildcards, input):
-
     gvcf_input = "-i {}".format(" -i ".join(input.gvcfs))
 
     return gvcf_input
@@ -231,11 +206,12 @@ def generate_copy_code(workflow, output_json):
             code += f'@workflow.output("{output_file}")\n'
             if rule_name == "_copy_reviewer":  # handle rules that have directory as output
                 result_file = "{sample}"
+                output_file = f"directory({output_file})"
             else:
                 result_file = os.path.basename(output_file)
             code += f'@workflow.log("logs/{rule_name}_{result_file}.log")\n'
             code += f'@workflow.container("{copy_container}")\n'
-            code += f'@workflow.conda("../envs/copy_result.yaml")\n'
+            # code += f'@workflow.conda("../envs/copy_result.yaml")\n'
             code += f'@workflow.resources(time = "{time}", threads = {threads}, mem_mb = {mem_mb}, mem_per_cpu = {mem_per_cpu}, partition = "{partition}")\n'
             code += '@workflow.shellcmd("cp -r {input} {output}")\n\n'
             code += "@workflow.run\n"

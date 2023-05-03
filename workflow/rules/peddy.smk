@@ -6,7 +6,7 @@ __license__ = "GPL-3"
 
 rule create_ped:
     input:
-        config["peddy"]["samples"],
+        config["samples"],
     output:
         temp("qc/peddy/all.ped"),
     log:
