@@ -9,7 +9,7 @@ import gzip
 # Specify input files
 configfile = snakemake.input[0]
 duplicationFile = snakemake.input.duplication_file
-mosdepth = snakemake.input.summary  
+mosdepth = snakemake.input.summary
 covRegionsFile = snakemake.input.cov_regions
 covThresFile = snakemake.input.cov_thresh
 mosdepthPerBase = snakemake.input.low_cov
@@ -109,7 +109,7 @@ while i < len(tableLinesCov):
         medBreadth = med/length
         maxBreadth = max/length
         covRow = [gene, transcript, round((cov/length), 2), round((minBredth*100), 1),
-                    round((medBreadth*100), 1), round((maxBreadth*100), 1)]
+                  round((medBreadth*100), 1), round((maxBreadth*100), 1)]
         covtable.append(covRow)
         i = i + 1
 
@@ -163,11 +163,11 @@ cmdDupl = 'grep -A1 PERCENT '+duplicationFile+' | tail -1 | cut -f9'
 duplicateLevel = subprocess.run(cmdDupl, stdout=subprocess.PIPE, shell='TRUE').stdout.decode('utf-8').strip()
 
 worksheetOver.write_row(8, 0, ['DNAnr', 'Avg. coverage (x)', 'Duplicationlevel ()%)',
-                                str(minCov)+'x (%)', str(medCov)+'x (%)', str(maxCov)+'x (%)'], tableHeadFormat)
+                               str(minCov)+'x (%)', str(medCov)+'x (%)', str(maxCov)+'x (%)'], tableHeadFormat)
 worksheetOver.write_row(9, 0, [sample, avgCov, str(round(float(duplicateLevel)*100, 2)),
-                                str(round(float(totalMinBreadth/totalLength)*100, 1)),
-                                str(round(float(totalMedBreadth/totalLength)*100, 1)),
-                                str(round(float(totalMaxBreadth/totalLength)*100, 1))])
+                               str(round(float(totalMinBreadth/totalLength)*100, 1)),
+                               str(round(float(totalMedBreadth/totalLength)*100, 1)),
+                               str(round(float(totalMaxBreadth/totalLength)*100, 1))])
 
 worksheetOver.write(11, 0, 'Number of regions not covered by at least '+str(minCov)+'x: ', tableHeadFormat)  # From Cov sheet
 worksheetOver.write(12, 0, str(len(lowRegLines)))  # From Cov sheet
@@ -216,13 +216,13 @@ for line in panels:
                     k = k + 1
         tableArea = 'A6:F'+str(len(genes)+6)  # rows of full list
         headerListDict = [{'header': 'Gene'}, {'header': 'Transcript'}, {'header': 'Avg coverage'},
-                            {'header': str(minCov)+'x'}, {'header': str(medCov)+'x'}, {'header': str(maxCov)+'x'}]
+                          {'header': str(minCov)+'x'}, {'header': str(medCov)+'x'}, {'header': str(maxCov)+'x'}]
         worksheetpanel.add_table(tableArea, {'data': genes, 'columns': headerListDict, 'style': 'Table Style Light 1'})
         if lows != []:
             worksheetpanel.write('A'+str(len(genes)+9), 'Regions of exons that are covered below '+str(minCov)+'x'+'.')
             tableArea2 = 'A'+str(len(genes)+10)+':E'+str(len(lows)+len(genes)+10)  # rows of full list
             headerListDict2 = [{'header': 'Gene name_transcript_exon'}, {'header': 'Chr'}, {'header': 'Start'},
-                                {'header': 'Stop'}, {'header': 'Coverage (x)'}]
+                               {'header': 'Stop'}, {'header': 'Coverage (x)'}]
             worksheetpanel.add_table(tableArea2, {'data': lows, 'columns': headerListDict2, 'style': 'Table Style Light 1'})
         else:
             worksheetpanel.write('A'+str(len(genes)+9), 'No regions of exons are covered under '+str(minCov)+'x'+'.')
