@@ -496,6 +496,11 @@ use rule deepvariant_make_examples from snv_indels as snv_indels_deepvariant_mak
         examples=temp(
             f"snv_indels/deepvariant/{{sample}}_{{type}}/make_examples.tfrecord-{{shard}}-of-{config.get('deepvariant_make_examples').get('n_shards', 10):05}.gz"
         ),
+        gvcf_records=temp(
+            f"snv_indels/deepvariant/{{sample}}_{{type}}/gvcf.tfrecord-{{shard}}-of-{config.get('deepvariant_make_examples', {}).get('n_shards', 2):05}.gz"
+        )
+        if config.get("deepvariant_postprocess_variants", {}).get("vcf_type", "vcf") == "gvcf"
+        else [],
     log:
         "snv_indels/deepvariant/{sample}_{type}/make_examples_{shard}.output.log",
     benchmark:
@@ -527,7 +532,7 @@ use rule deepvariant_postprocess_variants from snv_indels as snv_indels_deepvari
     input:
         call_variants_record="snv_indels/deepvariant/{sample}_{type}/call_variants_output.tfrecord.gz",
         gvcf_records=expand(
-            "snv_indels/deepvariant/{{sample}}_{{type}}_{{chr}}/gvcf.tfrecord-{shard}-of-{nshards:05}.gz",
+            "snv_indels/deepvariant/{{sample}}_{{type}}/gvcf.tfrecord-{shard}-of-{nshards:05}.gz",
             shard=[f"{x:05}" for x in range(config.get("deepvariant_make_examples", {}).get("n_shards", 2))],
             nshards=config.get("deepvariant_make_examples").get("n_shards", 2),
         )
