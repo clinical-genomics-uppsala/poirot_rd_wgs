@@ -39,6 +39,7 @@ reference:
 
 trimmer_software: "fastp_pe"
 
+
 aligner: "bwa_gpu" # "bwa_cpu" or "bwa_gpu"
 snp_caller: "deepvariant_gpu" # "deepvariant_cpu" or "deepvariant_gpu"
 
@@ -51,12 +52,12 @@ automap:
 
 
 bcftools_view_biallelic:
-  container: "docker://hydragenetics/common:0.2.0"
+  container: "docker://hydragenetics/common:0.3.0"
   extra: "-m2 -M2 -v snps"
 
 
 bcftools_view_pass:
-  container: "docker://hydragenetics/common:0.2.0"
+  container: "docker://hydragenetics/common:0.3.0"
   extra: "--apply-filter PASS "
 
 
@@ -104,7 +105,7 @@ cnvpytor_filter:
 
 
 create_cov_excel:
-  container: "/projects/wp2/nobackup/Twist_Myeloid/Containers/python3.9-0.1.0.sif"
+  container: "docker://hydragenetics/common:0.3.0"
   covLimits: "10 20 30"
 
 
@@ -302,8 +303,6 @@ pbrun_deepvariant:
   deepvariant_model: "/beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng"
   extra: "--disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
 
-
-
 pbrun_fq2bam:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
   extra: ""
@@ -352,54 +351,40 @@ picard_collect_multiple_metrics:
 picard_collect_wgs_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
 
-
 picard_mark_duplicates:
   container: "docker://hydragenetics/picard:2.25.4"
-
 
 reviewer:
   container: "docker://hydragenetics/reviewer:0.2.7"
 
-
-sample_order_for_multiqc:
-  sample_sheet: "config/SampleSheet.csv"
-
-
 samtools_stats:
-  container: "docker://hydragenetics/common:0.1.9"
+  container: "docker://hydragenetics/common:0.3.0"
   threads: 3
   params:
     extra: " --threads 3 "
-
 
 samtools_idxstats:
-  container: "docker://hydragenetics/common:0.1.9"
+  container: "docker://hydragenetics/common:0.3.0"
   threads: 3
   params:
     extra: " --threads 3 "
 
-
 samtools:
-  container: "docker://hydragenetics/common:0.1.9"
-
+  container: "docker://hydragenetics/common:0.3.0"
 
 smn_caller:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
   genome_version: '38'
 
-
 smn_charts:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
-
 
 spring:
   container: "docker://hydragenetics/spring:1.0.1"
 
-
 stranger:
   container: "docker://hydragenetics/stranger:0.8.1"
   catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_grch38.json"
-
 
 svdb_merge:
   container: "docker://hydragenetics/svdb:2.6.0"
@@ -409,17 +394,14 @@ svdb_merge:
     - "tiddit"
   overlap: 0.6
 
-
 svdb_query:
   container: "docker://hydragenetics/svdb:2.6.0"
   db_string:
     "--db /data/ref_genomes/GRCh38/SweGenSVDBGRCh38/swegen_cnvnator_tiddit_manta.vcf,/data/ref_genomes/GRCh38/gnomAD/gnomad_v2.1_sv.sites.vcf.gz \
     --in_frq FRQ,AF --in_occ OCC,AC --out_frq SweGen_AF,gnomAD_AF --out_occ SweGen_OCC,gnomAD_OCC "
 
-
 tabix:
-  container: "docker://hydragenetics/common:0.1.9"
-
+  container: "docker://hydragenetics/common:0.3.0"
 
 tiddit:
   container: "docker://hydragenetics/tiddit:3.3.2"
@@ -432,7 +414,6 @@ vep:
   container: "docker://ensemblorg/ensembl-vep:release_109.3"
   vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
   extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol --af --af_1kg --af_gnomad --max_af"
-
 
 vep_trio:
   container: "docker://ensemblorg/ensembl-vep:release_109.3"
