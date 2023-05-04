@@ -203,15 +203,14 @@ def generate_copy_code(workflow, output_json):
             copy_container = config.get("_copy", {}).get("container", config["default_container"])
             code += f'@workflow.rule(name="{rule_name}")\n'
             code += f'@workflow.input("{input_file}")\n'
-            code += f'@workflow.output("{output_file}")\n'
-            if rule_name == "_copy_reviewer":  # handle rules that have directory as output
+            if rule_name == "_copy_reviewer":  # handle rule that has directory as output
                 result_file = "{sample}"
-                output_file = f"directory({output_file})"
+                code += f'@workflow.output(directory("{output_file}"))\n'
             else:
                 result_file = os.path.basename(output_file)
+                code += f'@workflow.output("{output_file}")\n'
             code += f'@workflow.log("logs/{rule_name}_{result_file}.log")\n'
             code += f'@workflow.container("{copy_container}")\n'
-            # code += f'@workflow.conda("../envs/copy_result.yaml")\n'
             code += f'@workflow.resources(time = "{time}", threads = {threads}, mem_mb = {mem_mb}, mem_per_cpu = {mem_per_cpu}, partition = "{partition}")\n'
             code += '@workflow.shellcmd("cp -r {input} {output}")\n\n'
             code += "@workflow.run\n"
