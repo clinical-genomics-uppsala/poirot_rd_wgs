@@ -3,27 +3,24 @@
 
 resources: "config/resources.yaml"
 samples: "config/samples.tsv"
-samples_with_trio_sex: "config/SampleSheet.csv"
 units: "config/units.tsv"
 
 output: "config/output_list.json"
 
 default_container: "docker://hydragenetics/common:0.1.9"
 
-
 modules:
-  alignment: "v0.3.0"
+  alignment: "v0.4.0"
   annotation: "v0.3.0"
-  compression: "v1.1.0"
-  cnv_sv: "3dd2e6a"
-  filtering: "6e95284"
-  parabricks: "1410021"
-  prealignment: "v0.5.0"
-  qc: "v0.3.0"
+  compression: "3f79698"
+  cnv_sv: "v0.4.1"
+  filtering: "v0.2.0"
+  parabricks: "v1.0.0"
+  prealignment: "v1.1.0"
+  qc: "v0.4.0"
   misc: "v0.2.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "842a5a8"
-
+  snv_indels: "v0.4.0"
 
 reference:
   coverage_bed: "reference/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
@@ -37,13 +34,10 @@ reference:
   sites: "reference/homo_sapiens.known_indels.vcf.gz"
   wgs_intervals: "reference/homo_sapiens.wgs.interval_list"
 
-
 trimmer_software: "fastp_pe"
-
 
 aligner: "bwa_cpu" # "bwa_cpu"
 snp_caller: "deepvariant_cpu" # "deepvariant_cpu"
-
 
 automap:
   container: "docker://hydragenetics/automap:1.2"
@@ -51,13 +45,13 @@ automap:
   extra: "--DP 10 --minsize 3 --chrX"
   outdir: "cnv_sv/automap"
 
-
-
-
 bcftools_view_pass:
-  container: "docker://hydragenetics/common:0.2.0"
+  container: "docker://hydragenetics/common:0.3.0"
   extra: "--apply-filter PASS "
 
+bcftools_view_pass:
+  container: "docker://hydragenetics/common:0.3.0"
+  extra: "--apply-filter PASS "
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
@@ -66,7 +60,6 @@ bwa_mem:
   bwt: "reference/homo_sapiens.fasta.bwt"
   pac: "reference/homo_sapiens.fasta.pac"
   sa: "reference/homo_sapiens.fasta.sa"
-
 
 bwa_mem_mito:
   container: "docker://hydragenetics/bwa_mem:0.7.17"
@@ -87,11 +80,9 @@ bwa_mem_mito:
     mt: "reference/Homo_sapiens_assembly38.chrM.fasta.sa"
     mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.sa"
 
-
 cnvpytor_readdepth:
   container: "docker://hydragenetics/cnvpytor:1.2.1"
   length_list: "1000 10000 100000"
-
 
 cnvpytor_filter:
   container: "docker://hydragenetics/cnvpytor:1.2.1"
@@ -101,100 +92,86 @@ cnvpytor_filter:
   Q0_range: "0 0.05"
   view: "1000"
 
-
 create_cov_excel:
-  container: "/projects/wp2/nobackup/Twist_Myeloid/Containers/python3.6-pysam-xlsxwriter-yaml.simg"
+  container: "docker://hydragenetics/common:0.3.0"
   covLimits: "10 20 30"
-
 
 crumble:
   container: "docker://hydragenetics/crumble:0.8.3"
   extra: "-O CRAM"
 
+deeptrio_call_variants:
+  container: "docker://google/deepvariant:deeptrio-1.4.0" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
+  # extra: "--config_string 'gpu_options: {allow_growth: True}'"
+  model:
+    child: "/opt/models/deeptrio/wgs/child/model.ckpt" 
+    parent: "/opt/models/deeptrio/wgs/parent/model.ckpt"
+
+deeptrio_make_examples:
+  container: "docker://google/deepvariant:deeptrio-1.4.0-" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
+  extra: "--channels insert_size --pileup_image_height_child 60 --pileup_image_height_parent 40 "
+  n_shards: 80
+
+deeptrio_postprocess_variants:
+  container: "docker://google/deepvariant:deeptrio-1.4.0"
 
 deepvariant_call_variants:
-  container: "docker://hydragenetics/deepvariant:1.4.0"
-  model_dir: "/opt/models/wgs"
-
+  container: "docker://hydragenetics/deepvariant:1.4.0" #"docker://hydragenetics/deepvariant:1.4.0"
+  model: "/opt/models/wes/model.ckpt" # path to model in the deepvariant container
 
 deepvariant_make_examples:
   container: "docker://hydragenetics/deepvariant:1.4.0"
-  model: "WGS"
-
-
-deepvariant_make_examples_peddy:
-  container: "docker://hydragenetics/deepvariant:1.4.0"
-  model: "WGS"
-  extra: "--regions reference/peddy/v0.4.8/GRCH38.bed "
-
+  extra: "--channels insert_size"
+  n_shards: 80
 
 deepvariant_postprocess_variants:
   container: "docker://hydragenetics/deepvariant:1.4.0"
-  vcf_type: "vcf"
-
-
-deepvariant_postprocess_variants_peddy:
-  container: "docker://hydragenetics/deepvariant:1.4.0"
   vcf_type: "gvcf"
-
 
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
   variant_catalog: "reference/variant_catalog.json"
-
 
 fastp_pe:
   container: "docker://hydragenetics/fastp:0.20.1"
   # Default enabled trimming parameters for fastp. Specified for clarity.
   extra: "--trim_poly_g --qualified_quality_phred 15 --unqualified_percent_limit 40 --n_base_limit 5 --length_required 15"
 
-
 fastqc:
   container: "docker://hydragenetics/fastqc:0.11.9"
 
-
 filter_vcf:
   germline: "config/config_hard_filter_germline.yaml"
-
 
 gatk_collect_wgs_metrics:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
   coverage_cap: 100000
   read_length: 151
 
-
 gatk_filter_contamination:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
-
 
 gatk_filter_mutect_calls_mt:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
 
-
 gatk_left_align_and_trim_variants:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
-
 
 gatk_lift_over_vcf:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
   shift_back_chain: "reference/ShiftBack.chain"
 
-
 gatk_mark_duplicates:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
-
 
 gatk_merge_bam_alignment:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
 
-
 gatk_merge_vcfs:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
 
-
 gatk_merge_stats:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
-
 
 gatk_mutect2:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
@@ -203,64 +180,55 @@ gatk_mutect2:
     mt_shifted: "reference/control_region_shifted.chrM.interval_list"
   max_reads_per_alignment_start: 75
 
-
 gatk_print_reads:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
   interval: "chrM"
 
-
 gatk_revert_sam:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
-
 
 gatk_sam_to_fastq:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
 
-
 gatk_select_variants:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
-
 
 gatk_sort_sam:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
 
-
 gatk_split_multi_allelic_sites:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
 
-
 gatk_variant_filtration:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
-
 
 glnexus:
   bedfile: "reference/GRCH38.bed"
   container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.3"
 
+glnexus_peddy:
+  container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
+  configfile: "DeepVariantWGS"
+  extra: "--bed reference/GRCH38.bed "
 
 haplocheck:
   container: "docker://hydragenetics/haplocheck:1.3.3"
-
 
 manta_config_n:
   container: "docker://hydragenetics/manta:1.6.0"
   extra: ""
 
-
 manta_run_workflow_n:
   container: "docker://hydragenetics/manta:1.6.0"
-
 
 mosdepth:
   container: "docker://hydragenetics/mosdepth:0.3.2"
   by: "500"
   extra: "--fast-mode --no-per-base "
 
-
 mosdepth_bed:
   container: "docker://hydragenetics/mosdepth:0.3.2"
   extra: ""
-
 
 multiqc:
   container: "docker://hydragenetics/multiqc:1.11"
@@ -285,50 +253,39 @@ multiqc:
         - "qc/samtools_stats/{sample}_{type}.samtools-stats.txt"
         - "qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"
 
-
 mt_reference:
   mt: "reference/Homo_sapiens_assembly38.chrM.fasta"
   mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta"
   blacklist: reference/blacklist_sites.hg38.chrM.bed
 
-
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
   deepvariant_model: "reference/deepvariant.eng"
-  extra: "--disable-use-window-selector-model " ## For consistency with deepvariant cpu. Also increases accuracy.
-
+  extra: "--disable-use-window-selector-model --gvcf" ## For consistency with deepvariant cpu. Also increases accuracy.
 
 pbrun_fq2bam:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
   extra: ""
 
-
 peddy:
   container: "docker://hydragenetics/peddy:0.4.8"
-  samples: "config/SampleSheet.csv"
   config: "config/peddy_mqc.yaml"
   extra: "--sites hg38 "
-
 
 picard_collect_alignment_summary_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
 
-
 picard_collect_duplication_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
-
 
 picard_collect_gc_bias_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
 
-
 picard_collect_hs_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
 
-
 picard_collect_insert_size_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
-
 
 picard_collect_multiple_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
@@ -343,60 +300,43 @@ picard_collect_multiple_metrics:
  # - "quality_distribution_metrics"
  # - "quality_distribution.pdf"
 
-
 picard_collect_wgs_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
 
 picard_mark_duplicates:
   container: "docker://hydragenetics/picard:2.25.4"
 
-picard_mark_duplicates:
-  container: "docker://hydragenetics/picard:2.25.4"
-
-
 reviewer:
   container: "docker://hydragenetics/reviewer:0.2.7"
 
-
-sample_order_for_multiqc:
-  sample_sheet: "config/SampleSheet.csv"
-
-
 samtools_stats:
-  container: "docker://hydragenetics/common:0.1.9"
+  container: "docker://hydragenetics/common:0.3.0"
   threads: 3
   params:
     extra: " --threads 3 "
-
 
 samtools_idxstats:
-  container: "docker://hydragenetics/common:0.1.9"
+  container: "docker://hydragenetics/common:0.3.0"
   threads: 3
   params:
     extra: " --threads 3 "
 
-
 samtools:
-  container: "docker://hydragenetics/common:0.1.9"
-
+  container: "docker://hydragenetics/common:0.3.0"
 
 smn_caller:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
   genome_version: '38'
 
-
 smn_charts:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
-
 
 spring:
   container: "docker://hydragenetics/spring:1.0.1"
 
-
 stranger:
   container: "docker://hydragenetics/stranger:0.8.1"
   catalog: "reference/variant_catalog_grch38.json"
-
 
 svdb_merge:
   container: "docker://hydragenetics/svdb:2.6.0"
@@ -405,7 +345,6 @@ svdb_merge:
     - "manta"
     - "tiddit"
   overlap: 0.6
-
 
 svdb_query:
   container: "docker://hydragenetics/svdb:2.6.0"
@@ -416,13 +355,22 @@ svdb_query:
 tabix:
   container: "docker://hydragenetics/common:0.1.9"
 
-
 tiddit:
   container: "docker://hydragenetics/tiddit:3.3.2"
 
+upd:
+  container: "docker://hydragenetics/upd:0.1.1"
+  extra: "--vep "
 
 vep:
   container: "docker://ensemblorg/ensembl-vep:release_109.3"
   vep_cache: "reference/VEP/"
   extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol --af --af_1kg --af_gnomad --max_af"
-  threads: 4
+
+vep_trio:
+  container: "docker://ensemblorg/ensembl-vep:release_109.3"
+  vep_cache: "reference/VEP/"
+  extra: "--assembly GRCh38 --check_existing --pick --max_af --buffer_size 50000"
+
+vt_decompose:
+  container: "docker://hydragenetics/vt:2015.11.10"
