@@ -17,7 +17,7 @@ modules:
   filtering: "v0.2.0"
   parabricks: "v1.0.0"
   prealignment: "v1.1.0"
-  qc: "v0.4.0"
+  qc: "v0.4.1"
   misc: "v0.2.0"
   mitochondrial: "v0.1.0"
   snv_indels: "v0.4.0"
@@ -260,8 +260,8 @@ mt_reference:
 
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-  deepvariant_model: "/beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng"
-  extra: "--disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
+  
+  extra: "--pb-model-file /beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng --disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
 
 pbrun_fq2bam:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"

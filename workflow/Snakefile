@@ -325,7 +325,6 @@ use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
         bam=lambda wildcards: get_bam_input(wildcards)[0],
         bai=lambda wildcards: get_bam_input(wildcards)[1],
         fasta=config.get("reference", {}).get("fasta", ""),
-        model=config.get("pbrun_deepvariant", {}).get("deepvariant_model", ""),
     output:
         vcf=temp("parabricks/pbrun_deepvariant/{sample}_{type}.g.vcf"),
         vcf2=temp("parabricks/pbrun_deepvariant/{sample}_{type}.vcf"),
