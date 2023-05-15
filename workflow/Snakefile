@@ -8,6 +8,7 @@ include: "rules/common.smk"
 include: "rules/add_ref_to_vcf.smk"
 include: "rules/concat_vcfs.smk"
 include: "rules/coverage.smk"
+include: "rules/extract_str_bed.smk"
 include: "rules/peddy.smk"
 
 
