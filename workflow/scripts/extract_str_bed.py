@@ -1,5 +1,6 @@
 import pysam
 
+
 loci_to_filter = ["HTT", "HTT_CCG", "C9ORF72"]
 vcf = pysam.VariantFile(snakemake.input.vcf)
 
@@ -10,19 +11,19 @@ def get_bed_rec(rec):
         str_normal_max = str(rec.info["STR_NORMAL_MAX"])
         str_pathologic_min = str(rec.info["STR_PATHOLOGIC_MIN"])
     except KeyError:
-        str_status = 'NA'
-        str_normal_max = 'NA'
-        str_pathologic_min = 'NA'
+        str_status = "NA"
+        str_normal_max = "NA"
+        str_pathologic_min = "NA"
 
     if rec.alts is not None:
-        alts = ','.join(rec.alts)
+        alts = ",".join(rec.alts)
     else:
-        alts = '.'
+        alts = "."
 
-    if str_status != 'NA':
+    if str_status != "NA":
         str_status = ','.join(str_status)
 
-    bed_rec = '\t'.join([rec.chrom, str(rec.pos - 1), str(rec.stop),
+    bed_rec = "\t".join([rec.chrom, str(rec.pos - 1), str(rec.stop),
                         rec.info["VARID"], alts,
                         str_status, str_normal_max,
                         str_pathologic_min])
