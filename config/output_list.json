@@ -11,6 +11,7 @@
   "results/{sample}/{sample}.upd_regions.bed": {"name": "_copy_upd_regions_bed", "file": "cnv_sv/upd/{sample}_N.upd_regions.bed", "types": ["N"]},
   "results/{sample}/{sample}.contamination.html": {"name": "_copy_haplochack_contamination_report", "file": "mitochondrial/haplocheck/{sample}_N.contamination.html", "types": ["N"]},
   "results/{sample}/{sample}.expansionhunter_stranger.vcf.gz": {"name": "_copy_stranger_vcf", "file": "cnv_sv/stranger/{sample}_N.stranger.vcf.gz", "types": ["N"]},
+  "results/{sample}/{sample}.expansionhunter_stranger.bed": {"name": "_copy_stranger_bed", "file": "cnv_sv/stranger/{sample}_N.stranger.bed", "types": ["N"]},
   "results/{sample}/{sample}.coverage_analysis.xlsx": {"name": "_copy_coverage_excel", "file": "qc/create_cov_excel/{sample}_N.coverage.xlsx", "types": ["N"]},
   "results/{sample}/SMNCopyNumberCaller/{sample}.smn_charts.pdf": {"name": "_copy_smn_pdf", "file": "cnv_sv/smn_charts/smn_{sample}_N.pdf", "types": ["N"]},
   "results/{sample}/SMNCopyNumberCaller/{sample}.smn_caller.tsv": {"name": "_copy_smn_tsv", "file": "cnv_sv/smn_caller/{sample}_N.tsv", "types": ["N"]},
