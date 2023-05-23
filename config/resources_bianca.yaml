@@ -1,0 +1,126 @@
+---
+
+default_resources:
+  threads: 1
+  time: "12:00:00"
+  mem_mb: 6144
+  mem_per_cpu: 6144
+  partition: "core"
+  account: "sens2019031"
+
+bwa_mem:
+  mem_mb: 98304
+  mem_per_cpu: 6144
+  threads: 16
+
+bwa_mem_merge:
+  mem_mb: 61440
+  mem_per_cpu: 6144
+  threads: 10
+
+bwa_mem_mito:
+  mem_mb: 6144
+  mem_per_cpu: 3072
+  threads: 2
+
+deeptrio_call_variants:
+  gres: "--gres=gpu:1" 
+  constraint: "-C GPU"
+
+deeptrio_make_examples:
+  threads: 1
+
+deeptrio_postprocess_variants:
+  threads: 5
+
+deepvariant_call_variants:
+  threads: 16
+
+deepvariant_make_examples:
+  threads: 1
+
+deepvariant_postprocess_variants:
+  threads: 5
+
+expansionhunter:
+  threads: 16
+
+fastp_pe:
+  threads: 5
+  mem_mb: 30720
+  mem_per_cpu: 6144
+
+fastqc:
+  threads: 2
+  mem_mb: 12288
+  mem_per_cpu: 6144
+
+gatk_mark_duplicates:
+  mem_mb: 4096
+  mem_per_cpu: 4096
+
+gatk_sam_to_fastq:
+  mem_mb: 5120
+  mem_per_cpu: 5120
+
+gatk_sort_sam:
+  mem_mb: 4096
+  mem_per_cpu: 4096
+
+gatk_mark_duplicates:
+  mem_mb: 4096
+  mem_per_cpu: 4096
+
+gatk_sam_to_fastq:
+  mem_mb: 5120
+  mem_per_cpu: 5120
+
+gatk_sort_sam:
+  mem_mb: 4096
+  mem_per_cpu: 4096
+
+glnexus:
+  threads: 16
+
+mosdepth:
+  mem_mb: 36864
+  threads: 7
+
+mosdepth_bed:
+  mem_mb: 36864
+  threads: 7
+
+pbrun_fq2bam:
+  gres: "--gres=gpu:2"
+  constraint: "-C GPU"
+  time: "08:00:00"
+
+pbrun_deepvariant:
+  gres: "--gres=gpu:2"
+  constraint: "-C GPU"
+  time: "08:00:00"
+
+peddy:
+  threads: 8
+
+samtools_sort:
+  mem_mb: 61440
+  mem_per_cpu: 6144
+  threads: 10
+
+samtools_view:
+  mem_mb: 61440
+  mem_per_cpu: 6144
+  threads: 10
+
+smn_caller:
+  threads: 8
+
+spring:
+  threads: 8
+
+tiddit:
+  threads: 8
+
+vep:
+  threads: 4

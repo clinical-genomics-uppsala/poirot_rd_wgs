@@ -1,0 +1,18 @@
+jobs: 100
+keep-going: True
+restart-times: 1
+rerun-incomplete: True
+max-jobs-per-second: 100
+max-status-checks-per-second: 100
+use-singularity: True
+snakefile: "workflow/Snakefile"
+configfile: "config/config.yaml"
+drmaa: "-A {ressources.account} -p {resources.partition} -t {resources.time} -n {resources.threads} --mem={resources.mem_mb} --mem-per-cpu={resources.mem_per_cpu} {resources.gres} {resources.constraint} -J {rule} -A wp4 -e slurm/{rule}_%j.err -o slurm/{rule}_%j.out --nodes=1-1"
+default-resources: 
+  - gres=""
+  - constraint=""
+drmaa-log-dir: "slurm"
+singularity-args: "--cleanenv --bind /beegfs-archive,/beegfs-scratch,/beegfs-storage -B /beegfs-scratch/wp4/poirot_rd_wgs_tmp:/tmp --disable-cache --nv"
+singularity-prefix: "/proj/sens2019031/poirot_pipeline/singularity_files"
+wrapper-prefix: 
+
