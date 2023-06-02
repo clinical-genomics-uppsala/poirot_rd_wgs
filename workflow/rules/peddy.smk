@@ -20,7 +20,7 @@ rule create_ped:
     container:
         config.get("create_ped", {}).get("container", config["default_container"])
     message:
-        "{rule}: Create a peddy ped/FAM file from the SampleSheet.csv file"
+        "{rule}: Create a peddy ped/FAM file from the samples.tsv file"
     script:
         "../scripts/create_peddy_fam.py"
 

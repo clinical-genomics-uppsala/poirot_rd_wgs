@@ -31,7 +31,7 @@ with open(snakemake.output[0], 'w') as pedfile:
     for sample in fam_df.itertuples():
         sample_id = sample.sample + '_N'  # vcf sample ids have type
         family_id = sample.trioid
-        if family_id == 'NA':
+        if pd.isna(family_id):
             family_id = sample_id
 
         if sample.sample in child_df['sample'].tolist():
