@@ -5,6 +5,7 @@ from datetime import date
 import subprocess
 import yaml
 import gzip
+from operator import itemgetter
 
 # Specify input files
 configfile = snakemake.input[0]
@@ -51,8 +52,8 @@ col = 0
 
 ''' Coverage and threshold sheet '''
 print('Generating Coverage and threshold sheet')
-tableLinesCov = []
-tableLinesTre = []
+tableLinesCov_unsorted = []
+tableLinesTre_unsorted = []
 totalMinBreadth = 0
 totalMedBreadth = 0
 totalMaxBreadth = 0
@@ -69,8 +70,11 @@ with gzip.open(covRegionsFile, 'rt') as regionsfile:
         exon = line[3].split("_")[3]
         transcript = "NM_"+line[3].split("_")[2]
         covRow = [gene, transcript, exon, line[4], length]
-        tableLinesCov.append(covRow)
+        tableLinesCov_unsorted.append(covRow)
         bedfile.append(line[0:4])
+
+# sort by gene name
+tableLinesCov = sorted(tableLinesCov_unsorted, key=itemgetter(0))
 
 with gzip.open(covThresFile, 'rt') as thresfile:
     next(thresfile)
@@ -85,7 +89,9 @@ with gzip.open(covThresFile, 'rt') as thresfile:
         totalMedBreadth += int(line[5])
         totalMaxBreadth += int(line[6])
         row = [[line[3]], line[0:3], min, med, max, length]
-        tableLinesTre.append(row)
+        tableLinesTre_unsorted.append(row)
+
+tableLinesTre = sorted(tableLinesTre_unsorted, key=itemgetter(0))
 
 while i < len(tableLinesCov):
     length = 0
