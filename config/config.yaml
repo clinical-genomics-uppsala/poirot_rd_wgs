@@ -15,12 +15,12 @@ modules:
   compression: "3f79698"
   cnv_sv: "v0.4.1"
   filtering: "v0.2.0"
-  parabricks: "v1.0.0"
+  parabricks: "9b94028"
   prealignment: "v1.1.0"
   qc: "v0.4.1"
   misc: "v0.2.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "v0.4.0"
+  snv_indels: "v0.5.0"
 
 reference:
   coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
@@ -260,7 +260,6 @@ mt_reference:
 
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-  
   extra: "--pb-model-file /beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng --disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
 
 pbrun_fq2bam:
