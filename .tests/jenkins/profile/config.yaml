@@ -1,0 +1,10 @@
+jobs: 100
+keep-going: True
+restart-times: 3
+rerun-incomplete: True
+use-singularity: True
+drmaa: "-A wp3 -p {resources.partition} -t {resources.time} -n {resources.threads} --mem={resources.mem_mb} --mem-per-cpu={resources.mem_per_cpu} {resources.gres} -J {rule} -e slurm/{rule}_%j.err -o slurm/{rule}_%j.out --nodes=1-1"
+default-resources: "tmpdir='/beegfs-scratch/wp4/poirot_rd_wgs_tmp'"
+drmaa-log-dir: "slurm_out"
+singularity-args: "--cleanenv --bind /beegfs-archive,/beegfs-scratch,/beegfs-storage -B /home/jenkins  -B /beegfs-scratch/wp4/poirot_rd_wgs_tmp:/tmp --disable-cache --nv"
+singularity-prefix: "/projects/wp4/nobackup/singularity_cache/"

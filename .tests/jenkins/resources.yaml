@@ -1,0 +1,88 @@
+---
+
+
+default_resources:
+  threads: 1
+  time: "12:00:00"
+  mem_mb: 3800
+  mem_per_cpu: 3800
+  partition: "core"
+
+bwa_mem:
+  mem_mb: 15200
+  mem_per_cpu: 1900
+  threads: 8
+  time: "8:00:00"
+
+bwa_mem_mito:
+  mem_mb: 6144
+  mem_per_cpu: 3072
+  threads: 2
+
+deepvariant_call_variants:
+  mem_mb: 6144
+  threads: 8
+
+deepvariant_make_examples:
+  mem_mb: 6144
+  threads: 8
+
+deepvariant_make_examples_peddy:
+  mem_mb: 6144
+  threads: 8
+
+deepvariant_postprocess_variants:
+  mem_mb: 6144
+
+expansionhunter:
+  threads: 8
+
+fastp_pe:
+  threads: 1
+  mem_mb: 6144
+  mem_per_cpu: 6144
+
+fastqc:
+  threads: 2
+  mem_mb: 12288
+  mem_per_cpu: 6144
+
+gatk_mark_duplicates:
+  mem_mb: 4096
+  mem_per_cpu: 4096
+
+gatk_sam_to_fastq:
+  mem_mb: 5120
+  mem_per_cpu: 5120
+
+gatk_sort_sam:
+  mem_mb: 4096
+  mem_per_cpu: 4096
+
+gatk_mark_duplicates:
+  mem_mb: 4096
+  mem_per_cpu: 4096
+
+gatk_sam_to_fastq:
+  mem_mb: 5120
+  mem_per_cpu: 5120
+
+gatk_sort_sam:
+  mem_mb: 4096
+  mem_per_cpu: 4096
+
+glnexus:
+  threads: 8
+
+peddy:
+  threads: 4
+
+smn_caller:
+  threads: 8
+
+spring:
+  mem_mb: 24576
+  threads: 8
+
+tiddit:
+  threads: 8

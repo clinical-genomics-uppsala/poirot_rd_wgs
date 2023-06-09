@@ -1,14 +1,15 @@
-# vim: syntax=python tabstop=4 expandtab
-# vim: syntax=python tabstop=4 expandtab
-# coding: utf-8
-
-__author__ = "Jessika Nordin"
-__copyright__ = "Copyright 2021, Jessika Nordin"
+__author__ = "Jessika Nordin, Padraic Corcoran, Arielle R Munters"
+__copyright__ = "Copyright 2022"
 __email__ = "jessika.nordin@scilifelab.uu.se"
 __license__ = "GPL-3"
 
 
 include: "rules/common.smk"
+include: "rules/add_ref_to_vcf.smk"
+include: "rules/concat_vcfs.smk"
+include: "rules/coverage.smk"
+include: "rules/extract_str_bed.smk"
+include: "rules/peddy.smk"
 
 
 report: "report/workflow.rst"
@@ -16,21 +17,589 @@ report: "report/workflow.rst"
 
 rule all:
     input:
-        ["vcf_filter/%s.sort.vcf.gz" % sample for sample in get_samples(samples)],
+        unpack(compile_output_list),
 
 
-# can change the function in common-smk to use : unpack(compile_output_list),
+ruleorder: _copy_crumble_crai > misc_samtools_index
+ruleorder: _copy_snv_indels_tbi > snv_indels_tabix
+ruleorder: _copy_snv_indels_filtered_tbi > snv_indels_tabix
+ruleorder: filtering_bcftools_view_pass > snv_indels_bgzip
+ruleorder: filtering_filter_vcf > snv_indels_bgzip
+ruleorder: filtering_filter_vcf > snv_indels_bcftools_view
+ruleorder: parabricks_fq2bam > alignment_samtools_index
+ruleorder: cnv_sv_svdb_merge > snv_indels_bcftools_concat
 
 
-module prealignment:
+module alignment:
     snakefile:
-        github("hydra-genetics/prealignment", path="workflow/Snakefile", tag="develop")
+        github(
+            "hydra-genetics/alignment",
+            path="workflow/Snakefile",
+            tag=config["modules"]["alignment"],
+        )
     config:
         config
 
 
-use rule * from prealignment as module_*
+use rule * from alignment as alignment_*
 
 
-include: "rules/fq2vcf.smk"
-include: "rules/vcf_filter.smk"
+use rule samtools_sort from alignment as alignment_samtools_sort_eh_bam with:
+    input:
+        "cnv_sv/expansionhunter/{sample}_{type}_realigned.bam",
+    output:
+        temp("cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam"),
+    log:
+        "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.log",
+    benchmark:
+        repeat(
+            "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.benchmark.tsv",
+            config.get("samtools_sort", {}).get("benchmark_repeats", 1),
+        )
+
+
+module annotation:
+    snakefile:
+        github(
+            "hydra-genetics/annotation",
+            path="workflow/Snakefile",
+            tag=config["modules"]["annotation"],
+        )
+    config:
+        config
+
+
+use rule stranger from annotation as annotation_stranger
+
+
+use rule vep from annotation as annotation_vep with:
+    input:
+        cache=config.get("vep", {}).get("vep_cache", ""),
+        fasta=config["reference"]["fasta"],
+        tabix="vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz.tbi",
+        vcf="vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz",
+    output:
+        vcf=temp("vcf_final/{sample}_{type}.vep_annotated.vcf"),
+    log:
+        "vcf_final/{sample}_{type}.vep_annotated.vcf.log",
+    benchmark:
+        repeat("vcf_final/{sample}_{type}.vep_annotated.vcf.benchmark.tsv", config.get("vep", {}).get("benchmark_repeats", 1))
+
+
+use rule vep from annotation as annotation_vep_trio with:
+    input:
+        cache=config.get("vep_trio", {}).get("vep_cache", ""),
+        fasta=config["reference"]["fasta"],
+        vcf="snv_indels/glnexus/{sample}_{type}.decomposed.vcf.gz",
+    output:
+        vcf=temp("snv_indels/glnexus/{sample}_{type}.vep_annotated.vcf"),
+    params:
+        extra=config.get("vep_trio", {}).get("extra", "--pick"),
+        mode=config.get("vep_trio", {}).get("mode", "--offline --cache"),
+    log:
+        "snv_indels/glnexus/{sample}_{type}.vep_annotated.vcf.log",
+    benchmark:
+        repeat(
+            "snv_indels/glnexus/{sample}_{type}.vep_annotated.vcf.benchmark.tsv",
+            config.get("vep", {}).get("benchmark_repeats", 1),
+        )
+
+
+module cnv_sv:
+    snakefile:
+        github(
+            "hydra-genetics/cnv_sv",
+            path="workflow/Snakefile",
+            tag=config["modules"]["cnv_sv"],
+        )
+    config:
+        config
+
+
+use rule * from cnv_sv as cnv_sv_*
+
+
+use rule automap from cnv_sv as cnv_sv_automap with:
+    input:
+        vcf="vcf_final/{sample}_{type}.vcf",
+
+
+use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter
+
+
+use rule cnvpytor_readdepth from cnv_sv as cnv_sv_cnvpytor_readdepth with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        vcf=lambda wildcards: get_vcf_input(wildcards),
+
+
+use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
+        cat=config.get("expansionhunter", {}).get("variant_catalog", ""),
+        ref=config.get("reference", {}).get("fasta", ""),
+        sex="qc/peddy/peddy.sex_check.csv",
+
+
+use rule manta_config_n from cnv_sv as cnv_sv_manta_config_n with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
+        bai=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
+        ref=config["reference"]["fasta"],
+
+
+use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
+        bai=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
+        ref=config["reference"]["fasta"],
+        scrpt="cnv_sv/manta_run_workflow_n/{sample}/runWorkflow.py",
+    output:
+        cand_si_vcf=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSmallIndels.vcf.gz"),
+        cand_si_tbi=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSmallIndels.vcf.gz.tbi"),
+        cand_sv_vcf=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSV.vcf.gz"),
+        cand_sv_tbi=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSV.vcf.gz.tbi"),
+        dip_sv_vcf=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz"),
+        dip_sv_tbi=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz.tbi"),
+        wrk_dir=temp(directory("cnv_sv/manta_run_workflow_n/{sample}/workspace")),
+
+
+use rule smn_manifest from cnv_sv as cnv_sv_smn_manifest with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
+
+
+use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
+    input:
+        vcfs=[
+            "cnv_sv/tiddit/{sample}_{type}.vcf",
+            "cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz",
+            "cnv_sv/cnvpytor/{sample}_{type}.vcf",
+        ],
+    output:
+        vcf=temp("cnv_sv/svdb_merge/{sample}_{type}.merged.vcf"),
+    log:
+        "cnv_sv/svdb_merge/{sample}_{type}.merged.vcf.log",
+    benchmark:
+        repeat(
+            "cnv_sv/svdb_merge/{sample}_{type}.merged.benchmark.tsv",
+            config.get("svdb_merge", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule svdb_query from cnv_sv as cnv_sv_svdb_query with:
+    input:
+        vcf="cnv_sv/svdb_merge/{sample}_{type}.merged.vcf",
+    output:
+        vcf=temp("cnv_sv/svdb_query/{sample}_{type}.svdb_query.vcf"),
+    log:
+        "cnv_sv/svdb_query/{sample}_{type}.svdb_query.log",
+    benchmark:
+        repeat(
+            "cnv_sv/svdb_query/{sample}_{type}.svdb_query.benchmark.tsv",
+            config.get("svdb_query", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule tiddit from cnv_sv as cnv_sv_tiddit with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        ref=config["reference"]["fasta"],
+
+
+module compression:
+    snakefile:
+        github(
+            "hydra-genetics/compression",
+            path="workflow/Snakefile",
+            tag=config["modules"]["compression"],
+        )
+    config:
+        config
+
+
+use rule * from compression as compression_*
+
+
+# use rule crumble from compression as compression_crumble
+
+
+use rule samtools_view from compression as compression_samtools_view with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards, use_sample_wildcard=False)[0],
+        bai=lambda wildcards: get_bam_input(wildcards, use_sample_wildcard=False)[1],
+        ref=config.get("reference", {}).get("fasta", ""),
+
+
+use rule spring from compression as compression_spring with:
+    output:
+        spring=temp("results/{sample}/spring/{sample}_{type}_{flowcell}_{lane}_{barcode}.spring"),
+
+
+module filtering:
+    snakefile:
+        github("hydra-genetics/filtering", path="workflow/Snakefile", tag=config["modules"]["filtering"])
+    config:
+        config
+
+
+use rule * from filtering as filtering_*
+
+
+use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
+    output:
+        vcf=temp("{file}.bcftools_view_pass.vcf.gz"),
+    params:
+        extra=config.get("bcftools_view_pass", {}).get("extra", ""),
+
+
+# use rule bcftools_view from filtering as filtering_bcftools_view_biallelic with:
+#    output:
+#        vcf=temp("{file}.bcftools_view_biallelic.vcf.gz"),
+#    params:
+#        extra=config.get("bcftools_view_biallelic", {}).get("extra", ""),
+
+
+module misc:
+    snakefile:
+        github("hydra-genetics/misc", path="workflow/Snakefile", tag=config["modules"]["misc"])
+    config:
+        config
+
+
+use rule samtools_index from misc as misc_samtools_index with:
+    input:
+        cram="{file}.crumble.cram",
+    output:
+        crai=temp("{file}.crumble.cram.crai"),
+    params:
+        extra=config.get("extra", {}).get("extra", ""),
+    log:
+        "{file}.crumble.cram.crai.log",
+    benchmark:
+        repeat(
+            "{file}.crumble.cram.crai.benchmark.tsv",
+            config.get("samtools_index", {}).get("benchmark_repeats", 1),
+        )
+    message:
+        "{rule}: Index {wildcards.file}.crumble.cram file"
+
+
+module mitochondrial:
+    snakefile:
+        github(
+            "hydra-genetics/mitochondrial",
+            path="workflow/Snakefile",
+            tag=config["modules"]["mitochondrial"],
+        )
+    config:
+        config
+
+
+use rule * from mitochondrial as mitochondrial_*
+
+
+use rule gatk_print_reads from mitochondrial as mitochondrial_gatk_print_reads with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
+
+
+module parabricks:
+    snakefile:
+        github(
+            "hydra-genetics/parabricks",
+            path="workflow/Snakefile",
+            tag=config["modules"]["parabricks"],
+        )
+    config:
+        config
+
+
+use rule pbrun_fq2bam from parabricks as parabricks_fq2bam
+
+
+use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
+        fasta=config.get("reference", {}).get("fasta", ""),
+    output:
+        vcf=temp("parabricks/pbrun_deepvariant/{sample}_{type}.g.vcf"),
+        vcf2=temp("parabricks/pbrun_deepvariant/{sample}_{type}.vcf"),
+
+
+module prealignment:
+    snakefile:
+        github(
+            "hydra-genetics/prealignment",
+            path="workflow/Snakefile",
+            tag=config["modules"]["prealignment"],
+        )
+    config:
+        config
+
+
+use rule * from prealignment as prealignment_*
+
+
+module qc:
+    snakefile:
+        github(
+            "hydra-genetics/qc",
+            path="workflow/Snakefile",
+            tag=config["modules"]["qc"],
+        )
+    config:
+        config
+
+
+use rule fastqc from qc as qc_fastqc
+
+
+use rule mosdepth from qc as qc_mosdepth with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
+
+
+use rule mosdepth_bed from qc as qc_mosdepth_bed with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
+        bed=config.get("reference", {}).get("coverage_bed", ""),
+    output:
+        bed=temp("qc/mosdepth_bed/{sample}_{type}.regions.bed.gz"),
+        bed_csi=temp("qc/mosdepth_bed/{sample}_{type}.regions.bed.gz.csi"),
+        glob=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.global.dist.txt"),
+        pairbase=temp("qc/mosdepth_bed/{sample}_{type}.per-base.bed.gz"),
+        region=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.region.dist.txt"),
+        summary=temp("qc/mosdepth_bed/{sample}_{type}.mosdepth.summary.txt"),
+        thresholds=temp("qc/mosdepth_bed/{sample}_{type}.thresholds.bed.gz"),
+    params:
+        thresholds="10,20,30",
+
+
+use rule multiqc from qc as qc_multiqc with:
+    input:
+        files=lambda wildcards: set(
+            [
+                file.format(sample=sample, type=u.type, lane=u.lane, flowcell=u.flowcell, barcode=u.barcode, read=read, ext=ext)
+                for file in config["multiqc"]["reports"][wildcards.report]["qc_files"]
+                for sample in get_samples(samples)
+                for u in units.loc[sample].dropna().itertuples()
+                if u.type in config["multiqc"]["reports"][wildcards.report]["included_unit_types"]
+                for read in ["fastq1", "fastq2"]
+                for ext in config.get("picard_collect_multiple_metrics", {}).get("output_ext", [""])
+            ]
+        ),
+        config=lambda wildcards: config["multiqc"]["reports"][wildcards.report]["config"],
+        sample_order="config/sample_order.tsv",
+        sample_replacement="config/sample_replacement.tsv",
+    params:
+        extra=lambda wildcards, input: "--replace-names "
+        + input.sample_replacement
+        + " --sample-names "
+        + input.sample_order
+        + " -c "
+        + input.config,
+
+
+use rule peddy from qc as qc_peddy
+
+
+use rule picard_collect_alignment_summary_metrics from qc as qc_pic_align_sum_met with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        ref=config["reference"]["fasta"],
+
+
+use rule picard_collect_duplication_metrics from qc as qc_pic_dup_met with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+
+
+use rule picard_collect_gc_bias_metrics from qc as qc_pic_gc_met with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        ref=config["reference"]["fasta"],
+
+
+use rule picard_collect_hs_metrics from qc as qc_pic_hs_met with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bait_intervals=config["reference"]["exome_intervals"],
+        target_intervals=config["reference"]["exome_intervals"],
+        reference=config["reference"]["fasta"],
+
+
+use rule picard_collect_insert_size_metrics from qc as qc_pic_ins_size with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+
+
+use rule picard_collect_multiple_metrics from qc as qc_pic_multi_met with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        ref=config["reference"]["fasta"],
+
+
+use rule picard_collect_wgs_metrics from qc as qc_pic_wgs_met with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        ref=config["reference"]["fasta"],
+        interval=config["reference"]["wgs_intervals"],
+
+
+use rule samtools_stats from qc as qc_samtools_stats with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+
+
+use rule samtools_idxstats from qc as qc_samtools_idxstats with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
+    output:
+        temp("qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"),
+
+
+module snv_indels:
+    snakefile:
+        github(
+            "hydra-genetics/snv_indels",
+            path="workflow/Snakefile",
+            tag=config["modules"]["snv_indels"],
+        )
+    config:
+        config
+
+
+use rule * from snv_indels as snv_indels_*
+
+
+use rule deeptrio_make_examples from snv_indels as snv_indels_deeptrio_make_examples with:
+    input:
+        child_bam=lambda wildcards: get_bam_input(wildcards)[0],
+        parent_bams=lambda wildcards: get_parent_bams(wildcards),
+        ref=config.get("reference", {}).get("fasta", ""),
+
+
+use rule deepvariant_make_examples from snv_indels as snv_indels_deepvariant_make_examples with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
+        ref=config.get("reference", {}).get("fasta", ""),
+    output:
+        examples=temp(
+            f"snv_indels/deepvariant/{{sample}}_{{type}}/make_examples.tfrecord-{{shard}}-of-{config.get('deepvariant_make_examples').get('n_shards', 10):05}.gz"
+        ),
+        gvcf_records=temp(
+            f"snv_indels/deepvariant/{{sample}}_{{type}}/gvcf.tfrecord-{{shard}}-of-{config.get('deepvariant_make_examples', {}).get('n_shards', 2):05}.gz"
+        )
+        if config.get("deepvariant_postprocess_variants", {}).get("vcf_type", "vcf") == "gvcf"
+        else [],
+    log:
+        "snv_indels/deepvariant/{sample}_{type}/make_examples_{shard}.output.log",
+    benchmark:
+        repeat(
+            "snv_indels/deepvariant/{sample}_{type}/make_examples_{shard}.output.benchmark.tsv",
+            config.get("deepvariant_make_examples", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule deepvariant_call_variants from snv_indels as snv_indels_deepvariant_call_variants with:
+    input:
+        examples=expand(
+            "snv_indels/deepvariant/{{sample}}_{{type}}/make_examples.tfrecord-{shard}-of-{nshards:05}.gz",
+            shard=[f"{x:05}" for x in range(config.get("deepvariant_make_examples").get("n_shards", 10))],
+            nshards=config.get("deepvariant_make_examples").get("n_shards", 10),
+        ),
+    output:
+        outfile=temp("snv_indels/deepvariant/{sample}_{type}/call_variants_output.tfrecord.gz"),
+    log:
+        "snv_indels/deepvariant/{sample}_{type}/call_variants.output.log",
+    benchmark:
+        repeat(
+            "snv_indels/deepvariant/{sample}_{type}/call_variants.output.benchmark.tsv",
+            config.get("deepvariant_call_variants", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule deepvariant_postprocess_variants from snv_indels as snv_indels_deepvariant_postprocess_variants with:
+    input:
+        call_variants_record="snv_indels/deepvariant/{sample}_{type}/call_variants_output.tfrecord.gz",
+        gvcf_records=expand(
+            "snv_indels/deepvariant/{{sample}}_{{type}}/gvcf.tfrecord-{shard}-of-{nshards:05}.gz",
+            shard=[f"{x:05}" for x in range(config.get("deepvariant_make_examples", {}).get("n_shards", 2))],
+            nshards=config.get("deepvariant_make_examples").get("n_shards", 2),
+        )
+        if config.get("deepvariant_postprocess_variants", {}).get("vcf_type", "vcf") == "gvcf"
+        else [],
+        ref=config.get("reference", {}).get("fasta", ""),
+    output:
+        vcf=temp("snv_indels/deepvariant/{sample}_{type}.vcf"),
+        gvcf=temp("snv_indels/deepvariant/{sample}_{type}.g.vcf"),
+    log:
+        "snv_indels/deepvariant/{sample}_{type}_postprocess_variants.output.log",
+    benchmark:
+        repeat(
+            "snv_indels/deepvariant/{sample}_{type}_postprocess_variants.output.benchmark.tsv",
+            config.get("deepvariant_postprocess_variants", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule glnexus from snv_indels as snv_indels_glnexus_peddy with:
+    input:
+        gvcfs=lambda wildcards: get_gvcf_list(wildcards),
+    output:
+        bcf=temp("qc/peddy/all.bcf"),
+        dir=temp(directory("qc/peddy/GLnexus_peddy.DB")),
+    params:
+        extra=config.get("glnexus_peddy", {}).get("extra", ""),
+        glnexus_config=config.get("glnexus_peddy", {}).get("configfile", ""),
+        in_gvcf=lambda wildcards, input: get_glnexus_input(wildcards, input),
+    log:
+        "qc/peddy/all.bcf.log",
+    benchmark:
+        repeat(
+            "qc/peddy/all.bcf.benchmark.tsv",
+            config.get("glnexus_peddy", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule vt_decompose from snv_indels as snv_indels_vt_decompose with:
+    input:
+        vcf="snv_indels/glnexus/{sample}_{type}.vcf.gz",
+    output:
+        vcf=temp("snv_indels/{caller}/{sample}_{type}.decomposed.vcf.gz"),
+
+
+use rule fix_af from snv_indels as snv_indels_fix_af with:
+    input:
+        vcf=lambda wildcards: get_vcf_input(wildcards),
+    output:
+        vcf=temp("vcf_final/{sample}_{type}.fix_af.vcf"),
+    log:
+        "parabricks/pbrun_deepvariant/{sample}_{type}.fix_af.vcf.log",
+    benchmark:
+        repeat(
+            "parabricks/pbrun_deepvariant/{sample}_{type}.fix_af.vcf.benchmark.tsv",
+            config.get("fix_af", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule fix_af from snv_indels as snv_indels_chrM_fix_af with:
+    input:
+        vcf="mitochondrial/gatk_select_variants_final/{sample}_{type}.vcf",
+    output:
+        vcf=temp("mitochondrial/gatk_select_variants_final/{sample}_{type}.fix_af.vcf"),
+    log:
+        "mitochondrial/gatk_select_variants_final/{sample}_{type}.fix_af.vcf.log",
+    benchmark:
+        repeat(
+            "mitochondrial/gatk_select_variants_final/{sample}_{type}.fix_af.vcf.benchmark.tsv",
+            config.get("fix_af", {}).get("benchmark_repeats", 1),
+        )

@@ -2,25 +2,37 @@ $schema: "http://json-schema.org/draft-04/schema#"
 description: snakemake configuration file
 type: object
 properties:
+  resources:
+    type: string
+    description: Path to resources.yaml file
   samples:
     type: string
     description: Path to samples.tsv file
   units:
     type: string
     description: Path to units.tsv file
-  resources:
-    type: string
-    description: Path to resources.yaml file
   trimmer_software:
     type: string
   default_container:
     type: string
     description: name or path to a default docker/singularity container
+  reference:
+    type: object
+    properties:
+      fasta:
+        type: string
+        description: path to reference fasta file
+      sites:
+        type: string
+        description: path to known sites list file
+    required:
+      - fasta
+      - sites
   fastp_pe:
     type: object
     properties:
       benchmark_repeats:
-        type: integer
+        type: number
         description: set number of times benchmark should be repeated for fastp_pe
       container:
         type: string
@@ -32,8 +44,8 @@ properties:
     type: object
     properties:
       benchmark_repeats:
-        type: integer
-        description: set number of times benchmark should be repeated for fastp_pe
+        type: string
+        description: set number of times benchmark should be repeated for merged
       container:
         type: string
         description: name or path to docker/singularity container
@@ -42,3 +54,4 @@ properties:
     - units
     - resources
     - default_container
+    - reference

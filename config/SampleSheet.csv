@@ -1,0 +1,19 @@
+[Header]
+Local Run Manager Analysis Id,20020
+Experiment Name,TE108
+Date,2022-05-21
+Module,GenerateFASTQ - 2.0.1
+Workflow,GenerateFASTQ
+Library Prep Kit,Custom
+Chemistry,Amplicon
+
+[Reads]
+149
+149
+
+[Settings]
+
+[Data]
+Sample_ID,Sample_Name,Description,index,I7_Index_ID,index2,I5_Index_ID,Sample_Project
+sampleid,sampleid,WGS_M_NA_12_NA,GTAGGTACAA,GTAGGTACAA,CACTCAAGAA,CACTCAAGAA,WGS
+

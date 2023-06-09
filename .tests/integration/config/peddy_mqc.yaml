@@ -1,0 +1,134 @@
+
+peddy_rel_check:
+  parent_id: peddy_section
+  parent_name: "Peddy"
+  parent_description: "This parent section contains one or more sub-sections below it"
+  id: 'peddy_rel_check_table'
+  format: tsv
+  plot_type: 'table'
+  section_name: 'Relatedness Check'
+  description: 'Report any unexpected relatedness results from the check of the pedigree relatedness against genotype based relatedness'
+  pconfig:
+    namespace: 'Cust Data1'
+  headers:
+    sample_pair:
+      title: Sample Pair
+      description: The pair if samples being compared.
+      hidden: False
+      placement: 900
+    trio_id:
+      title: Trio ID
+      description: ID for the trio the sample pair belong to
+      hidden: False
+      placement: 910
+    sample_a:
+      title: sample_a
+      description: First sample in the pair
+      hidden: True
+      placement: 920
+    sample_b:
+      title: sample_b
+      description: Second sample in the pair
+      hidden: True
+      placement: 930
+    rel:
+      title: relatedness
+      description: The relatedness calculated from the genotypes.
+      hidden: False
+      placement: 940
+    hets_a:
+      title: hets_a
+      description: The number of sites at which sample_a was het.
+      hidden: True
+    hets_b:
+      title: hets_b
+      description: The number of sites at which sample_b was het.
+      hidden: True
+    shared_hets:
+      title: shared_hets
+      description: The number of sites at which both samples were hets.
+      hidden: True
+    ibs0:
+      title: ibs0
+      description: The number of sites at which the 2 samples shared no alleles (should approach 0 for parent-child pairs).
+      hidden: True
+    ibs2:
+      title: ibs2
+      description: The number of sites and which the 2 samples where both hom-ref, both het, or both hom-alt.
+      hidden: True
+    n:
+      title: n
+      description: the number of sites that was used to predict the relatedness.
+      hidden: True
+    pedigree_parents:
+      title: pedigree_parents
+      description: Boolean indicating that this pair is a parent-child pair according to the ped file.
+      hidden: False
+    pedigree_relatedness:
+      title: pedigree_relatedness
+      description: The relatedness reported in the ped file.
+      hidden: False
+      placement: 950
+    parent_error:
+      title: parent_error
+      description: Boolean indicating that the pedigree_parents and pedigree_relatedness columns don’t match
+      hidden: False
+    predicted_parents:
+      title: predicted_parents
+      description: Boolean indicating that this pair is expected to be a parent-child pair according to the ibs0 (< 0.012) calculated from the genotypes.
+      hidden: False
+    sample_duplication_error :
+      title: sample_duplication_error
+      description: Boolean indicating that rel > 0.75 and ibs0 < 0.012
+      hidden: False
+    rel_difference:
+      title: rel_difference
+      description: Difference between the pedigree relatedness and the relatedness calculated from the genotypes.
+      hidden: True
+    rel_check_test:
+      title: rel_test_check
+      description: Fail if there if peddy reports a parent_error or sample_duplication_error.
+      hidden: False
+      placement: 1010
+
+peddy_sex_check:
+  parent_id: peddy_section
+  parent_name: "Peddy"
+  parent_description: "This parent section contains one or more sub-sections below it"
+  id: 'peddy_sex_check_table'
+  format: tsv
+  plot_type: 'table'
+  section_name: 'Sex check'
+  description: 'Check on the sex of a sample made with Peddy'
+  pconfig:
+       namespace: 'Cust Data2'
+  headers:
+    ped_sex:
+      title: ped_sex
+      description: sex from .ped file
+    hom_ref_count:
+      title: hom_ref_count
+      description: number of homozygous-reference calls
+      hidden: True
+    het_count:
+      title: het_count
+      description: number of heterozygote calls
+      hidden: True
+    hom_alt_count:
+      title: hom_alt_count
+      description:  number of homozygous-alternate calls
+      hidden: True
+    het_ratio:
+      title: het_ratio
+      description: ratio of het_count / hom_alt_count. Low for males, high for females
+      hidden: True
+    predicted_sex:
+      title: predicted_sex
+      description: sex predicted from rate of hets on chrX.
+    error:
+      title: sex error
+      description: Boolean indicating wether there is a mismatch between chrX genotypes and ped sex.
+      hidden: True
+    sex_check_test:
+      title: Sex check test
+      description: Pass when the sex from the pedigree information agrees with the sex predicted for the chrX genotypes
