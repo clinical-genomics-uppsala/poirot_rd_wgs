@@ -20,7 +20,7 @@ rule all:
         unpack(compile_output_list),
 
 
-ruleorder: _copy_crumble_crai > misc_samtools_index
+ruleorder: _copy_samtools_crai > compression_samtools_index
 ruleorder: _copy_snv_indels_tbi > snv_indels_tabix
 ruleorder: _copy_snv_indels_filtered_tbi > snv_indels_tabix
 ruleorder: filtering_bcftools_view_pass > snv_indels_bgzip
@@ -222,10 +222,6 @@ module compression:
 
 use rule * from compression as compression_*
 
-
-# use rule crumble from compression as compression_crumble
-
-
 use rule samtools_view from compression as compression_samtools_view with:
     input:
         bam=lambda wildcards: get_bam_input(wildcards, use_sample_wildcard=False)[0],
@@ -233,9 +229,9 @@ use rule samtools_view from compression as compression_samtools_view with:
         ref=config.get("reference", {}).get("fasta", ""),
 
 
-use rule spring from compression as compression_spring with:
-    output:
-        spring=temp("results/{sample}/spring/{sample}_{type}_{flowcell}_{lane}_{barcode}.spring"),
+# use rule spring from compression as compression_spring with:
+#     output:
+#         spring=temp("compression/spring/{sample}_{type}_{flowcell}_{lane}_{barcode}.spring"),
 
 
 module filtering:
@@ -253,38 +249,6 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
         vcf=temp("{file}.bcftools_view_pass.vcf.gz"),
     params:
         extra=config.get("bcftools_view_pass", {}).get("extra", ""),
-
-
-# use rule bcftools_view from filtering as filtering_bcftools_view_biallelic with:
-#    output:
-#        vcf=temp("{file}.bcftools_view_biallelic.vcf.gz"),
-#    params:
-#        extra=config.get("bcftools_view_biallelic", {}).get("extra", ""),
-
-
-module misc:
-    snakefile:
-        github("hydra-genetics/misc", path="workflow/Snakefile", tag=config["modules"]["misc"])
-    config:
-        config
-
-
-use rule samtools_index from misc as misc_samtools_index with:
-    input:
-        cram="{file}.crumble.cram",
-    output:
-        crai=temp("{file}.crumble.cram.crai"),
-    params:
-        extra=config.get("extra", {}).get("extra", ""),
-    log:
-        "{file}.crumble.cram.crai.log",
-    benchmark:
-        repeat(
-            "{file}.crumble.cram.crai.benchmark.tsv",
-            config.get("samtools_index", {}).get("benchmark_repeats", 1),
-        )
-    message:
-        "{rule}: Index {wildcards.file}.crumble.cram file"
 
 
 module mitochondrial:
