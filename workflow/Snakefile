@@ -229,11 +229,6 @@ use rule samtools_view from compression as compression_samtools_view with:
         ref=config.get("reference", {}).get("fasta", ""),
 
 
-# use rule spring from compression as compression_spring with:
-#     output:
-#         spring=temp("compression/spring/{sample}_{type}_{flowcell}_{lane}_{barcode}.spring"),
-
-
 module filtering:
     snakefile:
         github("hydra-genetics/filtering", path="workflow/Snakefile", tag=config["modules"]["filtering"])
