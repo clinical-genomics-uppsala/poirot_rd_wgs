@@ -12,13 +12,12 @@ default_container: "docker://hydragenetics/common:0.3.0"
 modules:
   alignment: "v0.4.0"
   annotation: "v0.3.0"
-  compression: "3f79698"
+  compression: "v2.0.0"
   cnv_sv: "v0.4.1"
   filtering: "v0.2.0"
-  parabricks: "9b94028"
+  parabricks: "v1.1.0"
   prealignment: "v1.1.0"
   qc: "v0.4.1"
-  misc: "v0.2.0"
   mitochondrial: "v0.1.0"
   snv_indels: "v0.5.0"
 
@@ -27,10 +26,9 @@ reference:
   design_bed: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
   exome_bed: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
   exome_intervals: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"
-  fasta: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta"
-  fai: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.fai"
+  fasta: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta"
+  fai: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.fai"
   genepanels: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/genepanels.list"
-  genome_dir: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens_star"
   sites: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.known_indels.vcf.gz"
   wgs_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.interval_list"
 
@@ -55,11 +53,11 @@ bcftools_view_pass:
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
-  amb: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.amb"
-  ann: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.ann"
-  bwt: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.bwt"
-  pac: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.pac"
-  sa: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.sa"
+  amb: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.amb"
+  ann: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.ann"
+  bwt: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.bwt"
+  pac: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.pac"
+  sa: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.sa"
 
 bwa_mem_mito:
   container: "docker://hydragenetics/bwa_mem:0.7.17"
