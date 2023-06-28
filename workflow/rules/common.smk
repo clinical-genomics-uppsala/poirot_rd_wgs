@@ -47,10 +47,10 @@ with open(config["output"]) as output:
 
 ### Set wildcard constraints
 wildcard_constraints:
-    barcode="[A-Z+]",
-    chr="[^_]",
-    flowcell="[A-Z0-9]",
-    lane="L[0-9]",
+    barcode="[A-Z+]+",
+    chr="[^_]+",
+    flowcell="[A-Z0-9]+",
+    lane="L[0-9]+",
     read="fastq[1|2]",
     sample="|".join(get_samples(samples)),
     type="N|T|R",
