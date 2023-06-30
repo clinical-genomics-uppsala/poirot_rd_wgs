@@ -12,11 +12,11 @@ pipeline {
       }
     }
     stage('VAL') {
-      when {
-          anyOf {
-                 expression { isPullRequest == false && env.BRANCH_NAME == 'main' }
-          }
-      }
+      #when {
+      #    anyOf {
+      #           expression { isPullRequest == false && env.BRANCH_NAME == 'main' }
+      #    }
+      #}
       steps {
         sshagent(['jenkins']) {
           sh '''#!/bin/bash
