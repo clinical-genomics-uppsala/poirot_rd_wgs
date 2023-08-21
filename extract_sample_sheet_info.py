@@ -12,6 +12,8 @@ def translate_sex(sex_code):
         sex = "male"
     elif sex_code == "K":
         sex = "female"
+    elif sex_code == "O":
+        sex = "unknown"
     else:
         print('Sex is not specified correctly in the Sample Sheet')
         sys.exit(1)
