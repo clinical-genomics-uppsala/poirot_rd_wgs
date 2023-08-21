@@ -14,10 +14,7 @@ rule vcf_to_aed:
     log:
         "vcf_to_aed/{sample}_{type}.aed.log",
     benchmark:
-        repeat(
-            "vcf_to_aed/{sample}_{type}.aed.benchmark.tsv",
-            config.get("vcf_to_aed", {}).get("benchmark_repeats", 1)
-        )
+        repeat("vcf_to_aed/{sample}_{type}.aed.benchmark.tsv", config.get("vcf_to_aed", {}).get("benchmark_repeats", 1))
     threads: config.get("vcf_to_aed", {}).get("threads", config["default_resources"]["threads"])
     resources:
         mem_mb=config.get("vcf_to_aed", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
