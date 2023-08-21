@@ -28,13 +28,13 @@ rule vcf_to_aed:
     container:
         config.get("vcf_to_aed", {}).get("container", config["default_container"])
     message:
-        "{rule}: do stuff on {input.input1}"
+        "{rule}: convert {input.vcf} to AED format"
     script:
         "../scripts/cnvpytor_vcf_to_aed.py"
 
 
 use rule vcf_to_aed as vcf_to_aed_filtered with:
     input:
-        vcf="cnv_sv/cnvpytor/{sample}_{type}_filtered.vcf",
+        vcf="cnv_sv/cnvpytor/{sample}_{type}.filtered.vcf",
     output:
-        aed="cnv_sv/{sample}_{type}_filtered.aed",
+        aed="cnv_sv/cnvpytor/{sample}_{type}_filtered.aed",
