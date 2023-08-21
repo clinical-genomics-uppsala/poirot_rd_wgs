@@ -5,6 +5,8 @@
   "results/{sample}/{sample}_snv_indels.filtered.vcf.gz.tbi": {"name": "_copy_snv_indels_filtered_tbi", "file": "vcf_final/{sample}_N.vep_annotated.filter.germline.vcf.gz.tbi", "types": ["N"]},
   "results/{sample}/cnv_sv/{sample}.cnvpytor_filtered.vcf.gz": {"name": "_copy_cnvpytor_filtered_vcf", "file": "cnv_sv/cnvpytor/{sample}_N.filtered.vcf.gz", "types": ["N"]},
   "results/{sample}/cnv_sv/{sample}.cnvpytor.vcf.gz": {"name": "_copy_cnvpytor_vcf", "file": "cnv_sv/cnvpytor/{sample}_N.vcf.gz", "types": ["N"]},
+  "results/{sample}/cnv_sv/{sample}.cnvpytor_filtered.aed": {"name": "_copy_cnvpytor_filtered_vcf", "file": "cnv_sv/cnvpytor/{sample}_N.filtered.aed", "types": ["N"]},
+  "results/{sample}/cnv_sv/{sample}.cnvpytor.aed": {"name": "_copy_cnvpytor_vcf", "file": "cnv_sv/cnvpytor/{sample}_N.aed", "types": ["N"]},
   "results/{sample}/cnv_sv/{sample}.tiddit.vcf.gz": {"name": "_copy_tiddit_vcf", "file": "cnv_sv/tiddit/{sample}_N.vcf.gz", "types": ["N"]},
   "results/{sample}/cnv_sv/{sample}.manta_diploidSV.vcf.gz": {"name": "_copy_manta_vcf", "file": "cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz", "types": ["N"]},
   "results/{sample}/cnv_sv/{sample}.svdb_merged.vcf.gz": {"name": "_copy_svdb_merged_vcf", "file": "cnv_sv/svdb_merge/{sample}_N.merged.vcf.gz", "types": ["N"]},
