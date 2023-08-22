@@ -12,6 +12,7 @@ decimalPoint_format: ','
 
 extra_fn_clean_exts: ##from this until end
     - '.dup'
+    - '_N'
     - type: regex
       pattern: '_fastq[12]'
 #    - '_S'
