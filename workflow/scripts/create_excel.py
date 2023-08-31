@@ -8,16 +8,16 @@ import gzip
 from operator import itemgetter
 
 # Specify input files
-configfile = "config.yaml"
-duplicationFile = "D23-03987_N.duplication_metrics.txt"
-mosdepth = "D23-03987_N.mosdepth.summary.txt"
-covRegionsFile = "D23-03987_N.regions.bed.gz"
-covThresFile = "D23-03987_N.thresholds.bed.gz"
-mosdepthPerBase = "D23-03987_N.mosdepth.lowCov.regions.txt"
-output = "D23-03987_test.xlsx"
+configfile = snakemake.input[0]
+duplicationFile = snakemake.input.duplication_file
+mosdepth = snakemake.input.summary
+covRegionsFile = snakemake.input.cov_regions
+covThresFile = snakemake.input.cov_thresh
+mosdepthPerBase = snakemake.input.low_cov
+output = snakemake.output.out
 
 # Define sample based on annotated vcf
-sample = "D23-03987"
+sample = mosdepth.split("_")[1].split("/")[1]
 today = date.today()
 
 ''' Create excel and overview tab '''
