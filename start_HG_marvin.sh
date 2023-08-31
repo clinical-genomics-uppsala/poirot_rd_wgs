@@ -1,18 +1,23 @@
 #!/usr/bin/env bash
 # To run script:
-# bash /projects/wp3/nobackup/TWIST/Bin/Poirot/start_TE_marvin.sh /projects/wp3/nobackup/WGS/*/230619_NDX550925_RUO_0133_AHJ2YMBGXT/Sample_* HG4
+# bash /projects/wp3/nobackup/TWIST/Bin/Poirot/start_HG_marvin.sh /projects/wp3/nobackup/WGS/*/230619_NDX550925_RUO_0133_AHJ2YMBGXT/Sample_* HG4
+
+set -euo pipefail
 
 module load slurm-drmaa/1.1.3
 module load snakemake/7.22.0
 module load singularity/3.7.1
-source /beegfs-storage/projects/wp3/nobackup/TWIST/Bin/Poirot/hydra-env/bin/activate;
-pip install -r /beegfs-storage/projects/wp3/nobackup/TWIST/Bin/Poirot/requirements.txt
+
+poirotFolder=/beegfs-storage/projects/wp3/nobackup/TWIST/Bin/Poirot
+
+python3.9 -m venv ${poirotFolder}/hydra_env
+source ${poirotFolder}/hydra_env/bin/activate
+pip install -r ${poirotFolder}/requirements.txt
 
 fastqFolder=$1
 sequencerun=$2    #Sequence ID
 startDir=$PWD
 
-poirotFolder=/beegfs-storage/projects/wp3/nobackup/TWIST/Bin/Poirot
 outbox=$(echo $(echo ${poirotFolder} | rev | cut -d/ -f3- | rev)/OUTBOX)
 
 # Create outbox and scratch folders
