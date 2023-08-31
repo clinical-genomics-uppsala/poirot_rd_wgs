@@ -8,16 +8,16 @@ import gzip
 from operator import itemgetter
 
 # Specify input files
-configfile = snakemake.input[0]
-duplicationFile = snakemake.input.duplication_file
-mosdepth = snakemake.input.summary
-covRegionsFile = snakemake.input.cov_regions
-covThresFile = snakemake.input.cov_thresh
-mosdepthPerBase = snakemake.input.low_cov
-output = snakemake.output.out
+configfile = "config.yaml"
+duplicationFile = "D23-03987_N.duplication_metrics.txt"
+mosdepth = "D23-03987_N.mosdepth.summary.txt"
+covRegionsFile = "D23-03987_N.regions.bed.gz"
+covThresFile = "D23-03987_N.thresholds.bed.gz"
+mosdepthPerBase = "D23-03987_N.mosdepth.lowCov.regions.txt"
+output = "D23-03987_test.xlsx"
 
 # Define sample based on annotated vcf
-sample = mosdepth.split("_")[1].split("/")[1]
+sample = "D23-03987"
 today = date.today()
 
 ''' Create excel and overview tab '''
@@ -73,7 +73,7 @@ with gzip.open(covRegionsFile, 'rt') as regionsfile:
         tableLinesCov_unsorted.append(covRow)
         bedfile.append(line[0:4])
 
-# sort by gene name
+# sort by gene name to deal with overlapping genes
 tableLinesCov = sorted(tableLinesCov_unsorted, key=itemgetter(0))
 
 with gzip.open(covThresFile, 'rt') as thresfile:
@@ -81,6 +81,7 @@ with gzip.open(covThresFile, 'rt') as thresfile:
     for lline in thresfile:
         line = lline.strip().split("\t")
         length = int(line[2])-int(line[1])
+        gene = line[3].split("_")[0]
         min = int(line[4])
         med = int(line[5])
         max = int(line[6])
@@ -88,7 +89,7 @@ with gzip.open(covThresFile, 'rt') as thresfile:
         totalMinBreadth += int(line[4])
         totalMedBreadth += int(line[5])
         totalMaxBreadth += int(line[6])
-        row = [[line[3]], line[0:3], min, med, max, length]
+        row = [gene, line[0:3], min, med, max, length]
         tableLinesTre_unsorted.append(row)
 
 tableLinesTre = sorted(tableLinesTre_unsorted, key=itemgetter(0))
