@@ -131,6 +131,7 @@ use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter
 use rule cnvpytor_readdepth from cnv_sv as cnv_sv_cnvpytor_readdepth with:
     input:
         bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
         vcf=lambda wildcards: get_vcf_input(wildcards),
 
 
