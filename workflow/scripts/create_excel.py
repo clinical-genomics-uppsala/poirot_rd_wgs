@@ -8,8 +8,13 @@ import gzip
 from operator import itemgetter
 import logging
 
-log = logging.getLogger()
 
+logging.basicConfig(filename=snakemake.log[0],
+                    level=logging.INFO,
+                    format='%(asctime)s %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                    )
+log = logging.getLogger()
 
 # Specify input files
 configfile = snakemake.input[0]
