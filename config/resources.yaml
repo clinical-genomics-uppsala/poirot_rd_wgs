@@ -122,7 +122,7 @@ samtools_sort:
   threads: 10
 
 samtools_view:
-  mem_mb: 36864
+  mem_mb: 49152
   mem_per_cpu: 6144
   threads: 8
   partition: "core_bkup"
@@ -131,7 +131,7 @@ smn_caller:
   threads: 8
 
 spring:
-  mem_mb: 36864
+  mem_mb: 49152
   mem_per_cpu: 6144
   threads: 8
   partition: "core_bkup"
