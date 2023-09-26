@@ -1,5 +1,4 @@
 #!/bin/python3.6
-import sys
 from pysam import VariantFile
 
 vcf_in = VariantFile(snakemake.input[0])  # dosen't matter if bgziped or not. Automatically recognizes
@@ -15,6 +14,3 @@ vcf_out = VariantFile(snakemake.output[0], 'w', header=new_header)
 
 for record in vcf_in.fetch():
     vcf_out.write(record)
-
-
-# import pdb; pdb.set_trace()

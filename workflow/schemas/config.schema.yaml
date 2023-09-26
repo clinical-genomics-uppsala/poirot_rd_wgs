@@ -72,3 +72,37 @@ properties:
         type: string
         description: parameters that should be forwarded
 
+
+
+# Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
+  svdb_ref:
+    type: object
+    description: parameters for svdb_ref
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
+
+
+
+# Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
+  tiddit_ref:
+    type: object
+    description: parameters for tiddit_ref
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
+
