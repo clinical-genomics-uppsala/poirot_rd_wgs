@@ -5,7 +5,6 @@
 set -euo pipefail
 
 module load slurm-drmaa/1.1.3
-module load snakemake/7.22.0
 module load singularity/3.7.1
 
 poirotFolder=/beegfs-storage/projects/wp3/nobackup/TWIST/Bin/Poirot
