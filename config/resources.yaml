@@ -22,6 +22,9 @@ bwa_mem_mito:
   mem_per_cpu: 3072
   threads: 2
 
+cnvpytor:
+  time: "18:00:00"
+ 
 deeptrio_call_variants:
   gres: "--gres=gres:gpu:1" ## Booking 2 GPUs and 20 cpus works on CGU GPU node (1 GPU and 10 threads not currently working)
   partition: "GPU_hi"
