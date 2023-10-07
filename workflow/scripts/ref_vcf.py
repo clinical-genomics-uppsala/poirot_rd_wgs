@@ -1,16 +1,13 @@
 #!/bin/python3.6
-from pysam import VariantFile
 
-vcf_in = VariantFile(snakemake.input[0])  # dosen't matter if bgziped or not. Automatically recognizes
+import gzip
 
-# Add reference_description descriptions to new header
-new_header = vcf_in.header
-# new_header.add_line("reference="+ sys.argv[2])
-new_header.add_line("##reference=" + snakemake.input[1])
-
-# start new vcf with the new_header
-vcf_out = VariantFile(snakemake.output[0], 'w', header=new_header)
-
-
-for record in vcf_in.fetch():
-    vcf_out.write(record)
+ref_str = snakemake.input[1]
+with gzip.open(snakemake.input[0], 'r') as vcf_in:
+    with open(snakemake.output[0], 'w') as vcf_out:
+        line_count = 0
+        for line in vcf_in:
+            line_count += 1
+            if line_count == 4:
+                print(f"##reference={ref_str}", file=vcf_out)
+            print(line.decode(encoding="utf-8").rstrip(), file=vcf_out)
