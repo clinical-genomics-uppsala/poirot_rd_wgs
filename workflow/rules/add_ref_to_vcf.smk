@@ -6,7 +6,7 @@ __license__ = "GPL-3"
 
 rule deepvariant_add_ref:
     input:
-        vcf="vcf_final/{sample}_{type}.fix_af.vcf",
+        vcf="vcf_final/{sample}_{type}.fix_af.vcf.gz",
         ref=config["reference"]["fasta"],
     output:
         vcf=temp("vcf_final/{sample}_{type}_ref.vcf"),
@@ -25,8 +25,6 @@ rule deepvariant_add_ref:
         time=config.get("deepvariant_add_ref", {}).get("time", config["default_resources"]["time"]),
     container:
         config.get("deepvariant_add_ref", {}).get("container", config["default_container"])
-    conda:
-        "../envs/deepvariant_add_ref.yaml"
     message:
         "{rule}: Add reference to the header of the deepvariant vcf: {input.vcf}"
     script:
