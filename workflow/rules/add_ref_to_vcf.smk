@@ -40,10 +40,10 @@ rule tiddit_add_ref:
     params:
         extra=config.get("tiddit_add_ref", {}).get("extra", ""),
     log:
-        "poirot_rd_wgs/tiddit_add_ref/{sample}_{type}.output.log",
+        "qc/tiddit_add_ref/{sample}_{type}.output.log",
     benchmark:
         repeat(
-            "poirot_rd_wgs/tiddit_add_ref/{sample}_{type}.output.benchmark.tsv",
+            "qc/tiddit_add_ref/{sample}_{type}.output.benchmark.tsv",
             config.get("tiddit_add_ref", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("tiddit_add_ref", {}).get("threads", config["default_resources"]["threads"])
