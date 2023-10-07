@@ -16,7 +16,6 @@ pip install -r ${poirotFolder}/requirements.txt
 fastqFolder=$1
 sequencerun=$2    #Sequence ID
 startDir=$PWD
-wp3WGS=/projects/wp3/nobackup/WGS
 
 outbox=$(echo $(echo ${poirotFolder} | rev | cut -d/ -f3- | rev)/OUTBOX)
 
@@ -31,8 +30,6 @@ if [ ! -d "${outbox}/${sequencerun}/" ]
 then
   mkdir ${outbox}/${sequencerun}/
 fi
-
-rsync -ru SampleSheet.csv /scratch/wp3/TWIST/${sequencerun}/  && \
 
 # Cp data to scratch
 echo 'Copy to scratch' && \
