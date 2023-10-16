@@ -36,8 +36,14 @@ with open(snakemake.output[0], 'w') as pedfile:
 
         if sample.sample in child_df['sample'].tolist():
             child_trio = sample.trioid
-            paternal_id = father_df[father_df.trioid == child_trio].iat[0, 0] + '_N'
-            maternal_id = mother_df[mother_df.trioid == child_trio].iat[0, 0] + '_N'
+            try:
+                paternal_id = father_df[father_df.trioid == child_trio].iat[0, 0] + '_N'
+            except IndexError:
+                paternal_id = '0'
+            try:
+                maternal_id = mother_df[mother_df.trioid == child_trio].iat[0, 0] + '_N'
+            except IndexError:
+                maternal_id = '0'
         else:
             paternal_id = '0'
             maternal_id = '0'

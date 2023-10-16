@@ -29,8 +29,6 @@ validate(config, schema="../schemas/resources.schema.yaml")
 samples = pandas.read_table(config["samples"], dtype=str).set_index("sample", drop=False)
 validate(samples, schema="../schemas/samples.schema.yaml")
 
-if samples[~pandas.isnull(samples.trio_member)].shape[0] % 3 != 0:
-    sys.exit("Not all members of the trios are available in the Sample Sheet")
 
 ### Read and validate units file
 units = (

@@ -2,10 +2,77 @@ $schema: "http://json-schema.org/draft-04/schema#"
 description: snakemake rule input and output files description file
 type: object
 properties:
-# Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
+
+  deepvariant_add_ref:
+    type: object
+    description: input and output parameters for deepvariant_add_ref
+    properties:
+      input:
+        type: object
+        description: list of inputs
+        properties:
+          input1:
+            type: string
+            description: description input1
+            #value: set to override value in table, else remove
+
+      output:
+        type: object
+        description: list of outputs
+        properties:
+          output1:
+            type: string
+            description: description output1
+            #value: set to override value in table, else remove
+
   vcf_to_aed:
     type: object
     description: input and output parameters for vcf_to_aed
+    properties:
+      input:
+        type: object
+        description: list of inputs
+        properties:
+          input1:
+            type: string
+            description: description input1
+            #value: set to override value in table, else remove
+
+      output:
+        type: object
+        description: list of outputs
+        properties:
+          output1:
+            type: string
+            description: description output1
+            #value: set to override value in table, else remove
+
+
+  svdb_add_ref:
+    type: object
+    description: input and output parameters for svdb_add_ref
+    properties:
+      input:
+        type: object
+        description: list of inputs
+        properties:
+          input1:
+            type: string
+            description: description input1
+            #value: set to override value in table, else remove
+
+      output:
+        type: object
+        description: list of outputs
+        properties:
+          output1:
+            type: string
+            description: description output1
+            #value: set to override value in table, else remove
+
+  tiddit_add_ref:
+    type: object
+    description: input and output parameters for tiddit_add_ref
     properties:
       input:
         type: object

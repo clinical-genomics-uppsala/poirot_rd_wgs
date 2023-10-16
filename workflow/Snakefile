@@ -289,7 +289,7 @@ use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
         bai=lambda wildcards: get_bam_input(wildcards)[1],
         fasta=config.get("reference", {}).get("fasta", ""),
     output:
-        vcf=temp("parabricks/pbrun_deepvariant/{sample}_{type}.g.vcf"),
+        vcf="parabricks/pbrun_deepvariant/{sample}_{type}.g.vcf",
         vcf2=temp("parabricks/pbrun_deepvariant/{sample}_{type}.vcf"),
 
 
@@ -445,6 +445,7 @@ use rule * from snv_indels as snv_indels_*
 use rule deeptrio_make_examples from snv_indels as snv_indels_deeptrio_make_examples with:
     input:
         child_bam=lambda wildcards: get_bam_input(wildcards)[0],
+        child_bai=lambda wildcards: get_bam_input(wildcards)[1],
         parent_bams=lambda wildcards: get_parent_bams(wildcards),
         ref=config.get("reference", {}).get("fasta", ""),
 
