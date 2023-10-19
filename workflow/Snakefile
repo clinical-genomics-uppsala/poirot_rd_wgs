@@ -123,6 +123,41 @@ use rule cnvpytor_readdepth from cnv_sv as cnv_sv_cnvpytor_readdepth with:
         vcf=lambda wildcards: get_vcf_input(wildcards),
 
 
+use rule cnvpytor_readdepth from cnv_sv as cnv_sv_cnvpytor_readdepth_combined with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
+        vcf=lambda wildcards: get_vcf_input(wildcards),
+    output:
+        pytor=temp("cnv_sv/cnvpytor/{sample}_{type}.combined.pytor"),
+    params:
+        extra=config.get("cnvpytor_readdepth_combined", {}).get("extra", ""),
+        length=config.get("cnvpytor_readdepth_combined", {}).get("length_list", ""),
+        model=config.get("cnvpytor_readdepth_combined", {}).get("calling_model", ""),
+    log:
+        "cnv_sv/cnvpytor/{sample}_{type}_rd_combined.log",
+    threads: config.get("cnvpytor_readdepth_combined", {}).get("threads", config["default_resources"]["threads"])
+ 
+use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter_combined with:
+    input:
+        pytor="cnv_sv/cnvpytor/{sample}_{type}.combined.pytor",
+    output:
+        vcf=temp("cnv_sv/cnvpytor/{sample}_{type}.combined.vcf"),
+        filtvcf=temp("cnv_sv/cnvpytor/{sample}_{type}.combined.filtered.vcf"),
+    params:
+        extra=config.get("cnvpytor_filter_combined", {}).get("extra", ""),
+        dgrange=config.get("cnvpytor_filter_combined", {}).get("dG_range", ""),
+        model=config.get("cnvpytor_filter_combined", {}).get("calling_model", ""),
+        prange=config.get("cnvpytor_filter_combined", {}).get("p_range", ""),
+        pnrange=config.get("cnvpytor_filter_combined", {}).get("pN_range", ""),
+        q0range=config.get("cnvpytor_filter_combined", {}).get("Q0_range", ""),
+        view=config.get("cnvpytor_filter_combined", {}).get("view", ""),
+    log:
+        "cnv_sv/cnvpytor/{sample}_{type}_filter_combined.log",
+    benchmark:
+        repeat("cnv_sv/cnvpytor/{sample}_{type}_filter_combined.benchmark.tsv", config.get("cnvpytor_filter_combined", {}).get("benchmark_repeats", 1))
+
+
 use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
     input:
         bam=lambda wildcards: get_bam_input(wildcards)[0],
@@ -178,6 +213,21 @@ use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
             config.get("svdb_merge", {}).get("benchmark_repeats", 1),
         )
 
+use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge_cnvpytor with:
+    input:
+        vcfs=[
+            "cnv_sv/cnvpytor/{sample}_{type}.filtered.vcf",
+            "cnv_sv/cnvpytor/{sample}_{type}.combined.filtered.vcf",
+        ],
+    output:
+        vcf=temp("cnv_sv/cnvpytor/{sample}_{type}.filtered.merged.vcf"),
+    log:
+        "cnv_sv/cnvpytor/{sample}_{type}.merged.vcf.log",
+    benchmark:
+        repeat(
+            "cnv_sv/cnvpytor/{sample}_{type}.merged.benchmark.tsv",
+            config.get("svdb_merge", {}).get("benchmark_repeats", 1),
+        )
 
 use rule svdb_query from cnv_sv as cnv_sv_svdb_query with:
     input:
