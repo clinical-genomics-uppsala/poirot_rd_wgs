@@ -137,8 +137,8 @@ def get_parent_bams(wildcards):
     elif aligner == "bwa_cpu":
         bam_path = "alignment/samtools_merge_bam"
 
-    proband_sample = samples[samples.index == wildcards.sample]
-    trio_id = proband_sample.at[wildcards.sample, "trioid"]
+    child_sample = samples[samples.index == wildcards.sample]
+    trio_id = child_sample.at[wildcards.sample, "trioid"]
 
     mother_sample = samples[(samples.trio_member == "mother") & (samples.trioid == trio_id)].index[0]
     mother_bam = "{}/{}_{}.bam".format(bam_path, mother_sample, list(get_unit_types(units, mother_sample))[0])
@@ -160,16 +160,16 @@ def get_glnexus_input(wildcards, input):
 def compile_output_list(wildcards):
     output_files = []
     types = set([unit.type for unit in units.itertuples()])
-    for output, values in output_json.items():
-        if values["name"] == "_copy_upd_regions_bed":
-            output_files += set(
-                [
-                    output.format(sample=sample, type=unit_type)
-                    for sample in samples[samples.trio_member == "proband"].index
-                    for unit_type in get_unit_types(units, sample)
-                    if unit_type in set(output_json[output]["types"]).intersection(types)
-                ]
-            )
+    for output in output_json:
+        if output == "results/{sample}/{sample}.upd_regions.bed":
+            for sample in samples[samples.trio_member == "child"].index:
+                child_trio_id = samples[samples.index == sample].trioid.iloc[0]
+                try: # check for parents to the child
+                    mother_sample = samples[(samples.trio_member == "mother") & (samples.trioid == child_trio_id)].index[0]
+                    father_sample = samples[(samples.trio_member == "father") & (samples.trioid == child_trio_id)].index[0]
+                except IndexError: 
+                    continue
+                output_files.append(output.format(sample=sample))
         else:
             output_files += set(
                 [

@@ -3,7 +3,6 @@
 
 import pandas as pd
 import sys
-import os
 
 
 def translate_sex(sex_code):
@@ -24,6 +23,20 @@ def extract_trio_info(samples, trio_col):
     trio_member_list = []
     trio_id_list = []
     sex_list = []
+
+    family_dict = {}
+    for i in trio_col:
+        col_list = i.split('_')
+        trio_info = col_list[2]
+        if trio_info == "NA":
+            continue
+        trioid = '-'.join(trio_info.split("-")[:-1])
+        if trioid not in family_dict:
+            family_dict[trioid] = []
+        
+        trio_member = trio_info.split("-")[-1].lower()
+        family_dict[trioid].append(trio_member)
+
     for i in trio_col:
         col_list = i.split('_')
         sex = translate_sex(col_list[1])
@@ -33,16 +46,33 @@ def extract_trio_info(samples, trio_col):
             trio_member_list.append("NA")
             trio_id_list.append("NA")
         else:
-            trioid = trio_info.split("-")[0]
+            trioid = '-'.join(trio_info.split("-")[:-1])
             trio_id_list.append(trioid)
-            trio_member = trio_info.split("-")[1]
-            if trio_member == "Foralder" and sex == "female":
-                trio_member = "mother"
-            elif trio_member == "Foralder" and sex == "male":
-                trio_member = "father"
+            trio_member = trio_info.split("-")[-1].lower()
+            if trio_member == "foralder" and sex == "female":
+                trio_member_id = "mother"
+            elif trio_member == "foralder" and sex == "male":
+                trio_member_id = "father"
+            elif trio_member == "son" or trio_member == "dotter":
+                trio_member_id = "child"
+            elif trio_member == "index":
+                if "foralder" in family_dict[trioid]:
+                    trio_member_id = "child"
+                elif "son" in family_dict[trioid] or "dotter" in family_dict[trioid]:
+                    if sex == "male":
+                        trio_member_id = "father"
+                    else: 
+                        trio_member_id = "mother"
+                else:
+                    trio_member_id = "NA"
+            elif trio_member == "syster" or trio_member == "bror":
+                if "foralder" in family_dict[trioid]:
+                    trio_member_id = "child"
+                else:
+                    trio_member_id = "other"
             else:
-                trio_member = "proband"
-            trio_member_list.append(trio_member)
+                trio_member_id = "other"
+            trio_member_list.append(trio_member_id)
 
     trio_df = pd.DataFrame(data={"sample": samples, "sex": sex_list,
                                  "trioid": trio_id_list,        

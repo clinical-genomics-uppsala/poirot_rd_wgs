@@ -21,7 +21,7 @@ samples = pd.read_table(
 
 fam_df = samples[['sample', 'sex', 'trioid', 'trio_member']]
 
-child_df = fam_df[samples.trio_member == 'proband']
+child_df = fam_df[samples.trio_member == 'child']
 father_df = fam_df[samples.trio_member == 'father']
 mother_df = fam_df[samples.trio_member == 'mother']
 
