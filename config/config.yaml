@@ -12,25 +12,23 @@ default_container: "docker://hydragenetics/common:0.3.0"
 modules:
   alignment: "v0.4.0"
   annotation: "v0.3.0"
-  compression: "3f79698"
+  compression: "v2.0.0"
   cnv_sv: "v0.4.1"
   filtering: "v0.2.0"
-  parabricks: "9b94028"
+  parabricks: "v1.1.0"
   prealignment: "v1.1.0"
   qc: "v0.4.1"
-  misc: "v0.2.0"
   mitochondrial: "v0.1.0"
   snv_indels: "v0.5.0"
 
 reference:
-  coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
+  coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_20230828.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
   design_bed: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
   exome_bed: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
   exome_intervals: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"
-  fasta: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta"
-  fai: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.fai"
-  genepanels: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/genepanels.list"
-  genome_dir: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens_star"
+  fasta: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta"
+  fai: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.fai"
+  genepanels: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/genepanels_WGS.list"
   sites: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.known_indels.vcf.gz"
   wgs_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.interval_list"
 
@@ -55,11 +53,11 @@ bcftools_view_pass:
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
-  amb: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.amb"
-  ann: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.ann"
-  bwt: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.bwt"
-  pac: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.pac"
-  sa: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.fasta.sa"
+  amb: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.amb"
+  ann: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.ann"
+  bwt: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.bwt"
+  pac: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.pac"
+  sa: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.sa"
 
 bwa_mem_mito:
   container: "docker://hydragenetics/bwa_mem:0.7.17"
@@ -81,11 +79,11 @@ bwa_mem_mito:
     mt_shifted: "/beegfs-storage/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.sa"
 
 cnvpytor_readdepth:
-  container: "docker://hydragenetics/cnvpytor:1.2.1"
+  container: "docker://hydragenetics/cnvpytor:1.3.1"
   length_list: "1000 10000 100000"
 
 cnvpytor_filter:
-  container: "docker://hydragenetics/cnvpytor:1.2.1"
+  container: "docker://hydragenetics/cnvpytor:1.3.1"
   dG_range: "100000 inf"
   p_range: "0 0.01"
   pN_range: "0 0.5"
@@ -240,8 +238,16 @@ multiqc:
         - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq1_fastqc.zip"
         - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq2_fastqc.zip"
         - "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"
+        - "qc/mosdepth_bed/{sample}_{type}.per-base.bed.gz"
+        - "qc/mosdepth_bed/{sample}_{type}.thresholds.bed.gz"
+        - "qc/mosdepth_bed/{sample}_{type}.regions.bed.gz"
         - "qc/mosdepth/{sample}_{type}.mosdepth.region.dist.txt"
         - "qc/mosdepth/{sample}_{type}.mosdepth.global.dist.txt"
+        - "qc/peddy/peddy.peddy.ped"
+        - "qc/peddy/peddy.background_pca.json"
+        - "qc/peddy/peddy.ped_check.csv"
+        - "qc/peddy/peddy.sex_check.csv"
+        - "qc/peddy/peddy.het_check.csv"
         - "qc/peddy/peddy_sex_check_mqc.tsv"
         - "qc/peddy/peddy_rel_check_mqc.tsv"
         - "qc/picard_collect_alignment_summary_metrics/{sample}_{type}.alignment_summary_metrics.txt"

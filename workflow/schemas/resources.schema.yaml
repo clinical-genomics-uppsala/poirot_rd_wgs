@@ -27,6 +27,26 @@ properties:
       - threads
       - time
 
+  deepvariant_add_ref:
+    type: object
+    description: resource definitions for deepvariant_add_ref
+    properties:
+      mem_mb:
+        type: integer
+        description: max memory in MB to be available
+      mem_per_cpu:
+        type: integer
+        description: memory in MB used per cpu
+      partition:
+        type: string
+        description: partition to use on cluster
+      threads:
+        type: integer
+        description: number of threads to be available
+      time:
+        type: string
+        description: max execution time
+
   fastp_pe:
     type: object
     properties:
@@ -108,6 +128,66 @@ properties:
       time:
         type: string
         description: max execution time for 'mutectcaller' rule
+
+  svdb_add_ref:
+    type: object
+    description: resource definitions for svdb_add_ref
+    properties:
+      mem_mb:
+        type: integer
+        description: max memory in MB to be available
+      mem_per_cpu:
+        type: integer
+        description: memory in MB used per cpu
+      partition:
+        type: string
+        description: partition to use on cluster
+      threads:
+        type: integer
+        description: number of threads to be available
+      time:
+        type: string
+        description: max execution time
+
+  tiddit_add_ref:
+    type: object
+    description: resource definitions for tiddit_add_ref
+    properties:
+      mem_mb:
+        type: integer
+        description: max memory in MB to be available
+      mem_per_cpu:
+        type: integer
+        description: memory in MB used per cpu
+      partition:
+        type: string
+        description: partition to use on cluster
+      threads:
+        type: integer
+        description: number of threads to be available
+      time:
+        type: string
+        description: max execution time
+
+  vcf_to_aed:
+    type: object
+    description: resource definitions for vcf_to_aed
+    properties:
+      mem_mb:
+        type: integer
+        description: max memory in MB to be available
+      mem_per_cpu:
+        type: integer
+        description: memory in MB used per cpu
+      partition:
+        type: string
+        description: partition to use on cluster
+      threads:
+        type: integer
+        description: number of threads to be available
+      time:
+        type: string
+        description: max execution time
 
 required:
   - default_resources

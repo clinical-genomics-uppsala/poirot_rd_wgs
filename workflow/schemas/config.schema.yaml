@@ -55,3 +55,60 @@ properties:
     - resources
     - default_container
     - reference
+
+  deepvariant_add_ref:
+    type: object
+    description: parameters for deepvariant_add_ref
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
+
+  vcf_to_aed:
+    type: object
+    description: parameters for vcf_to_aed
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
+
+  svdb_add_ref:
+    type: object
+    description: parameters for svdb_add_ref
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
+
+  tiddit_add_ref:
+    type: object
+    description: parameters for tiddit_add_ref
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
+

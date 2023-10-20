@@ -5,6 +5,7 @@ __license__ = "GPL-3"
 
 
 include: "rules/common.smk"
+include: "rules/vcf_to_aed.smk"
 include: "rules/add_ref_to_vcf.smk"
 include: "rules/concat_vcfs.smk"
 include: "rules/coverage.smk"
@@ -20,7 +21,7 @@ rule all:
         unpack(compile_output_list),
 
 
-ruleorder: _copy_crumble_crai > misc_samtools_index
+ruleorder: _copy_samtools_crai > compression_samtools_index
 ruleorder: _copy_snv_indels_tbi > snv_indels_tabix
 ruleorder: _copy_snv_indels_filtered_tbi > snv_indels_tabix
 ruleorder: filtering_bcftools_view_pass > snv_indels_bgzip
@@ -130,6 +131,7 @@ use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter
 use rule cnvpytor_readdepth from cnv_sv as cnv_sv_cnvpytor_readdepth with:
     input:
         bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
         vcf=lambda wildcards: get_vcf_input(wildcards),
 
 
@@ -223,19 +225,11 @@ module compression:
 use rule * from compression as compression_*
 
 
-# use rule crumble from compression as compression_crumble
-
-
 use rule samtools_view from compression as compression_samtools_view with:
     input:
         bam=lambda wildcards: get_bam_input(wildcards, use_sample_wildcard=False)[0],
         bai=lambda wildcards: get_bam_input(wildcards, use_sample_wildcard=False)[1],
         ref=config.get("reference", {}).get("fasta", ""),
-
-
-use rule spring from compression as compression_spring with:
-    output:
-        spring=temp("results/{sample}/spring/{sample}_{type}_{flowcell}_{lane}_{barcode}.spring"),
 
 
 module filtering:
@@ -253,38 +247,6 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
         vcf=temp("{file}.bcftools_view_pass.vcf.gz"),
     params:
         extra=config.get("bcftools_view_pass", {}).get("extra", ""),
-
-
-# use rule bcftools_view from filtering as filtering_bcftools_view_biallelic with:
-#    output:
-#        vcf=temp("{file}.bcftools_view_biallelic.vcf.gz"),
-#    params:
-#        extra=config.get("bcftools_view_biallelic", {}).get("extra", ""),
-
-
-module misc:
-    snakefile:
-        github("hydra-genetics/misc", path="workflow/Snakefile", tag=config["modules"]["misc"])
-    config:
-        config
-
-
-use rule samtools_index from misc as misc_samtools_index with:
-    input:
-        cram="{file}.crumble.cram",
-    output:
-        crai=temp("{file}.crumble.cram.crai"),
-    params:
-        extra=config.get("extra", {}).get("extra", ""),
-    log:
-        "{file}.crumble.cram.crai.log",
-    benchmark:
-        repeat(
-            "{file}.crumble.cram.crai.benchmark.tsv",
-            config.get("samtools_index", {}).get("benchmark_repeats", 1),
-        )
-    message:
-        "{rule}: Index {wildcards.file}.crumble.cram file"
 
 
 module mitochondrial:
@@ -327,7 +289,7 @@ use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
         bai=lambda wildcards: get_bam_input(wildcards)[1],
         fasta=config.get("reference", {}).get("fasta", ""),
     output:
-        vcf=temp("parabricks/pbrun_deepvariant/{sample}_{type}.g.vcf"),
+        vcf="parabricks/pbrun_deepvariant/{sample}_{type}.g.vcf",
         vcf2=temp("parabricks/pbrun_deepvariant/{sample}_{type}.vcf"),
 
 
@@ -483,6 +445,7 @@ use rule * from snv_indels as snv_indels_*
 use rule deeptrio_make_examples from snv_indels as snv_indels_deeptrio_make_examples with:
     input:
         child_bam=lambda wildcards: get_bam_input(wildcards)[0],
+        child_bai=lambda wildcards: get_bam_input(wildcards)[1],
         parent_bams=lambda wildcards: get_parent_bams(wildcards),
         ref=config.get("reference", {}).get("fasta", ""),
 

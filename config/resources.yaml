@@ -22,9 +22,12 @@ bwa_mem_mito:
   mem_per_cpu: 3072
   threads: 2
 
+cnvpytor:
+  time: "18:00:00"
+ 
 deeptrio_call_variants:
   gres: "--gres=gres:gpu:1" ## Booking 2 GPUs and 20 cpus works on CGU GPU node (1 GPU and 10 threads not currently working)
-  partition: "GPU"
+  partition: "GPU_hi"
   threads: 10
 
 deeptrio_make_examples:
@@ -53,7 +56,7 @@ expansionhunter:
   threads: 16
 
 fastp_pe:
-  threads: 5
+  threads: 8
   mem_mb: 30720
   mem_per_cpu: 6144
 
@@ -101,7 +104,7 @@ pbrun_fq2bam:
   gres: "--gres=gres:gpu:4"
   mem_mb: 655360
   mem_per_cpu: 16384
-  partition: "GPU"
+  partition: "GPU_hi"
   threads: 40
   time: "20:00:00"
 
@@ -109,7 +112,7 @@ pbrun_deepvariant:
   gres: "--gres=gres:gpu:4"
   mem_mb: 655360
   mem_per_cpu: 16384
-  partition: "GPU"
+  partition: "GPU_hi"
   threads: 40
   time: "20:00:00"
 
@@ -122,16 +125,19 @@ samtools_sort:
   threads: 10
 
 samtools_view:
-  mem_mb: 61440
+  mem_mb: 49152
   mem_per_cpu: 6144
-  threads: 10
+  threads: 8
+  partition: "core_bkup"
 
 smn_caller:
   threads: 8
 
 spring:
-  mem_mb: 36864
+  mem_mb: 49152
+  mem_per_cpu: 6144
   threads: 8
+  partition: "core_bkup"
 
 tiddit:
   threads: 8

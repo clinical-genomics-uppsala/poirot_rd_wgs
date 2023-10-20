@@ -1,11 +1,20 @@
 # !/bin/python3.6
-import sys
+import os
 import xlsxwriter
 from datetime import date
 import subprocess
 import yaml
 import gzip
 from operator import itemgetter
+import logging
+
+
+logging.basicConfig(filename=snakemake.log[0],
+                    level=logging.INFO,
+                    format='%(asctime)s %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                    )
+log = logging.getLogger()
 
 # Specify input files
 configfile = snakemake.input[0]
@@ -51,7 +60,7 @@ col = 0
 
 
 ''' Coverage and threshold sheet '''
-print('Generating Coverage and threshold sheet')
+log.info("Generating Coverage and threshold sheets")
 tableLinesCov_unsorted = []
 tableLinesTre_unsorted = []
 totalMinBreadth = 0
@@ -73,7 +82,7 @@ with gzip.open(covRegionsFile, 'rt') as regionsfile:
         tableLinesCov_unsorted.append(covRow)
         bedfile.append(line[0:4])
 
-# sort by gene name
+# sort by gene name to deal with overlapping genes
 tableLinesCov = sorted(tableLinesCov_unsorted, key=itemgetter(0))
 
 with gzip.open(covThresFile, 'rt') as thresfile:
@@ -81,6 +90,7 @@ with gzip.open(covThresFile, 'rt') as thresfile:
     for lline in thresfile:
         line = lline.strip().split("\t")
         length = int(line[2])-int(line[1])
+        gene = line[3].split("_")[0]
         min = int(line[4])
         med = int(line[5])
         max = int(line[6])
@@ -88,7 +98,7 @@ with gzip.open(covThresFile, 'rt') as thresfile:
         totalMinBreadth += int(line[4])
         totalMedBreadth += int(line[5])
         totalMaxBreadth += int(line[6])
-        row = [[line[3]], line[0:3], min, med, max, length]
+        row = [gene, line[0:3], min, med, max, length]
         tableLinesTre_unsorted.append(row)
 
 tableLinesTre = sorted(tableLinesTre_unsorted, key=itemgetter(0))
@@ -121,7 +131,7 @@ while i < len(tableLinesCov):
 
 
 ''' Low coverage sheet '''
-print('Generating Low Coverage sheet')
+log.info("Generating Low Coverage sheets")
 row = 6  # 0 index
 lowCovLines = []
 lowRegLines = []
@@ -152,7 +162,7 @@ for line in lowCovLines:
 
 
 ''' Overview sheet (1) '''
-print('Generating Overview sheet')
+log.info("Generating Overview sheet")
 worksheetOver.write(3, 0, "Processing date: "+today.strftime("%B %d, %Y"))
 worksheetOver.write_row(4, 0, emptyList, lineFormat)
 worksheetOver.write(5, 0, "Created by: ")
@@ -185,24 +195,22 @@ worksheetOver.write_url(16, 0, "internal: 'Coverage'!A1", string='Average covera
 
 
 ''' Genepanel sheets '''
-print('Generating Gene panel sheet')
-panels = []
-with open(genepanels, 'rt') as file:
-    for lline in file:
-        panels.append(lline.rstrip())
+log.info("Generating Gene panel sheets")
+panels = [panel.rstrip() for panel in open(genepanels)]
 
 number = 0
 for line in panels:
-    panel = genepanels.replace("genepanels", line)
+    log.info(f"  - {line}")
+    genepanels_dir = os.path.dirname(genepanels)
+    panel = f"{genepanels_dir}/{line}.list"
     worksheetpanel = workbook.add_worksheet(line)
     worksheetpanel.write('A1', 'Coverage analysis per gene for '+line+' gene panel', headingFormat)
     worksheetpanel.write_row('A2', emptyList, lineFormat)
     worksheetpanel.write('A3', 'Sample: '+str(sample))
-    worksheetpanel.write('A5', 'Averge coverage and coverage breadth of genes in '+line+' gene panel.')
+    worksheetpanel.write('A5', 'Average coverage and coverage breadth of genes in '+line+' gene panel.')
     number = number + 1
     genes = []
     lows = []
-    print(panel)
     with open(panel, 'rt', encoding='utf-8') as file:
         for lline in file:
             i = 0
