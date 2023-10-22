@@ -264,6 +264,14 @@ module parabricks:
 
 
 use rule pbrun_fq2bam from parabricks as parabricks_fq2bam
+    resources:
+        constraint=config.get("pbrun_fq2bam", {}).get("constraint", ""),
+        gres=config.get("pbrun_fq2bam", {}).get("gres", ""),
+        mem_mb=config.get("pbrun_fq2bam", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
+        mem_per_cpu=config.get("pbrun_fq2bam", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
+        partition=config.get("pbrun_fq2bam", {}).get("partition", config["default_resources"]["partition"]),
+        threads=config.get("pbrun_fq2bam", {}).get("threads", config["default_resources"]["threads"]),
+        time=config.get("pbrun_fq2bam", {}).get("time", config["default_resources"]["time"]),
 
 
 use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
@@ -274,6 +282,14 @@ use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
     output:
         vcf="parabricks/pbrun_deepvariant/{sample}_{type}.g.vcf",
         vcf2=temp("parabricks/pbrun_deepvariant/{sample}_{type}.vcf"),
+    resources:
+        constraint=config.get("pbrun_deepvariant", {}).get("constraint", ""),
+        gres=config.get("pbrun_deepvariant", {}).get("gres", ""),
+        mem_mb=config.get("pbrun_deepvariant", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
+        mem_per_cpu=config.get("pbrun_deepvariant", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
+        partition=config.get("pbrun_deepvariant", {}).get("partition", config["default_resources"]["partition"]),
+        threads=config.get("pbrun_deepvariant", {}).get("threads", config["default_resources"]["threads"]),
+        time=config.get("pbrun_deepvariant", {}).get("time", config["default_resources"]["time"]),
 
 
 module prealignment:
