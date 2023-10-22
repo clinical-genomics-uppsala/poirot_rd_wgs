@@ -1,16 +1,13 @@
----
-
 default_resources:
   threads: 1
   time: "12:00:00"
-  mem_mb: 6144
-  mem_per_cpu: 6144
+  mem_mb: 7168
+  mem_per_cpu: 7168
   partition: "core"
-  account: "sens2019031"
 
 bwa_mem:
-  mem_mb: 98304
-  mem_per_cpu: 6144
+  mem_mb: 114688
+  mem_per_cpu: 7168
   threads: 16
 
 bwa_mem_merge:
@@ -25,12 +22,17 @@ bwa_mem_mito:
 
 deeptrio_call_variants:
   gres: "--gres=gpu:1" 
-  constraint: "-C GPU"
+  constraint: "-C gpu"
+  mem_mb: 234000
 
 deeptrio_make_examples:
+  mem_mb: 7168
+  mem_per_cpu: 7168
   threads: 1
 
 deeptrio_postprocess_variants:
+  mem_mb: 35840
+  mem_per_cpu: 7168
   threads: 5
 
 deepvariant_call_variants:
@@ -46,14 +48,14 @@ expansionhunter:
   threads: 16
 
 fastp_pe:
-  threads: 5
-  mem_mb: 30720
-  mem_per_cpu: 6144
+  threads: 8
+  mem_mb: 57344
+  mem_per_cpu: 7168
 
 fastqc:
   threads: 2
-  mem_mb: 12288
-  mem_per_cpu: 6144
+  mem_mb: 14336
+  mem_per_cpu: 7168
 
 gatk_mark_duplicates:
   mem_mb: 4096
@@ -80,47 +82,70 @@ gatk_sort_sam:
   mem_per_cpu: 4096
 
 glnexus:
+  mem_mb: 57344
+  mem_per_cpu: 7168
   threads: 16
 
 mosdepth:
-  mem_mb: 36864
-  threads: 7
+  mem_mb: 57344
+  mem_per_cpu: 7168
+  threads: 8
 
 mosdepth_bed:
-  mem_mb: 36864
-  threads: 7
+  mem_mb: 57344
+  mem_per_cpu: 7168
+  threads: 8
 
 pbrun_fq2bam:
   gres: "--gres=gpu:2"
-  constraint: "-C GPU"
+  constraint: "-C gpu"
   time: "08:00:00"
+  partition: "node"
+  threads: 16
+  mem_mb: 234000
+  mem_per_cpu: 14000
 
 pbrun_deepvariant:
   gres: "--gres=gpu:2"
-  constraint: "-C GPU"
+  constraint: "-C gpu"
   time: "08:00:00"
+  partition: "node"
+  threads: 16
+  mem_mb: 234000
+  mem_per_cpu: 14000
 
 peddy:
+  mem_mb: 57344
+  mem_per_cpu: 7168
   threads: 8
 
 samtools_sort:
-  mem_mb: 61440
-  mem_per_cpu: 6144
-  threads: 10
+  mem_mb: 57344
+  mem_per_cpu: 7168
+  threads: 8
 
 samtools_view:
-  mem_mb: 61440
-  mem_per_cpu: 6144
-  threads: 10
+  mem_mb: 57344
+  mem_per_cpu: 7168
+  threads: 8
 
 smn_caller:
+  mem_mb: 57344
+  mem_per_cpu: 7168
   threads: 8
 
 spring:
-  threads: 8
+  mem_mb: 114688
+  mem_per_cpu: 7168
+  threads: 16
+  time: "24:00:00"
 
 tiddit:
+  mem_mb: 57344
+  mem_per_cpu: 7168
   threads: 8
 
 vep:
+  mem_mb: 28672
+  mem_per_cpu: 7168
   threads: 4
