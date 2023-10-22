@@ -238,32 +238,6 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
         extra=config.get("bcftools_view_pass", {}).get("extra", ""),
 
 
-module misc:
-    snakefile:
-        get_module_snakefile(
-            config, "hydra-genetics/misc", path="workflow/Snakefile", tag=config["modules"]["misc"])
-    config:
-        config
-
-
-use rule samtools_index from misc as misc_samtools_index with:
-    input:
-        cram="{file}.crumble.cram",
-    output:
-        crai=temp("{file}.crumble.cram.crai"),
-    params:
-        extra=config.get("extra", {}).get("extra", ""),
-    log:
-        "{file}.crumble.cram.crai.log",
-    benchmark:
-        repeat(
-            "{file}.crumble.cram.crai.benchmark.tsv",
-            config.get("samtools_index", {}).get("benchmark_repeats", 1),
-        )
-    message:
-        "{rule}: Index {wildcards.file}.crumble.cram file"
-
-
 module mitochondrial:
     snakefile:
         get_module_snakefile(
