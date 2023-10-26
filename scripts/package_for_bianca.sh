@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
+
+set -eou
+
 eval "$(conda shell.bash hook)"
 
 POIROT_VERSION=bianca_support # version or branch
-reference_files=reference_files/ # path to reference files
-
-conda create --name poirot_env python=3.9 -y
-
-conda activate poirot_env
-
-conda install -c conda-forge pip -y
+reference_files=/data/backups/wp3/poirot_ref_files/ref_files_231022/ # path to reference files
 
 if [ -d poirot_pipeline ];
 then
@@ -17,18 +14,23 @@ fi
 
 mkdir poirot_pipeline
 
-tar -czvf poirot_pipeline/reference_files.tar.gz ${reference_files}
+git clone --branch ${POIROT_VERSION} https://github.com/clinical-genomics-uppsala/poirot_rd_wgs poirot_pipeline/poirot_rd_wgs_${POIROT_VERSION} 
 
-git clone --branch ${POIROT_VERSION} https://github.com/clinical-genomics-uppsala/poirot_rd_wgs poirot_pipeline/poirot_rd_wgs_${POIROT_VERSION}
+conda create --prefix ./poirot_env  python=3.9  -y 
+
+conda activate ./poirot_env 
+
+conda install -c conda-forge conda-pack pip -y 
+
+echo $( which pip )
 
 pip install -r poirot_pipeline/poirot_rd_wgs_${POIROT_VERSION}/requirements.txt 
 
-# pull the singlarity containers
-hydra-genetics prepare-environment create-singularity-files -c config/config.yaml -o poirot_pipeline/singularity_files
+conda-pack -n poirot_env -o poirot_pipeline/poirot_env.tar.gz 
 
-conda deactivate
+conda deactivate 
 
-conda-pack -n poirot_env -o poirot_pipeline/poirot_env.tar.gz
+conda remove --name poirot_env --all -y
 
 mkdir -p poirot_pipeline/hydra-genetics
 
@@ -46,6 +48,15 @@ git clone https://github.com/hydra-genetics/parabricks.git poirot_pipeline/hydra
 git clone https://github.com/hydra-genetics/qc.git poirot_pipeline/hydra-genetics/qc
 git clone https://github.com/hydra-genetics/snv_indels.git poirot_pipeline/hydra-genetics/snv_indels
 
+python3.9 -m venv hydra_env
+source hydra_env/bin/activate
+pip install hydra-genetics==1.8.1
+
+# pull the singlarity containers with hydra-genetics cli
+hydra-genetics prepare-environment create-singularity-files -c config/config.yaml -o poirot_pipeline/singularity_files
+
+# get the reference files
+rsync -ruv -P ${reference_files}/* poirot_pipeline/reference_files 
 
 tar -zcvf poirot_pipeline.tar.gz poirot_pipeline
 

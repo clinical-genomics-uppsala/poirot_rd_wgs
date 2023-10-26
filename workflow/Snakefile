@@ -263,7 +263,7 @@ module parabricks:
         config
 
 
-use rule pbrun_fq2bam from parabricks as parabricks_fq2bam
+use rule pbrun_fq2bam from parabricks as parabricks_fq2bam with:
     resources:
         constraint=config.get("pbrun_fq2bam", {}).get("constraint", ""),
         gres=config.get("pbrun_fq2bam", {}).get("gres", ""),
@@ -295,7 +295,7 @@ use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
 module prealignment:
     snakefile:
         get_module_snakefile(
-            config, "hydra-genetics/prealigment", path="workflow/Snakefile", tag=config["modules"]["prealignment"])
+            config, "hydra-genetics/prealignment", path="workflow/Snakefile", tag=config["modules"]["prealignment"])
     config:
         config
 

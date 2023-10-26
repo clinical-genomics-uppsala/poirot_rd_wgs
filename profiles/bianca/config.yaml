@@ -14,6 +14,6 @@ default-resources:
   - constraint=""
 drmaa-log-dir: "slurm"
 singularity-args: "--cleanenv --bind /castor/project/proj,/proj --disable-cache --nv"
-singularity-prefix: "/proj/sens2019031/poirot_pipeline/singularity_files"
+singularity-prefix: "/castor/project/proj/poirot_pipeline/singularity_files"
 wrapper-prefix: "git+file://castor/project/proj/poirot_pipeline/snakemake-wrappers"
 

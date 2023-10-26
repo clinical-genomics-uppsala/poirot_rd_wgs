@@ -4,7 +4,7 @@ samples: config/samples.tsv
 
 units: config/units.tsv
 
-hydra_local_path: "/proj/sens2019031/poirot_pipeline/"
+hydra_local_path: "/castor/project/proj/poirot_pipeline/"
 
 output: config/output_list.json
 
