@@ -1,0 +1,374 @@
+resources: config/resources_bianca.yaml
+
+samples: config/samples.tsv
+
+units: config/units.tsv
+
+hydra_local_path: "/castor/project/proj/poirot_pipeline/"
+
+output: config/output_list.json
+
+default_container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif
+
+modules:
+  alignment: "v0.4.0"
+  annotation: "v0.3.0"
+  compression: "v2.0.0"
+  cnv_sv: "v0.4.1"
+  filtering: "v0.2.0"
+  parabricks: "v1.1.0"
+  prealignment: "v1.1.0"
+  qc: "v0.4.1"
+  mitochondrial: "v0.1.0"
+  snv_indels: "v0.5.0"
+
+reference:
+  coverage_bed: /castor/project/proj/poirot_pipeline/reference_files/refseq_select_mane_20230828.bed
+  design_bed: /castor/project/proj/poirot_pipeline/reference_files/homo_sapiens.wgs.bed
+  exome_bed: /castor/project/proj/poirot_pipeline/reference_files/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed
+  exome_intervals: /castor/project/proj/poirot_pipeline/reference_files/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed
+  fai: /castor/project/proj/poirot_pipeline/reference_files/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.fai
+  fasta: /castor/project/proj/poirot_pipeline/reference_files/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta
+  genepanels: /castor/project/proj/poirot_pipeline/reference_files/reference_files/gene_panels/genepanels_WGS.list
+  sites: /castor/project/proj/poirot_pipeline/reference_files/homo_sapiens.known_indels.vcf.gz
+  wgs_intervals: /castor/project/proj/poirot_pipeline/reference_files/homo_sapiens.wgs.interval_list
+
+trimmer_software: fastp_pe
+
+aligner: bwa_gpu
+
+snp_caller: deepvariant_gpu
+
+automap:
+  build: hg38
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_automap_1.2.sif
+  extra: --DP 10 --minsize 3 --chrX
+  outdir: cnv_sv/automap
+
+bcftools_view_biallelic:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif
+  extra: -m2 -M2 -v snps
+
+bcftools_view_pass:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif
+  extra: '--apply-filter PASS '
+
+bwa_mem:
+  amb: /castor/project/proj/poirot_pipeline/reference_files/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.amb
+  ann: /castor/project/proj/poirot_pipeline/reference_files/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.ann
+  bwt: /castor/project/proj/poirot_pipeline/reference_files/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.bwt
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_bwa_0.7.15.sif
+  pac: /castor/project/proj/poirot_pipeline/reference_files/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.pac
+  sa: /castor/project/proj/poirot_pipeline/reference_files/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.sa
+
+bwa_mem_mito:
+  amb:
+    mt: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.amb
+    mt_shifted: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.amb
+  ann:
+    mt: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.ann
+    mt_shifted: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.ann
+  bwt:
+    mt: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.bwt
+    mt_shifted: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.bwt
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_bwa_mem_0.7.17.sif
+  extra: '-K 100000000 -v3 -Y '
+  pac:
+    mt: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.pac
+    mt_shifted: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.pac
+  sa:
+    mt: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.sa
+    mt_shifted: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.sa
+
+cnvpytor_readdepth:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_cnvpytor_1.2.1.sif
+  length_list: 1000 10000 100000
+
+cnvpytor_filter:
+  Q0_range: 0 0.05
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_cnvpytor_1.2.1.sif
+  dG_range: 100000 inf
+  pN_range: 0 0.5
+  p_range: 0 0.01
+  view: '1000'
+
+create_cov_excel:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif
+  covLimits: 10 20 30
+
+crumble:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_crumble_0.8.3.sif
+  extra: -O CRAM
+
+deeptrio_call_variants:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/google_deepvariant_deeptrio-1.4.0-gpu.sif
+  model:
+    child: /opt/models/deeptrio/wgs/child/model.ckpt
+    parent: /opt/models/deeptrio/wgs/parent/model.ckpt
+
+deeptrio_make_examples:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/google_deepvariant_deeptrio-1.4.0-gpu.sif
+  extra: '--channels insert_size --pileup_image_height_child 60 --pileup_image_height_parent
+    40 '
+  n_shards: 80
+
+deeptrio_postprocess_variants:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/google_deepvariant_deeptrio-1.4.0-gpu.sif
+
+deepvariant_call_variants:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_deepvariant_1.4.0.sif
+  model: /opt/models/wgs/model.ckpt
+
+deepvariant_make_examples:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_deepvariant_1.4.0.sif
+  extra: --channels insert_size
+  n_shards: 80
+
+deepvariant_postprocess_variants:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_deepvariant_1.4.0.sif
+  vcf_type: gvcf
+
+expansionhunter:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_expansionhunter_5.0.0.sif
+  variant_catalog: /castor/project/proj/poirot_pipeline/reference_files/stranger/v0.8.1/variant_catalog_grch38.json
+
+fastp_pe:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_fastp_0.20.1.sif
+  extra: --trim_poly_g --qualified_quality_phred 15 --unqualified_percent_limit 40
+    --n_base_limit 5 --length_required 15
+
+fastqc:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_fastqc_0.11.9.sif
+
+filter_vcf:
+  germline: config/config_hard_filter_germline.yaml
+
+gatk_collect_wgs_metrics:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+  coverage_cap: 100000
+  read_length: 151
+
+gatk_filter_contamination:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+
+gatk_filter_mutect_calls_mt:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+
+gatk_left_align_and_trim_variants:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+
+gatk_lift_over_vcf:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+  shift_back_chain: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/ShiftBack.chain
+
+gatk_mark_duplicates:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+
+gatk_merge_bam_alignment:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+
+gatk_merge_vcfs:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+
+gatk_merge_stats:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+
+gatk_mutect2:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+  interval:
+    mt: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/non_control_region.chrM.interval_list
+    mt_shifted: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/control_region_shifted.chrM.interval_list
+  max_reads_per_alignment_start: 75
+
+gatk_print_reads:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+  interval: chrM
+
+gatk_revert_sam:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+
+gatk_sam_to_fastq:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+
+gatk_select_variants:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+
+gatk_sort_sam:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+
+gatk_split_multi_allelic_sites:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+
+gatk_variant_filtration:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_gatk4_4.2.2.0.sif
+
+glnexus:
+  configfile: DeepVariantWGS
+  container: /castor/project/proj/poirot_pipeline/singularity_files/ghcr.io_dnanexus-rnd_glnexus_v1.4.1.sif
+
+glnexus_peddy:
+  configfile: DeepVariantWGS
+  container: /castor/project/proj/poirot_pipeline/singularity_files/ghcr.io_dnanexus-rnd_glnexus_v1.4.1.sif
+  extra: '--bed /castor/project/proj/poirot_pipeline/reference_files/peddy/v0.4.8/GRCH38.bed '
+
+haplocheck:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_haplocheck_1.3.3.sif
+
+manta_config_n:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_manta_1.6.0.sif
+  extra: ''
+
+manta_run_workflow_n:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_manta_1.6.0.sif
+
+mosdepth:
+  by: '500'
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_mosdepth_0.3.2.sif
+  extra: '--fast-mode --no-per-base '
+
+mosdepth_bed:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_mosdepth_0.3.2.sif
+  extra: ''
+
+multiqc:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_multiqc_1.11.sif
+  reports:
+    DNA:
+      config: config/multiqc_config_DNA.yaml
+      included_unit_types: ["N"]
+      qc_files:
+        - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq1_fastqc.zip"
+        - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq2_fastqc.zip"
+        - "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"
+        - "qc/mosdepth_bed/{sample}_{type}.per-base.bed.gz"
+        - "qc/mosdepth_bed/{sample}_{type}.thresholds.bed.gz"
+        - "qc/mosdepth_bed/{sample}_{type}.regions.bed.gz"
+        - "qc/mosdepth/{sample}_{type}.mosdepth.region.dist.txt"
+        - "qc/mosdepth/{sample}_{type}.mosdepth.global.dist.txt"
+        - "qc/peddy/peddy.peddy.ped"
+        - "qc/peddy/peddy.background_pca.json"
+        - "qc/peddy/peddy.ped_check.csv"
+        - "qc/peddy/peddy.sex_check.csv"
+        - "qc/peddy/peddy.het_check.csv"
+        - "qc/peddy/peddy_sex_check_mqc.tsv"
+        - "qc/peddy/peddy_rel_check_mqc.tsv"
+        - "qc/picard_collect_alignment_summary_metrics/{sample}_{type}.alignment_summary_metrics.txt"
+        - "qc/picard_collect_duplication_metrics/{sample}_{type}.duplication_metrics.txt"
+        - "qc/picard_collect_gc_bias_metrics/{sample}_{type}.gc_bias.summary_metrics"
+        - "qc/picard_collect_hs_metrics/{sample}_{type}.HsMetrics.txt"
+        - "qc/picard_collect_insert_size_metrics/{sample}_{type}.insert_size_metrics.txt"
+        - "qc/picard_collect_wgs_metrics/{sample}_{type}.txt"
+        - "qc/samtools_stats/{sample}_{type}.samtools-stats.txt"
+        - "qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"
+
+mt_reference:
+  blacklist: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/blacklist_sites.hg38.chrM.bed
+  mt: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/Homo_sapiens_assembly38.chrM.fasta
+  mt_shifted: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta
+
+pbrun_deepvariant:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/nvcr.io_nvidia_clara_clara-parabricks_4.0.0-1.sif
+  extra: '--disable-use-window-selector-model --gvcf '
+
+pbrun_fq2bam:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/nvcr.io_nvidia_clara_clara-parabricks_4.0.0-1.sif
+  extra: ''
+
+peddy:
+  config: config/peddy_mqc.yaml
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_peddy_0.4.8.sif
+  extra: '--sites hg38 '
+
+picard_collect_alignment_summary_metrics:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_picard_2.25.0.sif
+
+picard_collect_duplication_metrics:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_picard_2.25.0.sif
+
+picard_collect_gc_bias_metrics:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_picard_2.25.0.sif
+
+picard_collect_hs_metrics:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_picard_2.25.0.sif
+
+picard_collect_insert_size_metrics:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_picard_2.25.0.sif
+
+picard_collect_multiple_metrics:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_picard_2.25.0.sif
+
+picard_collect_wgs_metrics:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_picard_2.25.0.sif
+
+picard_mark_duplicates:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_picard_2.25.4.sif
+
+reviewer:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_reviewer_0.2.7.sif
+
+samtools_stats:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif
+  params:
+    extra: ' --threads 3 '
+  threads: 3
+
+samtools_idxstats:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif
+  params:
+    extra: ' --threads 3 '
+  threads: 3
+
+samtools:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif
+
+smn_caller:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_smncopynumbercaller_1.1.2.sif
+  genome_version: '38'
+
+smn_charts:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_smncopynumbercaller_1.1.2.sif
+
+spring:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_spring_1.0.1.sif
+
+stranger:
+  catalog: /castor/project/proj/poirot_pipeline/reference_files/stranger/v0.8.1/variant_catalog_grch38.json
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_stranger_0.8.1.sif
+
+svdb_merge:
+  cnv_callers:
+    - cnvnator
+    - manta
+    - tiddit
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_svdb_2.6.0.sif
+  overlap: 0.6
+
+svdb_query:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_svdb_2.6.0.sif
+  db_string: '--db /data/ref_genomes/GRCh38/SweGenSVDBGRCh38/swegen_cnvnator_tiddit_manta.vcf,/data/ref_genomes/GRCh38/gnomAD/gnomad_v2.1_sv.sites.vcf.gz
+    --in_frq FRQ,AF --in_occ OCC,AC --out_frq SweGen_AF,gnomAD_AF --out_occ SweGen_OCC,gnomAD_OCC '
+
+tabix:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif
+
+tiddit:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_tiddit_3.3.2.sif
+
+upd:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_upd_0.1.1.sif
+  extra: '--vep '
+
+vep:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/ensemblorg_ensembl-vep_release_109.3.sif
+  extra: --assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol
+    --af --af_1kg --af_gnomad --max_af
+  vep_cache: /castor/project/proj/poirot_pipeline/reference_files/VEP/
+
+vep_trio:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/ensemblorg_ensembl-vep_release_109.3.sif
+  extra: --assembly GRCh38 --check_existing --pick --max_af --buffer_size 50000
+  vep_cache: /castor/project/proj/poirot_pipeline/reference_files/VEP/
+
+vt_decompose:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_vt_2015.11.10.sif
+
