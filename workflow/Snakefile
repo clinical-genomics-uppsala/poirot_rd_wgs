@@ -33,8 +33,7 @@ ruleorder: cnv_sv_svdb_merge > snv_indels_bcftools_concat
 
 module alignment:
     snakefile:
-        get_module_snakefile(
-            config, "hydra-genetics/alignment", path="workflow/Snakefile", tag=config["modules"]["alignment"])
+        get_module_snakefile(config, "hydra-genetics/alignment", path="workflow/Snakefile", tag=config["modules"]["alignment"])
     config:
         config
 
@@ -58,8 +57,7 @@ use rule samtools_sort from alignment as alignment_samtools_sort_eh_bam with:
 
 module annotation:
     snakefile:
-        get_module_snakefile(
-            config, "hydra-genetics/annotation", path="workflow/Snakefile", tag=config["modules"]["annotation"])
+        get_module_snakefile(config, "hydra-genetics/annotation", path="workflow/Snakefile", tag=config["modules"]["annotation"])
     config:
         config
 
@@ -102,8 +100,7 @@ use rule vep from annotation as annotation_vep_trio with:
 
 module cnv_sv:
     snakefile:
-        get_module_snakefile(
-            config, "hydra-genetics/cnv_sv", path="workflow/Snakefile", tag=config["modules"]["cnv_sv"])
+        get_module_snakefile(config, "hydra-genetics/cnv_sv", path="workflow/Snakefile", tag=config["modules"]["cnv_sv"])
     config:
         config
 
@@ -205,7 +202,8 @@ use rule tiddit from cnv_sv as cnv_sv_tiddit with:
 module compression:
     snakefile:
         get_module_snakefile(
-            config, "hydra-genetics/compression", path="workflow/Snakefile", tag=config["modules"]["compression"])
+            config, "hydra-genetics/compression", path="workflow/Snakefile", tag=config["modules"]["compression"]
+        )
     config:
         config
 
@@ -222,8 +220,7 @@ use rule samtools_view from compression as compression_samtools_view with:
 
 module filtering:
     snakefile:
-        get_module_snakefile(
-            config, "hydra-genetics/filtering", path="workflow/Snakefile", tag=config["modules"]["filtering"])
+        get_module_snakefile(config, "hydra-genetics/filtering", path="workflow/Snakefile", tag=config["modules"]["filtering"])
     config:
         config
 
@@ -241,7 +238,8 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
 module mitochondrial:
     snakefile:
         get_module_snakefile(
-            config, "hydra-genetics/mitochondrial", path="workflow/Snakefile", tag=config["modules"]["mitochondrial"])
+            config, "hydra-genetics/mitochondrial", path="workflow/Snakefile", tag=config["modules"]["mitochondrial"]
+        )
     config:
         config
 
@@ -257,8 +255,7 @@ use rule gatk_print_reads from mitochondrial as mitochondrial_gatk_print_reads w
 
 module parabricks:
     snakefile:
-        get_module_snakefile(
-            config, "hydra-genetics/parabricks", path="workflow/Snakefile", tag=config["modules"]["parabricks"])
+        get_module_snakefile(config, "hydra-genetics/parabricks", path="workflow/Snakefile", tag=config["modules"]["parabricks"])
     config:
         config
 
@@ -295,7 +292,8 @@ use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
 module prealignment:
     snakefile:
         get_module_snakefile(
-            config, "hydra-genetics/prealignment", path="workflow/Snakefile", tag=config["modules"]["prealignment"])
+            config, "hydra-genetics/prealignment", path="workflow/Snakefile", tag=config["modules"]["prealignment"]
+        )
     config:
         config
 
@@ -305,8 +303,7 @@ use rule * from prealignment as prealignment_*
 
 module qc:
     snakefile:
-        get_module_snakefile(
-            config, "hydra-genetics/qc", path="workflow/Snakefile", tag=config["modules"]["qc"])
+        get_module_snakefile(config, "hydra-genetics/qc", path="workflow/Snakefile", tag=config["modules"]["qc"])
     config:
         config
 
@@ -423,8 +420,7 @@ use rule samtools_idxstats from qc as qc_samtools_idxstats with:
 
 module snv_indels:
     snakefile:
-        get_module_snakefile(
-            config, "hydra-genetics/snv_indels", path="workflow/Snakefile", tag=config["modules"]["snv_indels"])
+        get_module_snakefile(config, "hydra-genetics/snv_indels", path="workflow/Snakefile", tag=config["modules"]["snv_indels"])
     config:
         config
 
@@ -486,10 +482,10 @@ use rule deepvariant_postprocess_variants from snv_indels as snv_indels_deepvari
         call_variants_record="snv_indels/deepvariant/{sample}_{type}/call_variants_output.tfrecord.gz",
         gvcf_records=expand(
             "snv_indels/deepvariant/{{sample}}_{{type}}/gvcf.tfrecord-{shard}-of-{nshards:05}.gz",
-            shard=[f"{x:05}" for x in range(config.get("deepvariant_make_examples", {}).get("n_shards", 2))],
-            nshards=config.get("deepvariant_make_examples").get("n_shards", 2),
-        )
-        if config.get("deepvariant_postprocess_variants", {}).get("vcf_type", "vcf") == "gvcf"
+                shard=[f"{x:05}" for x in range(config.get("deepvariant_make_examples", {}).get("n_shards", 2))],
+                nshards=config.get("deepvariant_make_examples").get("n_shards", 2),
+            )
+            if config.get("deepvariant_postprocess_variants", {}).get("vcf_type", "vcf") == "gvcf"
         else [],
         ref=config.get("reference", {}).get("fasta", ""),
     output:
