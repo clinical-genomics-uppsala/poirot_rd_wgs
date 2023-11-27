@@ -6,7 +6,7 @@ __license__ = "GPL-3"
 
 rule vcf_to_aed:
     input:
-        vcf="cnv_sv/cnvpytor/{sample}_{type}.vcf",
+        vcf="cnv_sv/cnvpytor/{sample}_{type}.merged.vcf",
     output:
         aed="cnv_sv/cnvpytor/{sample}_{type}.aed",
     params:
@@ -32,6 +32,6 @@ rule vcf_to_aed:
 
 use rule vcf_to_aed as vcf_to_aed_filtered with:
     input:
-        vcf="cnv_sv/cnvpytor/{sample}_{type}.filtered.vcf",
+        vcf="cnv_sv/cnvpytor/{sample}_{type}.filtered.merged.vcf",
     output:
         aed="cnv_sv/cnvpytor/{sample}_{type}_filtered.aed",
