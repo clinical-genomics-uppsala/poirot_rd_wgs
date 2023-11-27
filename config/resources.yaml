@@ -5,12 +5,12 @@ default_resources:
   time: "12:00:00"
   mem_mb: 6144
   mem_per_cpu: 6144
-  partition: "core"
+  partition: "low"
 
 bwa_mem:
-  mem_mb: 122880
+  mem_mb: 196608
   mem_per_cpu: 6144
-  threads: 20
+  threads: 32
 
 bwa_mem_merge:
   mem_mb: 61440
@@ -35,7 +35,7 @@ cnvpytor_readdepth_combined:
   time: "12:00:00"
  
 deeptrio_call_variants:
-  gres: "--gres=gres:gpu:1" ## Booking 2 GPUs and 20 cpus works on CGU GPU node (1 GPU and 10 threads not currently working)
+  gres: "--gres=gres:gpu:1" 
   partition: "GPU_hi"
   threads: 10
 
@@ -105,7 +105,6 @@ manta_run_workflow_n:
   threads: 20
   mem_mb: 122880
   mem_per_cpu: 6144
-  time: "20:00:00"
 
 mosdepth:
   mem_mb: 36864
@@ -134,20 +133,20 @@ pbrun_deepvariant:
 peddy:
   threads: 8
 
-samtools_idxstats:
-  mem_mb: 18432
+samtools_stats:
+  mem_mb: 49152
   mem_per_cpu: 6144
-  threads: 3
+  threads: 8
+
+samtools_idxstats:
+  mem_mb: 49152
+  mem_per_cpu: 6144
+  threads: 8
 
 samtools_sort:
   mem_mb: 61440
   mem_per_cpu: 6144
   threads: 10
-
-samtools_stats:
-  mem_mb: 18432
-  mem_per_cpu: 6144
-  threads: 3
 
 samtools_view:
   mem_mb: 49152
@@ -169,8 +168,3 @@ tiddit:
 
 vep:
   threads: 4
-
-verifybamid2:
-  mem_mb: 49152
-  mem_per_cpu: 6144
-  threads: 8
