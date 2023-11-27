@@ -29,7 +29,7 @@ reference:
   exome_intervals: /castor/project/proj/poirot_pipeline/reference_files/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed
   fai: /castor/project/proj/poirot_pipeline/reference_files/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.fai
   fasta: /castor/project/proj/poirot_pipeline/reference_files/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta
-  genepanels: /castor/project/proj/poirot_pipeline/reference_files/reference_files/gene_panels/genepanels_WGS.list
+  genepanels: /castor/project/proj/poirot_pipeline/reference_files/gene_panels/genepanels_WGS.list
   sites: /castor/project/proj/poirot_pipeline/reference_files/homo_sapiens.known_indels.vcf.gz
   wgs_intervals: /castor/project/proj/poirot_pipeline/reference_files/homo_sapiens.wgs.interval_list
 
@@ -81,12 +81,12 @@ bwa_mem_mito:
     mt_shifted: /castor/project/proj/poirot_pipeline/reference_files/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.sa
 
 cnvpytor_readdepth:
-  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_cnvpytor_1.2.1.sif
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_cnvpytor_1.3.1.sif
   length_list: 1000 10000 100000
 
 cnvpytor_filter:
   Q0_range: 0 0.05
-  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_cnvpytor_1.2.1.sif
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_cnvpytor_1.3.1.sif
   dG_range: 100000 inf
   pN_range: 0 0.5
   p_range: 0 0.01
