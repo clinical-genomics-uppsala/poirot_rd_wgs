@@ -30,6 +30,9 @@ with open(aed, 'w') as outfile:
         elif var_type == 'DUP':
             aed_vartype = "copynumber/gain"
             colour = "rgb(0,0,255)"
+        elif var_type == 'LOH':
+            aed_vartype = "copynumber/loh"
+            colour = "rgb(255,0,255)"
 
         print(rec.contig, rec.start,
               rec.stop, rec.id, "", aed_vartype,
