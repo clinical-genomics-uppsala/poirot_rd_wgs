@@ -13,7 +13,7 @@ modules:
   alignment: "v0.4.0"
   annotation: "v0.3.0"
   compression: "v2.0.0"
-  cnv_sv: "v0.4.1"
+  cnv_sv: "0b0cd74"
   filtering: "v0.2.0"
   parabricks: "v1.1.0"
   prealignment: "v1.1.0"
@@ -23,14 +23,14 @@ modules:
 
 reference:
   coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_with_MT_20240102.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
-  design_bed: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
-  exome_bed: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
-  exome_intervals: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"
-  fasta: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta"
-  fai: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.fai"
+  design_bed: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/homo_sapiens.hg38.wgs.bed"
+  exome_bed: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
+  exome_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/Twist_Comprehensive_Exome_Covered_Targets_hg38.interval_list"
+  fasta: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta"
+  fai: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.fai"
   genepanels: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/genepanels_WGS.list"
-  sites: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.known_indels.vcf.gz"
-  wgs_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.interval_list"
+  sites: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/Homo_sapiens_assembly38.known_indels.vcf.gz"
+  wgs_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/homo_sapiens.hg38.wgs.interval_list"
 
 trimmer_software: "fastp_pe"
 
@@ -53,11 +53,12 @@ bcftools_view_pass:
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
-  amb: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.amb"
-  ann: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.ann"
-  bwt: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.bwt"
-  pac: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.pac"
-  sa: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.sa"
+  extra: "-K 10000000 "
+  amb: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.amb"
+  ann: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.ann"
+  bwt: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.bwt"
+  pac: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.pac"
+  sa: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.sa"
 
 bwa_mem_mito:
   container: "docker://hydragenetics/bwa_mem:0.7.17"
@@ -110,16 +111,16 @@ create_cov_excel:
   covLimits: "10 20 30"
 
 deepvariant_call_variants:
-  container: "docker://hydragenetics/deepvariant:1.4.0" #"docker://hydragenetics/deepvariant:1.4.0"
+  container: "docker://hydragenetics/deepvariant:1.5.0" #"docker://hydragenetics/deepvariant:1.4.0"
   model: "/opt/models/wgs/model.ckpt" # path to model in the deepvariant container
 
 deepvariant_make_examples:
-  container: "docker://hydragenetics/deepvariant:1.4.0"
+  container: "docker://hydragenetics/deepvariant:1.5.0"
   extra: "--channels insert_size"
   n_shards: 80
 
 deepvariant_postprocess_variants:
-  container: "docker://hydragenetics/deepvariant:1.4.0"
+  container: "docker://hydragenetics/deepvariant:1.5.0"
   vcf_type: "gvcf"
 
 expansionhunter:
@@ -210,7 +211,7 @@ haplocheck:
 
 manta_config_n:
   container: "docker://hydragenetics/manta:1.6.0"
-  extra: ""
+  extra: "--callRegions /beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GRCh38_chromosomes.bed.gz"
 
 manta_run_workflow_n:
   container: "docker://hydragenetics/manta:1.6.0"
@@ -259,12 +260,12 @@ mt_reference:
   blacklist: /beegfs-storage/data/ref_data/gatk_mito/blacklist_sites.hg38.chrM.bed
 
 pbrun_deepvariant:
-  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-  extra: "--pb-model-file /beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng --disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
+  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.2.0-1"
+  extra: "--num-cpu-threads-per-stream 10 --num-streams-per-gpu 4 --disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
 
 pbrun_fq2bam:
-  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-  extra: ""
+  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.2.0-1"
+  extra: "--gpusort --gpuwrite "
 
 peddy:
   container: "docker://hydragenetics/peddy:0.4.8"
