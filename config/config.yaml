@@ -94,25 +94,6 @@ create_cov_excel:
   container: "docker://hydragenetics/common:0.3.0"
   covLimits: "10 20 30"
 
-crumble:
-  container: "docker://hydragenetics/crumble:0.8.3"
-  extra: "-O CRAM"
-
-deeptrio_call_variants:
-  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
-  # extra: "--config_string 'gpu_options: {allow_growth: True}'"
-  model:
-    child: "/opt/models/deeptrio/wgs/child/model.ckpt" 
-    parent: "/opt/models/deeptrio/wgs/parent/model.ckpt"
-
-deeptrio_make_examples:
-  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
-  extra: "--channels insert_size --pileup_image_height_child 60 --pileup_image_height_parent 40 "
-  n_shards: 80
-
-deeptrio_postprocess_variants:
-  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu"
-
 deepvariant_call_variants:
   container: "docker://hydragenetics/deepvariant:1.4.0" #"docker://hydragenetics/deepvariant:1.4.0"
   model: "/opt/models/wgs/model.ckpt" # path to model in the deepvariant container
@@ -128,7 +109,7 @@ deepvariant_postprocess_variants:
 
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
-  variant_catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_grch38.json"
+  variant_catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_hg38.json"
 
 fastp_pe:
   container: "docker://hydragenetics/fastp:0.20.1"
@@ -341,7 +322,7 @@ spring:
 
 stranger:
   container: "docker://hydragenetics/stranger:0.8.1"
-  catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_grch38.json"
+  catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_hg38.json"
 
 svdb_merge:
   container: "docker://hydragenetics/svdb:2.6.0"

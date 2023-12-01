@@ -29,7 +29,7 @@ ruleorder: filtering_filter_vcf > snv_indels_bgzip
 ruleorder: filtering_filter_vcf > snv_indels_bcftools_view
 ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: cnv_sv_svdb_merge > snv_indels_bcftools_concat
-
+ruleorder: snv_indels_glnexus_trio > snv_indels_glnexus
 
 module alignment:
     snakefile:
@@ -424,17 +424,7 @@ module snv_indels:
     config:
         config
 
-
 use rule * from snv_indels as snv_indels_*
-
-
-use rule deeptrio_make_examples from snv_indels as snv_indels_deeptrio_make_examples with:
-    input:
-        child_bam=lambda wildcards: get_bam_input(wildcards)[0],
-        child_bai=lambda wildcards: get_bam_input(wildcards)[1],
-        parent_bams=lambda wildcards: get_parent_bams(wildcards),
-        ref=config.get("reference", {}).get("fasta", ""),
-
 
 use rule deepvariant_make_examples from snv_indels as snv_indels_deepvariant_make_examples with:
     input:
@@ -516,6 +506,24 @@ use rule glnexus from snv_indels as snv_indels_glnexus_peddy with:
         repeat(
             "qc/peddy/all.bcf.benchmark.tsv",
             config.get("glnexus_peddy", {}).get("benchmark_repeats", 1),
+        )
+
+use rule glnexus from snv_indels as snv_indels_glnexus_trio with:
+    input:
+        gvcfs=lambda wildcards: get_gvcf_trio(wildcards),
+    output:
+        bcf=temp("snv_indels/glnexus/{sample}_{type}.bcf"),
+        dir=temp(directory("snv_indels/glnexus/{sample}_{type}/GLnexus.DB")),
+    params:
+        extra=config.get("glnexus_trio", {}).get("extra", ""),
+        glnexus_config=config.get("glnexus_trio", {}).get("configfile", ""),
+        in_gvcf=lambda wildcards, input: get_glnexus_input(wildcards, input),
+    log:
+        "snv_indels/glnexus/{sample}_{type}.bcf.log",
+    benchmark:
+        repeat(
+            "snv_indels/glnexus/{sample}_{type}.bcf.benchmark.tsv",
+            config.get("glnexus_trio", {}).get("benchmark_repeats", 1),
         )
 
 
