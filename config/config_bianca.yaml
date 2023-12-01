@@ -96,25 +96,6 @@ create_cov_excel:
   container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif
   covLimits: 10 20 30
 
-crumble:
-  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_crumble_0.8.3.sif
-  extra: -O CRAM
-
-deeptrio_call_variants:
-  container: /castor/project/proj/poirot_pipeline/singularity_files/google_deepvariant_deeptrio-1.4.0-gpu.sif
-  model:
-    child: /opt/models/deeptrio/wgs/child/model.ckpt
-    parent: /opt/models/deeptrio/wgs/parent/model.ckpt
-
-deeptrio_make_examples:
-  container: /castor/project/proj/poirot_pipeline/singularity_files/google_deepvariant_deeptrio-1.4.0-gpu.sif
-  extra: '--channels insert_size --pileup_image_height_child 60 --pileup_image_height_parent
-    40 '
-  n_shards: 80
-
-deeptrio_postprocess_variants:
-  container: /castor/project/proj/poirot_pipeline/singularity_files/google_deepvariant_deeptrio-1.4.0-gpu.sif
-
 deepvariant_call_variants:
   container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_deepvariant_1.4.0.sif
   model: /opt/models/wgs/model.ckpt
