@@ -507,6 +507,8 @@ use rule glnexus from snv_indels as snv_indels_glnexus_peddy with:
             "qc/peddy/all.bcf.benchmark.tsv",
             config.get("glnexus_peddy", {}).get("benchmark_repeats", 1),
         )
+    container:
+        config.get("glnexus_peddy", {}).get("container", config["default_container"])
 
 use rule glnexus from snv_indels as snv_indels_glnexus_trio with:
     input:
@@ -525,6 +527,8 @@ use rule glnexus from snv_indels as snv_indels_glnexus_trio with:
             "snv_indels/glnexus/{sample}_{type}.bcf.benchmark.tsv",
             config.get("glnexus_trio", {}).get("benchmark_repeats", 1),
         )
+    container:
+        config.get("glnexus_trio", {}).get("container", config["default_container"])
 
 
 use rule vt_decompose from snv_indels as snv_indels_vt_decompose with:

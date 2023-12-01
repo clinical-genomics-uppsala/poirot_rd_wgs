@@ -181,7 +181,7 @@ gatk_split_multi_allelic_sites:
 gatk_variant_filtration:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
 
-glnexus:
+glnexus_trio:
   container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
   configfile: "DeepVariantWGS"
 
