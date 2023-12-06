@@ -18,7 +18,7 @@ modules:
   filtering: "v0.2.0"
   parabricks: "v1.1.0"
   prealignment: "v1.1.0"
-  qc: "v0.4.1"
+  qc: "da66130"
   mitochondrial: "v0.1.0"
   snv_indels: "v0.5.0"
 
@@ -289,15 +289,9 @@ reviewer:
 
 samtools_stats:
   container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif
-  params:
-    extra: ' --threads 3 '
-  threads: 3
 
 samtools_idxstats:
   container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif
-  params:
-    extra: ' --threads 3 '
-  threads: 3
 
 samtools:
   container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif

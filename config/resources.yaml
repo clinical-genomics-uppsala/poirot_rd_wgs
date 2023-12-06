@@ -119,10 +119,20 @@ pbrun_deepvariant:
 peddy:
   threads: 8
 
+samtools_idxstats:
+  mem_mb: 18432
+  mem_per_cpu: 6144
+  threads: 3
+
 samtools_sort:
   mem_mb: 61440
   mem_per_cpu: 6144
   threads: 10
+
+samtools_stats:
+  mem_mb: 18432
+  mem_per_cpu: 6144
+  threads: 3
 
 samtools_view:
   mem_mb: 49152
