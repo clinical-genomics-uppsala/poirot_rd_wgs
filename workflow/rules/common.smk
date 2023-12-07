@@ -115,6 +115,7 @@ def get_gvcf_list(wildcards):
 
     return gvcf_list
 
+
 def get_gvcf_trio(wildcards):
     caller = config.get("snp_caller", None)
 
@@ -139,6 +140,7 @@ def get_gvcf_trio(wildcards):
     gvcf_list = [child_gvcf, mother_gvcf, father_gvcf]
 
     return gvcf_list
+
 
 def get_spring_extra(wildcards: snakemake.io.Wildcards):
     extra = config.get("spring", {}).get("extra", "")
