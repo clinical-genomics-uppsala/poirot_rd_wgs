@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.2.0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.1.0...v0.2.0) (2023-12-07)
+
+
+### Features
+
+* add constraint to the rule resources ([bc7fd42](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/bc7fd42aa83f86cceed0f7cbd957e9a1828e0497))
+* add singularity download and reference files compression ([af55a2a](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/af55a2aabc80d9422fa01447868f9a906a224611))
+* add snakemake wrapper prefix path to bianca profile ([ed90e49](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/ed90e490be35b853ab0b05f328c761480324fb96))
+* change deeptrio to deepvariant in the upd analysis ([10d93a7](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/10d93a7044338e08c59a5bf0a08c51c89d318a6e))
+* support running the pipeline on bianca cluster ([1691c4d](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/1691c4d0b12ec2e0bc3c565b0c44950f32ca6c5a))
+
+
+### Bug Fixes
+
+* point to the WGS model for deepvariant CPU ([18c4966](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/18c4966edba7838c899ed7e4710e992b1804b91c))
+* use updated qc module so that samtools stats avoids using design_bed ([c970216](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/c9702168878feaedfaf3e4a1de536380b3505d4a))
+
 ## 0.1.0 (2023-10-20)
 
 
