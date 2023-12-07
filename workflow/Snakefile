@@ -29,15 +29,12 @@ ruleorder: filtering_filter_vcf > snv_indels_bgzip
 ruleorder: filtering_filter_vcf > snv_indels_bcftools_view
 ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: cnv_sv_svdb_merge > snv_indels_bcftools_concat
+ruleorder: snv_indels_glnexus_trio > snv_indels_glnexus
 
 
 module alignment:
     snakefile:
-        github(
-            "hydra-genetics/alignment",
-            path="workflow/Snakefile",
-            tag=config["modules"]["alignment"],
-        )
+        get_module_snakefile(config, "hydra-genetics/alignment", path="workflow/Snakefile", tag=config["modules"]["alignment"])
     config:
         config
 
@@ -61,11 +58,7 @@ use rule samtools_sort from alignment as alignment_samtools_sort_eh_bam with:
 
 module annotation:
     snakefile:
-        github(
-            "hydra-genetics/annotation",
-            path="workflow/Snakefile",
-            tag=config["modules"]["annotation"],
-        )
+        get_module_snakefile(config, "hydra-genetics/annotation", path="workflow/Snakefile", tag=config["modules"]["annotation"])
     config:
         config
 
@@ -108,11 +101,7 @@ use rule vep from annotation as annotation_vep_trio with:
 
 module cnv_sv:
     snakefile:
-        github(
-            "hydra-genetics/cnv_sv",
-            path="workflow/Snakefile",
-            tag=config["modules"]["cnv_sv"],
-        )
+        get_module_snakefile(config, "hydra-genetics/cnv_sv", path="workflow/Snakefile", tag=config["modules"]["cnv_sv"])
     config:
         config
 
@@ -213,10 +202,8 @@ use rule tiddit from cnv_sv as cnv_sv_tiddit with:
 
 module compression:
     snakefile:
-        github(
-            "hydra-genetics/compression",
-            path="workflow/Snakefile",
-            tag=config["modules"]["compression"],
+        get_module_snakefile(
+            config, "hydra-genetics/compression", path="workflow/Snakefile", tag=config["modules"]["compression"]
         )
     config:
         config
@@ -234,7 +221,7 @@ use rule samtools_view from compression as compression_samtools_view with:
 
 module filtering:
     snakefile:
-        github("hydra-genetics/filtering", path="workflow/Snakefile", tag=config["modules"]["filtering"])
+        get_module_snakefile(config, "hydra-genetics/filtering", path="workflow/Snakefile", tag=config["modules"]["filtering"])
     config:
         config
 
@@ -251,10 +238,8 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
 
 module mitochondrial:
     snakefile:
-        github(
-            "hydra-genetics/mitochondrial",
-            path="workflow/Snakefile",
-            tag=config["modules"]["mitochondrial"],
+        get_module_snakefile(
+            config, "hydra-genetics/mitochondrial", path="workflow/Snakefile", tag=config["modules"]["mitochondrial"]
         )
     config:
         config
@@ -271,16 +256,20 @@ use rule gatk_print_reads from mitochondrial as mitochondrial_gatk_print_reads w
 
 module parabricks:
     snakefile:
-        github(
-            "hydra-genetics/parabricks",
-            path="workflow/Snakefile",
-            tag=config["modules"]["parabricks"],
-        )
+        get_module_snakefile(config, "hydra-genetics/parabricks", path="workflow/Snakefile", tag=config["modules"]["parabricks"])
     config:
         config
 
 
-use rule pbrun_fq2bam from parabricks as parabricks_fq2bam
+use rule pbrun_fq2bam from parabricks as parabricks_fq2bam with:
+    resources:
+        constraint=config.get("pbrun_fq2bam", {}).get("constraint", ""),
+        gres=config.get("pbrun_fq2bam", {}).get("gres", ""),
+        mem_mb=config.get("pbrun_fq2bam", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
+        mem_per_cpu=config.get("pbrun_fq2bam", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
+        partition=config.get("pbrun_fq2bam", {}).get("partition", config["default_resources"]["partition"]),
+        threads=config.get("pbrun_fq2bam", {}).get("threads", config["default_resources"]["threads"]),
+        time=config.get("pbrun_fq2bam", {}).get("time", config["default_resources"]["time"]),
 
 
 use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
@@ -291,14 +280,20 @@ use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
     output:
         vcf="parabricks/pbrun_deepvariant/{sample}_{type}.g.vcf",
         vcf2=temp("parabricks/pbrun_deepvariant/{sample}_{type}.vcf"),
+    resources:
+        constraint=config.get("pbrun_deepvariant", {}).get("constraint", ""),
+        gres=config.get("pbrun_deepvariant", {}).get("gres", ""),
+        mem_mb=config.get("pbrun_deepvariant", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
+        mem_per_cpu=config.get("pbrun_deepvariant", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
+        partition=config.get("pbrun_deepvariant", {}).get("partition", config["default_resources"]["partition"]),
+        threads=config.get("pbrun_deepvariant", {}).get("threads", config["default_resources"]["threads"]),
+        time=config.get("pbrun_deepvariant", {}).get("time", config["default_resources"]["time"]),
 
 
 module prealignment:
     snakefile:
-        github(
-            "hydra-genetics/prealignment",
-            path="workflow/Snakefile",
-            tag=config["modules"]["prealignment"],
+        get_module_snakefile(
+            config, "hydra-genetics/prealignment", path="workflow/Snakefile", tag=config["modules"]["prealignment"]
         )
     config:
         config
@@ -309,11 +304,7 @@ use rule * from prealignment as prealignment_*
 
 module qc:
     snakefile:
-        github(
-            "hydra-genetics/qc",
-            path="workflow/Snakefile",
-            tag=config["modules"]["qc"],
-        )
+        get_module_snakefile(config, "hydra-genetics/qc", path="workflow/Snakefile", tag=config["modules"]["qc"])
     config:
         config
 
@@ -430,24 +421,12 @@ use rule samtools_idxstats from qc as qc_samtools_idxstats with:
 
 module snv_indels:
     snakefile:
-        github(
-            "hydra-genetics/snv_indels",
-            path="workflow/Snakefile",
-            tag=config["modules"]["snv_indels"],
-        )
+        get_module_snakefile(config, "hydra-genetics/snv_indels", path="workflow/Snakefile", tag=config["modules"]["snv_indels"])
     config:
         config
 
 
 use rule * from snv_indels as snv_indels_*
-
-
-use rule deeptrio_make_examples from snv_indels as snv_indels_deeptrio_make_examples with:
-    input:
-        child_bam=lambda wildcards: get_bam_input(wildcards)[0],
-        child_bai=lambda wildcards: get_bam_input(wildcards)[1],
-        parent_bams=lambda wildcards: get_parent_bams(wildcards),
-        ref=config.get("reference", {}).get("fasta", ""),
 
 
 use rule deepvariant_make_examples from snv_indels as snv_indels_deepvariant_make_examples with:
@@ -531,6 +510,29 @@ use rule glnexus from snv_indels as snv_indels_glnexus_peddy with:
             "qc/peddy/all.bcf.benchmark.tsv",
             config.get("glnexus_peddy", {}).get("benchmark_repeats", 1),
         )
+    container:
+        config.get("glnexus_peddy", {}).get("container", config["default_container"])
+
+
+use rule glnexus from snv_indels as snv_indels_glnexus_trio with:
+    input:
+        gvcfs=lambda wildcards: get_gvcf_trio(wildcards),
+    output:
+        bcf=temp("snv_indels/glnexus/{sample}_{type}.bcf"),
+        dir=temp(directory("snv_indels/glnexus/{sample}_{type}/GLnexus.DB")),
+    params:
+        extra=config.get("glnexus_trio", {}).get("extra", ""),
+        glnexus_config=config.get("glnexus_trio", {}).get("configfile", ""),
+        in_gvcf=lambda wildcards, input: get_glnexus_input(wildcards, input),
+    log:
+        "snv_indels/glnexus/{sample}_{type}.bcf.log",
+    benchmark:
+        repeat(
+            "snv_indels/glnexus/{sample}_{type}.bcf.benchmark.tsv",
+            config.get("glnexus_trio", {}).get("benchmark_repeats", 1),
+        )
+    container:
+        config.get("glnexus_trio", {}).get("container", config["default_container"])
 
 
 use rule vt_decompose from snv_indels as snv_indels_vt_decompose with:

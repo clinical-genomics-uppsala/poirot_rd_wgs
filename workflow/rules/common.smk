@@ -6,6 +6,7 @@ __license__ = "GPL-3"
 import pandas
 import yaml
 
+from hydra_genetics.utils.misc import get_module_snakefile
 from hydra_genetics.utils.resources import load_resources
 from hydra_genetics.utils.samples import *
 from hydra_genetics.utils.units import *
@@ -115,9 +116,30 @@ def get_gvcf_list(wildcards):
     return gvcf_list
 
 
-def get_in_gvcf(wildcards):
-    gvcf_list = get_gvcf_list(wildcards)
-    return " -i ".join(gvcf_list)
+def get_gvcf_trio(wildcards):
+    caller = config.get("snp_caller", None)
+
+    proband_sample = samples[samples.index == wildcards.sample]
+    trio_id = proband_sample.at[wildcards.sample, "trioid"]
+    mother_sample = samples[(samples.trio_member == "mother") & (samples.trioid == trio_id)].index[0]
+    father_sample = samples[(samples.trio_member == "father") & (samples.trioid == trio_id)].index[0]
+
+    if caller is None:
+        sys.exit("snp_caller missing from config, valid options: deepvariant_gpu or deepvariant_cpu")
+    elif caller == "deepvariant_gpu":
+        child_gvcf = "parabricks/pbrun_deepvariant/{}_{}.g.vcf".format(wildcards.sample, wildcards.type)
+        mother_gvcf = "parabricks/pbrun_deepvariant/{}_{}.g.vcf".format(mother_sample, wildcards.type)
+        father_gvcf = "parabricks/pbrun_deepvariant/{}_{}.g.vcf".format(father_sample, wildcards.type)
+    elif caller == "deepvariant_cpu":
+        child_gvcf = "snv_indels/deepvariant/{}_{}.g.vcf".format(wildcards.sample, wildcards.type)
+        mother_gvcf = "snv_indels/deepvariant/{}_{}.g.vcf".format(mother_sample, wildcards.type)
+        father_gvcf = "snv_indels/deepvariant/{}_{}.g.vcf".format(father_sample, wildcards.type)
+    else:
+        sys.exit("Invalid options for snp_caller, valid options are: deepvariant_gpu or deepvariant_cpu")
+
+    gvcf_list = [child_gvcf, mother_gvcf, father_gvcf]
+
+    return gvcf_list
 
 
 def get_spring_extra(wildcards: snakemake.io.Wildcards):

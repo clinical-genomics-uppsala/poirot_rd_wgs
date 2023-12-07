@@ -17,7 +17,7 @@ modules:
   filtering: "v0.2.0"
   parabricks: "v1.1.0"
   prealignment: "v1.1.0"
-  qc: "v0.4.1"
+  qc: "da66130"
   mitochondrial: "v0.1.0"
   snv_indels: "v0.5.0"
 
@@ -94,28 +94,9 @@ create_cov_excel:
   container: "docker://hydragenetics/common:0.3.0"
   covLimits: "10 20 30"
 
-crumble:
-  container: "docker://hydragenetics/crumble:0.8.3"
-  extra: "-O CRAM"
-
-deeptrio_call_variants:
-  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
-  # extra: "--config_string 'gpu_options: {allow_growth: True}'"
-  model:
-    child: "/opt/models/deeptrio/wgs/child/model.ckpt" 
-    parent: "/opt/models/deeptrio/wgs/parent/model.ckpt"
-
-deeptrio_make_examples:
-  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
-  extra: "--channels insert_size --pileup_image_height_child 60 --pileup_image_height_parent 40 "
-  n_shards: 80
-
-deeptrio_postprocess_variants:
-  container: "docker://google/deepvariant:deeptrio-1.4.0-gpu"
-
 deepvariant_call_variants:
   container: "docker://hydragenetics/deepvariant:1.4.0" #"docker://hydragenetics/deepvariant:1.4.0"
-  model: "/opt/models/wes/model.ckpt" # path to model in the deepvariant container
+  model: "/opt/models/wgs/model.ckpt" # path to model in the deepvariant container
 
 deepvariant_make_examples:
   container: "docker://hydragenetics/deepvariant:1.4.0"
@@ -128,7 +109,7 @@ deepvariant_postprocess_variants:
 
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
-  variant_catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_grch38.json"
+  variant_catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_hg38.json"
 
 fastp_pe:
   container: "docker://hydragenetics/fastp:0.20.1"
@@ -200,7 +181,7 @@ gatk_split_multi_allelic_sites:
 gatk_variant_filtration:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
 
-glnexus:
+glnexus_trio:
   container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
   configfile: "DeepVariantWGS"
 
@@ -238,9 +219,6 @@ multiqc:
         - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq1_fastqc.zip"
         - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq2_fastqc.zip"
         - "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"
-        - "qc/mosdepth_bed/{sample}_{type}.per-base.bed.gz"
-        - "qc/mosdepth_bed/{sample}_{type}.thresholds.bed.gz"
-        - "qc/mosdepth_bed/{sample}_{type}.regions.bed.gz"
         - "qc/mosdepth/{sample}_{type}.mosdepth.region.dist.txt"
         - "qc/mosdepth/{sample}_{type}.mosdepth.global.dist.txt"
         - "qc/peddy/peddy.peddy.ped"
@@ -292,19 +270,6 @@ picard_collect_hs_metrics:
 picard_collect_insert_size_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
 
-picard_collect_multiple_metrics:
-  container: "docker://hydragenetics/picard:2.25.0"
- # output_ext:
- # - "alignment_summary_metrics"
- # - "base_distribution_by_cycle_metrics"
- # - "base_distribution_by_cycle.pdf"
- # - "insert_size_metrics"
- # - "insert_size_histogram.pdf"
- # - "quality_by_cycle_metrics"
- # - "quality_by_cycle.pdf"
- # - "quality_distribution_metrics"
- # - "quality_distribution.pdf"
-
 picard_collect_wgs_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
 
@@ -316,15 +281,9 @@ reviewer:
 
 samtools_stats:
   container: "docker://hydragenetics/common:0.3.0"
-  threads: 3
-  params:
-    extra: " --threads 3 "
 
 samtools_idxstats:
   container: "docker://hydragenetics/common:0.3.0"
-  threads: 3
-  params:
-    extra: " --threads 3 "
 
 samtools:
   container: "docker://hydragenetics/common:0.3.0"
@@ -341,14 +300,10 @@ spring:
 
 stranger:
   container: "docker://hydragenetics/stranger:0.8.1"
-  catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_grch38.json"
+  catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_hg38.json"
 
 svdb_merge:
   container: "docker://hydragenetics/svdb:2.6.0"
-  cnv_callers:
-    - "cnvnator"
-    - "manta"
-    - "tiddit"
   overlap: 0.6
 
 svdb_query:

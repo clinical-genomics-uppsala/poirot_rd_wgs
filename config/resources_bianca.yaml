@@ -1,16 +1,14 @@
----
-
 default_resources:
   threads: 1
   time: "12:00:00"
-  mem_mb: 6144
-  mem_per_cpu: 6144
+  mem_mb: 7168
+  mem_per_cpu: 7168
   partition: "core"
 
 bwa_mem:
-  mem_mb: 122880
-  mem_per_cpu: 6144
-  threads: 20
+  mem_mb: 114688
+  mem_per_cpu: 7168
+  threads: 16
 
 bwa_mem_merge:
   mem_mb: 61440
@@ -22,48 +20,42 @@ bwa_mem_mito:
   mem_per_cpu: 3072
   threads: 2
 
-cnvpytor:
-  time: "18:00:00"
- 
 deeptrio_call_variants:
-  gres: "--gres=gres:gpu:1" ## Booking 2 GPUs and 20 cpus works on CGU GPU node (1 GPU and 10 threads not currently working)
-  partition: "GPU_hi"
-  threads: 10
+  gres: "--gres=gpu:1" 
+  constraint: "-C gpu"
+  mem_mb: 234000
 
 deeptrio_make_examples:
+  mem_mb: 7168
+  mem_per_cpu: 7168
   threads: 1
 
 deeptrio_postprocess_variants:
-  mem_mb: 36864
-  mem_per_cpu: 36864
+  mem_mb: 35840
+  mem_per_cpu: 7168
+  threads: 5
 
 deepvariant_call_variants:
-  threads: 20
-  mem_mb: 6144
-  mem_per_cpu: 6144
-
-deepvariant_call_variants:
-  threads: 20
+  threads: 16
 
 deepvariant_make_examples:
   threads: 1
 
 deepvariant_postprocess_variants:
-  mem_mb: 36864
-  mem_per_cpu: 36864
+  threads: 5
 
 expansionhunter:
   threads: 16
 
 fastp_pe:
   threads: 8
-  mem_mb: 30720
-  mem_per_cpu: 6144
+  mem_mb: 57344
+  mem_per_cpu: 7168
 
 fastqc:
   threads: 2
-  mem_mb: 12288
-  mem_per_cpu: 6144
+  mem_mb: 14336
+  mem_per_cpu: 7168
 
 gatk_mark_duplicates:
   mem_mb: 4096
@@ -90,33 +82,41 @@ gatk_sort_sam:
   mem_per_cpu: 4096
 
 glnexus:
-  threads: 20
+  mem_mb: 57344
+  mem_per_cpu: 7168
+  threads: 16
 
 mosdepth:
-  mem_mb: 36864
-  threads: 4
+  mem_mb: 57344
+  mem_per_cpu: 7168
+  threads: 8
 
 mosdepth_bed:
-  mem_mb: 36864
-  threads: 4
+  mem_mb: 57344
+  mem_per_cpu: 7168
+  threads: 8
 
 pbrun_fq2bam:
-  gres: "--gres=gres:gpu:4"
-  mem_mb: 655360
-  mem_per_cpu: 16384
-  partition: "GPU_hi"
-  threads: 40
-  time: "20:00:00"
+  gres: "--gres=gpu:2"
+  constraint: "-C gpu"
+  time: "08:00:00"
+  partition: "node"
+  threads: 16
+  mem_mb: 234000
+  mem_per_cpu: 14000
 
 pbrun_deepvariant:
-  gres: "--gres=gres:gpu:4"
-  mem_mb: 655360
-  mem_per_cpu: 16384
-  partition: "GPU_hi"
-  threads: 40
-  time: "20:00:00"
+  gres: "--gres=gpu:2"
+  constraint: "-C gpu"
+  time: "08:00:00"
+  partition: "node"
+  threads: 16
+  mem_mb: 234000
+  mem_per_cpu: 14000
 
 peddy:
+  mem_mb: 57344
+  mem_per_cpu: 7168
   threads: 8
 
 samtools_idxstats:
@@ -125,9 +125,9 @@ samtools_idxstats:
   threads: 3
 
 samtools_sort:
-  mem_mb: 61440
-  mem_per_cpu: 6144
-  threads: 10
+  mem_mb: 57344
+  mem_per_cpu: 7168
+  threads: 8
 
 samtools_stats:
   mem_mb: 18432
@@ -135,22 +135,27 @@ samtools_stats:
   threads: 3
 
 samtools_view:
-  mem_mb: 49152
-  mem_per_cpu: 6144
+  mem_mb: 57344
+  mem_per_cpu: 7168
   threads: 8
-  partition: "core_bkup"
 
 smn_caller:
+  mem_mb: 57344
+  mem_per_cpu: 7168
   threads: 8
 
 spring:
-  mem_mb: 49152
-  mem_per_cpu: 6144
-  threads: 8
-  partition: "core_bkup"
+  mem_mb: 114688
+  mem_per_cpu: 7168
+  threads: 16
+  time: "24:00:00"
 
 tiddit:
+  mem_mb: 57344
+  mem_per_cpu: 7168
   threads: 8
 
 vep:
+  mem_mb: 28672
+  mem_per_cpu: 7168
   threads: 4
