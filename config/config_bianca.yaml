@@ -18,7 +18,7 @@ modules:
   filtering: "v0.2.0"
   parabricks: "v1.1.0"
   prealignment: "v1.1.0"
-  qc: "v0.4.1"
+  qc: "da66130"
   mitochondrial: "v0.1.0"
   snv_indels: "v0.5.0"
 
@@ -95,25 +95,6 @@ cnvpytor_filter:
 create_cov_excel:
   container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif
   covLimits: 10 20 30
-
-crumble:
-  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_crumble_0.8.3.sif
-  extra: -O CRAM
-
-deeptrio_call_variants:
-  container: /castor/project/proj/poirot_pipeline/singularity_files/google_deepvariant_deeptrio-1.4.0-gpu.sif
-  model:
-    child: /opt/models/deeptrio/wgs/child/model.ckpt
-    parent: /opt/models/deeptrio/wgs/parent/model.ckpt
-
-deeptrio_make_examples:
-  container: /castor/project/proj/poirot_pipeline/singularity_files/google_deepvariant_deeptrio-1.4.0-gpu.sif
-  extra: '--channels insert_size --pileup_image_height_child 60 --pileup_image_height_parent
-    40 '
-  n_shards: 80
-
-deeptrio_postprocess_variants:
-  container: /castor/project/proj/poirot_pipeline/singularity_files/google_deepvariant_deeptrio-1.4.0-gpu.sif
 
 deepvariant_call_variants:
   container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_deepvariant_1.4.0.sif
@@ -308,15 +289,9 @@ reviewer:
 
 samtools_stats:
   container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif
-  params:
-    extra: ' --threads 3 '
-  threads: 3
 
 samtools_idxstats:
   container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif
-  params:
-    extra: ' --threads 3 '
-  threads: 3
 
 samtools:
   container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_0.3.0.sif
