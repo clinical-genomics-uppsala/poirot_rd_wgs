@@ -17,7 +17,7 @@ modules:
   filtering: "v0.2.0"
   parabricks: "v1.1.0"
   prealignment: "v1.1.0"
-  qc: "v0.4.1"
+  qc: "da66130"
   mitochondrial: "v0.1.0"
   snv_indels: "v0.5.0"
 
@@ -29,7 +29,6 @@ reference:
   fasta: "reference/homo_sapiens.fasta"
   fai: "reference/homo_sapiens.fasta.fai"
   genepanels: "reference/genepanels.list"
-  genome_dir: "reference/homo_sapiens_star"
   sites: "reference/homo_sapiens.known_indels.vcf.gz"
   wgs_intervals: "reference/homo_sapiens.wgs.interval_list"
 
@@ -94,25 +93,6 @@ cnvpytor_filter:
 create_cov_excel:
   container: "docker://hydragenetics/common:0.3.0"
   covLimits: "10 20 30"
-
-crumble:
-  container: "docker://hydragenetics/crumble:0.8.3"
-  extra: "-O CRAM"
-
-deeptrio_call_variants:
-  container: "docker://google/deepvariant:deeptrio-1.4.0" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
-  # extra: "--config_string 'gpu_options: {allow_growth: True}'"
-  model:
-    child: "/opt/models/deeptrio/wgs/child/model.ckpt" 
-    parent: "/opt/models/deeptrio/wgs/parent/model.ckpt"
-
-deeptrio_make_examples:
-  container: "docker://google/deepvariant:deeptrio-1.4.0-" #"docker://google/deepvariant:deeptrio-1.4.0-gpu"
-  extra: "--channels insert_size --pileup_image_height_child 60 --pileup_image_height_parent 40 "
-  n_shards: 80
-
-deeptrio_postprocess_variants:
-  container: "docker://google/deepvariant:deeptrio-1.4.0"
 
 deepvariant_call_variants:
   container: "docker://hydragenetics/deepvariant:1.4.0" #"docker://hydragenetics/deepvariant:1.4.0"
@@ -241,6 +221,11 @@ multiqc:
         - "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"
         - "qc/mosdepth/{sample}_{type}.mosdepth.region.dist.txt"
         - "qc/mosdepth/{sample}_{type}.mosdepth.global.dist.txt"
+        - "qc/peddy/peddy.peddy.ped"
+        - "qc/peddy/peddy.background_pca.json"
+        - "qc/peddy/peddy.ped_check.csv"
+        - "qc/peddy/peddy.sex_check.csv"
+        - "qc/peddy/peddy.het_check.csv"
         - "qc/peddy/peddy_sex_check_mqc.tsv"
         - "qc/peddy/peddy_rel_check_mqc.tsv"
         - "qc/picard_collect_alignment_summary_metrics/{sample}_{type}.alignment_summary_metrics.txt"
@@ -259,8 +244,7 @@ mt_reference:
 
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-  deepvariant_model: "reference/deepvariant.eng"
-  extra: "--disable-use-window-selector-model --gvcf" ## For consistency with deepvariant cpu. Also increases accuracy.
+  extra: "--pb-model-file reference/deepvariant.eng --disable-use-window-selector-model --gvcf" ## For consistency with deepvariant cpu. Also increases accuracy.
 
 pbrun_fq2bam:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
@@ -286,19 +270,6 @@ picard_collect_hs_metrics:
 picard_collect_insert_size_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
 
-picard_collect_multiple_metrics:
-  container: "docker://hydragenetics/picard:2.25.0"
- # output_ext:
- # - "alignment_summary_metrics"
- # - "base_distribution_by_cycle_metrics"
- # - "base_distribution_by_cycle.pdf"
- # - "insert_size_metrics"
- # - "insert_size_histogram.pdf"
- # - "quality_by_cycle_metrics"
- # - "quality_by_cycle.pdf"
- # - "quality_distribution_metrics"
- # - "quality_distribution.pdf"
-
 picard_collect_wgs_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
 
@@ -310,15 +281,9 @@ reviewer:
 
 samtools_stats:
   container: "docker://hydragenetics/common:0.3.0"
-  threads: 3
-  params:
-    extra: " --threads 3 "
 
 samtools_idxstats:
   container: "docker://hydragenetics/common:0.3.0"
-  threads: 3
-  params:
-    extra: " --threads 3 "
 
 samtools:
   container: "docker://hydragenetics/common:0.3.0"
@@ -339,10 +304,6 @@ stranger:
 
 svdb_merge:
   container: "docker://hydragenetics/svdb:2.6.0"
-  cnv_callers:
-    - "cnvnator"
-    - "manta"
-    - "tiddit"
   overlap: 0.6
 
 svdb_query:

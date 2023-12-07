@@ -219,9 +219,6 @@ multiqc:
         - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq1_fastqc.zip"
         - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq2_fastqc.zip"
         - "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"
-        - "qc/mosdepth_bed/{sample}_{type}.per-base.bed.gz"
-        - "qc/mosdepth_bed/{sample}_{type}.thresholds.bed.gz"
-        - "qc/mosdepth_bed/{sample}_{type}.regions.bed.gz"
         - "qc/mosdepth/{sample}_{type}.mosdepth.region.dist.txt"
         - "qc/mosdepth/{sample}_{type}.mosdepth.global.dist.txt"
         - "qc/peddy/peddy.peddy.ped"
@@ -273,19 +270,6 @@ picard_collect_hs_metrics:
 picard_collect_insert_size_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
 
-picard_collect_multiple_metrics:
-  container: "docker://hydragenetics/picard:2.25.0"
- # output_ext:
- # - "alignment_summary_metrics"
- # - "base_distribution_by_cycle_metrics"
- # - "base_distribution_by_cycle.pdf"
- # - "insert_size_metrics"
- # - "insert_size_histogram.pdf"
- # - "quality_by_cycle_metrics"
- # - "quality_by_cycle.pdf"
- # - "quality_distribution_metrics"
- # - "quality_distribution.pdf"
-
 picard_collect_wgs_metrics:
   container: "docker://hydragenetics/picard:2.25.0"
 
@@ -320,10 +304,6 @@ stranger:
 
 svdb_merge:
   container: "docker://hydragenetics/svdb:2.6.0"
-  cnv_callers:
-    - "cnvnator"
-    - "manta"
-    - "tiddit"
   overlap: 0.6
 
 svdb_query:
