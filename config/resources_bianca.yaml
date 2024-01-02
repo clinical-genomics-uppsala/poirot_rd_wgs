@@ -86,6 +86,11 @@ glnexus:
   mem_per_cpu: 7168
   threads: 16
 
+manta_run_workflow_n:
+  mem_mb: 57344
+  mem_per_cpu: 7168
+  threads: 16
+
 mosdepth:
   mem_mb: 57344
   mem_per_cpu: 7168
