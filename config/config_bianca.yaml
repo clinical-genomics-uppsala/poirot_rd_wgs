@@ -23,7 +23,7 @@ modules:
   snv_indels: "v0.5.0"
 
 reference:
-  coverage_bed: /castor/project/proj/poirot_pipeline/reference_files/refseq_select_mane_20230828.bed
+  coverage_bed: /castor/project/proj/poirot_pipeline/reference_files/refseq_select_mane_with_MT_20240102.bed
   design_bed: /castor/project/proj/poirot_pipeline/reference_files/homo_sapiens.wgs.bed
   exome_bed: /castor/project/proj/poirot_pipeline/reference_files/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed
   exome_intervals: /castor/project/proj/poirot_pipeline/reference_files/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed
