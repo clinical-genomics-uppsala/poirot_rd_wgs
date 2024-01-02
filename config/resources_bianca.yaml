@@ -164,3 +164,8 @@ vep:
   mem_mb: 28672
   mem_per_cpu: 7168
   threads: 4
+
+verifybamid2:
+  mem_mb: 49152
+  mem_per_cpu: 6144
+  threads: 8

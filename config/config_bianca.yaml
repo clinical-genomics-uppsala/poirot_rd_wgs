@@ -344,6 +344,10 @@ vep_trio:
   extra: --assembly GRCh38 --check_existing --pick --max_af --buffer_size 50000
   vep_cache: /castor/project/proj/poirot_pipeline/reference_files/VEP/
 
+verifybamid2:
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_verifybamid2_2.0.1.sif
+  svd_mu: /castor/project/proj/poirot_pipeline/reference_files/verifybamid2/1000g.phase3.100k.b38.vcf.gz.dat.mu
+
 vt_decompose:
   container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_vt_2015.11.10.sif
 

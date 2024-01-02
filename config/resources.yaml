@@ -160,3 +160,8 @@ tiddit:
 
 vep:
   threads: 4
+
+verifybamid2:
+  mem_mb: 49152
+  mem_per_cpu: 6144
+  threads: 8

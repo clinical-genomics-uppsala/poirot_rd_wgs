@@ -419,6 +419,13 @@ use rule samtools_idxstats from qc as qc_samtools_idxstats with:
         temp("qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"),
 
 
+use rule verifybamid2 from qc as qc_verifybamid2 with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
+        ref=config.get("reference", {}).get("fasta", ""),
+        svd_mu=config.get("verifybamid2", {}).get("svd_mu", ""),
+
 module snv_indels:
     snakefile:
         get_module_snakefile(config, "hydra-genetics/snv_indels", path="workflow/Snakefile", tag=config["modules"]["snv_indels"])
