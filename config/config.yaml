@@ -22,7 +22,7 @@ modules:
   snv_indels: "v0.5.0"
 
 reference:
-  coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_20230828.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
+  coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_with_MT_20240102.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
   design_bed: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
   exome_bed: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
   exome_intervals: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"
@@ -236,6 +236,7 @@ multiqc:
         - "qc/picard_collect_wgs_metrics/{sample}_{type}.txt"
         - "qc/samtools_stats/{sample}_{type}.samtools-stats.txt"
         - "qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"
+        - "qc/verifybamid2/{sample}_{type}.selfSM"
 
 mt_reference:
   mt: "/beegfs-storage/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta"
@@ -331,6 +332,10 @@ vep_trio:
   container: "docker://ensemblorg/ensembl-vep:release_109.3"
   vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
   extra: "--assembly GRCh38 --check_existing --pick --max_af --buffer_size 50000"
+
+verifybamid2:
+  container: "docker://hydragenetics/verifybamid2:2.0.1"
+  svd_mu: "/beegfs-storage/data/ref_data/verifybamid2/1000g.phase3.100k.b38.vcf.gz.dat.mu"
 
 vt_decompose:
   container: "docker://hydragenetics/vt:2015.11.10"

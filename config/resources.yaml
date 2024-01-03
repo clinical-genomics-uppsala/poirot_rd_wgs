@@ -92,6 +92,12 @@ gatk_sort_sam:
 glnexus:
   threads: 20
 
+manta_run_workflow_n:
+  threads: 20
+  mem_mb: 122880
+  mem_per_cpu: 6144
+  time: "20:00:00"
+
 mosdepth:
   mem_mb: 36864
   threads: 4
@@ -154,3 +160,8 @@ tiddit:
 
 vep:
   threads: 4
+
+verifybamid2:
+  mem_mb: 49152
+  mem_per_cpu: 6144
+  threads: 8
