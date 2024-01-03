@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.2.0...v0.3.0) (2024-01-03)
+
+
+### Features
+
+* add verifybamid2 to the QC ([540b6d6](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/540b6d66d996f0cd6bd3947bfc6c9335e19d09ba))
+* handle when the coverage bed file that has mitochondria genes ([75d6296](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/75d62969a51f29debf059933d7259f001d6bfa90))
+
 ## [0.2.0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.1.0...v0.2.0) (2023-12-07)
 
 
