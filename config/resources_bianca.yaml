@@ -86,15 +86,9 @@ glnexus:
   mem_per_cpu: 7168
   threads: 16
 
-<<<<<<< HEAD
 manta_run_workflow_n:
   mem_mb: 57344
   mem_per_cpu: 7168
-=======
-manta_config_n:
-  mem_mb: 98304
-  mem_per_cpu: 6144
->>>>>>> 9739073 (feat: increase threads for manta)
   threads: 16
 
 mosdepth:
