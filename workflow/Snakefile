@@ -184,7 +184,7 @@ use rule svdb_query from cnv_sv as cnv_sv_svdb_query with:
     input:
         vcf="cnv_sv/svdb_merge/{sample}_{type}.merged.vcf",
     output:
-        vcf=temp("cnv_sv/svdb_query/{sample}_{type}.svdb_query.vcf"),
+        vcf=temp("cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vcf"),
     log:
         "cnv_sv/svdb_query/{sample}_{type}.svdb_query.log",
     benchmark:
@@ -234,6 +234,22 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
         vcf=temp("{file}.bcftools_view_pass.vcf.gz"),
     params:
         extra=config.get("bcftools_view_pass", {}).get("extra", ""),
+
+
+use rule bcftools_view from filtering as filtering_bcftools_view_svdb with:
+    input:
+        vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.vcf.gz"
+    output:
+        vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.filtered.vcf.gz"
+    params:
+        extra=config.get("bcftools_view_svdb", {}).get("extra", ""),
+    log:
+        "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.filtered.vcf.log",
+    benchmark:
+        repeat(
+            "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.filtered.vcf.benchmark.tsv",
+            config.get("bcftools_view_svdb", {}).get("benchmark_repeats", 1),
+        )
 
 
 module mitochondrial:

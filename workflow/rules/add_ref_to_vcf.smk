@@ -40,10 +40,10 @@ rule tiddit_add_ref:
     params:
         extra=config.get("tiddit_add_ref", {}).get("extra", ""),
     log:
-        "qc/tiddit_add_ref/{sample}_{type}.output.log",
+        "cnv_sv/tiddit/{sample}_{type}.add_ref.log",
     benchmark:
         repeat(
-            "qc/tiddit_add_ref/{sample}_{type}.output.benchmark.tsv",
+            "cnv_sv/tiddit/{sample}_{type}.add_ref.benchmark.tsv",
             config.get("tiddit_add_ref", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("tiddit_add_ref", {}).get("threads", config["default_resources"]["threads"])
@@ -63,14 +63,14 @@ rule tiddit_add_ref:
 
 rule svdb_add_ref:
     input:
-        vcf="cnv_sv/svdb_merge/{sample}_{type}.merged.vcf.gz",
+        vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vcf.gz",
         ref=config["reference"]["fasta"],
     output:
-        vcf="cnv_sv/svdb_merge/{sample}_{type}.merged_ref.vcf",
+        vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.vcf",
     params:
         extra=config.get("svdb_add_ref", {}).get("extra", ""),
     log:
-        "cnv_sv/svdb_merge/{sample}_{type}.output.log",
+        "cnv_sv/svdb_query/{sample}_{type}.add_ref.log",
     benchmark:
         repeat(
             "cnv_sv/svdb_merge/{sample}_{type}.output.benchmark.tsv", config.get("svdb_add_ref", {}).get("benchmark_repeats", 1)
@@ -88,3 +88,4 @@ rule svdb_add_ref:
         "{rule}: Add reference to the header of the svdb vcf: {input.vcf}"
     script:
         "../scripts/ref_vcf.py"
+
