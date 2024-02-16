@@ -13,7 +13,7 @@ modules:
   alignment: "v0.4.0"
   annotation: "v0.3.0"
   compression: "v2.0.0"
-  cnv_sv: "b549266"
+  cnv_sv: "92cb72f"
   filtering: "v0.3.0"
   parabricks: "074a4dc"
   prealignment: "v1.2.0"
@@ -50,7 +50,7 @@ bcftools_view_pass:
   extra: "--apply-filter PASS "
 
 bcftools_view_svdb:
-  extra: "-e tiddit_AF>0.01 | manta_AF>0.01 | cnvpytor_AF>0.01"
+  extra: "-e 'tiddit_AF>0.01 | manta_AF>0.01 | cnvpytor_AF>0.01'"
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
@@ -283,13 +283,13 @@ reviewer:
   container: "docker://hydragenetics/reviewer:0.2.7"
 
 samtools_stats:
-  container: "docker://hydragenetics/common:1.10.1"
+  container: "docker://hydragenetics/common:1.10.2"
 
 samtools_idxstats:
-  container: "docker://hydragenetics/common:1.10.1"
+  container: "docker://hydragenetics/common:1.10.2"
 
 samtools:
-  container: "docker://hydragenetics/common:1.10.1"
+  container: "docker://hydragenetics/common:1.10.2"
 
 smn_caller:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
@@ -308,7 +308,8 @@ stranger:
 svdb_merge:
   container: "docker://hydragenetics/svdb:2.8.2"
   overlap: 0.6
-  extra: "--pass-only "
+  priority: "tiddit,manta,cnvpytor"
+  extra: "--pass_only "
 
 svdb_query:
   container: "docker://hydragenetics/svdb:2.8.2"
@@ -317,7 +318,7 @@ svdb_query:
   extra: "--in_frq FRQ,FRQ,FRQ --in_occ OCC,OCC,OCC --out_frq tiddit_AF,manta_AF,cnvpytor_AF --out_occ tiddit_OCC,manta_OCC,cnpytor_OCC "
 
 tabix:
-  container: "docker://hydragenetics/common:1.10.1"
+  container: "docker://hydragenetics/common:1.10.2"
 
 tiddit:
   container: "docker://hydragenetics/tiddit:3.3.2"

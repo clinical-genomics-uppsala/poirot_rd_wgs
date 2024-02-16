@@ -171,6 +171,12 @@ use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
         ],
     output:
         vcf=temp("cnv_sv/svdb_merge/{sample}_{type}.merged.vcf"),
+    params:
+        extra=config.get("svdb_merge", {}).get("extra", ""),
+        overlap=config.get("svdb_merge", {}).get("overlap", 0.6),
+        bnd_distance=config.get("svdb_merge", {}).get("bnd_distance", 10000),
+        priority=config.get("svdb_merge", {}).get("priority", ""),
+        vcfs=lambda wildards, input: get_vcfs_for_svdb_merge(wildards, input),
     log:
         "cnv_sv/svdb_merge/{sample}_{type}.merged.vcf.log",
     benchmark:
@@ -178,7 +184,6 @@ use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
             "cnv_sv/svdb_merge/{sample}_{type}.merged.benchmark.tsv",
             config.get("svdb_merge", {}).get("benchmark_repeats", 1),
         )
-
 
 use rule svdb_query from cnv_sv as cnv_sv_svdb_query with:
     input:

@@ -179,6 +179,16 @@ def get_glnexus_input(wildcards, input):
     return gvcf_input
 
 
+def get_vcfs_for_svdb_merge(wildcards, input):
+    
+    vcfs_with_suffix = []
+    for v in input.vcfs:
+        caller = os.path.dirname(v).split('/')[1].split('_')[0]
+        vcfs_with_suffix.append(f"{v}:{caller}")
+    
+    return vcfs_with_suffix
+
+
 def compile_output_list(wildcards):
     output_files = []
     types = set([unit.type for unit in units.itertuples()])
