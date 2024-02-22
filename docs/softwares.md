@@ -82,3 +82,45 @@ Introduction to deepvariant_add_ref
 #### Resources settings (`resources.yaml`)
 
 #RESOURCESSCHEMA__tiddit_add_ref#
+
+## [split_vep_bcftools](url_to_tool)
+Introduction to split_vep_bcftools
+
+### :snake: Rule
+
+#SNAKEMAKE_RULE_SOURCE__split_vep__split_vep_bcftools#
+
+#### :left_right_arrow: input / output files
+
+#SNAKEMAKE_RULE_TABLE__split_vep__split_vep_bcftools#
+
+### :wrench: Configuration
+
+#### Software settings (`config.yaml`)
+
+#CONFIGSCHEMA__split_vep_bcftools#
+
+#### Resources settings (`resources.yaml`)
+
+#RESOURCESSCHEMA__split_vep_bcftools#
+
+## [fix_sv_header_bcftools](url_to_tool)
+Introduction to fix_sv_header_bcftools
+
+### :snake: Rule
+
+#SNAKEMAKE_RULE_SOURCE__fix_sv_header__fix_sv_header_bcftools#
+
+#### :left_right_arrow: input / output files
+
+#SNAKEMAKE_RULE_TABLE__fix_sv_header__fix_sv_header_bcftools#
+
+### :wrench: Configuration
+
+#### Software settings (`config.yaml`)
+
+#CONFIGSCHEMA__fix_sv_header_bcftools#
+
+#### Resources settings (`resources.yaml`)
+
+#RESOURCESSCHEMA__fix_sv_header_bcftools#
