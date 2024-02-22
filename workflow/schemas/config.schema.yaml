@@ -112,3 +112,37 @@ properties:
         type: string
         description: parameters that should be forwarded
 
+
+
+# Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
+  split_vep_bcftools:
+    type: object
+    description: parameters for split_vep_bcftools
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
+
+
+
+# Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
+  fix_sv_header_bcftools:
+    type: object
+    description: parameters for fix_sv_header_bcftools
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
+

@@ -5,7 +5,7 @@ default_resources:
   time: "12:00:00"
   mem_mb: 6144
   mem_per_cpu: 6144
-  partition: "low"
+  partition: "core"
 
 bwa_mem:
   mem_mb: 196608
@@ -142,6 +142,11 @@ samtools_idxstats:
   mem_mb: 49152
   mem_per_cpu: 6144
   threads: 8
+
+samtools_merge_bam:
+  mem_mb: 61440
+  mem_per_cpu: 6144
+  threads: 10
 
 samtools_sort:
   mem_mb: 61440

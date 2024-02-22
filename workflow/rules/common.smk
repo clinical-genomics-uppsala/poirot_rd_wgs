@@ -10,6 +10,7 @@ from hydra_genetics.utils.misc import get_module_snakefile
 from hydra_genetics.utils.resources import load_resources
 from hydra_genetics.utils.samples import *
 from hydra_genetics.utils.units import *
+from hydra_genetics.utils.misc import extract_chr
 from snakemake.utils import min_version
 from snakemake.utils import validate
 
@@ -43,6 +44,11 @@ validate(units, schema="../schemas/units.schema.yaml")
 with open(config["output"]) as output:
     output_json = json.load(output)
 
+## contigs in hg38
+contigs = extract_chr("%s.fai" % (config.get("reference", {}).get("fasta", "")),
+                filter_out=[])
+non_chr_contigs = [c for c in contigs if  '_' in c or c == 'chrEBV']
+non_chr_contigs.append('*')
 
 ### Set wildcard constraints
 wildcard_constraints:
@@ -58,7 +64,7 @@ wildcard_constraints:
 ### Functions
 
 
-def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True, by_chr=False):
+def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True):
     if use_sample_wildcard and use_type_wildcard is True:
         sample_str = "{}_{}".format(wildcards.sample, wildcards.type)
     elif use_sample_wildcard and use_type_wildcard is not True:
@@ -72,10 +78,9 @@ def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True, b
     elif aligner == "bwa_gpu":
         bam_input = "parabricks/pbrun_fq2bam/{}.bam".format(sample_str)
     elif aligner == "bwa_cpu":
-        if by_chr:  # if a bam for single chromosome is needed
-            bam_input = "alignment/picard_mark_duplicates/{}_{}.bam".format(sample_str, wildcards.chr)
-        else:
-            bam_input = "alignment/samtools_merge_bam/{}.bam".format(sample_str)
+        # if by_chr:  # if a bam for single chromosome is needed
+        #     bam_input = "alignment/picard_mark_duplicates/{}_{}.bam".format(sample_str, wildcards.chr)
+        bam_input = "alignment/samtools_merge_bam/{}.bam".format(sample_str)
     else:
         sys.exit("valid options for aligner are: bwa_gpu or bwa_cpu")
 

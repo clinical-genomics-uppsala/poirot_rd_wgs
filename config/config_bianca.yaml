@@ -283,13 +283,13 @@ reviewer:
   container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_reviewer_0.2.7.sif
 
 samtools_stats:
-  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_1.10.1.sif
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_1.10.2.sif
  
 samtools_idxstats:
-  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_1.10.1.sif
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_1.10.2.sif
   
 samtools:
-  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_1.10.1.sif
+  container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_common_1.10.2.sif
 
 smn_caller:
   container: /castor/project/proj/poirot_pipeline/singularity_files/hydragenetics_smncopynumbercaller_1.1.2.sif
