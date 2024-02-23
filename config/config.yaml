@@ -2,8 +2,8 @@
 
 
 resources: "config/resources.yaml"
-samples: "config/samples.tsv"
-units: "config/units.tsv"
+samples: "samples.tsv"
+units: "units.tsv"
 
 output: "config/output_list.json"
 
@@ -88,8 +88,7 @@ bwa_mem_mito:
 
 cnvpytor_readdepth:
   container: "docker://hydragenetics/cnvpytor:1.3.1"
-  calling_model: "rd_mean_shift"
-  length_list: "500 10000 100000"
+  length_list: "500"
   extra: "-chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM "
 
 cnvpytor_filter:
@@ -256,12 +255,12 @@ mt_reference:
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.2.1-1"
   extra: "--num-cpu-threads-per-stream 5 --num-streams-per-gpu 2 --disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
-  # tmp_dir: "/tmp/"
+  tmp_dir: "/tmp/"
 
 pbrun_fq2bam:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.2.1-1"
   extra: "--gpusort --gpuwrite --num-cpu-threads-per-stage 10 "
-  # tmp_dir: "/tmp/"
+  tmp_dir: "/tmp/"
 
 peddy:
   container: "docker://hydragenetics/peddy:0.4.8"
