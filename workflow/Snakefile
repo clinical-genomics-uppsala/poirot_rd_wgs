@@ -315,7 +315,7 @@ use rule bcftools_view from filtering as filtering_bcftools_view_svdb with:
     input:
         vcf="annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.vep_info.vcf"
     output:
-        vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.filtered.vcf.gz"
+        vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.filtered.vcf.gz"
     params:
         extra=config.get("bcftools_view_svdb", {}).get("extra", ""),
     log:
