@@ -440,8 +440,8 @@ use rule multiqc from qc as qc_multiqc with:
             ]
         ),
         config=lambda wildcards: config["multiqc"]["reports"][wildcards.report]["config"],
-        #sample_order="config/sample_order.tsv",
-        #sample_replacement="config/sample_replacement.tsv",
+        sample_order="config/sample_order.tsv",
+        sample_replacement="config/sample_replacement.tsv",
     params:
         extra=lambda wildcards, input: "--replace-names "
         + input.sample_replacement
