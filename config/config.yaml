@@ -49,8 +49,9 @@ bcftools_split_vep:
 bcftools_view_biallelic:
   extra: "-m2 -M2 -v snps"
 
-bcftools_view_cnvpytor:
-  extra: "-s LowQual -e 'pytorp1>0.0001 | pytorDG<100000 | pytorpN>0.5 | pytorQ0>0.5' "
+bcftools_filter_cnvpytor:
+  exclude: "'pytorp1>0.0001 | pytorDG<100000 | pytorpN>0.5 | pytorQ0>0.5'"
+  extra: "-s LowQual "
 
 bcftools_view_pass:
   extra: "--apply-filter PASS "
