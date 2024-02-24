@@ -296,19 +296,20 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
         extra=config.get("bcftools_view_pass", {}).get("extra", ""),
 
 
-use rule bcftools_view from filtering as filtering_bcftools_view_cnvpytor with:
+use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_filter_cnvpytor with:
     input:
         vcf="cnv_sv/cnvpytor/{sample}_{type}.vcf"
     output:
         vcf="cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf"
     params:
-        extra=config.get("bcftools_view_cnvpytor", {}).get("extra", ""),
+        filter=lambda wildcards: "-e {}".format(config["bcftools_filter_cnvpytor"]["exclude"]),
+        extra=config.get("bcftools_filter_cnvpytor", {}).get("extra", ""),
     log:
         "cnv_sv/cnvpytor/{sample}_{type}.softfilered.vcf.log"
     benchmark:
         repeat(
             "cnv_sv/cnvpytor/{sample}_{type}.softfilered.vcf.benchmark.tsv",
-            config.get("bcftools_view_cnvpytor", {}).get("benchmark_repeats", 1),
+            config.get("bcftools_filter_cnvpytor", {}).get("benchmark_repeats", 1),
         )
 
 use rule bcftools_view from filtering as filtering_bcftools_view_svdb with:
