@@ -9,10 +9,6 @@ module load singularity/3.7.1
 
 poirotFolder=/beegfs-storage/projects/wp3/nobackup/TWIST/Bin/Poirot
 
-python3.9 -m venv ${poirotFolder}/hydra_env
-source ${poirotFolder}/hydra_env/bin/activate
-pip install -r ${poirotFolder}/requirements.txt
-
 fastqFolder=$1
 sequencerun=$2    #Sequence ID
 startDir=$PWD
@@ -37,6 +33,10 @@ rsync -ru SampleSheet.csv /scratch/wp3/TWIST/${sequencerun}/  && \
 rsync -ru ${poirotFolder}/config /scratch/wp3/TWIST/${sequencerun}/  && \
 
 cd /scratch/wp3/TWIST/${sequencerun}/  && \
+
+python3.9 -m venv hydra_env && \
+source hydra_env/bin/activate && \
+pip install -r ${poirotFolder}/requirements.txt && \
 
 # Create sample and unit files
 hydra-genetics create-input-files -d ${fastqFolder} -t N --tc 0 -f && \
