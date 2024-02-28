@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.3.1](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.3.0...v0.3.1) (2024-02-28)
+
+
+### Bug Fixes
+
+* handle incomplete trios ([35e7e5a](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/35e7e5a48e27932d3f13f60e2b72ca1da988f87a))
+
 ## [0.3.0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.2.0...v0.3.0) (2024-01-03)
 
 
