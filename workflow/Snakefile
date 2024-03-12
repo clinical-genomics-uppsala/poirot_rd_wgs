@@ -13,7 +13,6 @@ include: "rules/concat_vcfs.smk"
 include: "rules/coverage.smk"
 include: "rules/extract_str_bed.smk"
 include: "rules/peddy.smk"
-include: "rules/samtools.smk"
 
 
 report: "report/workflow.rst"
@@ -43,35 +42,6 @@ module alignment:
     
 
 use rule * from alignment as alignment_*
-
-use rule samtools_merge_bam from alignment as alignment_samtools_merge_bam with:
-    input:
-        chr_bams=expand(
-            "alignment/picard_mark_duplicates/{{sample}}_{{type}}_{chr}.bam",
-            chr=extract_chr(
-                "%s.fai" % (config.get("reference", {}).get("fasta", "")),
-                filter_out=non_chr_contigs,
-            ),
-        ),
-        non_chr_bams="alignment/picard_mark_duplicates/{sample}_{type}_non_chr.bam",
-    output:
-        bam=temp("alignment/samtools_merge_bam/{sample}_{type}.bam_unsorted"),
-
-
-use rule picard_mark_duplicates from alignment as alignment_picard_mark_duplicates_non_chr with:
-    input:
-        bams="alignment/samtools_extract_reads/{sample}_{type}_non_chr.bam",
-    output:
-        bam=temp("alignment/picard_mark_duplicates/{sample}_{type}_non_chr.bam"),
-        metrics=temp("alignment/picard_mark_duplicates/{sample}_{type}_non_chr.metrics.txt"),
-    log:
-        "alignment/picard_mark_duplicates/{sample}_{type}_non_chr.bam.log",
-    benchmark:
-        repeat(
-            "alignment/picard_mark_duplicates/{sample}_{type}_non_chr.bam.benchmark.tsv",
-            config.get("samtools_sort", {}).get("benchmark_repeats", 1),
-        )
-
 
 use rule samtools_sort from alignment as alignment_samtools_sort_eh_bam with:
     input:
@@ -296,26 +266,31 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
         extra=config.get("bcftools_view_pass", {}).get("extra", ""),
 
 
-use rule bcftools_view from filtering as filtering_bcftools_view_cnvpytor with:
+use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_filter_cnvpytor with:
     input:
         vcf="cnv_sv/cnvpytor/{sample}_{type}.vcf"
     output:
         vcf="cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf"
     params:
-        extra=config.get("bcftools_view_cnvpytor", {}).get("extra", ""),
+        filter=lambda wildcards: "-e {}".format(config["bcftools_filter_cnvpytor"]["exclude"]),
+        extra=config.get("bcftools_filter_cnvpytor", {}).get("extra", ""),
     log:
         "cnv_sv/cnvpytor/{sample}_{type}.softfilered.vcf.log"
     benchmark:
         repeat(
             "cnv_sv/cnvpytor/{sample}_{type}.softfilered.vcf.benchmark.tsv",
-            config.get("bcftools_view_cnvpytor", {}).get("benchmark_repeats", 1),
+            config.get("bcftools_filter_cnvpytor", {}).get("benchmark_repeats", 1),
         )
 
 use rule bcftools_view from filtering as filtering_bcftools_view_svdb with:
     input:
         vcf="annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.vep_info.vcf"
     output:
+<<<<<<< HEAD
         vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.filtered.vcf.gz"
+=======
+        vcf="annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.filtered.vcf.gz"
+>>>>>>> d5b7807dc4847aadce55441ae3bdc727acca8ea7
     params:
         extra=config.get("bcftools_view_svdb", {}).get("extra", ""),
     log:
