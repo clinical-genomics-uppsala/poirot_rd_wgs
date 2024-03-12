@@ -31,6 +31,10 @@ reference:
   genepanels: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/genepanels_WGS.list"
   sites: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/Homo_sapiens_assembly38.known_indels.vcf.gz"
   wgs_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/homo_sapiens.hg38.wgs.interval_list"
+  merge_contigs: # contigs to be merged to a single BAM for mark duplicates
+    - ".*_random"
+    - ".chrUn*"
+    - "chrEBV"
 
 trimmer_software: "fastp_pe"
 
