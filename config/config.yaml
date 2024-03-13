@@ -19,7 +19,7 @@ modules:
   prealignment: "v1.2.0"
   qc: "da66130"
   mitochondrial: "v0.1.0"
-  snv_indels: "v0.5.0"
+  snv_indels: "a6d2dc1"
 
 reference:
   coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_with_MT_20240102.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
@@ -33,7 +33,7 @@ reference:
   wgs_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/homo_sapiens.hg38.wgs.interval_list"
   merge_contigs: # contigs to be merged to a single BAM for mark duplicates
     - ".*_random"
-    - ".chrUn*"
+    - "chrUn_.*"
     - "chrEBV"
 
 trimmer_software: "fastp_pe"
@@ -106,20 +106,13 @@ cnvpytor_filter:
   view: "500"
 
 create_cov_excel:
+  container: "docker://hydragenetics/common:1.11.1"
   covLimits: "10 20 30"
 
-deepvariant_call_variants:
+deepvariant:
   container: "docker://google/deepvariant:1.5.0" 
-  model: "/opt/models/wgs/model.ckpt" # path to model in the deepvariant container
-
-deepvariant_make_examples:
-  container: "docker://google/deepvariant:1.5.0" 
-  extra: "--channels insert_size"
-  n_shards: 80
-
-deepvariant_postprocess_variants:
-  container: "docker://google/deepvariant:1.5.0" 
-  vcf_type: "gvcf"
+  model_type: "WGS" 
+  output_gvcf: true
 
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"

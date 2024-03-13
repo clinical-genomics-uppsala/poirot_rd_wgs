@@ -10,7 +10,7 @@ output: "config/output_list.json"
 default_container: "docker://hydragenetics/common:0.1.9"
 
 modules:
-  alignment: "v0.4.0"
+  alignment: "1c54479"
   annotation: "v0.3.0"
   compression: "v2.0.0"
   cnv_sv: "v0.4.1"
@@ -19,7 +19,7 @@ modules:
   prealignment: "v1.1.0"
   qc: "da66130"
   mitochondrial: "v0.1.0"
-  snv_indels: "v0.5.0"
+  snv_indels: "a6d2dc1"
 
 reference:
   coverage_bed: "reference/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
@@ -31,6 +31,10 @@ reference:
   genepanels: "reference/genepanels.list"
   sites: "reference/homo_sapiens.known_indels.vcf.gz"
   wgs_intervals: "reference/homo_sapiens.wgs.interval_list"
+  merge_contigs: # contigs to be merged to a single BAM for mark duplicates
+    - ".*_random"
+    - "chrUn_.*"
+    - "chrEBV"
 
 trimmer_software: "fastp_pe"
 
@@ -43,13 +47,22 @@ automap:
   extra: "--DP 10 --minsize 3 --chrX"
   outdir: "cnv_sv/automap"
 
-bcftools_view_pass:
-  container: "docker://hydragenetics/common:0.3.0"
-  extra: "--apply-filter PASS "
+bcftools_split_vep:
+  columns: "gnomad_AF:Float"
+
+bcftools_view_biallelic:
+  extra: "-m2 -M2 -v snps"
+
+bcftools_filter_cnvpytor:
+  exclude: "'pytorp1>0.0001 | pytorDG<100000 | pytorpN>0.5 | pytorQ0>0.5'"
+  extra: "-s LowQual "
 
 bcftools_view_pass:
-  container: "docker://hydragenetics/common:0.3.0"
+  container: "docker://hydragenetics/common:1.11.1"
   extra: "--apply-filter PASS "
+
+bcftools_view_svdb:
+  extra: "-f 'PASS' -e 'tiddit_AF>0.05 | manta_AF>0.05 | cnvpytor_AF>0.05 | gnomad_AF>0.1'"
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
@@ -81,31 +94,25 @@ bwa_mem_mito:
 cnvpytor_readdepth:
   container: "docker://hydragenetics/cnvpytor:1.2.1"
   length_list: "1000 10000 100000"
+  extra: "-chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM "
 
 cnvpytor_filter:
-  container: "docker://hydragenetics/cnvpytor:1.2.1"
+  container: "docker://hydragenetics/cnvpytor:1.3.1"
   dG_range: "100000 inf"
-  p_range: "0 0.01"
+  calling_model: "rd_mean_shift"
+  p_range: "0 0.0001"
   pN_range: "0 0.5"
-  Q0_range: "0 0.05"
-  view: "1000"
+  Q0_range: "-1 0.5"
+  view: "500"
 
 create_cov_excel:
-  container: "docker://hydragenetics/common:0.3.0"
+  container: "docker://hydragenetics/common:1.11.1"
   covLimits: "10 20 30"
 
-deepvariant_call_variants:
-  container: "docker://hydragenetics/deepvariant:1.4.0" #"docker://hydragenetics/deepvariant:1.4.0"
-  model: "/opt/models/wes/model.ckpt" # path to model in the deepvariant container
-
-deepvariant_make_examples:
-  container: "docker://hydragenetics/deepvariant:1.4.0"
-  extra: "--channels insert_size"
-  n_shards: 80
-
-deepvariant_postprocess_variants:
-  container: "docker://hydragenetics/deepvariant:1.4.0"
-  vcf_type: "gvcf"
+deepvariant:
+  container: "docker://google/deepvariant:1.5.0" 
+  model_type: "WGS" 
+  output_gvcf: true
 
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
@@ -181,9 +188,9 @@ gatk_split_multi_allelic_sites:
 gatk_variant_filtration:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
 
-glnexus:
-  bedfile: "reference/GRCH38.bed"
-  container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.3"
+glnexus_trio:
+  container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
+  configfile: "DeepVariantWGS"
 
 glnexus_peddy:
   container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
@@ -195,7 +202,7 @@ haplocheck:
 
 manta_config_n:
   container: "docker://hydragenetics/manta:1.6.0"
-  extra: ""
+  extra: "--callRegions reference/GRCh38_chromosomes.bed.gz"
 
 manta_run_workflow_n:
   container: "docker://hydragenetics/manta:1.6.0"
@@ -236,6 +243,7 @@ multiqc:
         - "qc/picard_collect_wgs_metrics/{sample}_{type}.txt"
         - "qc/samtools_stats/{sample}_{type}.samtools-stats.txt"
         - "qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"
+        - "qc/verifybamid2/{sample}_{type}.selfSM"
 
 mt_reference:
   mt: "reference/Homo_sapiens_assembly38.chrM.fasta"
@@ -243,12 +251,14 @@ mt_reference:
   blacklist: reference/blacklist_sites.hg38.chrM.bed
 
 pbrun_deepvariant:
-  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-  extra: "--pb-model-file reference/deepvariant.eng --disable-use-window-selector-model --gvcf" ## For consistency with deepvariant cpu. Also increases accuracy.
+  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.2.1-1"
+  extra: "--num-cpu-threads-per-stream 5 --num-streams-per-gpu 2 --disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
+  tmp_dir: "/tmp/"
 
 pbrun_fq2bam:
-  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-  extra: ""
+  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.2.1-1"
+  extra: "--gpusort --gpuwrite --num-cpu-threads-per-stage 10 "
+  tmp_dir: "/tmp/"
 
 peddy:
   container: "docker://hydragenetics/peddy:0.4.8"
@@ -280,13 +290,13 @@ reviewer:
   container: "docker://hydragenetics/reviewer:0.2.7"
 
 samtools_stats:
-  container: "docker://hydragenetics/common:0.3.0"
+  container: "docker://hydragenetics/common:1.11.1"
 
 samtools_idxstats:
-  container: "docker://hydragenetics/common:0.3.0"
+  container: "docker://hydragenetics/common:1.11.1"
 
 samtools:
-  container: "docker://hydragenetics/common:0.3.0"
+  container: "docker://hydragenetics/common:1.11.1"
 
 smn_caller:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
@@ -303,8 +313,10 @@ stranger:
   catalog: "reference/variant_catalog_grch38.json"
 
 svdb_merge:
-  container: "docker://hydragenetics/svdb:2.6.0"
+  container: "docker://hydragenetics/svdb:2.8.2"
   overlap: 0.6
+  priority: "tiddit,manta,cnvpytor"
+  extra: "--pass_only "
 
 svdb_query:
   container: "docker://hydragenetics/svdb:2.6.0"
@@ -331,6 +343,11 @@ vep_trio:
   container: "docker://ensemblorg/ensembl-vep:release_109.3"
   vep_cache: "reference/VEP/"
   extra: "--assembly GRCh38 --check_existing --pick --max_af --buffer_size 50000"
+
+vep_svdb:
+  container: "docker://ensemblorg/ensembl-vep:release_110.1"
+  vep_cache: "reference/VEP/"
+  extra: "--assembly GRCh38 --check_existing --pick --custom file=/data/ref_data/gnomad/gnomad_sv/gnomad.v4.0.sv.vcf.gz,short_name=gnomad,fields=AF%CN_NONREF_FREQ%FILTER%ALGORITHMS%EVIDENCE%SVTYPE,format=vcf,reciprocal=1,overlap_cutoff=60,distance=1000,same_type=1"
 
 verifybamid2:
   container: "docker://hydragenetics/verifybamid2:2.0.1"
