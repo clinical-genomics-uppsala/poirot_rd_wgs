@@ -65,7 +65,6 @@ bcftools_view_svdb:
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
-  extra: "-K 10000000 "
   amb: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.amb"
   ann: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.ann"
   bwt: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.bwt"
