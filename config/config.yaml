@@ -10,16 +10,16 @@ output: "config/output_list.json"
 default_container: "docker://hydragenetics/common:1.11.1"
 
 modules:
-  alignment: "1c54479"
+  alignment: "v0.5.1"
   annotation: "v0.3.0"
-  compression: "90d160d"
+  compression: "v2.0.0"
   cnv_sv: "2cb7d68"
   filtering: "v0.3.0"
   parabricks: "1b6399b"
   prealignment: "v1.2.0"
   qc: "da66130"
   mitochondrial: "v0.1.0"
-  snv_indels: "a6d2dc1"
+  snv_indels: "v0.5.0"
 
 reference:
   coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_with_MT_20240102.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
@@ -31,10 +31,6 @@ reference:
   genepanels: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/genepanels_WGS.list"
   sites: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/Homo_sapiens_assembly38.known_indels.vcf.gz"
   wgs_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/homo_sapiens.hg38.wgs.interval_list"
-  merge_contigs: # contigs to be merged to a single BAM for mark duplicates
-    - ".*_random"
-    - "chrUn_.*"
-    - "chrEBV"
 
 trimmer_software: "fastp_pe"
 
@@ -54,7 +50,7 @@ bcftools_view_biallelic:
   extra: "-m2 -M2 -v snps"
 
 bcftools_filter_cnvpytor:
-  exclude: "'pytorp1>0.0001 | pytorDG<100000 | pytorpN>0.5 | pytorQ0>0.5'"
+  exclude: "'pytorP1>0.0001 | pytorDG<100000 | pytorPN>0.5 | pytorQ0>0.5'"
   extra: "-s LowQual "
 
 bcftools_view_pass:
@@ -65,6 +61,7 @@ bcftools_view_svdb:
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
+  extra: "-K 10000000 "
   amb: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.amb"
   ann: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.ann"
   bwt: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.bwt"
@@ -105,13 +102,20 @@ cnvpytor_filter:
   view: "500"
 
 create_cov_excel:
-  container: "docker://hydragenetics/common:1.11.1"
   covLimits: "10 20 30"
 
-deepvariant:
+deepvariant_call_variants:
   container: "docker://google/deepvariant:1.5.0" 
-  model_type: "WGS" 
-  output_gvcf: true
+  model: "/opt/models/wgs/model.ckpt" # path to model in the deepvariant container
+
+deepvariant_make_examples:
+  container: "docker://google/deepvariant:1.5.0" 
+  extra: "--channels insert_size"
+  n_shards: 80
+
+deepvariant_postprocess_variants:
+  container: "docker://google/deepvariant:1.5.0" 
+  vcf_type: "gvcf"
 
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
@@ -209,14 +213,14 @@ manta_run_workflow_n:
 mosdepth:
   container: "docker://hydragenetics/mosdepth:0.3.2"
   by: "500"
-  extra: "--fast-mode --no-per-base "
+  extra: "--fast-mode --use-median --no-per-base "
 
 mosdepth_bed:
   container: "docker://hydragenetics/mosdepth:0.3.2"
   extra: ""
 
 multiqc:
-  container: "docker://hydragenetics/multiqc:1.18"
+  container: "docker://hydragenetics/multiqc:1.11"
   reports:
     DNA:
       config: "config/multiqc_config_DNA.yaml"
