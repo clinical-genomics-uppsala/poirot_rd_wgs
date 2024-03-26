@@ -12,14 +12,14 @@ default_container: "docker://hydragenetics/common:1.11.1"
 modules:
   alignment: "1c54479"
   annotation: "v0.3.0"
-  compression: "90d160d"
+  compression: "v2.0.0"
   cnv_sv: "2cb7d68"
   filtering: "v0.3.0"
   parabricks: "1b6399b"
   prealignment: "v1.2.0"
   qc: "da66130"
   mitochondrial: "v0.1.0"
-  snv_indels: "a6d2dc1"
+  snv_indels: "3935ecf"
 
 reference:
   coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_with_MT_20240102.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
@@ -38,8 +38,8 @@ reference:
 
 trimmer_software: "fastp_pe"
 
-aligner: "bwa_gpu" # "bwa_cpu" or "bwa_gpu"
-snp_caller: "deepvariant_gpu" # "deepvariant_cpu" or "deepvariant_gpu"
+aligner: "bwa_cpu" # "bwa_cpu" or "bwa_gpu"
+snp_caller: "deepvariant_cpu" # "deepvariant_cpu" or "deepvariant_gpu"
 
 automap:
   container: "docker://hydragenetics/automap:1.2"
@@ -54,7 +54,7 @@ bcftools_view_biallelic:
   extra: "-m2 -M2 -v snps"
 
 bcftools_filter_cnvpytor:
-  exclude: "'pytorp1>0.0001 | pytorDG<100000 | pytorpN>0.5 | pytorQ0>0.5'"
+  exclude: "'pytorP1>0.0001 | pytorDG<100000 | pytorPN>0.5 | pytorQ0>0.5'"
   extra: "-s LowQual "
 
 bcftools_view_pass:
@@ -109,7 +109,7 @@ create_cov_excel:
   covLimits: "10 20 30"
 
 deepvariant:
-  container: "docker://google/deepvariant:1.5.0" 
+  container: "docker://google/deepvariant:1.6.1" 
   model_type: "WGS" 
   output_gvcf: true
 
@@ -209,14 +209,14 @@ manta_run_workflow_n:
 mosdepth:
   container: "docker://hydragenetics/mosdepth:0.3.2"
   by: "500"
-  extra: "--fast-mode --no-per-base "
+  extra: "--fast-mode --use-median --no-per-base "
 
 mosdepth_bed:
   container: "docker://hydragenetics/mosdepth:0.3.2"
   extra: ""
 
 multiqc:
-  container: "docker://hydragenetics/multiqc:1.18"
+  container: "docker://hydragenetics/multiqc:1.11"
   reports:
     DNA:
       config: "config/multiqc_config_DNA.yaml"
