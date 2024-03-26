@@ -33,19 +33,12 @@ cnvpytor_readdepth_combined:
   mem_per_cpu: 6144
   threads: 10
   time: "12:00:00"
- 
-deeptrio_call_variants:
-  gres: "--gres=gres:gpu:1" 
-  partition: "GPU_hi"
-  threads: 10
-
-deeptrio_make_examples:
-  threads: 1
 
 deepvariant:
-  threads: 20
-  mem_mb: 6144
+  mem_mb: 122880
   mem_per_cpu: 6144
+  threads: 20
+  time: "20:00:00"
 
 expansionhunter:
   threads: 16
