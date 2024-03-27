@@ -154,9 +154,9 @@ def get_gvcf_trio(wildcards):
     caller = config.get("snp_caller", None)
 
     proband_sample = samples[samples.index == wildcards.sample]
-    trio_id = proband_sample.at[wildcards.sample, "trio"]
-    mother_sample = samples[(samples.trio_member == "mother") & (samples.trio == trio_id)].index[0]
-    father_sample = samples[(samples.trio_member == "father") & (samples.trio == trio_id)].index[0]
+    trio_id = proband_sample.at[wildcards.sample, "trioid"]
+    mother_sample = samples[(samples.trio_member == "mother") & (samples.trioid == trio_id)].index[0]
+    father_sample = samples[(samples.trio_member == "father") & (samples.trioid == trio_id)].index[0]
 
     if caller is None:
         sys.exit("snp_caller missing from config, valid options: deepvariant_gpu or deepvariant_cpu")
@@ -194,12 +194,12 @@ def get_parent_bams(wildcards):
         bam_path = "alignment/samtools_merge_bam"
 
     proband_sample = samples[samples.index == wildcards.sample]
-    trio_id = proband_sample.at[wildcards.sample, "trio"]
+    trio_id = proband_sample.at[wildcards.sample, "trioid"]
 
-    mother_sample = samples[(samples.trio_member == "mother") & (samples.trio == trio_id)].index[0]
+    mother_sample = samples[(samples.trio_member == "mother") & (samples.trioid == trio_id)].index[0]
     mother_bam = "{}/{}_{}.bam".format(bam_path, mother_sample, list(get_unit_types(units, mother_sample))[0])
 
-    father_sample = samples[(samples.trio_member == "father") & (samples.trio == trio_id)].index[0]
+    father_sample = samples[(samples.trio_member == "father") & (samples.trioid == trio_id)].index[0]
     father_bam = "{}/{}_{}.bam".format(bam_path, father_sample, list(get_unit_types(units, father_sample))[0])
 
     bam_list = [mother_bam, father_bam]
