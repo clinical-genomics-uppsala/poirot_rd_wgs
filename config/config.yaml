@@ -13,7 +13,7 @@ modules:
   alignment: "1c54479"
   annotation: "v0.3.0"
   compression: "v2.0.0"
-  cnv_sv: "2cb7d68"
+  cnv_sv: "v0.5.0"
   filtering: "v0.3.0"
   parabricks: "v1.2.0"
   prealignment: "v1.2.0"
