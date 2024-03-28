@@ -38,8 +38,8 @@ reference:
 
 trimmer_software: "fastp_pe"
 
-aligner: "bwa_cpu" # "bwa_cpu" or "bwa_gpu"
-snp_caller: "deepvariant_cpu" # "deepvariant_cpu" or "deepvariant_gpu"
+aligner: "bwa_gpu" # "bwa_cpu" or "bwa_gpu"
+snp_caller: "deepvariant_gpu" # "deepvariant_cpu" or "deepvariant_gpu"
 
 automap:
   container: "docker://hydragenetics/automap:1.2"
