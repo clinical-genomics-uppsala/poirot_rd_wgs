@@ -2,7 +2,7 @@
 
 
 resources: "config/resources.yaml"
-samples: "samples.tsv"
+samples: "samples_with_info.tsv"
 units: "units.tsv"
 
 output: "config/output_list.json"
