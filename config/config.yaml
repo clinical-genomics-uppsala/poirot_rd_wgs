@@ -15,7 +15,7 @@ modules:
   compression: "v2.0.0"
   cnv_sv: "2cb7d68"
   filtering: "v0.3.0"
-  parabricks: "1b6399b"
+  parabricks: "v1.2.0"
   prealignment: "v1.2.0"
   qc: "da66130"
   mitochondrial: "v0.1.0"
@@ -250,12 +250,12 @@ mt_reference:
   blacklist: /beegfs-storage/data/ref_data/gatk_mito/blacklist_sites.hg38.chrM.bed
 
 pbrun_deepvariant:
-  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.2.1-1"
+  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
   extra: "--num-cpu-threads-per-stream 5 --num-streams-per-gpu 2 --disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
   tmp_dir: "/tmp/"
 
 pbrun_fq2bam:
-  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.2.1-1"
+  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
   extra: "--gpusort --gpuwrite --num-cpu-threads-per-stage 10 "
   tmp_dir: "/tmp/"
 
@@ -305,7 +305,7 @@ smn_charts:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
 
 spring:
-  container: "docker://hydragenetics/spring:1.0.1"
+  container: "docker://hydragenetics/spring:1.1.1"
 
 stranger:
   container: "docker://hydragenetics/stranger:0.8.1"
