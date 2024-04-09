@@ -1,0 +1,51 @@
+site_name: poirot_rd_wgs
+nav:
+  - Overview:
+    - Introduction: index.md
+    - Pipeline overview: overview.md
+    - Result files: result_files.md
+    - Reference files: references.md
+  - Setting up and Running the pipeline:
+    - Setup: setup.md
+    - Running: running.md
+  - Output- Project Info:
+    - Changelog: changelog.md
+    - Credits: credits.md
+    - Frequently Asked Questions: faq.md
+    - License: license.md
+  
+
+theme: readthedocs
+extra_css: [extra.css]
+markdown_extensions:
+  - abbr
+  - attr_list
+  - pymdownx.details
+  - pymdownx.snippets:
+      auto_append:
+        - includes/abbreviations.md
+      base_path: ["docs/"]
+      url_download: "True"
+  - mdx_spanner
+  - admonition
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+plugins:
+  - search
+  - include-markdown
+  - yaml-schema:
+      yaml_files:
+        - file: "workflow/schemas/config.schema.yaml"
+          tag: "CONFIGSCHEMA"
+        - file: "workflow/schemas/resources.schema.yaml"
+          tag: "RESOURCESSCHEMA"
+  - snakemake-rule:
+      rule_folders:
+        - 'workflow/rules'
+      schemas:
+        - 'workflow/schemas/rules.schema.yaml'
+  - mkdocs-simple-hooks:
+      hooks:
+        on_pre_build: "docs.hooks:copy_changelog_and_license"

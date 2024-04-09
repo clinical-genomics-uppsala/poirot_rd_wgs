@@ -1,5 +1,5 @@
 
-## [vcf_to_aed](url_to_tool)
+## vcf_to_aed
 Introduction to vcf_to_aed
 
 ### :snake: Rule
@@ -20,7 +20,9 @@ Introduction to vcf_to_aed
 
 #RESOURCESSCHEMA__vcf_to_aed#
 
-## [svdb_add_ref](url_to_tool)
+---
+
+## svdb_add_ref
 Introduction to svdb_add_ref
 
 ### :snake: Rule
@@ -41,7 +43,8 @@ Introduction to svdb_add_ref
 
 #RESOURCESSCHEMA__svdb_add_ref#
 
-## [tiddit_add_ref](url_to_tool)
+---
+## tiddit_add_ref
 Introduction to tiddit_add_ref
 
 ### :snake: Rule
@@ -62,7 +65,7 @@ Introduction to tiddit_add_ref
 
 #RESOURCESSCHEMA__tiddit_add_ref#
 
-## [deepvariant_add_ref](url_to_tool)
+## deepvariant_add_ref
 Introduction to deepvariant_add_ref
 
 ### :snake: Rule
@@ -77,50 +80,8 @@ Introduction to deepvariant_add_ref
 
 #### Software settings (`config.yaml`)
 
-#CONFIGSCHEMA__tiddit_add_ref#
+#CONFIGSCHEMA__deepvariant_add_ref#
 
 #### Resources settings (`resources.yaml`)
 
-#RESOURCESSCHEMA__tiddit_add_ref#
-
-## [split_vep_bcftools](url_to_tool)
-Introduction to split_vep_bcftools
-
-### :snake: Rule
-
-#SNAKEMAKE_RULE_SOURCE__split_vep__split_vep_bcftools#
-
-#### :left_right_arrow: input / output files
-
-#SNAKEMAKE_RULE_TABLE__split_vep__split_vep_bcftools#
-
-### :wrench: Configuration
-
-#### Software settings (`config.yaml`)
-
-#CONFIGSCHEMA__split_vep_bcftools#
-
-#### Resources settings (`resources.yaml`)
-
-#RESOURCESSCHEMA__split_vep_bcftools#
-
-## [fix_sv_header_bcftools](url_to_tool)
-Introduction to fix_sv_header_bcftools
-
-### :snake: Rule
-
-#SNAKEMAKE_RULE_SOURCE__fix_sv_header__fix_sv_header_bcftools#
-
-#### :left_right_arrow: input / output files
-
-#SNAKEMAKE_RULE_TABLE__fix_sv_header__fix_sv_header_bcftools#
-
-### :wrench: Configuration
-
-#### Software settings (`config.yaml`)
-
-#CONFIGSCHEMA__fix_sv_header_bcftools#
-
-#### Resources settings (`resources.yaml`)
-
-#RESOURCESSCHEMA__fix_sv_header_bcftools#
+#RESOURCESSCHEMA__deepvariant_add_ref#

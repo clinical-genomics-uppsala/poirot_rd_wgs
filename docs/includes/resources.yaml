@@ -1,0 +1,154 @@
+---
+
+default_resources:
+  threads: 1
+  time: "12:00:00"
+  mem_mb: 6144
+  mem_per_cpu: 6144
+  partition: "core"
+
+bwa_mem:
+  mem_mb: 122880
+  mem_per_cpu: 6144
+  threads: 20
+
+bwa_mem_merge:
+  mem_mb: 61440
+  mem_per_cpu: 6144
+  threads: 10
+
+bwa_mem_mito:
+  mem_mb: 6144
+  mem_per_cpu: 3072
+  threads: 2
+
+cnvpytor_readdepth:
+  mem_mb: 61440
+  mem_per_cpu: 6144
+  threads: 10
+  time: "12:00:00"
+
+cnvpytor_readdepth_combined:
+  mem_mb: 61440
+  mem_per_cpu: 6144
+  threads: 10
+  time: "12:00:00"
+
+deepvariant:
+  mem_mb: 122880
+  mem_per_cpu: 6144
+  threads: 20
+  time: "20:00:00"
+
+expansionhunter:
+  threads: 16
+
+fastp_pe:
+  threads: 8
+  mem_mb: 30720
+  mem_per_cpu: 6144
+
+fastqc:
+  threads: 2
+  mem_mb: 12288
+  mem_per_cpu: 6144
+
+gatk_mark_duplicates:
+  mem_mb: 4096
+  mem_per_cpu: 4096
+
+gatk_sam_to_fastq:
+  mem_mb: 5120
+  mem_per_cpu: 5120
+
+gatk_sort_sam:
+  mem_mb: 4096
+  mem_per_cpu: 4096
+
+gatk_mark_duplicates:
+  mem_mb: 4096
+  mem_per_cpu: 4096
+
+gatk_sam_to_fastq:
+  mem_mb: 5120
+  mem_per_cpu: 5120
+
+gatk_sort_sam:
+  mem_mb: 4096
+  mem_per_cpu: 4096
+
+glnexus:
+  threads: 20
+
+manta_run_workflow_n:
+  threads: 20
+  mem_mb: 122880
+  mem_per_cpu: 6144
+
+mosdepth:
+  mem_mb: 36864
+  threads: 4
+
+mosdepth_bed:
+  mem_mb: 36864
+  threads: 4
+
+pbrun_fq2bam:
+  gres: "--gres=gres:gpu:4"
+  mem_mb: 655360
+  mem_per_cpu: 16384
+  partition: "GPU_hi"
+  threads: 40
+  time: "20:00:00"
+
+pbrun_deepvariant:
+  gres: "--gres=gres:gpu:4"
+  mem_mb: 655360
+  mem_per_cpu: 16384
+  partition: "GPU_hi"
+  threads: 40
+  time: "20:00:00"
+
+peddy:
+  threads: 8
+
+samtools_stats:
+  mem_mb: 49152
+  mem_per_cpu: 6144
+  threads: 8
+
+samtools_idxstats:
+  mem_mb: 49152
+  mem_per_cpu: 6144
+  threads: 8
+
+samtools_merge_bam:
+  mem_mb: 61440
+  mem_per_cpu: 6144
+  threads: 10
+
+samtools_sort:
+  mem_mb: 61440
+  mem_per_cpu: 6144
+  threads: 10
+
+samtools_view:
+  mem_mb: 49152
+  mem_per_cpu: 6144
+  threads: 8
+  partition: "core_bkup"
+
+smn_caller:
+  threads: 8
+
+spring:
+  mem_mb: 49152
+  mem_per_cpu: 6144
+  threads: 8
+  partition: "core_bkup"
+
+tiddit:
+  threads: 8
+
+vep:
+  threads: 4
