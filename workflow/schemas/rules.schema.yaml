@@ -3,6 +3,26 @@ description: snakemake rule input and output files description file
 type: object
 properties:
 
+  bcftools_split_vep:
+    type: object
+    description: input and output parameters for bcftools_split_vep
+    properties:
+      input:
+        type: object
+        description: list of inputs
+        properties:
+          vcf:
+            type: string
+            description: VEP annotated SVDB merged vcf file with gnomad_AF corrected to type float in header
+
+      output:
+        type: object
+        description: list of outputs
+        properties:
+          vcf:
+            type: string
+            description: VEP annotated SVDB merged vcf file with gnomad_AF added as an info field
+
   deepvariant_add_ref:
     type: object
     description: input and output parameters for deepvariant_add_ref
@@ -11,19 +31,40 @@ properties:
         type: object
         description: list of inputs
         properties:
-          input1:
+          vcf:
             type: string
-            description: description input1
-            #value: set to override value in table, else remove
+            description: deepvariant vcf where reference genome version should be added to VCF header
+          ref:
+            type: string
+            description: The fasta reference used.
 
       output:
         type: object
         description: list of outputs
         properties:
-          output1:
+          vcf:
             type: string
-            description: description output1
-            #value: set to override value in table, else remove
+            description: deepvariant vcf to which the reference genome version has been added to vcf header
+
+  fix_sv_header:
+    type: object
+    description: input and output parameters for fix_sv_header
+    properties:
+      input:
+        type: object
+        description: list of inputs
+        properties:
+          vcf:
+            type: string
+            description: VEP annotated SVDB merged vcf file
+
+      output:
+        type: object
+        description: list of outputs
+        properties:
+          vcf:
+            type: string
+            description: VEP annotated SVDB merged vcf file with gnomad_AF corrected to type float in header
 
   vcf_to_aed:
     type: object
@@ -33,20 +74,37 @@ properties:
         type: object
         description: list of inputs
         properties:
-          input1:
+          vcf:
             type: string
-            description: description input1
-            #value: set to override value in table, else remove
+            description: VCF with CNVpytor calls
 
       output:
         type: object
         description: list of outputs
         properties:
-          output1:
+          aed:
             type: string
-            description: description output1
-            #value: set to override value in table, else remove
+            description: CNVpytor calls in Affymetrix Extensible Data format. 
+  
+  vcf_to_aed_filtered:
+    type: object
+    description: input and output parameters for vcf_to_aed_filtered
+    properties:
+      input:
+        type: object
+        description: list of inputs
+        properties:
+          vcf:
+            type: string
+            description: VCF with filtered CNVpytor calls.
 
+      output:
+        type: object
+        description: list of outputs
+        properties:
+          aed:
+            type: string
+            description: Filtered CNVpytor calls in Affymetrix Extensible Data format.
 
   svdb_add_ref:
     type: object
@@ -56,19 +114,20 @@ properties:
         type: object
         description: list of inputs
         properties:
-          input1:
+          vcf:
             type: string
-            description: description input1
-            #value: set to override value in table, else remove
+            description: SVDB merged vcf to which the reference genome version should be added to vcf header.
+          ref:
+            type: string
+            description: The fasta reference used
 
       output:
         type: object
         description: list of outputs
         properties:
-          output1:
+          vcf:
             type: string
-            description: description output1
-            #value: set to override value in table, else remove
+            description:  SVDB merged vcf where the reference genome version has been added to vcf header.
 
   tiddit_add_ref:
     type: object
@@ -78,62 +137,20 @@ properties:
         type: object
         description: list of inputs
         properties:
-          input1:
+          vcf:
             type: string
-            description: description input1
-            #value: set to override value in table, else remove
+            description: Tiddit vcf to which the reference genome version should be added to vcf header.
+          ref:
+            type: string
+            description: The fasta reference used.
 
       output:
         type: object
         description: list of outputs
         properties:
-          output1:
+          vcf:
             type: string
-            description: description output1
-            #value: set to override value in table, else remove
+            description: Tiddit vcf where the reference genome version has been added to vcf header.
 
-# Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
-  bcftools_split_vep:
-    type: object
-    description: input and output parameters for bcftools_split_vep
-    properties:
-      input:
-        type: object
-        description: list of inputs
-        properties:
-          input1:
-            type: string
-            description: description input1
-            #value: set to override value in table, else remove
 
-      output:
-        type: object
-        description: list of outputs
-        properties:
-          output1:
-            type: string
-            description: description output1
-            #value: set to override value in table, else remove
-
-# Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
-  fix_sv_header:
-    type: object
-    description: input and output parameters for fix_sv_header
-    properties:
-      input:
-        type: object
-        description: list of inputs
-        properties:
-          input1:
-            type: string
-            description: description input1
-            #value: set to override value in table, else remove
-
-      output:
-        type: object
-        description: list of outputs
-        properties:
-          output1:
-            type: string
-            description: description output1
-            #value: set to override value in table, else remove
+  

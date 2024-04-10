@@ -18,7 +18,7 @@ multiqc_DNA.html| html  | Aggregated QC values for entire sequence run, open in 
 {sample}/cnv_sv/{sample}.cnvpytor_filtered.vcf.gz | vcf.gz | Filtered CNVpytor VCF file |
 {sample}/cnv_sv/{sample}.cnvpytor.vcf.gz | vcf.gz | Unfiltered CNVpytor VCF file |
 {sample}/cnv_sv/{sample}.cnvpytor_filtered.aed| aed | Filtered CNVpytor calls in aed format (Affymetrix Extensible Data format, tab delimited) |
-{sample}/cnv_sv/{sample}.cnvpytor.aed | aed | Unfiltered CNVpytor calls in aed format (Affymetrix Extensible Data format, tab delimited) |
+{sample}/cnv_sv/{sample}.cnvpytor.aed | aed | CNVpytor calls in aed format (Affymetrix Extensible Data format, tab delimited) |
 {sample}/cnv_sv/{sample}.tiddit.vcf.gz| vcf.gz  | Compressed VCF of SV called by Tiddit |
 {sample}/cnv_sv/{sample}.manta_diploidSV.vcf.gz | vcf.gz  | Compressed VCF for SV calls called by Manta |
 {sample}/cnv_sv/{sample}.svdb_merged.vcf.gz | vcf.gz | Compressed VCF containg the merge of SV and CNV calls from Tiddit, Manta and CNVpytor  |

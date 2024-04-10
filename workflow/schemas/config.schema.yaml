@@ -26,35 +26,11 @@ properties:
         type: string
         description: path to known sites list file
     required:
-      - fasta
-      - sites
-  fastp_pe:
-    type: object
-    properties:
-      benchmark_repeats:
-        type: number
-        description: set number of times benchmark should be repeated for fastp_pe
-      container:
-        type: string
-        description: name or path to docker/singularity container
-      extra:
-        type: string
-        description: parameters that should be forwarded to fastp
-  merged:
-    type: object
-    properties:
-      benchmark_repeats:
-        type: string
-        description: set number of times benchmark should be repeated for merged
-      container:
-        type: string
-        description: name or path to docker/singularity container
-  required:
-    - samples
-    - units
-    - resources
-    - default_container
-    - reference
+      - samples
+      - units
+      - resources
+      - default_container
+      - reference
 
   deepvariant_add_ref:
     type: object
@@ -73,6 +49,20 @@ properties:
   vcf_to_aed:
     type: object
     description: parameters for vcf_to_aed
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
+  
+  vcf_to_aed_filtered:
+    type: object
+    description: parameters for vcf_to_aed_filtered
     properties:
       benchmark_repeats:
         type: integer
@@ -115,9 +105,9 @@ properties:
 
 
 # Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
-  split_vep_bcftools:
+  bcftools_split_vep:
     type: object
-    description: parameters for split_vep_bcftools
+    description: parameters for bcftools_split_vep
     properties:
       benchmark_repeats:
         type: integer
@@ -132,9 +122,9 @@ properties:
 
 
 # Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
-  fix_sv_header_bcftools:
+  fix_sv_header:
     type: object
-    description: parameters for fix_sv_header_bcftools
+    description: parameters for fix_sv_header
     properties:
       benchmark_repeats:
         type: integer
