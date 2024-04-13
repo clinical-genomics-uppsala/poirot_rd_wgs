@@ -158,15 +158,15 @@ use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
 
 use rule manta_config_n from cnv_sv as cnv_sv_manta_config_n with:
     input:
-        bam=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
-        bai=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
+        bam_n=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
+        bai_n=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
         ref=config["reference"]["fasta"],
 
 
 use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
     input:
-        bam=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
-        bai=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
+        bam_n=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
+        bai_n=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
         ref=config["reference"]["fasta"],
         scrpt="cnv_sv/manta_run_workflow_n/{sample}/runWorkflow.py",
     output:
