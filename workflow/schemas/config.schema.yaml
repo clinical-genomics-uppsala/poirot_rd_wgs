@@ -26,12 +26,9 @@ properties:
         type: string
         description: path to known sites list file
     required:
-      - samples
-      - units
-      - resources
-      - default_container
-      - reference
-
+      - fasta
+      - sites
+  
   deepvariant_add_ref:
     type: object
     description: parameters for deepvariant_add_ref
@@ -135,4 +132,10 @@ properties:
       extra:
         type: string
         description: parameters that should be forwarded
-
+  required:
+      - samples
+      - units
+      - resources
+      - default_container
+      - reference
+ 
