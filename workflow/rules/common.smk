@@ -16,9 +16,25 @@ from snakemake.utils import validate
 
 min_version("7.8.0")
 
+if not workflow.overwrite_configfiles:
+    sys.exit("At least one config file must be passed using --configfile/--configfiles, by command line or a profile!")
 
-### Set and validate config file
-configfile: "config/config.yaml"
+try:
+    validate(config, schema="../schemas/config.schema.yaml")
+except WorkflowError as we:
+    # Probably a validation error, but the original exsception in lost in
+    # snakemake. Pull out the most relevant information instead of a potentially
+    # *very* long error message.
+    if not we.args[0].lower().startswith("error validating config file"):
+        raise
+    error_msg = "\n".join(we.args[0].splitlines()[:2])
+    parent_rule_ = we.args[0].splitlines()[3].split()[-1]
+    if parent_rule_ == "schema:":
+        sys.exit(error_msg)
+    else:
+        schema_hiearachy = parent_rule_.split()[-1]
+        schema_section = ".".join(re.findall(r"\['([^']+)'\]", schema_hiearachy)[1::2])
+        sys.exit(f"{error_msg} in {schema_section}")
 
 
 validate(config, schema="../schemas/config.schema.yaml")
