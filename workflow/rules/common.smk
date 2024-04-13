@@ -36,12 +36,8 @@ except WorkflowError as we:
         schema_section = ".".join(re.findall(r"\['([^']+)'\]", schema_hiearachy)[1::2])
         sys.exit(f"{error_msg} in {schema_section}")
 
-
-validate(config, schema="../schemas/config.schema.yaml")
-
 config = load_resources(config, config["resources"])
 validate(config, schema="../schemas/resources.schema.yaml")
-
 
 ### Read and validate samples file
 samples = pandas.read_table(config["samples"], dtype=str).set_index("sample", drop=False)
