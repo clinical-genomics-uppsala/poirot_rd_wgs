@@ -8,10 +8,11 @@ nav:
   - Setting up and Running the pipeline:
     - Setup: setup.md
     - Running: running.md
+  - Pipeline specific rules:
+    - Rule list: softwares.md
   - Output- Project Info:
     - Changelog: changelog.md
     - Credits: credits.md
-    - Frequently Asked Questions: faq.md
     - License: license.md
   
 
