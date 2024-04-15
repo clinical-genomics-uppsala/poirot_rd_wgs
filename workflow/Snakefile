@@ -31,7 +31,6 @@ ruleorder: filtering_filter_vcf > snv_indels_bcftools_view
 ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: cnv_sv_svdb_merge > snv_indels_bcftools_concat
 ruleorder: snv_indels_glnexus_trio > snv_indels_glnexus
-ruleorder: snv_indels_tabix > _copy_snv_indels_tbi 
 
 module alignment:
     snakefile:
