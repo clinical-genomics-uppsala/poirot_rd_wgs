@@ -1,4 +1,0 @@
-{ 
-  "results/{sample}/{sample}_{type}_{flowcell}_{lane}_{barcode}.bam":  {"name": "_copy_bwa_mem", "file": "alignment/bwa_mem/{sample}_{type}_{flowcell}_{lane}_{barcode}.bam", "types": ["N"]},
-  "results/{sample}/{sample}_{type}.bam":  {"name": "_copy_dedup_bam", "file": "alignment/samtools_merge_bam/{sample}_{type}.bam", "types": ["N"]}
-}
