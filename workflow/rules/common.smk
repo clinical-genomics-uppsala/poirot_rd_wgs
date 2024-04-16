@@ -238,16 +238,15 @@ def get_vcfs_for_svdb_merge(wildcards, input):
 def compile_output_list(wildcards):
     output_files = []
     types = set([unit.type for unit in units.itertuples()])
-    for output, values in output_json.items():
-        if values["name"] == "_copy_upd_regions_bed":
-            output_files += set(
-                [
-                    output.format(sample=sample, type=unit_type)
-                    for sample in samples[samples.trio_member == "proband"].index
-                    for unit_type in get_unit_types(units, sample)
-                    if unit_type in set(output_json[output]["types"]).intersection(types)
-                ]
-            )
+    for output in output_json:
+        if output == "results/{sample}/{sample}.upd_regions.bed":
+            for sample in samples[samples.trio_member == "proband"].index:
+                proband_trio_id = samples[samples.index == sample].trioid.iloc[0]
+                trio_num = samples[samples.trioid == proband_trio_id].shape[0]
+                if trio_num != 3:
+                    continue
+                else:
+                    output_files.append(output.format(sample=sample))
         else:
             output_files += set(
                 [
