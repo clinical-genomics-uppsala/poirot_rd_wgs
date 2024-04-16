@@ -186,11 +186,9 @@ use rule smn_manifest from cnv_sv as cnv_sv_smn_manifest with:
 
 use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
     input:
-        vcfs=[
-            "cnv_sv/tiddit/{sample}_{type}.vcf",
-            "cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz",
-            "cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf",
-        ],
+        tiddit="cnv_sv/tiddit/{sample}_{type}.vcf",
+        manta="cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz",
+        cnvpytor="cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf",
     output:
         vcf=temp("cnv_sv/svdb_merge/{sample}_{type}.merged.vcf"),
     params:
