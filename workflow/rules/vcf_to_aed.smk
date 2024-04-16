@@ -30,12 +30,6 @@ rule vcf_to_aed:
         "../scripts/cnvpytor_vcf_to_aed.py"
 
 
-# use rule vcf_to_aed as vcf_to_aed_filtered with:
-#     input:
-#         vcf="cnv_sv/cnvpytor/{sample}_{type}.filtered.vcf",
-#     output:
-#         aed="cnv_sv/cnvpytor/{sample}_{type}_filtered.aed",
-
 rule vcf_to_aed_filtered:
     input:
         vcf="cnv_sv/cnvpytor/{sample}_{type}.filtered.vcf",

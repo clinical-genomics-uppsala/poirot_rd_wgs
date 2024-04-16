@@ -57,9 +57,8 @@ with open(config["output"]) as output:
     output_json = json.load(output)
 
 ## contigs in hg38
-contigs = extract_chr("%s.fai" % (config.get("reference", {}).get("fasta", "")),
-                filter_out=[])
-skip_contigs = [c for c in contigs if  '_' in c or c == 'chrEBV']
+contigs = extract_chr("%s.fai" % (config.get("reference", {}).get("fasta", "")), filter_out=[])
+skip_contigs = [c for c in contigs if "_" in c or c == "chrEBV"]
 
 
 ### Set wildcard constraints
@@ -103,7 +102,7 @@ def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True):
 
 
 def get_chrom_deepvariant_vcfs(wildcards, vcf_type):
-    skip_contig_patterns = config.get("reference",{}).get("merge_contigs", "")
+    skip_contig_patterns = config.get("reference", {}).get("merge_contigs", "")
     skip_contigs = []
     ref_fasta = config.get("reference", {}).get("fasta", "")
     all_contigs = extract_chr(f"{ref_fasta}.fai", filter_out=[])
@@ -118,7 +117,7 @@ def get_chrom_deepvariant_vcfs(wildcards, vcf_type):
     vcf_suffix = "vcf.gz"
     if vcf_type == "gvcf":
         vcf_suffix = "g.vcf.gz"
-        
+
     vcf_list = [f"snv_indels/deepvariant/{wildcards.sample}_{wildcards.type}_{chr}.{vcf_suffix}" for chr in chroms]
     tbi_list = [f"{v}.tbi" for v in vcf_list]
 
@@ -147,17 +146,19 @@ def get_gvcf_list(wildcards):
     elif caller == "deepvariant_gpu":
         gvcf_path = "parabricks/pbrun_deepvariant"
         gvcf_list = [
-        "{}/{}_{}.g.vcf".format(gvcf_path, sample, t) for sample in get_samples(samples) for t in get_unit_types(units, sample)
-    ]
+            "{}/{}_{}.g.vcf".format(gvcf_path, sample, t)
+            for sample in get_samples(samples)
+            for t in get_unit_types(units, sample)
+        ]
     elif caller == "deepvariant_cpu":
         gvcf_path = "snv_indels/deepvariant"
         gvcf_list = [
-        "{}/{}_{}.merged.g.vcf".format(gvcf_path, sample, t) for sample in get_samples(samples) for t in get_unit_types(units, sample)
-    ]
+            "{}/{}_{}.merged.g.vcf".format(gvcf_path, sample, t)
+            for sample in get_samples(samples)
+            for t in get_unit_types(units, sample)
+        ]
     else:
         sys.exit("Invalid options for snp_caller, valid options are: deepvariant_gpu or deepvariant_cpu")
-
-    
 
     return gvcf_list
 
@@ -226,12 +227,11 @@ def get_glnexus_input(wildcards, input):
 
 
 def get_vcfs_for_svdb_merge(wildcards, input):
-    
     vcfs_with_suffix = []
     for v in input.vcfs:
-        caller = os.path.dirname(v).split('/')[1].split('_')[0]
+        caller = os.path.dirname(v).split("/")[1].split("_")[0]
         vcfs_with_suffix.append(f"{v}:{caller}")
-    
+
     return vcfs_with_suffix
 
 

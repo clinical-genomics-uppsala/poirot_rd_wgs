@@ -4,7 +4,6 @@ __email__ = "padraic.corcoran@scilifelab.uu.se"
 __license__ = "GPL-3"
 
 
-
 rule bcftools_split_vep:
     input:
         vcf="annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.fixed_header.vcf",
@@ -18,7 +17,7 @@ rule bcftools_split_vep:
     benchmark:
         repeat(
             "poirot_rd_wgs/bcftools_split_vep/{sample}_{type}.output.benchmark.tsv",
-            config.get("bcftools_split_vep", {}).get("benchmark_repeats", 1)
+            config.get("bcftools_split_vep", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("bcftools_split_vep", {}).get("threads", config["default_resources"]["threads"])
     resources:
