@@ -507,7 +507,7 @@ module snv_indels:
 use rule * from snv_indels as snv_indels_*
 
 
-use rule bcftools_concat from snv_indels as bcftools_concat_deepvariant with:
+use rule bcftools_concat from snv_indels as snv_indels_bcftools_concat_deepvariant with:
     input:
         calls=expand(
             "{{file}}_{chr}.{{vcf}}.gz", chr=extract_chr("%s.fai" % (config["reference"]["fasta"]), filter_out=skip_contigs)

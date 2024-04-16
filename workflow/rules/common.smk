@@ -113,7 +113,6 @@ def get_chrom_deepvariant_vcfs(wildcards, vcf_type):
                 skip_contigs.append(contig_match.group())
 
     chroms = extract_chr(f"{ref_fasta}.fai", filter_out=skip_contigs)
-    print(chroms)
     vcf_suffix = "vcf.gz"
     if vcf_type == "gvcf":
         vcf_suffix = "g.vcf.gz"
@@ -121,7 +120,6 @@ def get_chrom_deepvariant_vcfs(wildcards, vcf_type):
     vcf_list = [f"snv_indels/deepvariant/{wildcards.sample}_{wildcards.type}_{chr}.{vcf_suffix}" for chr in chroms]
     tbi_list = [f"{v}.tbi" for v in vcf_list]
 
-    print(vcf_list)
     return (vcf_list, tbi_list)
 
 
