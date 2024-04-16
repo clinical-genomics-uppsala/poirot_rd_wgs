@@ -10,7 +10,7 @@ output: "config/output_list.json"
 default_container: "docker://hydragenetics/common:1.11.1"
 
 modules:
-  alignment: "1c54479"
+  alignment: "1e40e3c"
   annotation: "v0.3.0"
   compression: "v2.0.0"
   cnv_sv: "v0.5.0"
@@ -18,8 +18,9 @@ modules:
   parabricks: "v1.2.0"
   prealignment: "v1.2.0"
   qc: "da66130"
+  misc: "v0.2.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "3935ecf"
+  snv_indels: "8650ea2"
 
 reference:
   coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_with_MT_20240102.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
