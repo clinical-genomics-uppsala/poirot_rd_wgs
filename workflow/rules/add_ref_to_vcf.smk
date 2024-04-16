@@ -88,4 +88,3 @@ rule svdb_add_ref:
         "{rule}: Add reference to the header of the svdb vcf: {input.vcf}"
     script:
         "../scripts/ref_vcf.py"
-
