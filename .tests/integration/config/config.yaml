@@ -12,14 +12,14 @@ default_container: "docker://hydragenetics/common:0.1.9"
 modules:
   alignment: "1c54479"
   annotation: "v0.3.0"
-  compression: "90d160d"
-  cnv_sv: "v0.4.1"
-  filtering: "v0.2.0"
-  parabricks: "v1.1.0"
-  prealignment: "v1.1.0"
+  compression: "v2.0.0"
+  cnv_sv: "v0.5.0"
+  filtering: "v0.3.0"
+  parabricks: "v1.2.0"
+  prealignment: "v1.2.0"
   qc: "da66130"
   mitochondrial: "v0.1.0"
-  snv_indels: "a6d2dc1"
+  snv_indels: "3935ecf"
 
 reference:
   coverage_bed: "reference/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
