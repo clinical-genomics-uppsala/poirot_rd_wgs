@@ -5,4 +5,3 @@ snakemake==7.22.0
 singularity==3.0.0
 networkx
 drmaa
-cyvcf2==0.30.16
