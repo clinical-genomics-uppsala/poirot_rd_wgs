@@ -34,7 +34,7 @@ $ snakemake -n -s ../../workflow/Snakefile --configfiles ../../config/config.yam
 To use this run this pipeline the requirements in `requirements.txt` must be installed. It is most straightforward to install the requirements inside a python virtual environment created with the python [venv module](https://docs.python.org/3/library/venv.html). The `sample.tsv`, `units.tsv`, `resources.yaml`, and `config.yaml` files need to be available in the current directory (or otherwise specified in `config.yaml`). You always need to specify the `config`-file either in the profile yaml file or in the snakemake command. To run the pipeline:
 
 ```bash
-$ snakemake --profile /path/to/snakemakeprofile --configfile config.yaml --config sequenceid="990909_test" -s /path/to/marple_rd_wgs/workflow/Snakefile
+$ snakemake --profile /path/to/snakemakeprofile --configfile config.yaml -s /path/to/marple_rd_wgs/workflow/Snakefile
 ```
 ## :judge: Rule Graph
 ![rule_graph](images/dag.svg)
