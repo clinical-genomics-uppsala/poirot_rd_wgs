@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.4.0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.3.1...v0.4.0) (2024-04-18)
+
+
+### Features
+
+* add peddy html report to output_list.json ([949e5a2](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/949e5a2b27a1e79f017149c2e77915592498954b))
+* improve handling of config validation ([603b258](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/603b258aa3ad486c982c3196aa2992500243108e))
+* remove temp on peddy sex check file ([7b16868](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/7b168685a759adad9058e296254864fc27ac4a71))
+* update hydra-modules ([44857c8](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/44857c82031dff122cad72258574471751bcd385))
+* update the alignment module version ([9e58777](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/9e587770af185c91af67a99f91beab36a2ddd9f2))
+* use misc module for bgzip and tabix ([07f21c2](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/07f21c21eb60041638dcf73027248c8d20e181e5))
+* use run_deepvariant script in updated snv_indels module ([6d4dfc2](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/6d4dfc2a30ae997c99b9dd695a0102ed9cf7c3e9))
+
+
+### Bug Fixes
+
+* update manta input names ([843e4f0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/843e4f0c22bc53415ad53bec27296c3baf4306b4))
+
+
+### Documentation
+
+* start using rtd ([9a6bc31](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/9a6bc31fd08981c8820e904f2d6d835d857824de))
+* update dag graph ([42d6c12](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/42d6c12858c3d0d8bba8feba0393b3e628918739))
+* update dag image ([2aa37f1](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/2aa37f1f9be78024a0268e69574810d8a14040b9))
+* update docs ([ddf7a5e](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/ddf7a5e451bec470985931c984c84216c050ca34))
+* update mkdocs nav ([4df2996](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/4df29962e5092f6f94411d013024575f9b535a29))
+* update README ([f9544c3](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/f9544c32b8d19a85be78b792055fcdd876d86341))
+* update REAME ([3737764](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/3737764818ce9a2851e691d4f914f8266f6d87e7))
+* update rulegraph ([2e6f88b](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/2e6f88bf9da9e587691cbdde5c1226b770c41653))
+
 ### [0.3.1](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.3.0...v0.3.1) (2024-02-28)
 
 
