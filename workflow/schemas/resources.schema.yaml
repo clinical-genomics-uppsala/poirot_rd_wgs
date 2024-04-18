@@ -27,6 +27,26 @@ properties:
       - threads
       - time
 
+  bcftools_split_vep:
+    type: object
+    description: resource definitions for bcftools_split_vep
+    properties:
+      mem_mb:
+        type: integer
+        description: max memory in MB to be available
+      mem_per_cpu:
+        type: integer
+        description: memory in MB used per cpu
+      partition:
+        type: string
+        description: partition to use on cluster
+      threads:
+        type: integer
+        description: number of threads to be available
+      time:
+        type: string
+        description: max execution time
+
   deepvariant_add_ref:
     type: object
     description: resource definitions for deepvariant_add_ref
@@ -65,6 +85,26 @@ properties:
       time:
         type: string
         description: default max execution time for 'fastp_pe' rule
+  
+  fix_sv_header:
+    type: object
+    description: resource definitions for fix_sv_header
+    properties:
+      mem_mb:
+        type: integer
+        description: max memory in MB to be available
+      mem_per_cpu:
+        type: integer
+        description: memory in MB used per cpu
+      partition:
+        type: string
+        description: partition to use on cluster
+      threads:
+        type: integer
+        description: number of threads to be available
+      time:
+        type: string
+        description: max execution time
 
   fq2bam:
     type: object
@@ -188,6 +228,27 @@ properties:
       time:
         type: string
         description: max execution time
+  
+  vcf_to_aed_filtered:
+    type: object
+    description: resource definitions for vcf_to_aed_filtered
+    properties:
+      mem_mb:
+        type: integer
+        description: max memory in MB to be available
+      mem_per_cpu:
+        type: integer
+        description: memory in MB used per cpu
+      partition:
+        type: string
+        description: partition to use on cluster
+      threads:
+        type: integer
+        description: number of threads to be available
+      time:
+        type: string
+        description: max execution time
+
 
 required:
   - default_resources
