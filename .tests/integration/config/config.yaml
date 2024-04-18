@@ -10,17 +10,17 @@ output: "config/output_list.json"
 default_container: "docker://hydragenetics/common:0.1.9"
 
 modules:
-  alignment: "1e40e3c"
+  alignment: "v0.6.0"
   annotation: "v0.3.0"
   compression: "v2.0.0"
   cnv_sv: "v0.5.0"
   filtering: "v0.3.0"
   parabricks: "v1.2.0"
   prealignment: "v1.2.0"
-  qc: "da66130"
+  qc: "v0.5.0"
   misc: "v0.2.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "8650ea2"
+  snv_indels: "v1.0.0"
 
 reference:
   coverage_bed: "reference/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
