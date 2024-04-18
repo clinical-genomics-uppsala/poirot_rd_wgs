@@ -10,21 +10,34 @@ from hydra_genetics.utils.misc import get_module_snakefile
 from hydra_genetics.utils.resources import load_resources
 from hydra_genetics.utils.samples import *
 from hydra_genetics.utils.units import *
+from hydra_genetics.utils.misc import extract_chr
 from snakemake.utils import min_version
 from snakemake.utils import validate
 
-min_version("6.10")
+min_version("7.8.0")
 
+if not workflow.overwrite_configfiles:
+    sys.exit("At least one config file must be passed using --configfile/--configfiles, by command line or a profile!")
 
-### Set and validate config file
-configfile: "config/config.yaml"
-
-
-validate(config, schema="../schemas/config.schema.yaml")
+try:
+    validate(config, schema="../schemas/config.schema.yaml")
+except WorkflowError as we:
+    # Probably a validation error, but the original exsception in lost in
+    # snakemake. Pull out the most relevant information instead of a potentially
+    # *very* long error message.
+    if not we.args[0].lower().startswith("error validating config file"):
+        raise
+    error_msg = "\n".join(we.args[0].splitlines()[:2])
+    parent_rule_ = we.args[0].splitlines()[3].split()[-1]
+    if parent_rule_ == "schema:":
+        sys.exit(error_msg)
+    else:
+        schema_hiearachy = parent_rule_.split()[-1]
+        schema_section = ".".join(re.findall(r"\['([^']+)'\]", schema_hiearachy)[1::2])
+        sys.exit(f"{error_msg} in {schema_section}")
 
 config = load_resources(config, config["resources"])
 validate(config, schema="../schemas/resources.schema.yaml")
-
 
 ### Read and validate samples file
 samples = pandas.read_table(config["samples"], dtype=str).set_index("sample", drop=False)
@@ -43,6 +56,10 @@ validate(units, schema="../schemas/units.schema.yaml")
 with open(config["output"]) as output:
     output_json = json.load(output)
 
+## contigs in hg38
+contigs = extract_chr("%s.fai" % (config.get("reference", {}).get("fasta", "")), filter_out=[])
+skip_contigs = [c for c in contigs if "_" in c or c == "chrEBV"]
+
 
 ### Set wildcard constraints
 wildcard_constraints:
@@ -53,12 +70,13 @@ wildcard_constraints:
     read="fastq[1|2]",
     sample="|".join(get_samples(samples)),
     type="N|T|R",
+    vcf="vcf|g.vcf|unfiltered.vcf",
 
 
 ### Functions
 
 
-def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True, by_chr=False):
+def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True):
     if use_sample_wildcard and use_type_wildcard is True:
         sample_str = "{}_{}".format(wildcards.sample, wildcards.type)
     elif use_sample_wildcard and use_type_wildcard is not True:
@@ -72,10 +90,9 @@ def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True, b
     elif aligner == "bwa_gpu":
         bam_input = "parabricks/pbrun_fq2bam/{}.bam".format(sample_str)
     elif aligner == "bwa_cpu":
-        if by_chr:  # if a bam for single chromosome is needed
-            bam_input = "alignment/picard_mark_duplicates/{}_{}.bam".format(sample_str, wildcards.chr)
-        else:
-            bam_input = "alignment/samtools_merge_bam/{}.bam".format(sample_str)
+        # if by_chr:  # if a bam for single chromosome is needed
+        #     bam_input = "alignment/picard_mark_duplicates/{}_{}.bam".format(sample_str, wildcards.chr)
+        bam_input = "alignment/samtools_merge_bam/{}.bam".format(sample_str)
     else:
         sys.exit("valid options for aligner are: bwa_gpu or bwa_cpu")
 
@@ -84,14 +101,36 @@ def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True, b
     return (bam_input, bai_input)
 
 
+def get_chrom_deepvariant_vcfs(wildcards, vcf_type):
+    skip_contig_patterns = config.get("reference", {}).get("merge_contigs", "")
+    skip_contigs = []
+    ref_fasta = config.get("reference", {}).get("fasta", "")
+    all_contigs = extract_chr(f"{ref_fasta}.fai", filter_out=[])
+    for pattern in contig_patterns:
+        for contig in all_contigs:
+            contig_match = re.match(pattern, contig)
+            if contig_match is not None:
+                skip_contigs.append(contig_match.group())
+
+    chroms = extract_chr(f"{ref_fasta}.fai", filter_out=skip_contigs)
+    vcf_suffix = "vcf.gz"
+    if vcf_type == "gvcf":
+        vcf_suffix = "g.vcf.gz"
+
+    vcf_list = [f"snv_indels/deepvariant/{wildcards.sample}_{wildcards.type}_{chr}.{vcf_suffix}" for chr in chroms]
+    tbi_list = [f"{v}.tbi" for v in vcf_list]
+
+    return (vcf_list, tbi_list)
+
+
 def get_vcf_input(wildcards):
     caller = config.get("snp_caller", None)
     if caller is None:
         sys.exit("snp_caller missing from config, valid options: deepvariant_gpu or deepvariant_cpu")
     elif caller == "deepvariant_gpu":
-        vcf_input = "parabricks/pbrun_deepvariant/{}_{}.vcf".format(wildcards.sample, wildcards.type)
+        vcf_input = f"parabricks/pbrun_deepvariant/{wildcards.sample}_{wildcards.type}.vcf"
     elif caller == "deepvariant_cpu":
-        vcf_input = "snv_indels/deepvariant/{}_{}.vcf".format(wildcards.sample, wildcards.type)
+        vcf_input = f"snv_indels/deepvariant/{wildcards.sample}_{wildcards.type}.merged.vcf"
     else:
         sys.exit("Invalid options for snp_caller, valid options are: deepvariant_gpu or deepvariant_cpu")
 
@@ -104,14 +143,20 @@ def get_gvcf_list(wildcards):
         sys.exit("snp_caller missing from config, valid options: deepvariant_gpu or deepvariant_cpu")
     elif caller == "deepvariant_gpu":
         gvcf_path = "parabricks/pbrun_deepvariant"
+        gvcf_list = [
+            "{}/{}_{}.g.vcf".format(gvcf_path, sample, t)
+            for sample in get_samples(samples)
+            for t in get_unit_types(units, sample)
+        ]
     elif caller == "deepvariant_cpu":
         gvcf_path = "snv_indels/deepvariant"
+        gvcf_list = [
+            "{}/{}_{}.merged.g.vcf".format(gvcf_path, sample, t)
+            for sample in get_samples(samples)
+            for t in get_unit_types(units, sample)
+        ]
     else:
         sys.exit("Invalid options for snp_caller, valid options are: deepvariant_gpu or deepvariant_cpu")
-
-    gvcf_list = [
-        "{}/{}_{}.g.vcf".format(gvcf_path, sample, t) for sample in get_samples(samples) for t in get_unit_types(units, sample)
-    ]
 
     return gvcf_list
 
@@ -131,9 +176,9 @@ def get_gvcf_trio(wildcards):
         mother_gvcf = "parabricks/pbrun_deepvariant/{}_{}.g.vcf".format(mother_sample, wildcards.type)
         father_gvcf = "parabricks/pbrun_deepvariant/{}_{}.g.vcf".format(father_sample, wildcards.type)
     elif caller == "deepvariant_cpu":
-        child_gvcf = "snv_indels/deepvariant/{}_{}.g.vcf".format(wildcards.sample, wildcards.type)
-        mother_gvcf = "snv_indels/deepvariant/{}_{}.g.vcf".format(mother_sample, wildcards.type)
-        father_gvcf = "snv_indels/deepvariant/{}_{}.g.vcf".format(father_sample, wildcards.type)
+        child_gvcf = "snv_indels/deepvariant/{}_{}.merged.g.vcf".format(wildcards.sample, wildcards.type)
+        mother_gvcf = "snv_indels/deepvariant/{}_{}.merged.g.vcf".format(mother_sample, wildcards.type)
+        father_gvcf = "snv_indels/deepvariant/{}_{}.merged.g.vcf".format(father_sample, wildcards.type)
     else:
         sys.exit("Invalid options for snp_caller, valid options are: deepvariant_gpu or deepvariant_cpu")
 
@@ -177,6 +222,15 @@ def get_glnexus_input(wildcards, input):
     gvcf_input = "-i {}".format(" -i ".join(input.gvcfs))
 
     return gvcf_input
+
+
+def get_vcfs_for_svdb_merge(wildcards, input):
+    vcfs_with_suffix = []
+    vcfs_with_suffix.append(f"{input.tiddit}:tiddit")
+    vcfs_with_suffix.append(f"{input.manta}:manta")
+    vcfs_with_suffix.append(f"{input.cnvpytor}:cnvpytor")
+
+    return vcfs_with_suffix
 
 
 def compile_output_list(wildcards):

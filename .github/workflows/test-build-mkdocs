@@ -1,33 +1,33 @@
-name: pycodestyle
+name: build mkdocs
 
 on:
   push:
     branches:
      - develop
-     - main
+     - master
   pull_request:
     branches:
      - develop
-     - main
+     - master
   workflow_dispatch:
 
 jobs:
-  pycodestyle:
-    name: pycodestyle
-    runs-on: ubuntu-latest
+  build-mkdocs:
+    name: build mkdocs
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python 3.9
+      - name: Set up Python 3.8
         uses: actions/setup-python@v3
         with:
-          python-version: 3.9
+          python-version: 3.8
       - name: Install requirements.txt
         run: |
           pip install -r requirements.txt
       - name: Install requirements.test.txt
         run: |
           pip install -r requirements.test.txt
-      - name: Check python syntax lib
-        run: pycodestyle --max-line-length=130 --statistics workflow/scripts
-      # - name: Check python syntax unit tests
-      #   run: pycodestyle --max-line-length=130 --statistics .tests/units
+          pip install -r docs/requirements.txt
+      - name: build mkdocs
+        run: |
+          mkdocs build

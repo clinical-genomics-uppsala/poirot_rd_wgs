@@ -2,35 +2,40 @@
 
 
 resources: "config/resources.yaml"
-samples: "config/samples.tsv"
-units: "config/units.tsv"
+samples: "samples_with_info.tsv"
+units: "units.tsv"
 
 output: "config/output_list.json"
 
-default_container: "docker://hydragenetics/common:0.3.0"
+default_container: "docker://hydragenetics/common:1.11.1"
 
 modules:
-  alignment: "v0.4.0"
+  alignment: "v0.6.0"
   annotation: "v0.3.0"
   compression: "v2.0.0"
-  cnv_sv: "v0.4.1"
-  filtering: "v0.2.0"
-  parabricks: "v1.1.0"
-  prealignment: "v1.1.0"
-  qc: "da66130"
+  cnv_sv: "v0.5.0"
+  filtering: "v0.3.0"
+  parabricks: "v1.2.0"
+  prealignment: "v1.2.0"
+  qc: "v0.5.0"
+  misc: "v0.2.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "v0.5.0"
+  snv_indels: "v1.0.0"
 
 reference:
   coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_with_MT_20240102.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
-  design_bed: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.bed"
-  exome_bed: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
-  exome_intervals: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/TWIST/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"
-  fasta: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta"
-  fai: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.fai"
+  design_bed: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/homo_sapiens.hg38.wgs.bed"
+  exome_bed: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
+  exome_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/Twist_Comprehensive_Exome_Covered_Targets_hg38.interval_list"
+  fasta: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta"
+  fai: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.fai"
   genepanels: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/genepanels_WGS.list"
-  sites: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.known_indels.vcf.gz"
-  wgs_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/reference_grasnatter/homo_sapiens.wgs.interval_list"
+  sites: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/Homo_sapiens_assembly38.known_indels.vcf.gz"
+  wgs_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/homo_sapiens.hg38.wgs.interval_list"
+  merge_contigs: # contigs to be merged to a single BAM for mark duplicates
+    - ".*_random"
+    - "chrUn_.*"
+    - "chrEBV"
 
 trimmer_software: "fastp_pe"
 
@@ -43,21 +48,29 @@ automap:
   extra: "--DP 10 --minsize 3 --chrX"
   outdir: "cnv_sv/automap"
 
+bcftools_split_vep:
+  columns: "gnomad_AF:Float"
+
 bcftools_view_biallelic:
-  container: "docker://hydragenetics/common:0.3.0"
   extra: "-m2 -M2 -v snps"
 
+bcftools_filter_cnvpytor:
+  exclude: "'pytorP1>0.0001 | pytorDG<100000 | pytorPN>0.5 | pytorQ0>0.5'"
+  extra: "-s LowQual "
+
 bcftools_view_pass:
-  container: "docker://hydragenetics/common:0.3.0"
   extra: "--apply-filter PASS "
+
+bcftools_view_svdb:
+  extra: "-f 'PASS' -e 'tiddit_AF>0.05 | manta_AF>0.05 | cnvpytor_AF>0.05 | gnomad_AF>0.1'"
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
-  amb: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.amb"
-  ann: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.ann"
-  bwt: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.bwt"
-  pac: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.pac"
-  sa: "/beegfs-storage/data/ref_genomes/GRCh38/GCA_000001405.15/GCA_000001405.15_GRCh38_no_alt_analysis_set_masked_chr.fasta.sa"
+  amb: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.amb"
+  ann: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.ann"
+  bwt: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.bwt"
+  pac: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.pac"
+  sa: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.sa"
 
 bwa_mem_mito:
   container: "docker://hydragenetics/bwa_mem:0.7.17"
@@ -80,32 +93,26 @@ bwa_mem_mito:
 
 cnvpytor_readdepth:
   container: "docker://hydragenetics/cnvpytor:1.3.1"
-  length_list: "1000 10000 100000"
+  length_list: "500"
+  extra: "-chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM "
 
 cnvpytor_filter:
   container: "docker://hydragenetics/cnvpytor:1.3.1"
   dG_range: "100000 inf"
-  p_range: "0 0.01"
+  calling_model: "rd_mean_shift"
+  p_range: "0 0.0001"
   pN_range: "0 0.5"
-  Q0_range: "0 0.05"
-  view: "1000"
+  Q0_range: "-1 0.5"
+  view: "500"
 
 create_cov_excel:
-  container: "docker://hydragenetics/common:0.3.0"
+  container: "docker://hydragenetics/common:1.11.1"
   covLimits: "10 20 30"
 
-deepvariant_call_variants:
-  container: "docker://hydragenetics/deepvariant:1.4.0" #"docker://hydragenetics/deepvariant:1.4.0"
-  model: "/opt/models/wgs/model.ckpt" # path to model in the deepvariant container
-
-deepvariant_make_examples:
-  container: "docker://hydragenetics/deepvariant:1.4.0"
-  extra: "--channels insert_size"
-  n_shards: 80
-
-deepvariant_postprocess_variants:
-  container: "docker://hydragenetics/deepvariant:1.4.0"
-  vcf_type: "gvcf"
+deepvariant:
+  container: "docker://google/deepvariant:1.6.1" 
+  model_type: "WGS" 
+  output_gvcf: true
 
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
@@ -195,7 +202,7 @@ haplocheck:
 
 manta_config_n:
   container: "docker://hydragenetics/manta:1.6.0"
-  extra: ""
+  extra: "--callRegions /beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GRCh38_chromosomes.bed.gz"
 
 manta_run_workflow_n:
   container: "docker://hydragenetics/manta:1.6.0"
@@ -203,7 +210,7 @@ manta_run_workflow_n:
 mosdepth:
   container: "docker://hydragenetics/mosdepth:0.3.2"
   by: "500"
-  extra: "--fast-mode --no-per-base "
+  extra: "--fast-mode --use-median --no-per-base "
 
 mosdepth_bed:
   container: "docker://hydragenetics/mosdepth:0.3.2"
@@ -244,12 +251,14 @@ mt_reference:
   blacklist: /beegfs-storage/data/ref_data/gatk_mito/blacklist_sites.hg38.chrM.bed
 
 pbrun_deepvariant:
-  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-  extra: "--pb-model-file /beegfs-storage/data/parabricks/4.0.0-1/A30/wgs/deepvariant.eng --disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
+  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
+  extra: "--num-cpu-threads-per-stream 5 --num-streams-per-gpu 2 --disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
+  tmp_dir: "/tmp/"
 
 pbrun_fq2bam:
-  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-  extra: ""
+  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
+  extra: "--gpusort --gpuwrite --num-cpu-threads-per-stage 10 "
+  tmp_dir: "/tmp/"
 
 peddy:
   container: "docker://hydragenetics/peddy:0.4.8"
@@ -281,13 +290,13 @@ reviewer:
   container: "docker://hydragenetics/reviewer:0.2.7"
 
 samtools_stats:
-  container: "docker://hydragenetics/common:0.3.0"
+  container: "docker://hydragenetics/common:1.11.1"
 
 samtools_idxstats:
-  container: "docker://hydragenetics/common:0.3.0"
+  container: "docker://hydragenetics/common:1.11.1"
 
 samtools:
-  container: "docker://hydragenetics/common:0.3.0"
+  container: "docker://hydragenetics/common:1.11.1"
 
 smn_caller:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
@@ -297,24 +306,26 @@ smn_charts:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
 
 spring:
-  container: "docker://hydragenetics/spring:1.0.1"
+  container: "docker://hydragenetics/spring:1.1.1"
 
 stranger:
   container: "docker://hydragenetics/stranger:0.8.1"
   catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_hg38.json"
 
 svdb_merge:
-  container: "docker://hydragenetics/svdb:2.6.0"
+  container: "docker://hydragenetics/svdb:2.8.2"
   overlap: 0.6
+  priority: "tiddit,manta,cnvpytor"
+  extra: "--pass_only "
 
 svdb_query:
-  container: "docker://hydragenetics/svdb:2.6.0"
+  container: "docker://hydragenetics/svdb:2.8.2"
   db_string:
-    "--db /data/ref_genomes/GRCh38/SweGenSVDBGRCh38/swegen_cnvnator_tiddit_manta.vcf,/data/ref_genomes/GRCh38/gnomAD/gnomad_v2.1_sv.sites.vcf.gz \
-    --in_frq FRQ,AF --in_occ OCC,AC --out_frq SweGen_AF,gnomAD_AF --out_occ SweGen_OCC,gnomAD_OCC "
+    "--db /beegfs-storage/data/ref_data/wp3/svdb/svdb_create/tiddit_wgs_hg38_1.0.vcf.gz,/beegfs-storage/data/ref_data/wp3/svdb/svdb_create/manta_wgs_hg38_1.0.vcf.gz,/beegfs-storage/data/ref_data/wp3/svdb/svdb_create/cnvpytor_wgs_hg38_1.0.vcf.gz"
+  extra: "--in_frq FRQ,FRQ,FRQ --in_occ OCC,OCC,OCC --out_frq tiddit_AF,manta_AF,cnvpytor_AF --out_occ tiddit_OCC,manta_OCC,cnpytor_OCC "
 
 tabix:
-  container: "docker://hydragenetics/common:0.3.0"
+  container: "docker://hydragenetics/common:1.11.1"
 
 tiddit:
   container: "docker://hydragenetics/tiddit:3.3.2"
@@ -324,14 +335,19 @@ upd:
   extra: "--vep "
 
 vep:
-  container: "docker://ensemblorg/ensembl-vep:release_109.3"
+  container: "docker://ensemblorg/ensembl-vep:release_110.1"
   vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
   extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol --af --af_1kg --af_gnomad --max_af"
 
 vep_trio:
-  container: "docker://ensemblorg/ensembl-vep:release_109.3"
+  container: "docker://ensemblorg/ensembl-vep:release_110.1"
   vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
   extra: "--assembly GRCh38 --check_existing --pick --max_af --buffer_size 50000"
+
+vep_svdb:
+  container: "docker://ensemblorg/ensembl-vep:release_110.1"
+  vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
+  extra: "--assembly GRCh38 --check_existing --pick --custom file=/data/ref_data/gnomad/gnomad_sv/gnomad.v4.0.sv.vcf.gz,short_name=gnomad,fields=AF%CN_NONREF_FREQ%FILTER%ALGORITHMS%EVIDENCE%SVTYPE,format=vcf,reciprocal=1,overlap_cutoff=60,distance=1000,same_type=1"
 
 verifybamid2:
   container: "docker://hydragenetics/verifybamid2:2.0.1"

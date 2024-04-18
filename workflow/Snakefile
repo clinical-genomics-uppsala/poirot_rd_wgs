@@ -5,6 +5,8 @@ __license__ = "GPL-3"
 
 
 include: "rules/common.smk"
+include: "rules/fix_sv_header.smk"
+include: "rules/bcftools.smk"
 include: "rules/vcf_to_aed.smk"
 include: "rules/add_ref_to_vcf.smk"
 include: "rules/concat_vcfs.smk"
@@ -22,14 +24,11 @@ rule all:
 
 
 ruleorder: _copy_samtools_crai > compression_samtools_index
-ruleorder: _copy_snv_indels_tbi > snv_indels_tabix
-ruleorder: _copy_snv_indels_filtered_tbi > snv_indels_tabix
-ruleorder: filtering_bcftools_view_pass > snv_indels_bgzip
-ruleorder: filtering_filter_vcf > snv_indels_bgzip
-ruleorder: filtering_filter_vcf > snv_indels_bcftools_view
+ruleorder: _copy_snv_indels_tbi > misc_tabix
+ruleorder: _copy_snv_indels_filtered_tbi > misc_tabix
 ruleorder: parabricks_fq2bam > alignment_samtools_index
-ruleorder: cnv_sv_svdb_merge > snv_indels_bcftools_concat
 ruleorder: snv_indels_glnexus_trio > snv_indels_glnexus
+ruleorder: snv_indels_tabix > misc_tabix
 
 
 module alignment:
@@ -44,9 +43,9 @@ use rule * from alignment as alignment_*
 
 use rule samtools_sort from alignment as alignment_samtools_sort_eh_bam with:
     input:
-        "cnv_sv/expansionhunter/{sample}_{type}_realigned.bam",
+        bam="cnv_sv/expansionhunter/{sample}_{type}_realigned.bam",
     output:
-        temp("cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam"),
+        bam=temp("cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam"),
     log:
         "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.log",
     benchmark:
@@ -99,6 +98,25 @@ use rule vep from annotation as annotation_vep_trio with:
         )
 
 
+use rule vep from annotation as annotation_vep_svdb with:
+    input:
+        cache=config.get("vep_svdb", {}).get("vep_cache", ""),
+        fasta=config["reference"]["fasta"],
+        vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.vcf.gz",
+    output:
+        vcf=temp("annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.vcf"),
+    params:
+        extra=config.get("vep_svdb", {}).get("extra", "--pick"),
+        mode=config.get("vep_svdb", {}).get("mode", "--offline --cache"),
+    log:
+        "annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.vcf.log",
+    benchmark:
+        repeat(
+            "annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.vcf.benchmark.tsv",
+            config.get("vep_svdb", {}).get("benchmark_repeats", 1),
+        )
+
+
 module cnv_sv:
     snakefile:
         get_module_snakefile(config, "hydra-genetics/cnv_sv", path="workflow/Snakefile", tag=config["modules"]["cnv_sv"])
@@ -122,6 +140,10 @@ use rule cnvpytor_readdepth from cnv_sv as cnv_sv_cnvpytor_readdepth with:
         bam=lambda wildcards: get_bam_input(wildcards)[0],
         bai=lambda wildcards: get_bam_input(wildcards)[1],
         vcf=lambda wildcards: get_vcf_input(wildcards),
+    params:
+        extra=config.get("cnvpytor_readdepth", {}).get("extra", ""),
+        length=config.get("cnvpytor_readdepth", {}).get("length_list", ""),
+        model=config.get("cnvpytor_readdepth", {}).get("calling_model", ""),
 
 
 use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
@@ -135,15 +157,15 @@ use rule expansionhunter from cnv_sv as cnv_sv_expansionhunter with:
 
 use rule manta_config_n from cnv_sv as cnv_sv_manta_config_n with:
     input:
-        bam=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
-        bai=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
+        bam_n=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
+        bai_n=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
         ref=config["reference"]["fasta"],
 
 
 use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
     input:
-        bam=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
-        bai=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
+        bam_n=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
+        bai_n=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
         ref=config["reference"]["fasta"],
         scrpt="cnv_sv/manta_run_workflow_n/{sample}/runWorkflow.py",
     output:
@@ -164,13 +186,17 @@ use rule smn_manifest from cnv_sv as cnv_sv_smn_manifest with:
 
 use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
     input:
-        vcfs=[
-            "cnv_sv/tiddit/{sample}_{type}.vcf",
-            "cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz",
-            "cnv_sv/cnvpytor/{sample}_{type}.vcf",
-        ],
+        tiddit="cnv_sv/tiddit/{sample}_{type}.vcf",
+        manta="cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz",
+        cnvpytor="cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf",
     output:
         vcf=temp("cnv_sv/svdb_merge/{sample}_{type}.merged.vcf"),
+    params:
+        extra=config.get("svdb_merge", {}).get("extra", ""),
+        overlap=config.get("svdb_merge", {}).get("overlap", 0.6),
+        bnd_distance=config.get("svdb_merge", {}).get("bnd_distance", 10000),
+        priority=config.get("svdb_merge", {}).get("priority", ""),
+        vcfs=lambda wildards, input: get_vcfs_for_svdb_merge(wildards, input),
     log:
         "cnv_sv/svdb_merge/{sample}_{type}.merged.vcf.log",
     benchmark:
@@ -184,7 +210,7 @@ use rule svdb_query from cnv_sv as cnv_sv_svdb_query with:
     input:
         vcf="cnv_sv/svdb_merge/{sample}_{type}.merged.vcf",
     output:
-        vcf=temp("cnv_sv/svdb_query/{sample}_{type}.svdb_query.vcf"),
+        vcf=temp("cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vcf"),
     log:
         "cnv_sv/svdb_query/{sample}_{type}.svdb_query.log",
     benchmark:
@@ -234,6 +260,66 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
         vcf=temp("{file}.bcftools_view_pass.vcf.gz"),
     params:
         extra=config.get("bcftools_view_pass", {}).get("extra", ""),
+
+
+use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_filter_cnvpytor with:
+    input:
+        vcf="cnv_sv/cnvpytor/{sample}_{type}.vcf",
+    output:
+        vcf="cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf",
+    params:
+        filter=lambda wildcards: "-e {}".format(config["bcftools_filter_cnvpytor"]["exclude"]),
+        extra=config.get("bcftools_filter_cnvpytor", {}).get("extra", ""),
+    log:
+        "cnv_sv/cnvpytor/{sample}_{type}.softfilered.vcf.log",
+    benchmark:
+        repeat(
+            "cnv_sv/cnvpytor/{sample}_{type}.softfilered.vcf.benchmark.tsv",
+            config.get("bcftools_filter_cnvpytor", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule bcftools_view from filtering as filtering_bcftools_view_svdb with:
+    input:
+        vcf="annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.vep_info.vcf",
+    output:
+        vcf="annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.filtered.vcf.gz",
+    params:
+        extra=config.get("bcftools_view_svdb", {}).get("extra", ""),
+    log:
+        "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.filtered.vcf.log",
+    benchmark:
+        repeat(
+            "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.filtered.vcf.benchmark.tsv",
+            config.get("bcftools_view_svdb", {}).get("benchmark_repeats", 1),
+        )
+
+
+module misc:
+    snakefile:
+        get_module_snakefile(config, "hydra-genetics/misc", path="workflow/Snakefile", tag=config["modules"]["misc"])
+    config:
+        config
+
+
+use rule samtools_index from misc as misc_samtools_index with:
+    input:
+        bam="cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam",
+    output:
+        bam="cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.bai",
+    log:
+        "{sample}_{type}_realigned.sorted.bam.bai.log",
+    benchmark:
+        repeat(
+            "{sample}_{type}_realigned.sorted.bam.bai.benchmark.tsv",
+            config.get("samtools_index", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule bgzip from misc as misc_bgzip
+
+
+use rule tabix from misc as misc_tabix
 
 
 module mitochondrial:
@@ -360,7 +446,15 @@ use rule multiqc from qc as qc_multiqc with:
         + input.config,
 
 
-use rule peddy from qc as qc_peddy
+use rule peddy from qc as qc_peddy with:
+    output:
+        het_check=temp("qc/peddy/peddy.het_check.csv"),
+        pca=temp("qc/peddy/peddy.background_pca.json"),
+        ped=temp("qc/peddy/peddy.peddy.ped"),
+        ped_check=temp("qc/peddy/peddy.ped_check.csv"),
+        ped_html=temp("qc/peddy/peddy.html"),
+        ped_vs_html=temp("qc/peddy/peddy.vs.html"),
+        sex_check="qc/peddy/peddy.sex_check.csv",
 
 
 use rule picard_collect_alignment_summary_metrics from qc as qc_pic_align_sum_met with:
@@ -437,68 +531,28 @@ module snv_indels:
 use rule * from snv_indels as snv_indels_*
 
 
-use rule deepvariant_make_examples from snv_indels as snv_indels_deepvariant_make_examples with:
+use rule bcftools_view from snv_indels as snv_indels_bcftools_view with:
     input:
-        bam=lambda wildcards: get_bam_input(wildcards)[0],
-        bai=lambda wildcards: get_bam_input(wildcards)[1],
-        ref=config.get("reference", {}).get("fasta", ""),
+        bcf="qc/peddy/all.bcf",
     output:
-        examples=temp(
-            f"snv_indels/deepvariant/{{sample}}_{{type}}/make_examples.tfrecord-{{shard}}-of-{config.get('deepvariant_make_examples').get('n_shards', 10):05}.gz"
+        vcf=temp("qc/peddy/all.vcf.gz"),
+    log:
+        "qc/peddy/all.vcf.gz.log",
+    benchmark:
+        repeat(
+            "qc/peddy/all.vcf.gz.benchmark.tsv",
+            config.get("bcftools_view", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule bcftools_concat from snv_indels as snv_indels_bcftools_concat_deepvariant with:
+    input:
+        calls=expand(
+            "{{file}}_{chr}.{{vcf}}.gz", chr=extract_chr("%s.fai" % (config["reference"]["fasta"]), filter_out=skip_contigs)
         ),
-        gvcf_records=temp(
-            f"snv_indels/deepvariant/{{sample}}_{{type}}/gvcf.tfrecord-{{shard}}-of-{config.get('deepvariant_make_examples', {}).get('n_shards', 2):05}.gz"
-        )
-        if config.get("deepvariant_postprocess_variants", {}).get("vcf_type", "vcf") == "gvcf"
-        else [],
-    log:
-        "snv_indels/deepvariant/{sample}_{type}/make_examples_{shard}.output.log",
-    benchmark:
-        repeat(
-            "snv_indels/deepvariant/{sample}_{type}/make_examples_{shard}.output.benchmark.tsv",
-            config.get("deepvariant_make_examples", {}).get("benchmark_repeats", 1),
-        )
-
-
-use rule deepvariant_call_variants from snv_indels as snv_indels_deepvariant_call_variants with:
-    input:
-        examples=expand(
-            "snv_indels/deepvariant/{{sample}}_{{type}}/make_examples.tfrecord-{shard}-of-{nshards:05}.gz",
-            shard=[f"{x:05}" for x in range(config.get("deepvariant_make_examples").get("n_shards", 10))],
-            nshards=config.get("deepvariant_make_examples").get("n_shards", 10),
+        index=expand(
+            "{{file}}_{chr}.{{vcf}}.gz.tbi", chr=extract_chr("%s.fai" % (config["reference"]["fasta"]), filter_out=skip_contigs)
         ),
-    output:
-        outfile=temp("snv_indels/deepvariant/{sample}_{type}/call_variants_output.tfrecord.gz"),
-    log:
-        "snv_indels/deepvariant/{sample}_{type}/call_variants.output.log",
-    benchmark:
-        repeat(
-            "snv_indels/deepvariant/{sample}_{type}/call_variants.output.benchmark.tsv",
-            config.get("deepvariant_call_variants", {}).get("benchmark_repeats", 1),
-        )
-
-
-use rule deepvariant_postprocess_variants from snv_indels as snv_indels_deepvariant_postprocess_variants with:
-    input:
-        call_variants_record="snv_indels/deepvariant/{sample}_{type}/call_variants_output.tfrecord.gz",
-        gvcf_records=expand(
-            "snv_indels/deepvariant/{{sample}}_{{type}}/gvcf.tfrecord-{shard}-of-{nshards:05}.gz",
-            shard=[f"{x:05}" for x in range(config.get("deepvariant_make_examples", {}).get("n_shards", 2))],
-            nshards=config.get("deepvariant_make_examples").get("n_shards", 2),
-        )
-        if config.get("deepvariant_postprocess_variants", {}).get("vcf_type", "vcf") == "gvcf"
-        else [],
-        ref=config.get("reference", {}).get("fasta", ""),
-    output:
-        vcf=temp("snv_indels/deepvariant/{sample}_{type}.vcf"),
-        gvcf=temp("snv_indels/deepvariant/{sample}_{type}.g.vcf"),
-    log:
-        "snv_indels/deepvariant/{sample}_{type}_postprocess_variants.output.log",
-    benchmark:
-        repeat(
-            "snv_indels/deepvariant/{sample}_{type}_postprocess_variants.output.benchmark.tsv",
-            config.get("deepvariant_postprocess_variants", {}).get("benchmark_repeats", 1),
-        )
 
 
 use rule glnexus from snv_indels as snv_indels_glnexus_peddy with:
@@ -556,10 +610,10 @@ use rule fix_af from snv_indels as snv_indels_fix_af with:
     output:
         vcf=temp("vcf_final/{sample}_{type}.fix_af.vcf"),
     log:
-        "parabricks/pbrun_deepvariant/{sample}_{type}.fix_af.vcf.log",
+        "vcf_final/{sample}_{type}.fix_af.vcf.log",
     benchmark:
         repeat(
-            "parabricks/pbrun_deepvariant/{sample}_{type}.fix_af.vcf.benchmark.tsv",
+            "vcf_final/{sample}_{type}.fix_af.vcf.benchmark.tsv",
             config.get("fix_af", {}).get("benchmark_repeats", 1),
         )
 

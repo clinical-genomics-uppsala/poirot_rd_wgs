@@ -13,21 +13,21 @@ on:
 
 jobs:
   snakemake-dry-run:
-    name: Run snakemake dry run
+    name: Run snakemake dry run for cpu mode
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python 3.8
+      - name: Set up Python 3.9
         uses: actions/setup-python@v3
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: Install requirements.txt
         run: |
           pip install -r requirements.txt
       - name: Install requirements.test.txt
         run: |
           pip install -r requirements.test.txt
-      - name: snakemake dry run
+      - name: snakemake dry run cpu mode
         working-directory: .tests/integration
         run: |
-          snakemake -n -s ../../workflow/Snakefile --configfile config/config.yaml
+          snakemake -n -s ../../workflow/Snakefile --configfile config/config.yaml --config aligner=bwa_cpu --config snp_caller=deepvariant_cpu

@@ -1,4 +1,4 @@
-name: Lint
+name: Snakemake dry run
 
 on:
   push:
@@ -12,8 +12,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
-    name: Lint workflow
+  snakemake-dry-run:
+    name: Run snakemake dry run for gpu mode
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -24,7 +24,10 @@ jobs:
       - name: Install requirements.txt
         run: |
           pip install -r requirements.txt
-      - name: Linting
+      - name: Install requirements.test.txt
+        run: |
+          pip install -r requirements.test.txt
+      - name: snakemake dry run gpu mode
         working-directory: .tests/integration
         run: |
-          snakemake --lint -n -s ../../workflow/Snakefile --configfile config/config.yaml
+          snakemake -n -s ../../workflow/Snakefile --configfile config/config.yaml

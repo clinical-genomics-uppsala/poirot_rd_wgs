@@ -1,57 +1,40 @@
 # Poirot RD WGS
- Clinical Genomics Uppsala inheritance disease pipeline for WGS made as a snakemake workflow.
+ Clinical Genomics Uppsala rare disease pipeline for Illumina whole genome sequence data.
 
 
-The pipeline is built to analys WGS data. Where possible, hydra-genetics modules (https://github.com/hydra-genetics) is being used. The main parts are the same as the GMS nextflow pipeline https://github.com/nf-core/raredisease.
+<p align="center">
+<a href="https://poirot-rd-wgs.readthedocs.io/en/latest/">https://poirot-rd-wgs.readthedocs.io/en/latest/</a>
+</p>
 
+This ReadMe is only a brief introduction, please refer to ReadTheDocs for the latest documentation and a more detailed description of the pipeline. 
 
-**SNV and indel analysis**
+---
+![Lint](https://github.com/clinical-genomics-uppsala/marple_rd_wgs/actions/workflows/lint.yaml/badge.svg?branch=main)
+![Snakefmt](https://github.com/clinical-genomics-uppsala/marple_rd_wgs/actions/workflows/snakefmt.yaml/badge.svg?branch=main)
+![snakemake dry run](https://github.com/clinical-genomics-uppsala/marple_rd_wgs/actions/workflows/snakemake-dry-run.yaml/badge.svg?branch=main)
+![integration test](https://github.com/clinical-genomics-uppsala/marple_rd_wgs/actions/workflows/integration1.yaml/badge.svg?branch=main)
+![pycodestyle](https://github.com/clinical-genomics-uppsala/marple_rd_wgs/actions/workflows/pycodestyle.yaml/badge.svg?branch=main)
 
-- fastq to BAM with bwa and marking duplicates (https://docs.nvidia.com/clara/parabricks/4.1.0/documentation/tooldocs/man_fq2bam.html#man-fq2bam)
-- deepVariant (+ GLNexus for peddy) for calling (https://docs.nvidia.com/clara/parabricks/4.1.0/documentation/tooldocs/man_deepvariant.html#man-deepvariant)
+[![License: GPL-3](https://img.shields.io/badge/License-GPL3-yellow.svg)](https://opensource.org/licenses/gpl-3.0.html)
 
+## :speech_balloon: Introduction
+This pipeline is created to run on Illumina whole genome sequence data to call germline variants.
 
-**CNV, and other SV: inversions, deletion and duplications**
+## :white_check_mark: Testing
 
-- Manta
-- CNVpytor
-- tiddit
-- When possible, we will continue buildning this part, adding other callers maybe CNVkit and delly.
-- Combine the results from different callers: SVDB to one vcf-file
-  - SVDB will help remove false positives
-- Region Of Homozygosity and UniParental Disomy
-  - AutoMap (https://github.com/mquinodo/AutoMap) and https://github.com/bjhall/upd
-- SMNCopyNumberCaller (https://github.com/Illumina/SMNCopyNumberCaller, https://www.nature.com/articles/s41436-020-0754-0?proof=t)
-  - Maybe look into: SMNca (https://onlinelibrary.wiley.com/doi/full/10.1002/humu.24120) and other ways to handle SMN1 och SMN2?
+The workflow repository contains a dry run test of the pipeline in  `.tests/integration` which can be run like so:
 
-**Mitochondria**
+```bash
+$ cd .tests/integration
+$ snakemake -n -s ../../workflow/Snakefile --configfiles ../../config/config.yaml config.yaml 
+```
 
-- heteroplasmy (sensitivity) 
+## :rocket: [Usage](https://marple-rd-tc.readthedocs.io/en/latest/running/)
 
+To use this run this pipeline the requirements in `requirements.txt` must be installed. It is most straightforward to install the requirements inside a python virtual environment created with the python [venv module](https://docs.python.org/3/library/venv.html). The `sample.tsv`, `units.tsv`, `resources.yaml`, and `config.yaml` files need to be available in the current directory (or otherwise specified in `config.yaml`). You always need to specify the `config`-file either in the profile yaml file or in the snakemake command. To run the pipeline:
 
-**Repeat expansions**
-
-- ExpansionHunter
-- annotater with STRanger
-- REViewer makes histogram with size distribution per sample
-
-
-**QC**
-
-- MultiQC report
-- Coverage for genes and gene panels
-- Kinship and sex-check with peddy
-
-
-**To implement**
-
-- RNA
-- GATK CNV germline caller
-- Continued work on SV calling
-- Mobile elements
-- Several sex-checks
-  - samtools idxstats helps with determining sex, can see XXY and females with highly homozygote chrX (make a table with predicted sex based on this)
-
-*Maybe in future*
-- Telomerecat is a tool for estimating the average telomere length (TL) for a paired end, whole genome sequencing (WGS) sample
-- Cyrius for good call of CYP2D6
+```bash
+$ snakemake --profile /path/to/snakemakeprofile --configfile config.yaml -s /path/to/marple_rd_wgs/workflow/Snakefile
+```
+## :judge: Rule Graph
+![rule_graph](images/dag.svg)
