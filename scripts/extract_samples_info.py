@@ -94,9 +94,13 @@ def main(samples_file, units_file, order_file, replacement_file):
     samples["sex"] = samples["sex"].apply(translate_sex)
 
     # split trio col
-    samples[["trioid", "trio_member"]] = samples.trio.str.split(
-        "-", expand=True)
-
+    try:
+        samples[["trioid", "trio_member"]] = samples.trio.str.split(
+            "-", expand=True)
+    except ValueError:  # manually create cols with NAs when no trio present
+        samples["trioid"] = ["NA"] * samples.shape[0]
+        samples["trio_member"] = ["NA"] * samples.shape[0]
+    
     # get the trio member in english
     samples["trio_member"] = samples.apply(
         lambda x: translate_trio_member(x.trio_member, x.sex), axis=1)
