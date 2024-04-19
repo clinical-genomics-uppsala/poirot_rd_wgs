@@ -29,6 +29,7 @@ ruleorder: _copy_snv_indels_filtered_tbi > misc_tabix
 ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: snv_indels_glnexus_trio > snv_indels_glnexus
 ruleorder: snv_indels_tabix > misc_tabix
+ruleorder: snv_indels_bgzip > misc_bgzip
 
 
 module alignment:
@@ -531,7 +532,7 @@ module snv_indels:
 use rule * from snv_indels as snv_indels_*
 
 
-use rule bcftools_view from snv_indels as snv_indels_bcftools_view with:
+use rule bcftools_view from snv_indels as snv_indels_bcftools_view_peddy with:
     input:
         bcf="qc/peddy/all.bcf",
     output:
