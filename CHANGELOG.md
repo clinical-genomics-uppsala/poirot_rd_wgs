@@ -1,5 +1,19 @@
 # Changelog
 
+### [0.4.1](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.4.0...v0.4.1) (2024-04-20)
+
+
+### Bug Fixes
+
+* handle col creation when no trios present ([6f55abf](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/6f55abf57cef25d8c438e6bdf2d2c621498d6b6a))
+* **Snakefile:** add rule order for bgzip and rename rule ([60d4ee8](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/60d4ee837e2e17669c1c91526365f034916d4e40))
+
+
+### Documentation
+
+* Update .readthedocs.yaml ([c740d3b](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/c740d3b15184b346d04467170a74268d90b67d9e))
+* Update README.md ([871dc9d](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/871dc9d620ca2098a7b96dcb7495307a8bc712ec))
+
 ## [0.4.0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.3.1...v0.4.0) (2024-04-18)
 
 
