@@ -25,8 +25,6 @@ rule exclude_chrM:
         time=config.get("exclude_chrM", {}).get("time", config["default_resources"]["time"]),
     container:
         config.get("exclude_chrM", {}).get("container", config["default_container"])
-    conda:
-        "../envs/concat_vcfs.yaml"
     message:
         "{rule}: Exclude chrM from the deepvariant vcf: {input.deepvariant_vcf}"
     shell:
@@ -58,8 +56,6 @@ rule bcftools_concat:
         time=config.get("bcftools_concat", {}).get("time", config["default_resources"]["time"]),
     container:
         config.get("bcftools_concat", {}).get("container", config["default_container"])
-    conda:
-        "../envs/concat_vcfs.yaml"
     message:
         "{rule}: Concatenate the deepvariant vcf: {input.deepvariant_vcf} and mitochondrial vcf: {input.mutect2_vcf}"
     shell:
