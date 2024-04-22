@@ -1,5 +1,18 @@
 # Changelog
 
+### [0.4.2](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.4.1...v0.4.2) (2024-04-22)
+
+
+### Bug Fixes
+
+* remove remining conda references ([da50c5f](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/da50c5fcaeb50b6c22054f94f41a4371daf609ab))
+
+
+### Documentation
+
+* add docs build badge to README.md ([c663ca2](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/c663ca2dbb75c543294199ea93f5cb258224606d))
+* change python version in .readthedocs.yaml ([967aab6](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/967aab6e35050311969f96c853c0bf693b5ef3d0))
+
 ### [0.4.1](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.4.0...v0.4.1) (2024-04-20)
 
 
