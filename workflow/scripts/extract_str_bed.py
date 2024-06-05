@@ -3,7 +3,9 @@ import pysam
 
 loci_to_filter = ["HTT", "HTT_CCG", "C9ORF72"]
 vcf = pysam.VariantFile(snakemake.input.vcf)
-
+if snakemake.input.panel_list is not None:
+    loci_to_keep = [locus.rstrip() for locus in open(
+        snakemake.input.panel_list, 'r')]
 
 def get_bed_rec(rec):
     try:
@@ -37,6 +39,9 @@ with open(snakemake.output.bed, "w") as outfile:
           str_pathologic_min", file=outfile)
     for rec in vcf:
         bed_rec = get_bed_rec(rec)
-
-        if rec.info["VARID"] not in loci_to_filter:
-            print(bed_rec, file=outfile)
+        if snakemake.input.panel_list is not None:
+            if rec.info["VARID"] in loci_to_keep:
+                print(bed_rec, file=outfile)
+        else:
+            if rec.info["VARID"] not in loci_to_filter:
+                print(bed_rec, file=outfile)

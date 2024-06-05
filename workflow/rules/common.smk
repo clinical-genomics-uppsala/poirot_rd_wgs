@@ -274,15 +274,17 @@ def compile_output_list(wildcards):
         else:
             output_files += set(
                 [
-                    output.format(sample=sample, flowcell=flowcell, lane=lane, barcode=barcode, type=unit_type)
+                    output.format(sample=sample, flowcell=flowcell, lane=lane, barcode=barcode, type=unit_type, panel=str_panel)
                     for sample in get_samples(samples)
                     for unit_type in get_unit_types(units, sample)
                     if unit_type in set(output_json[output]["types"])
                     for flowcell in set([u.flowcell for u in units.loc[(sample, unit_type)].dropna().itertuples()])
                     for barcode in set([u.barcode for u in units.loc[(sample, unit_type)].dropna().itertuples()])
                     for lane in set([u.lane for u in units.loc[(sample, unit_type)].dropna().itertuples()])
+                    for str_panel in [panel_list.split('.')[0] for panel_list in config.get("reference", {}).get("str_panels", "")]
                 ]
             )
+    
 
     return list(set(output_files))
 
