@@ -69,18 +69,16 @@ table_columns_visible:
     sex_het_ratio: False
     error_sex_check: True
     predicted_sex_sex_check: True
-  Picard:
-    PCT_PF_READS_ALIGNED: False
+  "Picard: HsMetrics":
+    FOLD_ENRICHMENT: False
+    MEDIAN_TARGET_COVERAGE: False
+    PCT_TARGET_BASES_30X: False
+  "Picard: InsertSizeMetrics":
     summed_median: False
     summed_mean: True
+  "Picard: Mark Duplicates":
     PERCENT_DUPLICATION: True
-    MEDIAN_COVERAGE: False
-    MEAN_COVERAGE: False
-    SD_COVERAGE: False
-    PCT_30X: False
-    PCT_TARGET_BASES_30X: False
-    FOLD_ENRICHMENT: False
-  Samtools:
+  "Samtools: stats":
     error_rate: False
     non-primary_alignments: False
     reads_mapped: True
@@ -91,7 +89,7 @@ table_columns_visible:
 
 # Patriks plug in, addera egna columner till general stats
 multiqc_cgs:
-  Picard:
+  "Picard: HsMetrics":
     FOLD_80_BASE_PENALTY:
       title: "Fold80"
       description: "Fold80 penalty from picard hs metrics"
@@ -110,21 +108,13 @@ multiqc_cgs:
       max: 100
       scale: "RdYlGn-rev"
       format: "{:.2%}"
-  Samtools:
+  "Samtools: stats":
     average_quality:
       title: "Average Quality"
       description: "Ratio between the sum of base qualities and total length from Samtools stats"
       min: 0
       max: 60
       scale: "RdYlGn"
-  mosdepth:
-     20_x_pc: #Cant get it to work
-        title: "20x percent"
-        description: "Fraction of genome with at least 20X coverage"
-        max: 100
-        min: 0
-        suffix: "%"
-        scale: "RdYlGn"
 
 # Galler alla kolumner oberoende pa module!
 table_columns_placement:
@@ -152,15 +142,18 @@ table_columns_placement:
     error_sex_check: 701
     predicted_sex_sex_check: 702
     family_id: 703
-  Picard:
+  "Picard: HsMetrics":
     PCT_SELECTED_BASES: 801
     FOLD_80_BASE_PENALTY: 802
     PCT_PF_READS_ALIGNED: 888
-    summed_median: 888
-    PERCENT_DUPLICATION: 803
-    summed_mean: 804
-    STANDARD_DEVIATION: 805
     ZERO_CVG_TARGETS_PCT: 888
+  "Picard: InsertSizeMetrics":
+    summed_median: 888
+    summed_mean: 804
+  "Picard: Mark Duplicates":
+    PERCENT_DUPLICATION: 803
+  Picard:
+    STANDARD_DEVIATION: 805
     MEDIAN_COVERAGE: 888
     MEAN_COVERAGE: 888
     SD_COVERAGE: 888
