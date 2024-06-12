@@ -29,6 +29,7 @@ rule extract_str_bed:
     script:
         "../scripts/extract_str_bed.py"
 
+
 use rule extract_str_bed as extract_str_bed_panel with:
     input:
         vcf="cnv_sv/stranger/{sample}_{type}.stranger.vcf",
