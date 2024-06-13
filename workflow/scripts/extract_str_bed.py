@@ -7,6 +7,7 @@ if snakemake.input.panel_list is not None:
     loci_to_keep = [locus.rstrip() for locus in open(
         snakemake.input.panel_list, 'r')]
 
+
 def get_bed_rec(rec):
     try:
         str_status = rec.info["STR_STATUS"]
