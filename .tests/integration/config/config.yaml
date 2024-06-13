@@ -7,7 +7,7 @@ units: "config/units.tsv"
 
 output: "config/output_list.json"
 
-default_container: "docker://hydragenetics/common:0.1.9"
+default_container: "docker://hydragenetics/common:1.11.1"
 
 modules:
   alignment: "v0.6.0"
@@ -30,6 +30,9 @@ reference:
   fasta: "reference/homo_sapiens.fasta"
   fai: "reference/homo_sapiens.fasta.fai"
   genepanels: "reference/genepanels.list"
+  str_panels_dir: "reference/str_panels"
+  str_panels:
+    - "ataxia.list"
   sites: "reference/homo_sapiens.known_indels.vcf.gz"
   wgs_intervals: "reference/homo_sapiens.wgs.interval_list"
   merge_contigs: # contigs to be merged to a single BAM for mark duplicates
@@ -218,7 +221,7 @@ mosdepth_bed:
   extra: ""
 
 multiqc:
-  container: "docker://hydragenetics/multiqc:1.11"
+  container: "docker://hydragenetics/multiqc:1.21"
   reports:
     DNA:
       config: "config/multiqc_config_DNA.yaml"

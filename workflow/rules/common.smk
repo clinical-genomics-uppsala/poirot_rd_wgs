@@ -5,6 +5,7 @@ __license__ = "GPL-3"
 
 import pandas
 import yaml
+from datetime import datetime
 
 from hydra_genetics.utils.misc import get_module_snakefile
 from hydra_genetics.utils.resources import load_resources
@@ -13,6 +14,20 @@ from hydra_genetics.utils.units import *
 from hydra_genetics.utils.misc import extract_chr
 from snakemake.utils import min_version
 from snakemake.utils import validate
+from hydra_genetics import min_version as hydra_min_version
+
+from hydra_genetics.utils.misc import export_config_as_file
+from hydra_genetics.utils.software_versions import add_version_files_to_multiqc
+from hydra_genetics.utils.software_versions import add_software_version_to_config
+from hydra_genetics.utils.software_versions import export_pipeline_version_as_file
+from hydra_genetics.utils.software_versions import export_software_version_as_file
+from hydra_genetics.utils.software_versions import get_pipeline_version
+from hydra_genetics.utils.software_versions import touch_pipeline_version_file_name
+from hydra_genetics.utils.software_versions import touch_software_version_file
+from hydra_genetics.utils.software_versions import use_container
+
+
+hydra_min_version("3.0.0")
 
 min_version("7.8.0")
 
@@ -43,7 +58,6 @@ validate(config, schema="../schemas/resources.schema.yaml")
 samples = pandas.read_table(config["samples"], dtype=str).set_index("sample", drop=False)
 validate(samples, schema="../schemas/samples.schema.yaml")
 
-
 ### Read and validate units file
 units = (
     pandas.read_table(config["units"], dtype=str)
@@ -56,9 +70,21 @@ validate(units, schema="../schemas/units.schema.yaml")
 with open(config["output"]) as output:
     output_json = json.load(output)
 
-## contigs in hg38
-contigs = extract_chr("%s.fai" % (config.get("reference", {}).get("fasta", "")), filter_out=[])
-skip_contigs = [c for c in contigs if "_" in c or c == "chrEBV"]
+## get version information on pipeline, containers and software
+date_string = datetime.now().strftime("%Y%m%d")
+pipeline_version = get_pipeline_version(workflow, pipeline_name="Poirot")
+version_files = touch_pipeline_version_file_name(pipeline_version, date_string=date_string, directory="results/versions/software")
+if use_container(workflow):
+    version_files.append(touch_software_version_file(config, date_string=date_string, directory="results/versions/software"))
+add_version_files_to_multiqc(config, version_files)
+
+
+onstart:
+    export_pipeline_version_as_file(pipeline_version, date_string=date_string, directory="results/versions/software")
+    if use_container(workflow):
+        update_config, software_info = add_software_version_to_config(config, workflow, False)
+        export_software_version_as_file(software_info, date_string=date_string, directory="results/versions/software")
+    export_config_as_file(update_config, date_string=date_string, directory="results/versions")
 
 
 ### Set wildcard constraints
@@ -72,6 +98,10 @@ wildcard_constraints:
     type="N|T|R",
     vcf="vcf|g.vcf|unfiltered.vcf",
 
+
+## contigs in hg38
+contigs = extract_chr("%s.fai" % (config.get("reference", {}).get("fasta", "")), filter_out=[])
+skip_contigs = [c for c in contigs if "_" in c or c == "chrEBV"]
 
 ### Functions
 
@@ -248,13 +278,16 @@ def compile_output_list(wildcards):
         else:
             output_files += set(
                 [
-                    output.format(sample=sample, flowcell=flowcell, lane=lane, barcode=barcode, type=unit_type)
+                    output.format(sample=sample, flowcell=flowcell, lane=lane, barcode=barcode, type=unit_type, panel=str_panel)
                     for sample in get_samples(samples)
                     for unit_type in get_unit_types(units, sample)
                     if unit_type in set(output_json[output]["types"])
                     for flowcell in set([u.flowcell for u in units.loc[(sample, unit_type)].dropna().itertuples()])
                     for barcode in set([u.barcode for u in units.loc[(sample, unit_type)].dropna().itertuples()])
                     for lane in set([u.lane for u in units.loc[(sample, unit_type)].dropna().itertuples()])
+                    for str_panel in [
+                        panel_list.split(".")[0] for panel_list in config.get("reference", {}).get("str_panels", "")
+                    ]
                 ]
             )
 
