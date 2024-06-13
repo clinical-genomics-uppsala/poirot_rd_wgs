@@ -307,12 +307,12 @@ use rule samtools_index from misc as misc_samtools_index with:
     input:
         bam="cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam",
     output:
-        bam="cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.bai",
+        bam=temp("cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.bai"),
     log:
-        "{sample}_{type}_realigned.sorted.bam.bai.log",
+        "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.bai.log",
     benchmark:
         repeat(
-            "{sample}_{type}_realigned.sorted.bam.bai.benchmark.tsv",
+            "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.bai.benchmark.tsv",
             config.get("samtools_index", {}).get("benchmark_repeats", 1),
         )
 

@@ -12,10 +12,10 @@ rule fix_sv_header:
     params:
         extra=config.get("fix_sv_header", {}).get("extra", ""),
     log:
-        "poirot_rd_wgs/fix_sv_header/{sample}_{type}.output.log",
+        "annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.fixed_header.vcf.log",
     benchmark:
         repeat(
-            "poirot_rd_wgs/fix_sv_header/{sample}_{type}.output.benchmark.tsv",
+            "annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.fixed_header.vcf.benchmark.tsv",
             config.get("fix_sv_header", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("fix_sv_header", {}).get("threads", config["default_resources"]["threads"])
