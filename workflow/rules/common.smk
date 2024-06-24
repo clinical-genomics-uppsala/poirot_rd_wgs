@@ -262,6 +262,7 @@ def get_vcfs_for_svdb_merge(wildcards, input):
 
     return vcfs_with_suffix
 
+
 def get_str_panel_list(wildcards):
 
     panel_dir = config["reference"]["str_panels_dir"]
