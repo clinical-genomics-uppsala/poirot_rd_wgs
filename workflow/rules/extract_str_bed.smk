@@ -28,3 +28,20 @@ rule extract_str_bed:
         "{rule}: Convert stranger annotated {input.vcf} to bed file format"
     script:
         "../scripts/extract_str_bed.py"
+
+
+use rule extract_str_bed as extract_str_bed_panel with:
+    input:
+        vcf="cnv_sv/stranger/{sample}_{type}.stranger.vcf",
+        panel_list=lambda wildcards: get_str_panel_list(wildcards),
+    output:
+        bed=temp("cnv_sv/stranger/{sample}_{type}_{panel}.stranger.bed"),
+    log:
+        "cnv_sv/stranger/{sample}_{type}_{panel}.stranger.bed.log",
+    benchmark:
+        repeat(
+            "cnv_sv/stranger/{sample}_{type}_{panel}.stranger.bed.benchmark.tsv",
+            config.get("extract_str_bed_panel", {}).get("benchmark_repeats", 1),
+        )
+    message:
+        "{rule}: Convert stranger annotated {input.vcf} to bed file format for loci in {input.panel_list}"
