@@ -70,15 +70,11 @@ def get_sample_sheet_order(fastq_path):
 
     fq1_name = os.path.basename(fastq_path)
     # get the 's#' part of the illumina fastq file name
-    sample_order = fq1_name.split('_')[2]
+    fq_filename = fq1_name.split('_')[1:] # fq filename without sample id
+    sample_order = [i for i in fq_filename if i.startswith('S')][0]
     numeric_order = int(sample_order[1:])
 
     return numeric_order
-
-
-def format_sample_order(numeric_order):
-
-    return f"sample_{numeric_order:03}"
 
 
 def main(samples_file, units_file, order_file, replacement_file):
@@ -100,7 +96,7 @@ def main(samples_file, units_file, order_file, replacement_file):
     except ValueError:  # manually create cols with NAs when no trio present
         samples["trioid"] = ["NA"] * samples.shape[0]
         samples["trio_member"] = ["NA"] * samples.shape[0]
-    
+
     # get the trio member in english
     samples["trio_member"] = samples.apply(
         lambda x: translate_trio_member(x.trio_member, x.sex), axis=1)
@@ -124,8 +120,8 @@ def main(samples_file, units_file, order_file, replacement_file):
         ["sample_order", "sample"]].drop_duplicates().sort_values(
             by="sample_order")
 
-    sample_order_df["sample_order"] = sample_order_df["sample_order"].apply(
-        format_sample_order)
+    sample_order_df["sample_order"] = [
+        f"sample_{i:03}" for i in range(1, sample_order_df.shape[0] + 1)]
 
     sample_order_df = sample_order_df.rename(
         columns={"sample_order": "Sample Order", "sample": "Sample Name"})
