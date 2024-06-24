@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.5.0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.4.2...v0.5.0) (2024-06-24)
+
+
+### Features
+
+* add container and software versions to multiqc report ([06c0a82](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/06c0a828de5040352a530430a862d153fa57a6a7))
+* add new sample order and replacement example files ([384ad67](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/384ad67c48b43a5f9633478345b3ecdd8dc28284))
+* output bed file for str panels ([408f10f](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/408f10fe70eb0b03221ec6a4bc285831af5c91de))
+* redo sample order extraction ([b6558a5](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/b6558a56790f16d941c637999cf553bd23e5eacf))
+* update multiqc version and reorder modules in report ([5825d09](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/5825d09915b95f2d66b62f54a5d04bc70a3b6af1))
+
+
+### Bug Fixes
+
+* correctly set the panel path as a string ([970f442](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/970f442a6de3e6b7334267cbd3fb91abbb93152a))
+* fix the paths for some log and benchmark files ([c268fd9](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/c268fd9a28bac57aa3eac3a7f8b6103cd932d1c8))
+
 ### [0.4.2](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.4.1...v0.4.2) (2024-04-22)
 
 
