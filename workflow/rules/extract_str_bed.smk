@@ -33,7 +33,7 @@ rule extract_str_bed:
 use rule extract_str_bed as extract_str_bed_panel with:
     input:
         vcf="cnv_sv/stranger/{sample}_{type}.stranger.vcf",
-        panel_list=expand("{panel_dir}/{{panel}}.list", panel_dir=config.get("reference", {}).get("str_panels_dir", "")),
+        panel_list=lambda wildcards: get_str_panel_list(wildcards),
     output:
         bed=temp("cnv_sv/stranger/{sample}_{type}_{panel}.stranger.bed"),
     log:
