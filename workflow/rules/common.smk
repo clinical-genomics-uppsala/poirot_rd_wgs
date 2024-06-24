@@ -264,9 +264,9 @@ def get_vcfs_for_svdb_merge(wildcards, input):
 
 def get_str_panel_list(wildcards):
 
-    panel_dir=config.get("reference", {}).get("str_panels_dir", "")
+    panel_dir = config["reference"]["str_panels_dir"]
     panel = wildcards.panel
-    panel_list_path=f"{panel_dir}/{panel}.list"
+    panel_list_path = f"{panel_dir}/{panel}.list"
 
     return panel_list_path
 
