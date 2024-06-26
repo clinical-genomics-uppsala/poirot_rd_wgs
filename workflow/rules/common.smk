@@ -295,7 +295,7 @@ def compile_output_list(wildcards):
                     for barcode in set([u.barcode for u in units.loc[(sample, unit_type)].dropna().itertuples()])
                     for lane in set([u.lane for u in units.loc[(sample, unit_type)].dropna().itertuples()])
                     for str_panel in [
-                        panel_list.split(".")[0] for panel_list in config.get("reference", {}).get("str_panels", "")
+                        panel_list.split(".")[0] for panel_list in config["reference"]["str_panels"]
                     ]
                 ]
             )
