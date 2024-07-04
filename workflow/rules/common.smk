@@ -74,10 +74,13 @@ with open(config["output"]) as output:
 
 pipeline_name = "Poirot"
 pipeline_version = get_pipeline_version(workflow, pipeline_name=pipeline_name)
-version_files = touch_pipeline_version_file_name(pipeline_version, date_string=pipeline_name, directory="results/versions/software")
+version_files = touch_pipeline_version_file_name(
+    pipeline_version, date_string=pipeline_name, directory="results/versions/software"
+)
 if use_container(workflow):
     version_files.append(touch_software_version_file(config, date_string=pipeline_name, directory="results/versions/software"))
 add_version_files_to_multiqc(config, version_files)
+
 
 onstart:
     export_pipeline_version_as_file(pipeline_version, date_string=pipeline_name, directory="results/versions/software")
