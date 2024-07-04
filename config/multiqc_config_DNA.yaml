@@ -1,6 +1,6 @@
 title: "Clinical Genomics MultiQC Report"
 subtitle: "Reference used: GRCh38"
-intro_text: "The MultiQC report summarise analysis results from WGS data that been analysed by the pipeline Poirot_RD-WGS (https://github.com/clinical-genomics-uppsala/Poirot_RD-WGS)."
+intro_text: "The MultiQC report summarise analysis results from WGS data that been analysed by the pipeline Poirot_RD-WGS (https://github.com/clinical-genomics-uppsala/poirot_rd_wgs)."
 
 report_header_info:
   - Contact E-mail: "igp-klinsek-bioinfo@lists.uu.se"
