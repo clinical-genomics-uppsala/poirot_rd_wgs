@@ -71,19 +71,23 @@ with open(config["output"]) as output:
     output_json = json.load(output)
 
 ## get version information on pipeline, containers and software
-date_string = datetime.now().strftime("%Y%m%d")
-pipeline_version = get_pipeline_version(workflow, pipeline_name="Poirot")
-version_files = touch_pipeline_version_file_name(pipeline_version, date_string=date_string, directory="results/versions/software")
+
+pipeline_name = "Poirot"
+pipeline_version = get_pipeline_version(workflow, pipeline_name=pipeline_name)
+version_files = touch_pipeline_version_file_name(
+    pipeline_version, date_string=pipeline_name, directory="results/versions/software"
+)
 if use_container(workflow):
-    version_files.append(touch_software_version_file(config, date_string=date_string, directory="results/versions/software"))
+    version_files.append(touch_software_version_file(config, date_string=pipeline_name, directory="results/versions/software"))
 add_version_files_to_multiqc(config, version_files)
 
 
 onstart:
-    export_pipeline_version_as_file(pipeline_version, date_string=date_string, directory="results/versions/software")
+    export_pipeline_version_as_file(pipeline_version, date_string=pipeline_name, directory="results/versions/software")
     if use_container(workflow):
         update_config, software_info = add_software_version_to_config(config, workflow, False)
-        export_software_version_as_file(software_info, date_string=date_string, directory="results/versions/software")
+        export_software_version_as_file(software_info, date_string=pipeline_name, directory="results/versions/software")
+    date_string = datetime.now().strftime("%Y%m%d")
     export_config_as_file(update_config, date_string=date_string, directory="results/versions")
 
 
@@ -294,9 +298,7 @@ def compile_output_list(wildcards):
                     for flowcell in set([u.flowcell for u in units.loc[(sample, unit_type)].dropna().itertuples()])
                     for barcode in set([u.barcode for u in units.loc[(sample, unit_type)].dropna().itertuples()])
                     for lane in set([u.lane for u in units.loc[(sample, unit_type)].dropna().itertuples()])
-                    for str_panel in [
-                        panel_list.split(".")[0] for panel_list in config.get("reference", {}).get("str_panels", "")
-                    ]
+                    for str_panel in [panel_list.split(".")[0] for panel_list in config["reference"]["str_panels"]]
                 ]
             )
 
