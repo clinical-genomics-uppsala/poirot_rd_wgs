@@ -1,5 +1,18 @@
 # Changelog
 
+### [0.5.1](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.5.0...v0.5.1) (2024-07-04)
+
+
+### Bug Fixes
+
+* change config get ([2229e8f](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/2229e8f7db7b6821f949faa6cf32f081610c6149))
+* used fixed string instead of date for version file ([1261aa1](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/1261aa1bbe35f3ef4e8bae9c8ea32d81d8b10c3e))
+
+
+### Documentation
+
+* update pipeline url ([df18d09](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/df18d0909f95bdb3f5dee141df6afd38dcbf7031))
+
 ## [0.5.0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.4.2...v0.5.0) (2024-06-24)
 
 
