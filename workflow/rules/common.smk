@@ -6,7 +6,6 @@ __license__ = "GPL-3"
 import pandas
 import yaml
 from datetime import datetime
-import os
 
 from hydra_genetics.utils.misc import get_module_snakefile
 from hydra_genetics.utils.resources import load_resources
