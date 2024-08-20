@@ -332,7 +332,7 @@ tabix:
   container: "docker://hydragenetics/common:0.1.9"
 
 tiddit:
-  container: "docker://hydragenetics/tiddit:3.3.2"
+  container: "docker://hydragenetics/tiddit:3.7.0"
 
 upd:
   container: "docker://hydragenetics/upd:0.1.1"
