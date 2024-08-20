@@ -78,6 +78,8 @@ use rule vep from annotation as annotation_vep with:
         "vcf_final/{sample}_{type}.vep_annotated.vcf.log",
     benchmark:
         repeat("vcf_final/{sample}_{type}.vep_annotated.vcf.benchmark.tsv", config.get("vep", {}).get("benchmark_repeats", 1))
+    container:
+        config.get("vep", {}).get("container", config["default_container"])
 
 
 use rule vep from annotation as annotation_vep_trio with:
@@ -97,6 +99,8 @@ use rule vep from annotation as annotation_vep_trio with:
             "snv_indels/glnexus/{sample}_{type}.vep_annotated.vcf.benchmark.tsv",
             config.get("vep", {}).get("benchmark_repeats", 1),
         )
+    container:
+        config.get("vep_trio", {}).get("container", config["default_container"])
 
 
 use rule vep from annotation as annotation_vep_svdb with:
@@ -116,6 +120,8 @@ use rule vep from annotation as annotation_vep_svdb with:
             "annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.vcf.benchmark.tsv",
             config.get("vep_svdb", {}).get("benchmark_repeats", 1),
         )
+    container:
+        config.get("vep_svdb", {}).get("container", config["default_container"])
 
 
 module cnv_sv:
