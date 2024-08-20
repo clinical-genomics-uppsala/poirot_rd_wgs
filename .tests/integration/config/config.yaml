@@ -319,8 +319,8 @@ stranger:
 svdb_merge:
   container: "docker://hydragenetics/svdb:2.8.2"
   overlap: 0.6
-  priority: "tiddit,manta,cnvpytor"
-  extra: "--pass_only "
+  priority: "manta,cnvpytor"
+  extra: "--pass_only --no_intra "
 
 svdb_query:
   container: "docker://hydragenetics/svdb:2.6.0"

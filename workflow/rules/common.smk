@@ -260,7 +260,6 @@ def get_glnexus_input(wildcards, input):
 
 def get_vcfs_for_svdb_merge(wildcards, input):
     vcfs_with_suffix = []
-    vcfs_with_suffix.append(f"{input.tiddit}:tiddit")
     vcfs_with_suffix.append(f"{input.manta}:manta")
     vcfs_with_suffix.append(f"{input.cnvpytor}:cnvpytor")
 

@@ -318,14 +318,14 @@ stranger:
 svdb_merge:
   container: "docker://hydragenetics/svdb:2.8.2"
   overlap: 0.6
-  priority: "tiddit,manta,cnvpytor"
-  extra: "--pass_only "
+  priority: "manta,cnvpytor"
+  extra: "--pass_only --no_intra "
 
 svdb_query:
   container: "docker://hydragenetics/svdb:2.8.2"
   db_string:
-    "--db /beegfs-storage/data/ref_data/wp3/svdb/svdb_create/tiddit_wgs_hg38_1.0.vcf.gz,/beegfs-storage/data/ref_data/wp3/svdb/svdb_create/manta_wgs_hg38_1.0.vcf.gz,/beegfs-storage/data/ref_data/wp3/svdb/svdb_create/cnvpytor_wgs_hg38_1.0.vcf.gz"
-  extra: "--in_frq FRQ,FRQ,FRQ --in_occ OCC,OCC,OCC --out_frq tiddit_AF,manta_AF,cnvpytor_AF --out_occ tiddit_OCC,manta_OCC,cnpytor_OCC "
+    "--db /beegfs-storage/data/ref_data/wp3/svdb/svdb_create/manta_wgs_hg38_1.0.vcf.gz,/beegfs-storage/data/ref_data/wp3/svdb/svdb_create/cnvpytor_wgs_hg38_1.0.vcf.gz"
+  extra: "--in_frq FRQ,FRQ --in_occ OCC,OCC --out_frq manta_AF,cnvpytor_AF --out_occ manta_OCC,cnvpytor_OCC "
 
 tabix:
   container: "docker://hydragenetics/common:1.11.1"
