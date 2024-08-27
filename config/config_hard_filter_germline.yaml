@@ -1,5 +1,5 @@
 filters:
   germline:
     description: "Hard filter germline"
-    expression: "(VEP:MAX_AF > 0.10 and VEP:SYMBOL != POLG)"
+    expression: "(VEP:MAX_AF > 0.10 and VEP:NA_TRUE:SYMBOL != POLG)"
     soft_filter: "False"
