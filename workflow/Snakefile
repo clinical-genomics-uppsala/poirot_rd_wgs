@@ -74,6 +74,9 @@ use rule vep from annotation as annotation_vep with:
         vcf="vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz",
     output:
         vcf=temp("vcf_final/{sample}_{type}.vep_annotated.vcf"),
+    params:
+        extra=config.get("vep", {}).get("extra", "--pick"),
+        mode=config.get("vep", {}).get("mode", "--offline --cache"),
     log:
         "vcf_final/{sample}_{type}.vep_annotated.vcf.log",
     benchmark:
