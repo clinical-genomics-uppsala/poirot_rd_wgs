@@ -1,7 +1,9 @@
 ---
 
+aligner: "bwa_gpu"
+snp_caller: "deepvariant_gpu"
 
-resources: "config/resources.yaml"
+resources: "config/resources_production_pipeline.yaml"
 samples: "samples_with_info.tsv"
 units: "units.tsv"
 
@@ -11,7 +13,7 @@ default_container: "docker://hydragenetics/common:1.11.1"
 
 modules:
   alignment: "v0.6.0"
-  annotation: "v0.3.0"
+  annotation: "v1.0.1"
   compression: "v2.0.0"
   cnv_sv: "v0.5.0"
   filtering: "v0.3.0"
@@ -23,27 +25,24 @@ modules:
   snv_indels: "v1.0.0"
 
 reference:
-  coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_with_MT_20240102.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
+  coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_with_MT_with_non_coding_20240613.bed" # see /beegfs-storage/data/ref_data/refseq/README 
   design_bed: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/homo_sapiens.hg38.wgs.bed"
   exome_bed: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
   exome_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/Twist_Comprehensive_Exome_Covered_Targets_hg38.interval_list"
   fasta: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta"
   fai: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.fai"
-  genepanels: "/beegfs-storage/projects/wp3/Reference_files/Manifest/Clinical_research_exome/Gene_panels/genepanels_WGS.list"
+  genepanels: "config/gene_panels/genepanels_WGS.list"
   sites: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/Homo_sapiens_assembly38.known_indels.vcf.gz"
   wgs_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/homo_sapiens.hg38.wgs.interval_list"
   str_panels_dir: "config/str_panels"
   str_panels:
-    - "ataxia.list"
+    - "ataxi.list"
   merge_contigs: # contigs to be merged to a single BAM for mark duplicates
     - ".*_random"
     - "chrUn_.*"
     - "chrEBV"
 
 trimmer_software: "fastp_pe"
-
-aligner: "bwa_gpu" # "bwa_cpu" or "bwa_gpu"
-snp_caller: "deepvariant_gpu" # "deepvariant_cpu" or "deepvariant_gpu"
 
 automap:
   container: "docker://hydragenetics/automap:1.2"
@@ -58,14 +57,14 @@ bcftools_view_biallelic:
   extra: "-m2 -M2 -v snps"
 
 bcftools_filter_cnvpytor:
-  exclude: "'pytorP1>0.0001 | pytorDG<100000 | pytorPN>0.5 | pytorQ0>0.5'"
+  exclude: "'pytorP1>0.0001 | pytorDG<100000 | pytorPN>0.5 | ( pytorQ0>0.5 && FORMAT/CN != 0)"
   extra: "-s LowQual "
 
 bcftools_view_pass:
   extra: "--apply-filter PASS "
 
 bcftools_view_svdb:
-  extra: "-f 'PASS' -e 'tiddit_AF>0.05 | manta_AF>0.05 | cnvpytor_AF>0.05 | gnomad_AF>0.1'"
+  extra: "-f 'PASS' -e 'manta_AF>0.05 | cnvpytor_AF>0.05 | gnomad_AF>0.1'"
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
@@ -109,7 +108,6 @@ cnvpytor_filter:
   view: "500"
 
 create_cov_excel:
-  container: "docker://hydragenetics/common:1.11.1"
   covLimits: "10 20 30"
 
 deepvariant:
@@ -119,7 +117,7 @@ deepvariant:
 
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
-  variant_catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_hg38.json"
+  variant_catalog: "config/str_catalog/variant_catalog_hg38.json"
 
 fastp_pe:
   container: "docker://hydragenetics/fastp:0.20.1"
@@ -313,7 +311,7 @@ spring:
 
 stranger:
   container: "docker://hydragenetics/stranger:0.8.1"
-  catalog: "/beegfs-storage/data/ref_data/stranger/v0.8.1/variant_catalog_hg38.json"
+  catalog: "config/str_catalog/variant_catalog_hg38.json"
 
 svdb_merge:
   container: "docker://hydragenetics/svdb:2.8.2"
@@ -340,16 +338,19 @@ upd:
 vep:
   container: "docker://ensemblorg/ensembl-vep:release_110.1"
   vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
+  mode: "--offline --cache --refseq "
   extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol --af --af_1kg --af_gnomad --max_af"
 
 vep_trio:
   container: "docker://ensemblorg/ensembl-vep:release_110.1"
   vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
+  mode: "--offline --cache --refseq "
   extra: "--assembly GRCh38 --check_existing --pick --max_af --buffer_size 50000"
 
 vep_svdb:
   container: "docker://ensemblorg/ensembl-vep:release_110.1"
   vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
+  mode: "--offline --cache --refseq "
   extra: "--assembly GRCh38 --check_existing --pick --custom file=/data/ref_data/gnomad/gnomad_sv/gnomad.v4.0.sv.vcf.gz,short_name=gnomad,fields=AF%CN_NONREF_FREQ%FILTER%ALGORITHMS%EVIDENCE%SVTYPE,format=vcf,reciprocal=1,overlap_cutoff=60,distance=1000,same_type=1"
 
 verifybamid2:
