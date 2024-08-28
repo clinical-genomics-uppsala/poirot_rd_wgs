@@ -57,9 +57,12 @@ bcftools_split_vep:
 bcftools_view_biallelic:
   extra: "-m2 -M2 -v snps"
 
-bcftools_filter_cnvpytor:
-  exclude: "'pytorP1>0.0001 | pytorDG<100000 | pytorPN>0.5 | ( pytorQ0>0.5 && FORMAT/CN != 0)"
+bcftools_softfilter_cnvpytor:
+  exclude: "'pytorP1>0.0001 | pytorDG<100000 | pytorPN>0.5 | ( pytorQ0>0.5 && FORMAT/CN != 0)'"
   extra: "-s LowQual "
+
+bcftools_hardfilter_cnvpytor:
+  exclude: "'pytorP1>0.0001 | pytorDG<100000 | pytorPN>0.5 | ( pytorQ0>0.5 && FORMAT/CN != 0)'"
 
 bcftools_view_pass:
   container: "docker://hydragenetics/common:1.11.1"
