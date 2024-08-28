@@ -3,7 +3,7 @@
 aligner: "bwa_gpu"
 snp_caller: "deepvariant_gpu"
 
-resources: "config/resources_production_pipeline.yaml"
+resources: "config/resources.yaml"
 samples: "samples_with_info.tsv"
 units: "units.tsv"
 
