@@ -17,7 +17,6 @@ logging.basicConfig(filename=snakemake.log[0],
 log = logging.getLogger()
 
 # Specify input files
-#configfile = snakemake.input[0]
 duplicationFile = snakemake.input.duplication_file
 mosdepth = snakemake.input.summary
 covRegionsFile = snakemake.input.cov_regions
