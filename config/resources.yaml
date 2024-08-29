@@ -149,6 +149,7 @@ spring:
 
 tiddit:
   threads: 8
+  time: "20:00:00"
 
 vep:
   threads: 4

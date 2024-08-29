@@ -74,10 +74,15 @@ use rule vep from annotation as annotation_vep with:
         vcf="vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz",
     output:
         vcf=temp("vcf_final/{sample}_{type}.vep_annotated.vcf"),
+    params:
+        extra=config.get("vep", {}).get("extra", "--pick"),
+        mode=config.get("vep", {}).get("mode", "--offline --cache"),
     log:
         "vcf_final/{sample}_{type}.vep_annotated.vcf.log",
     benchmark:
         repeat("vcf_final/{sample}_{type}.vep_annotated.vcf.benchmark.tsv", config.get("vep", {}).get("benchmark_repeats", 1))
+    container:
+        config.get("vep", {}).get("container", config["default_container"])
 
 
 use rule vep from annotation as annotation_vep_trio with:
@@ -97,6 +102,8 @@ use rule vep from annotation as annotation_vep_trio with:
             "snv_indels/glnexus/{sample}_{type}.vep_annotated.vcf.benchmark.tsv",
             config.get("vep", {}).get("benchmark_repeats", 1),
         )
+    container:
+        config.get("vep_trio", {}).get("container", config["default_container"])
 
 
 use rule vep from annotation as annotation_vep_svdb with:
@@ -116,6 +123,8 @@ use rule vep from annotation as annotation_vep_svdb with:
             "annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.vcf.benchmark.tsv",
             config.get("vep_svdb", {}).get("benchmark_repeats", 1),
         )
+    container:
+        config.get("vep_svdb", {}).get("container", config["default_container"])
 
 
 module cnv_sv:
@@ -187,7 +196,6 @@ use rule smn_manifest from cnv_sv as cnv_sv_smn_manifest with:
 
 use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
     input:
-        tiddit="cnv_sv/tiddit/{sample}_{type}.vcf",
         manta="cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz",
         cnvpytor="cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf",
     output:
@@ -263,20 +271,37 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
         extra=config.get("bcftools_view_pass", {}).get("extra", ""),
 
 
-use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_filter_cnvpytor with:
+use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_softfilter_cnvpytor with:
     input:
         vcf="cnv_sv/cnvpytor/{sample}_{type}.vcf",
     output:
         vcf="cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf",
     params:
-        filter=lambda wildcards: "-e {}".format(config["bcftools_filter_cnvpytor"]["exclude"]),
-        extra=config.get("bcftools_filter_cnvpytor", {}).get("extra", ""),
+        filter=lambda wildcards: "-e {}".format(config["bcftools_softfilter_cnvpytor"]["exclude"]),
+        extra=config.get("bcftools_softfilter_cnvpytor", {}).get("extra", ""),
     log:
-        "cnv_sv/cnvpytor/{sample}_{type}.softfilered.vcf.log",
+        "cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf.log",
     benchmark:
         repeat(
-            "cnv_sv/cnvpytor/{sample}_{type}.softfilered.vcf.benchmark.tsv",
-            config.get("bcftools_filter_cnvpytor", {}).get("benchmark_repeats", 1),
+            "cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf.benchmark.tsv",
+            config.get("bcftools_softfilter_cnvpytor", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_hardfilter_cnvpytor with:
+    input:
+        vcf="cnv_sv/cnvpytor/{sample}_{type}.vcf",
+    output:
+        vcf="cnv_sv/cnvpytor/{sample}_{type}.hardfiltered.vcf",
+    params:
+        filter=lambda wildcards: "-e {}".format(config["bcftools_hardfilter_cnvpytor"]["exclude"]),
+        extra=config.get("bcftools_hardfilter_cnvpytor", {}).get("extra", ""),
+    log:
+        "cnv_sv/cnvpytor/{sample}_{type}.hardfiltered.vcf.log",
+    benchmark:
+        repeat(
+            "cnv_sv/cnvpytor/{sample}_{type}.hardfiltered.vcf.benchmark.tsv",
+            config.get("bcftools_hardfilter_cnvpytor", {}).get("benchmark_repeats", 1),
         )
 
 
