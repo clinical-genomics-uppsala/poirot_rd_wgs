@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.6.0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.5.1...v0.6.0) (2024-08-29)
+
+
+### Features
+
+* exclude homozygous deletions from the pytorQ0 filter ([d0144f3](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/d0144f3d98fc7e8b680592533033c2fa425a144d))
+* exclude POLG from allele frequency filter ([3cdf35a](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/3cdf35a919235a0bc9b6e83c0188b8b9c36396e7))
+* exclude POLG variants from population allele frequency filter ([aa0b003](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/aa0b0034c92086bb4ba024fe54cf297f65ad6fea))
+* hardfilter cnvpytor with bcftools ([9fceaa0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/9fceaa003b6fdbdb888c8e7cc6329d8573e0585e))
+* make it possible to configure vep cache type ([4a53ddf](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/4a53ddfc3e48dafae162c37e5f399ee2fc4d1314))
+* remove tiddit from svdb merge and use --no_intra in merge ([fd00a92](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/fd00a928c5e73addf80e1beefa293d800c2b60f9))
+* update tiddit version ([d17092c](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/d17092c6c7bddc1eacf604f3e878b765dfdbe104))
+
+
+### Documentation
+
+* update dag image ([d362f2b](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/d362f2b0ac5dd9c81ae603185d5db88952f7fde3))
+* update README ([28101e7](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/28101e74d987808dc41217c5ab80aa65c8d97074))
+
 ### [0.5.1](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.5.0...v0.5.1) (2024-07-04)
 
 
