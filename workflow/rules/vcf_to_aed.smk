@@ -32,7 +32,7 @@ rule vcf_to_aed:
 
 rule vcf_to_aed_filtered:
     input:
-        vcf="cnv_sv/cnvpytor/{sample}_{type}.filtered.vcf",
+        vcf="cnv_sv/cnvpytor/{sample}_{type}.hardfiltered.vcf",
     output:
         aed="cnv_sv/cnvpytor/{sample}_{type}_filtered.aed",
     params:

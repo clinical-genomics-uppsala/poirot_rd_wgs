@@ -17,7 +17,6 @@ logging.basicConfig(filename=snakemake.log[0],
 log = logging.getLogger()
 
 # Specify input files
-configfile = snakemake.input[0]
 duplicationFile = snakemake.input.duplication_file
 mosdepth = snakemake.input.summary
 covRegionsFile = snakemake.input.cov_regions
@@ -40,15 +39,15 @@ textwrapFormat = workbook.add_format({'text_wrap': True})
 italicFormat = workbook.add_format({'italic': True})
 redFormat = workbook.add_format({'font_color': 'red'})
 
-with open(configfile, 'r') as file:
-    config_list = yaml.load(file, Loader=yaml.FullLoader)
+# with open(configfile, 'r') as file:
+#     config_list = yaml.load(file, Loader=yaml.FullLoader)
 
 # runID = config_list['seqID']['sequencerun'] # sys.argv[5]
-minCov = int(config_list['create_cov_excel']['covLimits'].split(' ')[0])
-medCov = int(config_list['create_cov_excel']['covLimits'].split(' ')[1])
-maxCov = int(config_list['create_cov_excel']['covLimits'].split(' ')[2])
-bedfile = config_list["reference"]["coverage_bed"]
-genepanels = config_list["reference"]["genepanels"]
+minCov = int(snakemake.config['create_cov_excel']['covLimits'].split(' ')[0])
+medCov = int(snakemake.config['create_cov_excel']['covLimits'].split(' ')[1])
+maxCov = int(snakemake.config['create_cov_excel']['covLimits'].split(' ')[2])
+bedfile = snakemake.config["reference"]["coverage_bed"]
+genepanels = snakemake.config["reference"]["genepanels"]
 
 worksheetOver = workbook.add_worksheet('Overview')
 worksheetOver.write(0, 0, sample, headingFormat)

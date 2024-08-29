@@ -34,7 +34,6 @@ rule mosdepth_bedtools:
 
 rule create_cov_excel:
     input:
-        config="config/config.yaml",
         cov_regions="qc/mosdepth_bed/{sample}_{type}.regions.bed.gz",
         cov_thresh="qc/mosdepth_bed/{sample}_{type}.thresholds.bed.gz",
         duplication_file="qc/picard_collect_duplication_metrics/{sample}_{type}.duplication_metrics.txt",
