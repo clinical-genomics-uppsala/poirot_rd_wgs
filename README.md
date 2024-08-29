@@ -26,7 +26,7 @@ The workflow repository contains a dry run test of the pipeline in  `.tests/inte
 
 ```bash
 $ cd .tests/integration
-$ snakemake -n -s ../../workflow/Snakefile --configfiles ../../config/config.yaml config.yaml 
+$ snakemake -n -s ../../workflow/Snakefile --configfile config/config.yaml 
 ```
 
 ## :rocket: [Usage](https://poirot-rd-wgs.readthedocs.io/en/latest/running/)
