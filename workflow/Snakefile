@@ -232,6 +232,7 @@ use rule svdb_query from cnv_sv as cnv_sv_svdb_query with:
 use rule tiddit from cnv_sv as cnv_sv_tiddit with:
     input:
         bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
         ref=config["reference"]["fasta"],
 
 
