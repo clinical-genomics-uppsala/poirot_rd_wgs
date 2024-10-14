@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.7.0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.6.0...v0.7.0) (2024-10-14)
+
+
+### Features
+
+* generalise how transcript id is extracted ([2d5fbd3](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/2d5fbd3b6006ff4c5b7051b2099bf315a158b88c))
+* remove unwanted suffixes in general stats columns ([b60d044](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/b60d0445c68b5815fb384210195190d9754bd8a7))
+
+
+### Bug Fixes
+
+* add bai as input for tiddit ([297296d](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/297296d5b6d4efa5cf8c43b2733b4bebf25ad5e9))
+
 ## [0.6.0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.5.1...v0.6.0) (2024-08-29)
 
 
