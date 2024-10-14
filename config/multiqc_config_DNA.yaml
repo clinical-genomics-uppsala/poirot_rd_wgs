@@ -18,6 +18,29 @@ extra_fn_clean_exts: ##from this until end
 extra_fn_clean_trim:
   - 'Sample_VE-3297_'
 
+custom_table_header_config:
+  general_stats_table:
+    raw_total_sequences:
+      suffix: ""
+      title: "Total seqs M"
+    reads_mapped:
+      suffix: ""
+      title: "Reads mapped M"
+    reads_mapped_percent:
+      suffix: ""
+    reads_properly_paired_percent:
+      suffix: ""
+    median_coverage:
+      suffix: ""
+    10_x_pc:
+      suffix: ""
+    30_x_pc:
+      suffix: ""
+    PERCENT_DUPLICATION:
+      suffix: ""
+    summed_mean:
+      suffix: ""
+
 module_order:
   - fastqc
   - fastp
