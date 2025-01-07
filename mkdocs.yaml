@@ -3,8 +3,8 @@ nav:
   - Overview:
     - Introduction: index.md
     - Pipeline overview: overview.md
-    - Result files: result_files.md
-    - Reference files: references.md
+    - Result files: results_files.md
+#    - Reference files: references.md
   - Setting up and Running the pipeline:
     - Setup: setup.md
     - Running: running.md
@@ -12,7 +12,7 @@ nav:
     - Rule list: softwares.md
   - Output- Project Info:
     - Changelog: changelog.md
-    - Credits: credits.md
+#    - Credits: credits.md
     - License: license.md
   
 
