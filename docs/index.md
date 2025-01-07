@@ -19,6 +19,19 @@ Poirot uses the following hydra genetics modules:
 - [mitochondrial](https://github.com/hydra-genetics/alignment/tree/v0.1.0)
 - [snv_indels](https://github.com/hydra-genetics/alignment/tree/3935ecf)
 
+
+- [alignment](https://github.com/hydra-genetics/alignment/tree/1c54479)
+- [annotation](https://github.com/hydra-genetics/annotation/tree/v0.3.0)
+- [compression](https://github.com/hydra-genetics/compression/tree/v2.0.0)
+- [cnv_sv](https://github.com/hydra-genetics/cnv_sv/tree/v0.5.0)
+- [filtering](https://github.com/hydra-genetics/filtering/tree/v0.3.0)
+- [parabricks](https://github.com/hydra-genetics/parabricks/tree/v1.2.0)
+- [prealignment](https://github.com/hydra-genetics/prealignment/tree/v1.2.0)
+- [qc](https://github.com/hydra-genetics/qc/tree/da66130)
+- [mitochondrial](https://github.com/hydra-genetics/tree/tag/v0.1.0)
+- [snv_indels](https://github.com/hydra-genetics/snv_indels/tree/3935ecf)
+
+
 # Hydra-genetics
 
 We are an organization/community with the goal of making [snakemake](https://snakemake.readthedocs.io/en/stable/index.html) pipeline development easier, faster, a bit more structured and of higher quality.
