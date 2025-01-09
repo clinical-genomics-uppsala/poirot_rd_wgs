@@ -23,6 +23,42 @@ properties:
             type: string
             description: VEP annotated SVDB merged vcf file with gnomad_AF added as an info field
 
+  create_cov_excel:
+    type: object
+    properties:
+      input:
+        type: object
+        description: list of inputs
+        properties:
+          bedfile:
+            type: string
+            description: bed file with the regions used for the coverage analysis
+          cov_regions:
+            type: string
+            description: bed file with coverage for the regions from mosdepth_bed
+          cov_thresh:
+            type: string
+            description: threshold file from mosdepth_bed
+          duplication_file:
+            type: string
+            description: text file from picard_collect_duplication_metrics with duplication metrics
+          genepanels:
+            type: string
+            description: list of which genepanels that should be used
+          low_cov:
+            type: string
+            description: text file with low coverage regions from mosdepth_bed
+          summary:
+            type: string
+            description: text file with the summary from mosdepth_bed
+      output: 
+        type: object
+        description: list of outputs
+        properties:
+          out:
+            type: string
+            description: excel file with tabs for each genepanel with coverage analysis for each gene
+
   deepvariant_add_ref:
     type: object
     description: input and output parameters for deepvariant_add_ref

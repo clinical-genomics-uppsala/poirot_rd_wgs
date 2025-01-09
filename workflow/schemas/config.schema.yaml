@@ -29,6 +29,23 @@ properties:
       - fasta
       - sites
   
+  create_cov_excel:
+    type: object
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
+      covLimits:
+        type: string
+        description: for which coverage depth should the percentage of bases with that coverage or above be calculated, default value "10 20 30"
+
+
   deepvariant_add_ref:
     type: object
     description: parameters for deepvariant_add_ref
