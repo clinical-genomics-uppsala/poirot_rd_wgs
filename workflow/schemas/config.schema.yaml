@@ -43,7 +43,7 @@ properties:
         type: string
         description: parameters that should be forwarded
 
-    create_cov_excel:
+  create_cov_excel:
     type: object
     properties:
       benchmark_repeats:
