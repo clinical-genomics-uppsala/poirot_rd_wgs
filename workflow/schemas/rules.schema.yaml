@@ -14,7 +14,6 @@ properties:
           vcf:
             type: string
             description: VEP annotated SVDB merged vcf file with gnomad_AF corrected to type float in header
-
       output:
         type: object
         description: list of outputs
