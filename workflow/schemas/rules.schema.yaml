@@ -14,6 +14,7 @@ properties:
           vcf:
             type: string
             description: VEP annotated SVDB merged vcf file with gnomad_AF corrected to type float in header
+
       output:
         type: object
         description: list of outputs
@@ -50,6 +51,7 @@ properties:
           summary:
             type: string
             description: text file with the summary from mosdepth_bed
+
       output: 
         type: object
         description: list of outputs
