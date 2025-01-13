@@ -4,7 +4,6 @@ nav:
     - Introduction: index.md
     - Pipeline overview: overview.md
     - Result files: results_files.md
-    - Reference files: references.md
   - Setting up and Running the pipeline:
     - Setup and configuration: setup.md
     - Running pipeline: running.md
@@ -12,30 +11,32 @@ nav:
     - Rule list: softwares.md
   - Output- Project Info:
     - Changelog: changelog.md
-    - Credits: credits.md
     - License: license.md
   
 
-theme: readthedocs
+theme:
+    name: readthedocs
 extra_css: [extra.css]
 markdown_extensions:
   - abbr
+  - admonition
   - attr_list
-  - pymdownx.details
+  - mdx_spanner
+  - pymdownx.blocks.details
   - pymdownx.snippets:
       auto_append:
         - includes/abbreviations.md
-      base_path: ["docs/"]
+      base_path: "docs/"
       url_download: "True"
-  - mdx_spanner
-  - admonition
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
+  - toc:
+      permalink: True
 
 plugins:
-  - search
   - include-markdown
+  - search
   - yaml-schema:
       yaml_files:
         - file: "workflow/schemas/config.schema.yaml"
