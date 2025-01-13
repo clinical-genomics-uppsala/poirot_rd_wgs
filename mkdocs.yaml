@@ -7,7 +7,6 @@ nav:
   - Setting up and Running the pipeline:
     - Setup and configuration: setup.md
     - Running pipeline: running.md
-  - Pipeline specific rules:
   - Project Info:
     - Changelog: changelog.md
     - License: license.md
