@@ -29,6 +29,36 @@ properties:
       - fasta
       - sites
   
+  bcftools_split_vep:
+    type: object
+    description: parameters for bcftools_split_vep
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
+
+    create_cov_excel:
+    type: object
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
+      covLimits:
+        type: string
+        description: for which coverage depth should the percentage of bases with that coverage or above be calculated, default value "10 20 30"
+
   deepvariant_add_ref:
     type: object
     description: parameters for deepvariant_add_ref
@@ -43,6 +73,26 @@ properties:
         type: string
         description: parameters that should be forwarded
 
+  fix_sv_header:
+    type: object
+    description: parameters for fix_sv_header
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
+  required:
+      - samples
+      - units
+      - resources
+      - default_container
+      - reference
+ 
   vcf_to_aed:
     type: object
     description: parameters for vcf_to_aed
@@ -99,43 +149,3 @@ properties:
         type: string
         description: parameters that should be forwarded
 
-
-
-# Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
-  bcftools_split_vep:
-    type: object
-    description: parameters for bcftools_split_vep
-    properties:
-      benchmark_repeats:
-        type: integer
-        description: set number of times benchmark should be repeated
-      container:
-        type: string
-        description: name or path to docker/singularity container
-      extra:
-        type: string
-        description: parameters that should be forwarded
-
-
-
-# Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
-  fix_sv_header:
-    type: object
-    description: parameters for fix_sv_header
-    properties:
-      benchmark_repeats:
-        type: integer
-        description: set number of times benchmark should be repeated
-      container:
-        type: string
-        description: name or path to docker/singularity container
-      extra:
-        type: string
-        description: parameters that should be forwarded
-  required:
-      - samples
-      - units
-      - resources
-      - default_container
-      - reference
- 
