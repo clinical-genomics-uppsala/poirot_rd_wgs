@@ -3,12 +3,16 @@ nav:
   - Overview:
     - Introduction: index.md
     - Pipeline overview: overview.md
-    - Result files: results_files.md
+    - Result files: result_files.md
+    - Reference files: references.md
   - Setting up and Running the pipeline:
     - Setup and configuration: setup.md
     - Running pipeline: running.md
-  - Project Info:
+  - Pipeline specific rules:
+    - Rule list: softwares.md
+  - Output- Project Info:
     - Changelog: changelog.md
+    - Credits: credits.md
     - License: license.md
   
 
@@ -28,8 +32,6 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
-  - toc:
-      permalink: True
 
 plugins:
   - search
