@@ -8,7 +8,6 @@ nav:
     - Setup and configuration: setup.md
     - Running pipeline: running.md
   - Pipeline specific rules:
-    - Rule list: softwares.md
   - Project Info:
     - Changelog: changelog.md
     - License: license.md
