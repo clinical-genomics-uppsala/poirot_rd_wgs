@@ -30,9 +30,6 @@ properties:
         type: object
         description: list of inputs
         properties:
-          bedfile:
-            type: string
-            description: bed file with the regions used for the coverage analysis
           cov_regions:
             type: string
             description: bed file with coverage for the regions from mosdepth_bed
@@ -51,6 +48,9 @@ properties:
           summary:
             type: string
             description: text file with the summary from mosdepth_bed
+          bedfile:
+            type: string
+            description: bed file with the regions used for the coverage analysis
 
       output: 
         type: object
