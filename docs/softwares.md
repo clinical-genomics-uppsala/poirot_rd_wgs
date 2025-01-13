@@ -32,7 +32,6 @@ Introduction to create_cov_excel
 
 #### :left_right_arrow: input / output files
 
-#SNAKEMAKE_RULE_TABLE__coverage__create_cov_excel#
 
 ---
 
