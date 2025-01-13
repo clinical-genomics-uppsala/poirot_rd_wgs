@@ -82,15 +82,67 @@ The `samples.tsv` and `units.tsv` are input files that must be generated before 
 
 ### Example samples.tsv
 
-| sample | tumor_content | sex | trioid | trio_member |
-| NA12878 | 0.0	| female | NA | NA |
-| NA12911 | 0.0	| male | NA | NA |
+| sample | tumor_content | sex	| trioid	| trio_member	|
+|-|-| -	| -	| -	|
+| NA12878	| 0.0	| female	| NA	| NA	|
+| NA12911	| 0	| male	| NA	| NA	|
 
 ### Example units.tsv
 
 | sample | type | machine | platform | flowcell | lane | barcode | fastq1 | fastq2 | adapter |
-| NA12878	| T	| NDX550407_RUO	| NextSeq	| HKTG2BGXG	| L001 | ACGGAACA+ACGAGAAC | fastq/NA12878_fastq1.fastq.gz | fastq/NA12878_fastq2.fastq.gz | ACGT,ACGT |
-| NA12879	| N	| NDX550407_RUO	| NextSeq	| HKTG2BGXG	| L001 | TCGGAACT+TCGAGAAT | fastq/NA12879_fastq1.fastq.gz | fastq/NA12879_fastq2.fastq.gz | ACGT,ACGT |
-| NA12880	| R	| NDX550407_RUO	| NextSeq	| HKTG2BGXG	| L002 | GCGGAACG+GCGAGAAG | fastq/NA12880_fastq1.fastq.gz | fastq/NA12880_fastq2.fastq.gz | ACGT,ACGT |
+|-|-|-|-|-|-|-|-|-|-|
+| NA12878	| N	| NDX550407_RUO	| NextSeq	| HKTG2BGXG	| L001 | ACGGAACA+ACGAGAAC | fastq/NA12878_fastq1.fastq.gz | fastq/NA12878_fastq2.fastq.gz | ACGT,ACGT |
+| NA12911	| N	| NDX550407_RUO	| NextSeq	| HKTG2BGXG	| L001 | TCGGAACT+TCGAGAAT | fastq/NA12911_fastq1.fastq.gz | fastq/NA12911_fastq2.fastq.gz | ACGT,ACGT |
+
+
+## Coverage analysis
+Too get coverage analysis for gene panels three things are needed 
+  1) a file with a list of gene panels and 
+  2) a list of which genes that is in the panel and 
+  3) a bed file with information about the genes.
+
+### Gene panels
+There are several gene panels available at [Poirot's config git](https://github.com/clinical-genomics-uppsala/poirot_config/tree/main/config/gene_panels).
+
+#### 1) example genepanel.list
+BRCA
+
+CADASIL
+
+EBS
+
+EDS
+
+#### 2) example gene panel list BRCA.list
+APC
+
+ATM
+
+BAP1
+
+BMPR1A
+
+BRCA1
+
+BRCA2
+
+### 3) Bed-file with gene information
+
+#### Example bed-file
+
+| chr1 | 999056   | 999434 	| HES4_NM_021170.4_[4]	|
+
+| chr1 | 999523   | 999615	| HES4_NM_021170.4_[3]	|
+
+| chr1 | 999689   | 999789	| HES4_NM_021170.4_[2]	|
+
+| chr1 | 999863   | 999975	| HES4_NM_021170.4_[1]	|
+
+| chr1 | 1013571  | 1013578	| ISG15_NM_005101.4_[1]	|
+
+| chr1 | 1013981  | 1014480	| ISG15_NM_005101.4_[2]	|
+
+<br />
+
 
 <br />

@@ -1,23 +1,28 @@
 # Welcome to Poirot
-
-<p align="center">
+the pipeline is running at [Clinical Genomics Uppsala](https://www.uu.se/en/research/clinical-genomics-uppsala) to call variants from short-read illumina WGS data from rare disease patients. 
+<br />
+<br />
+You can find the github repository at 
 <a href="https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/">https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/</a>
-</p>
+<br />
+<br />
+This [snakemake](https://snakemake.readthedocs.io/en/stable/) pipeline is built using module system from [Hydra Genetics](https://github.com/hydra-genetics/) to process paired-end `.fastq.gz` files from Illumina whole genome sequencing.
 
-This pipeline is run at Clinical Genomics Uppsala to call variants from short-read illumina WGS data from rare disease patients. This [snakemake](https://snakemake.readthedocs.io/en/stable/) pipeline is built using module system from [Hydra Genetics](https://github.com/hydra-genetics/) to process paired-end `.fastq.gz` files from Illumina whole genome sequencing.
-
-Poirot uses the following hydra genetics modules:
+We call it Poirot after the fictive detective, Hercule Poirot, created by Agatha Christie (one of the developers is a big Christie nerd and thought a detective's name was perfect since the pipeline should detect variants). We also have a whole exome pipeline, named after Poirot's side-kick [Hastings](https://hastings.readthedocs.io/en/latest/softwares/).
+<br />
+<br />
+**Poirot uses the following hydra genetics modules:**
 
 - [alignment](https://github.com/hydra-genetics/alignment/tree/v0.6.0)
 - [annotation](https://github.com/hydra-genetics/annotation/tree/v1.0.1)
 - [compression](https://github.com/hydra-genetics/compression/tree/v2.0.0)
 - [cnv_sv](https://github.com/hydra-genetics/cnv_sv/tree/v0.5.0)
 - [filtering](https://github.com/hydra-genetics/filtering/tree/v0.3.0)
+- [misc](https://github.com/hydra-genetics/misc/tree/v0.2.0)
+- [mitochondrial](https://github.com/hydra-genetics/tree/tag/v0.1.0)
 - [parabricks](https://github.com/hydra-genetics/parabricks/tree/v1.2.0)
 - [prealignment](https://github.com/hydra-genetics/prealignment/tree/v1.2.0)
 - [qc](https://github.com/hydra-genetics/qc/tree/v0.5.0)
-- [misc](https://github.com/hydra-genetics/misc/tree/v0.2.0)
-- [mitochondrial](https://github.com/hydra-genetics/tree/tag/v0.1.0)
 - [snv_indels](https://github.com/hydra-genetics/snv_indels/tree/v1.0.0)
 
 
