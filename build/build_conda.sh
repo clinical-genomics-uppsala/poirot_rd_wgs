@@ -79,7 +79,7 @@ then
     rm -fr ${PIPELINE_NAME}_${TAG_OR_BRANCH}
 fi
 
-if [ -d poirot_config];
+if [ -d poirot_config ];
 then
     rm -fr poirot_config
 fi
