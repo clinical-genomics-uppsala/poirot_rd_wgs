@@ -211,6 +211,12 @@ manta_config_n:
 manta_run_workflow_n:
   container: "docker://hydragenetics/manta:1.6.0"
 
+melt:
+  container: "docker://vanallenlab/melt:3159ce1"
+  bed: "/projects/wp3/Software/MELTv2.2.2/add_bed_files/Hg38/Hg38.genes.bed"
+  extra: ""
+  mei: "/projects/wp3/Software/MELTv2.2.2/mei_list.txt"
+
 mosdepth:
   container: "docker://hydragenetics/mosdepth:0.3.2"
   by: "500"
