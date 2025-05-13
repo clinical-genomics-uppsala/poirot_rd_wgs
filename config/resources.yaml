@@ -85,6 +85,11 @@ manta_run_workflow_n:
   mem_mb: 122880
   mem_per_cpu: 6144
 
+melt:
+  threads: 8
+  mem_mb: 40720
+  mem_per_cpu: 6144
+
 mosdepth:
   mem_mb: 36864
   threads: 4
