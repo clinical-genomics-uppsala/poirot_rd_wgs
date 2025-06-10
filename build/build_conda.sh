@@ -50,7 +50,9 @@ git clone https://github.com/hydra-genetics/references.git ${PIPELINE_NAME}_${TA
 
 ## Download the config files from the config repo
 git clone --branch ${CONFIG_VERSION} ${CONFIG_GITHUB_REPO} poirot_config/
+## copy resources.yaml files to the pipline config directory
 cp poirot_config/config/*.yaml ./${PIPELINE_NAME}_${TAG_OR_BRANCH}/${PIPELINE_NAME}/config/
+cp -r poirot_config/references ./${PIPELINE_NAME}_${TAG_OR_BRANCH}/${PIPELINE_NAME}/config/
 cp -r poirot_config/profiles/* ./${PIPELINE_NAME}_${TAG_OR_BRANCH}/${PIPELINE_NAME}/profiles/
 
 # # Pack all cloned repositories
