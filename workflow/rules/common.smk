@@ -9,6 +9,7 @@ from datetime import datetime
 
 from hydra_genetics.utils.misc import get_module_snakefile
 from hydra_genetics.utils.resources import load_resources
+from hydra_genetics.utils.misc import replace_dict_variables
 from hydra_genetics.utils.samples import *
 from hydra_genetics.utils.units import *
 from hydra_genetics.utils.misc import extract_chr
@@ -35,6 +36,7 @@ if not workflow.overwrite_configfiles:
     sys.exit("At least one config file must be passed using --configfile/--configfiles, by command line or a profile!")
 
 try:
+    config = replace_dict_variables(config)
     validate(config, schema="../schemas/config.schema.yaml")
 except WorkflowError as we:
     # Probably a validation error, but the original exsception in lost in
