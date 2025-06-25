@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.7.0...v0.8.0) (2025-06-25)
+
+
+### Features
+
+* remove spring files and tiddit vcfs from final results ([90881c2](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/90881c2c429c43602096fd0d237109da7dbdf24e))
+* update parabricks module ([c7c4718](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/c7c4718e0df79bd3fe3fb7f4fc4d1df623d57814))
+
 ## [0.7.0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.6.0...v0.7.0) (2024-10-14)
 
 
