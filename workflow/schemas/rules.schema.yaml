@@ -83,6 +83,26 @@ properties:
             type: string
             description: deepvariant vcf to which the reference genome version has been added to vcf header
 
+    fix_mt_gt:
+      type: object
+      description: input and output parameters for fix_mt_gt
+      properties:
+        input:
+          type: object
+          description: list of inputs
+          properties:
+            vcf:
+              type: string
+              description: filtered mutect2 vcf with mitochondrial variant calls
+
+      output:
+        type: object
+        description: list of outputs
+        properties:
+          vcf:
+            type: string
+            description: VCF with MT genotypes at split multiallelic sites fixed
+
   fix_sv_header:
     type: object
     description: input and output parameters for fix_sv_header
@@ -188,28 +208,3 @@ properties:
           vcf:
             type: string
             description: Tiddit vcf where the reference genome version has been added to vcf header.
-
-
-
-# Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
-  fix_mt_gt:
-    type: object
-    description: input and output parameters for fix_mt_gt
-    properties:
-      input:
-        type: object
-        description: list of inputs
-        properties:
-          input1:
-            type: string
-            description: description input1
-            #value: set to override value in table, else remove
-
-      output:
-        type: object
-        description: list of outputs
-        properties:
-          output1:
-            type: string
-            description: description output1
-            #value: set to override value in table, else remove
