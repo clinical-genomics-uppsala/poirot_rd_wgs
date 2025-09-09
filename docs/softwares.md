@@ -58,11 +58,8 @@ Introduction to deepvariant_add_ref
 
 ---
 
----
-
-## [fix_mt_gt]
-A script that postprocesses the GATK mitochondrial mutect2 VCF that has been run througj . It looks
-for GT fielsd that have more than two entries (e.g. '0/././1, or '0/1/./.' etc)
+## fix_mt_gt
+A script that postprocesses the GATK mitochondrial mutect2 VCF that has been run througj . It looks for GT fielsd that have more than two entries (e.g. '0/././1, or '0/1/./.' etc)
 and converts them to '0/1' as some tools can not parse the vcf when the 
 GT field has missing alleles and is > 2.
 
@@ -87,7 +84,7 @@ GT field has missing alleles and is > 2.
 ---
 
 ## fix_sv_header
-Introduction to fix_sv_header
+A script that changes the gnomad_af type to float in the vcf header
 
 ### :snake: Rule
 
