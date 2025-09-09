@@ -83,17 +83,17 @@ properties:
             type: string
             description: deepvariant vcf to which the reference genome version has been added to vcf header
 
-    fix_mt_gt:
-      type: object
-      description: input and output parameters for fix_mt_gt
-      properties:
-        input:
-          type: object
-          description: list of inputs
-          properties:
-            vcf:
-              type: string
-              description: filtered mutect2 vcf with mitochondrial variant calls
+  fix_mt_gt:
+    type: object
+    description: input and output parameters for fix_mt_gt
+    properties:
+      input:
+        type: object
+        description: list of inputs
+        properties:
+          vcf:
+            type: string
+            description: filtered mutect2 vcf with mitochondrial variant calls
 
       output:
         type: object
