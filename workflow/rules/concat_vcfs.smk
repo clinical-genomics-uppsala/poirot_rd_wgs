@@ -37,7 +37,7 @@ rule exclude_chrM:
 rule bcftools_concat:
     input:
         deepvariant_vcf="vcf_final/{sample}_{type}.no_ChrM.vcf",
-        mutect2_vcf="mitochondrial/gatk_select_variants_final/{sample}_{type}.fix_af.gt_fixed.vcf",
+        mutect2_vcf="mitochondrial/gatk_select_variants_final/{sample}_{type}.fix_gt.vcf",
     output:
         vcf=temp("vcf_final/{sample}_{type}.vcf"),
     log:
