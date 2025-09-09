@@ -189,3 +189,27 @@ properties:
             type: string
             description: Tiddit vcf where the reference genome version has been added to vcf header.
 
+
+
+# Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
+  fix_mt_gt:
+    type: object
+    description: input and output parameters for fix_mt_gt
+    properties:
+      input:
+        type: object
+        description: list of inputs
+        properties:
+          input1:
+            type: string
+            description: description input1
+            #value: set to override value in table, else remove
+
+      output:
+        type: object
+        description: list of outputs
+        properties:
+          output1:
+            type: string
+            description: description output1
+            #value: set to override value in table, else remove

@@ -15,7 +15,7 @@ modules:
   compression: "v2.0.0"
   cnv_sv: "v0.5.0"
   filtering: "v0.3.0"
-  parabricks: "v1.2.0"
+  parabricks: "v1.2.1"
   prealignment: "v1.2.0"
   qc: "v0.5.0"
   misc: "v0.2.0"
