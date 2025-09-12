@@ -11,7 +11,9 @@ This ReadMe is only a brief introduction, please refer to ReadTheDocs for the la
 ---
 ![Lint](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/actions/workflows/lint.yaml/badge.svg?branch=main)
 ![Snakefmt](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/actions/workflows/snakefmt.yaml/badge.svg?branch=main)
-![snakemake dry run](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/actions/workflows/snakemake-dry-run_gpu.yaml/badge.svg?branch=main)
+![snakemake dry run GPU](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/actions/workflows/snakemake-dry-run_gpu.yaml/badge.svg?branch=main)
+![snakemake dry run CPU](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/actions/workflows/snakemake-dry-run_cpu.yaml/badge.svg?branch=main)
+![unit](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/actions/workflows/pytest.yaml/badge.svg?branch=main)
 ![pycodestyle](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/actions/workflows/pycodestyle.yaml/badge.svg?branch=main)
 [![Documentation Status](https://readthedocs.org/projects/poirot-rd-wgs/badge/?version=latest)](https://poirot-rd-wgs.readthedocs.io/en/latest/?badge=latest)
 

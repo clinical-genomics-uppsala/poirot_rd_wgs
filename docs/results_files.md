@@ -10,7 +10,6 @@ Successful execution of the pipeline result in the the following output files lo
 multiqc_DNA.html| html  | Aggregated QC values for entire sequence run, open in browser|
 {sample}/{sample}_N.cram | cram | Sorted and deduplicated CRAM alignement file |
 {sample}/{sample}_N.cram.crai | crai |  Index for the CRAM alignment file | 
-{sample}/spring/{sample}_{type}_{flowcell}_{lane}_{barcode}.spring| spring (.tar archives) | Spring compressed files (lossless) are tar archives of the raw fastq files (.fastq.gz files)|
 {sample}/{sample}_snv_indels.vcf.gz | vcf.gz | Compressed deepvariant VCF file  |
 {sample}/{sample}_snv_indels.vcf.gz.tbi | tbi | Index for the compressed deepvariant VCF file  |
 {sample}/{sample}_snv_indels.filtered.vcf.gz | vcf.gz | Compressed deepvariant VCF file containing rare variants (filtered on VEP annoatoon max_af > 10%)  |
@@ -19,10 +18,9 @@ multiqc_DNA.html| html  | Aggregated QC values for entire sequence run, open in 
 {sample}/cnv_sv/{sample}.cnvpytor.vcf.gz | vcf.gz | Unfiltered CNVpytor VCF file |
 {sample}/cnv_sv/{sample}.cnvpytor_filtered.aed| aed | Filtered CNVpytor calls in aed format (Affymetrix Extensible Data format, tab delimited) |
 {sample}/cnv_sv/{sample}.cnvpytor.aed | aed | CNVpytor calls in aed format (Affymetrix Extensible Data format, tab delimited) |
-{sample}/cnv_sv/{sample}.tiddit.vcf.gz| vcf.gz  | Compressed VCF of SV called by Tiddit |
 {sample}/cnv_sv/{sample}.manta_diploidSV.vcf.gz | vcf.gz  | Compressed VCF for SV calls called by Manta |
-{sample}/cnv_sv/{sample}.svdb_merged.vcf.gz | vcf.gz | Compressed VCF containg the merge of SV and CNV calls from Tiddit, Manta and CNVpytor  |
-{sample}/cnv_sv/{sample}.svdb_merged.filtered.vcf.gz | vcf.gz | A filtered version of the compressed VCF containing the merge of SV and CNV calls from Tiddit, Manta and CNVpytor |
+{sample}/cnv_sv/{sample}.svdb_merged.vcf.gz | vcf.gz | Compressed VCF containg the merge of SV and CNV calls from Manta and CNVpytor  |
+{sample}/cnv_sv/{sample}.svdb_merged.filtered.vcf.gz | vcf.gz | A filtered version of the compressed VCF containing the merge of SV and CNV calls from Manta and CNVpytor |
 {sample}/{sample}.upd_regions.bed | bed | Bed file of UPD regions called from a Trio VCF. Sample in this case is the sample id of the proband in the trio.  |
 {sample}/{sample}.contamination.html | html | Contamination report from haplocheck program |
 {sample}/{sample}.expansionhunter_stranger.vcf.gz | vcf.gz | Compressed VCF with repeat expansions called by Expansion Hunter and annotated with stranger |
