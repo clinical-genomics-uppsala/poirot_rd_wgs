@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.9.0](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.8.0...v0.9.0) (2025-09-22)
+
+
+### Features
+
+* update dag images ([2c523ac](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/2c523ac3d4765c19f7c6d159171ad4b95fed2c50))
+
+
+### Bug Fixes
+
+* fix mitochondrial mutect2 GT fields that have missing alleles and splitting multiallelic sites ([bdccb53](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/bdccb531e5ddabcc7bd86d57884fd3ed8be4bfac))
+
+
+### Documentation
+
+* Fix description of fix_mt_gt script ([55482f7](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/55482f7111f2f761d92d082637eff890681f0099))
+* update results file page ([5271ca3](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/5271ca3c912b07415b8d0e082803ae729dc0ba78))
+* update rules schema ([0e727f8](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/0e727f860559865464cba4e26d77edce8133390b))
+* update rules schema ([415f0f0](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/415f0f05299d9bb8a4b469eb903f05803cfc16ae))
+* update softwares.md ([d51c022](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/d51c0225e070a99d7fe598ee45372e0dc87ef212))
+* update test badges ([6883345](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/688334557a5a635b6f057966e90ea27df0e0ce27))
+
 ## [0.8.0](https://www.github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.7.0...v0.8.0) (2025-06-25)
 
 
