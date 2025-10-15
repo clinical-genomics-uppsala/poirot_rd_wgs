@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.0](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.9.0...v0.10.0) (2025-10-15)
+
+
+### Features
+
+* rename vcf files for seqone ([07d1a67](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/07d1a67a8d7420677325d1e531b386e0cd764fd3))
+
+
+### Documentation
+
+* update docs on output files ([ff50f80](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/ff50f808c0f8a0393d1b13459ae93b9ac58794f5))
+
 ## [0.9.0](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.8.0...v0.9.0) (2025-09-22)
 
 
