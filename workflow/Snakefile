@@ -5,6 +5,7 @@ __license__ = "GPL-3"
 
 
 include: "rules/common.smk"
+include: "rules/fix_mt_gt.smk"
 include: "rules/fix_sv_header.smk"
 include: "rules/bcftools.smk"
 include: "rules/vcf_to_aed.smk"

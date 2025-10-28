@@ -1,0 +1,31 @@
+name: pytest
+
+on:
+  push:
+    branches:
+     - develop
+     - main
+  pull_request:
+    branches:
+     - develop
+     - main
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    name: pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.11
+      - name: Install requirements.txt
+        run: |
+          pip install -r requirements.txt
+      - name: Install requirements.test.txt
+        run: |
+          pip install -r requirements.test.txt
+      - name: pytest
+        run: pytest workflow/scripts

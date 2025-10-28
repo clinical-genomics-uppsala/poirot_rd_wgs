@@ -72,6 +72,20 @@ properties:
       extra:
         type: string
         description: parameters that should be forwarded
+ 
+  fix_mt_gt:
+    type: object
+    description: parameters for fix_mt_gt
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
 
   fix_sv_header:
     type: object
@@ -86,12 +100,8 @@ properties:
       extra:
         type: string
         description: parameters that should be forwarded
-  required:
-      - samples
-      - units
-      - resources
-      - default_container
-      - reference
+  
+  
  
   vcf_to_aed:
     type: object
@@ -149,3 +159,9 @@ properties:
         type: string
         description: parameters that should be forwarded
 
+  required:
+      - samples
+      - units
+      - resources
+      - default_container
+      - reference
