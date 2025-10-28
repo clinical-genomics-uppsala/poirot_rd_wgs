@@ -290,6 +290,13 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
         vcf=temp("{file}.bcftools_view_pass.vcf.gz"),
     params:
         extra=config.get("bcftools_view_pass", {}).get("extra", ""),
+    log:
+        "{file}.bcftools_view.vcf.log",
+    benchmark:
+        repeat(
+            "{file}.bcftools_view.vcf.benchmark.tsv",
+            config.get("bcftools_view", {}).get("benchmark_repeats", 1),
+        )
 
 
 use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_softfilter_cnvpytor with:
