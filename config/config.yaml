@@ -12,17 +12,17 @@ output: "config/output_list.json"
 default_container: "docker://hydragenetics/common:1.11.1"
 
 modules:
-  alignment: "v0.6.0"
-  annotation: "v1.0.1"
-  compression: "v2.0.0"
-  cnv_sv: "6739845"
-  filtering: "v0.3.0"
+  alignment: "v0.7.0"
+  annotation: "v1.2.0"
+  cnv_sv: "f441cb7"
+  compression: "v2.1.0"
+  filtering: "v1.1.0"
   parabricks: "v1.2.1"
-  prealignment: "v1.2.0"
-  qc: "v0.5.0"
+  prealignment: "v1.4.0"
+  qc: "v0.6.0"
   misc: "v0.2.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "v1.0.0"
+  snv_indels: "v1.3.0"
 
 reference:
   coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_with_MT_with_non_coding_20240613.bed" # see /beegfs-storage/data/ref_data/refseq/README 
@@ -212,7 +212,7 @@ manta_run_workflow_n:
   container: "docker://hydragenetics/manta:1.6.0"
 
 melt:
-  container: "docker://vanallenlab/melt:3159ce1"
+  container: "/projects/wp3/Software/MELTv2.2.2/MELT_v2.2.2.sif"
   bed: "/projects/wp3/Software/MELTv2.2.2/add_bed_files/Hg38/Hg38.genes.bed"
   extra: ""
   mei: "/projects/wp3/Software/MELTv2.2.2/mei_list.txt"

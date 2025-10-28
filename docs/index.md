@@ -13,17 +13,17 @@ We call it Poirot after the fictive detective, Hercule Poirot, created by Agatha
 <br />
 **Poirot uses the following hydra genetics modules:**
 
-- [alignment](https://github.com/hydra-genetics/alignment/tree/v0.6.0)
-- [annotation](https://github.com/hydra-genetics/annotation/tree/v1.0.1)
-- [compression](https://github.com/hydra-genetics/compression/tree/v2.0.0)
-- [cnv_sv](https://github.com/hydra-genetics/cnv_sv/tree/v0.5.0)
-- [filtering](https://github.com/hydra-genetics/filtering/tree/v0.3.0)
+- [alignment](https://github.com/hydra-genetics/alignment/tree/v0.7.0)
+- [annotation](https://github.com/hydra-genetics/annotation/tree/v1.2.0)
+- [cnv_sv](https://github.com/hydra-genetics/cnv_sv/tree/f441cb7)
+- [compression](https://github.com/hydra-genetics/compression/tree/v2.1.0)
+- [filtering](https://github.com/hydra-genetics/filtering/tree/v1.1.0)
 - [misc](https://github.com/hydra-genetics/misc/tree/v0.2.0)
 - [mitochondrial](https://github.com/hydra-genetics/tree/tag/v0.1.0)
 - [parabricks](https://github.com/hydra-genetics/parabricks/tree/v1.2.0)
-- [prealignment](https://github.com/hydra-genetics/prealignment/tree/v1.2.0)
-- [qc](https://github.com/hydra-genetics/qc/tree/v0.5.0)
-- [snv_indels](https://github.com/hydra-genetics/snv_indels/tree/v1.0.0)
+- [prealignment](https://github.com/hydra-genetics/prealignment/tree/v1.4.0)
+- [qc](https://github.com/hydra-genetics/qc/tree/v0.6.0)
+- [snv_indels](https://github.com/hydra-genetics/snv_indels/tree/v1.3.0)
 
 
 # Hydra-genetics
