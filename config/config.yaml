@@ -51,6 +51,7 @@ automap:
   outdir: "cnv_sv/automap"
 
 bcftools_split_vep:
+  container: "docker://hydragenetics/common:1.11.1"
   columns: "gnomad_AF:Float"
 
 bcftools_view_biallelic:
