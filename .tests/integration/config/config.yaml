@@ -216,7 +216,7 @@ manta_run_workflow_n:
 
 melt:
   container: "reference/MELT_v2.2.2.sif"
-  bed: "reference/Hg38/Hg38.genes.bed"
+  bed: "reference/Hg38.genes.bed"
   extra: ""
   mei: "reference/mei_list.txt"
 
