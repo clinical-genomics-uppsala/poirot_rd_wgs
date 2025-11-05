@@ -14,7 +14,7 @@ default_container: "docker://hydragenetics/common:3.1.1"
 modules:
   alignment: "v0.7.0"
   annotation: "v1.2.0"
-  cnv_sv: "f441cb7"
+  cnv_sv: "v1.0.2"
   compression: "v2.1.0"
   filtering: "v1.1.0"
   parabricks: "v1.2.1"
