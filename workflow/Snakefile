@@ -24,9 +24,14 @@ rule all:
         unpack(compile_output_list),
 
 
+ruleorder: _copy_melt_ALU > misc_bgzip
+ruleorder: _copy_melt_HERVK > misc_bgzip
+ruleorder: _copy_melt_LINE1 > misc_bgzip
+ruleorder: _copy_melt_SVA > misc_bgzip
 ruleorder: _copy_samtools_crai > compression_samtools_index
 ruleorder: _copy_snv_indels_tbi > misc_tabix
 ruleorder: _copy_snv_indels_filtered_tbi > misc_tabix
+ruleorder: cnv_sv_bgzip > misc_bgzip
 ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: snv_indels_glnexus_trio > snv_indels_glnexus
 ruleorder: snv_indels_tabix > misc_tabix
@@ -189,6 +194,21 @@ use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
         wrk_dir=temp(directory("cnv_sv/manta_run_workflow_n/{sample}/workspace")),
 
 
+use rule melt from cnv_sv as cnv_sv_melt with:
+    input:
+        bam=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
+        bai=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
+        bed=config.get("melt", {}).get("bed", ""),
+        mei=config.get("melt", {}).get("mei", ""),
+        ref=config.get("reference", {}).get("fasta", ""),
+    output:
+        alu=temp("cnv_sv/melt/{sample}_{type}/ALU.final_comp.vcf"),
+        hervk=temp("cnv_sv/melt/{sample}_{type}/HERVK.final_comp.vcf"),
+        line1=temp("cnv_sv/melt/{sample}_{type}/LINE1.final_comp.vcf"),
+        sva=temp("cnv_sv/melt/{sample}_{type}/SVA.final_comp.vcf"),
+        tmpdir=temp(directory("cnv_sv/melt/{sample}_{type}")),
+
+
 use rule smn_manifest from cnv_sv as cnv_sv_smn_manifest with:
     input:
         bam=lambda wildcards: get_bam_input(wildcards)[0],
@@ -271,6 +291,13 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
         vcf=temp("{file}.bcftools_view_pass.vcf.gz"),
     params:
         extra=config.get("bcftools_view_pass", {}).get("extra", ""),
+    log:
+        "{file}.bcftools_view.vcf.log",
+    benchmark:
+        repeat(
+            "{file}.bcftools_view.vcf.benchmark.tsv",
+            config.get("bcftools_view", {}).get("benchmark_repeats", 1),
+        )
 
 
 use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_softfilter_cnvpytor with:
