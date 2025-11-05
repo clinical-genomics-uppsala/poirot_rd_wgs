@@ -15,7 +15,7 @@ We call it Poirot after the fictive detective, Hercule Poirot, created by Agatha
 
 - [alignment](https://github.com/hydra-genetics/alignment/tree/v0.7.0)
 - [annotation](https://github.com/hydra-genetics/annotation/tree/v1.2.0)
-- [cnv_sv](https://github.com/hydra-genetics/cnv_sv/tree/f441cb7)
+- [cnv_sv](https://github.com/hydra-genetics/cnv_sv/tree/v1.0.2)
 - [compression](https://github.com/hydra-genetics/compression/tree/v2.1.0)
 - [filtering](https://github.com/hydra-genetics/filtering/tree/v1.1.0)
 - [misc](https://github.com/hydra-genetics/misc/tree/v0.2.0)
