@@ -217,7 +217,7 @@ manta_run_workflow_n:
 melt:
   container: "reference/MELT_v2.2.2.sif"
   bed: "reference/Hg38.genes.bed"
-  extra: ""
+  extra: "-r 150 "
   mei: "reference/mei_list.txt"
 
 mosdepth:
@@ -270,7 +270,7 @@ pbrun_deepvariant:
 
 pbrun_fq2bam:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.2.1-1"
-  extra: "--gpusort --gpuwrite --num-cpu-threads-per-stage 10 "
+  extra: "--gpusort --gpuwrite --num-cpu-threads-per-stage 10 --fix-mate "
   tmp_dir: "/tmp/"
 
 peddy:
