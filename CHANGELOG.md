@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.10.1](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.10.0...v0.10.1) (2025-11-06)
+
+
+### Bug Fixes
+
+* add --fix-mate to pbrun_fq2bam add -r 150 to melt ([5a69d32](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/5a69d32d014a1cec0da864993a17108ddc0d2c90))
+* add melt.sif to build.sh and update common container ([75d34a9](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/75d34a996aefb5c219ab45823c1bab4e141cfa10))
+* correct output ([d0d2d6f](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/d0d2d6f53488c0e402f5e132177c2c2a66307856))
+* melt with local .sif file ([cb9a48a](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/cb9a48af5a2ba8be5fa469b4f6c2c139d053cf8d))
+* more resources for melt and old container for bcftools split-vep ([50d82eb](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/50d82eb917897e0b05db8e16173d8867101137e9))
+* output, log and benchmark match in bcftools_view after update filtering ([2647250](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/26472505e696e5f2f2260859da9a8da8a5b8d622))
+* update .tests/integration/config/config.yaml ([4e165e1](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/4e165e158ccbb6c7755532949927e97186173f77))
+* Update config/config.yaml ([b9b877d](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/b9b877db15a332fe65f021ec882c8d770e9f1ca1))
+* version in readthedocs ([a080d38](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/a080d380925ad0f3d16e1352a475af3e04f2e3a0))
+* versions in test config and snakefmt ([dfafd83](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/dfafd838a4ee9cd56208dc06e7a7623b31bb76c1))
+
 ## [0.10.0](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.9.0...v0.10.0) (2025-10-15)
 
 
