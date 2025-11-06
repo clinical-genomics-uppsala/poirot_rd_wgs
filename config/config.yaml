@@ -9,20 +9,20 @@ units: "units.tsv"
 
 output: "config/output_list.json"
 
-default_container: "docker://hydragenetics/common:1.11.1"
+default_container: "docker://hydragenetics/common:3.1.1"
 
 modules:
-  alignment: "v0.6.0"
-  annotation: "v1.0.1"
-  compression: "v2.0.0"
-  cnv_sv: "v0.5.0"
-  filtering: "v0.3.0"
+  alignment: "v0.7.0"
+  annotation: "v1.2.0"
+  cnv_sv: "v1.0.2"
+  compression: "v2.1.0"
+  filtering: "v1.1.0"
   parabricks: "v1.2.1"
-  prealignment: "v1.2.0"
-  qc: "v0.5.0"
+  prealignment: "v1.4.0"
+  qc: "v0.6.0"
   misc: "v0.2.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "v1.0.0"
+  snv_indels: "v1.3.0"
 
 reference:
   coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_with_MT_with_non_coding_20240613.bed" # see /beegfs-storage/data/ref_data/refseq/README 
@@ -51,6 +51,7 @@ automap:
   outdir: "cnv_sv/automap"
 
 bcftools_split_vep:
+  container: "docker://hydragenetics/common:1.11.1"
   columns: "gnomad_AF:Float"
 
 bcftools_view_biallelic:
@@ -211,6 +212,12 @@ manta_config_n:
 manta_run_workflow_n:
   container: "docker://hydragenetics/manta:1.6.0"
 
+melt:
+  container: "/projects/wp3/Software/MELTv2.2.2/MELT_v2.2.2.sif"
+  bed: "/projects/wp3/Software/MELTv2.2.2/add_bed_files/Hg38/Hg38.genes.bed"
+  extra: "-r 150 "
+  mei: "/projects/wp3/Software/MELTv2.2.2/mei_list.txt"
+
 mosdepth:
   container: "docker://hydragenetics/mosdepth:0.3.2"
   by: "500"
@@ -261,7 +268,7 @@ pbrun_deepvariant:
 
 pbrun_fq2bam:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
-  extra: "--gpusort --gpuwrite --num-cpu-threads-per-stage 10 "
+  extra: "--gpusort --gpuwrite --num-cpu-threads-per-stage 10 --fix-mate "
   tmp_dir: "/tmp/"
 
 peddy:
