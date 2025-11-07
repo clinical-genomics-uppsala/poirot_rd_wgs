@@ -11,7 +11,7 @@ When succesfully run the script will generate four compressed tar archives:
 
 The requirments listed in requirements.txt are packaged using conda-pack in a .tar.gz in the poirot_config_${PIPELINE_VERSION}.tar.gz. The snakemake-wrappers github repo and all hydra-genetics modules required by the pipeline are cloned and packaged in poirot_config_${PIPELINE_VERSION}.tar.gz.
 
-```
+```bash
 export TAG_OR_BRANCH="v0.11.0"
 export CONFIG_VERSION="v0.14.0"
 export PIPELINE_NAME="poirot_rd_wgs"
