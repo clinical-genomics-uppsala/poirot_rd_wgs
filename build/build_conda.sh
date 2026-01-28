@@ -24,9 +24,9 @@ download_pipeline() {
     echo "Cloning pipeline from ${PIPELINE_GITHUB_REPO} (branch: ${TAG_OR_BRANCH})"
     git clone --branch ${TAG_OR_BRANCH} ${PIPELINE_GITHUB_REPO} ${PIPELINE_NAME}_${TAG_OR_BRANCH}/${PIPELINE_NAME}
     
-
     # Install the requirements for the pipeline
     echo "Installing pipeline requirements"
+    export PYTHONNOUSERSITE=1 # stops pip looking in ˙$HOME/.local for packages
     ./${PIPELINE_NAME}_${TAG_OR_BRANCH}_env/bin/pip3 install -r ${PIPELINE_NAME}_${TAG_OR_BRANCH}/${PIPELINE_NAME}/requirements.txt
     
     # Pack the environment with the requirements installed
@@ -149,14 +149,15 @@ download_config() {
     
     # Download the config files from the config repo
     echo "Downloading config files from ${CONFIG_GITHUB_REPO} (version: ${CONFIG_VERSION})"
-    git clone --branch ${CONFIG_VERSION} ${CONFIG_GITHUB_REPO} poirot_config/
+    git clone --branch ${CONFIG_VERSION} ${CONFIG_GITHUB_REPO} poirot_config_${CONFIG_VERSION}
     
     ## add the pipeline version to the profiles config files
-    envsubst < poirot_config/profiles/*/config.yaml
+    envsubst < poirot_config_${CONFIG_VERSION}/profiles/${PROFILE_NAME}/config.yaml > poirot_config_${CONFIG_VERSION}/profiles/${PROFILE_NAME}/config.yaml.sub
+    mv poirot_config_${CONFIG_VERSION}/profiles/${PROFILE_NAME}/config.yaml.sub poirot_config_${CONFIG_VERSION}/profiles/${PROFILE_NAME}/config.yaml
 
     # Create config archive with version number
     echo "Creating config archive: poirot_config_${CONFIG_VERSION}.tar.gz"
-    tar -czvf poirot_config_${CONFIG_VERSION}.tar.gz poirot_config/
+    tar -czvf poirot_config_${CONFIG_VERSION}.tar.gz poirot_config_${CONFIG_VERSION}
     
     echo "Config files download completed successfully"
 }
