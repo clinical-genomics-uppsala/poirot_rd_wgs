@@ -30,7 +30,8 @@ ruleorder: _copy_melt_LINE1 > misc_bgzip
 ruleorder: _copy_melt_SVA > misc_bgzip
 ruleorder: _copy_samtools_crai > compression_samtools_index
 ruleorder: _copy_snv_indels_tbi > misc_tabix
-ruleorder: _copy_echtvar_annotated_tbi > misc_tabix
+ruleorder: _copy_echtvar_filtered_annotated_tbi > misc_tabix
+ruleorder: _copy_echtvar_filtered_vcf > misc_tabix
 ruleorder: _copy_snv_indels_filtered_tbi > misc_tabix
 ruleorder: cnv_sv_bgzip > misc_bgzip
 ruleorder: parabricks_fq2bam > alignment_samtools_index
