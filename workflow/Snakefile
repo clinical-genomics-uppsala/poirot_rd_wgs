@@ -30,12 +30,14 @@ ruleorder: _copy_melt_LINE1 > misc_bgzip
 ruleorder: _copy_melt_SVA > misc_bgzip
 ruleorder: _copy_samtools_crai > compression_samtools_index
 ruleorder: _copy_snv_indels_tbi > misc_tabix
+ruleorder: _copy_echtvar_annotated_tbi > misc_tabix
 ruleorder: _copy_snv_indels_filtered_tbi > misc_tabix
 ruleorder: cnv_sv_bgzip > misc_bgzip
 ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: snv_indels_glnexus_trio > snv_indels_glnexus
 ruleorder: snv_indels_tabix > misc_tabix
 ruleorder: snv_indels_bgzip > misc_bgzip
+
 
 
 module alignment:
@@ -72,12 +74,55 @@ module annotation:
 use rule stranger from annotation as annotation_stranger
 
 
+use rule bcftools_annotate from annotation as annotation_bcftools_annotate with:
+    input:
+        vcf="vcf_final/{sample}_{type}.echtvar_annotated.vcf.gz",
+        annots=config.get("bcftools_annotate", {}).get("annots", []),
+    output:
+        vcf=temp("vcf_final/{sample}_{type}.bcftools_annotated.vcf.gz"),
+    log:
+        "vcf_final/{sample}_{type}.bcftools_annotated.vcf.gz.log",
+    benchmark:
+        repeat("vcf_final/{sample}_{type}.bcftools_annotated.vcf.gz.benchmark.tsv", config.get("bcftools_annotate", {}).get("benchmark_repeats", 1))
+
+
+use rule echtvar_anno from annotation as annotation_echtvar with:
+    input:
+        vcf="vcf_final/{sample}_{type}.bcftools_norm.vcf.gz",
+        fasta=config["reference"]["fasta"],
+    output:
+        vcf=temp("vcf_final/{sample}_{type}.echtvar_annotated.vcf.gz"),
+    log:
+        "vcf_final/{sample}_{type}.echtvar_annotated.vcf.gz.log",
+    benchmark:
+        repeat("vcf_final/{sample}_{type}.echtvar_annotated.vcf.gz.benchmark.tsv", config.get("echtvar_anno", {}).get("benchmark_repeats", 1))
+
+
 use rule vep from annotation as annotation_vep with:
     input:
         cache=config.get("vep", {}).get("vep_cache", ""),
         fasta=config["reference"]["fasta"],
-        tabix="vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz.tbi",
-        vcf="vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz",
+        tabix="vcf_final/{sample}_{type}.popAF_filtered.vcf.gz.tbi",
+        vcf="vcf_final/{sample}_{type}.popAF_filtered.vcf.gz",
+    output:
+        vcf=temp("vcf_final/{sample}_{type}.popAF_filtered.vep_annotated.vcf"),
+    params:
+        extra=config.get("vep", {}).get("extra", "--pick"),
+        mode=config.get("vep", {}).get("mode", "--offline --cache"),
+    log:
+        "vcf_final/{sample}_{type}.popAF_filtered.vep_annotated.vcf.log",
+    benchmark:
+        repeat("vcf_final/{sample}_{type}.popAF_filtered.vep_annotated.vcf.benchmark.tsv", config.get("vep", {}).get("benchmark_repeats", 1))
+    container:
+        config.get("vep", {}).get("container", config["default_container"])
+
+
+use rule vep from annotation as annotation_vep with:
+    input:
+        cache=config.get("vep", {}).get("vep_cache", ""),
+        fasta=config["reference"]["fasta"],
+        tabix="vcf_final/{sample}_{type}.echtvar_annotated.vcf.gz.tbi",
+        vcf="vcf_final/{sample}_{type}.echtvar_annotated.vcf.gz",
     output:
         vcf=temp("vcf_final/{sample}_{type}.vep_annotated.vcf"),
     params:
@@ -106,7 +151,7 @@ use rule vep from annotation as annotation_vep_trio with:
     benchmark:
         repeat(
             "snv_indels/glnexus/{sample}_{type}.vep_annotated.vcf.benchmark.tsv",
-            config.get("vep", {}).get("benchmark_repeats", 1),
+            config.get("vep_trio", {}).get("benchmark_repeats", 1),
         )
     container:
         config.get("vep_trio", {}).get("container", config["default_container"])
@@ -297,6 +342,22 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
         repeat(
             "{file}.bcftools_view.vcf.benchmark.tsv",
             config.get("bcftools_view", {}).get("benchmark_repeats", 1),
+        )
+
+use rule  bcftools_filter_exclude_region from filtering as filtering_bcftools_snv_indels with:
+    input:
+        vcf="vcf_final/{sample}_{type}.bcftools_annotated.vcf.gz",
+    output:
+        vcf="vcf_final/{sample}_{type}.popAF_filtered.vcf.gz",
+    params:
+        filter=lambda wildcards: "-e {}".format(config["bcftools_filter_snv_indels"]["exclude"]),
+        extra=config.get("bcftools_filter_snv_indels", {}).get("extra", ""),
+    log:
+        "vcf_final/{sample}_{type}.popAF_filtered.vcf.gz.log",
+    benchmark:
+        repeat(
+            "vcf_final/{sample}_{type}.popAF_filtered.vcf.gz.benchmark.tsv",
+            config.get("bcftools_filter_snv_indels", {}).get("benchmark_repeats", 1),
         )
 
 
@@ -584,6 +645,20 @@ module snv_indels:
 
 
 use rule * from snv_indels as snv_indels_*
+
+use rule bcftools_norm from snv_indels as snv_indels_bcftools_norm with:
+    input:
+        vcf="vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz",
+        ref=config.get("reference", {}).get("fasta", ""),
+    output:
+        vcf="vcf_final/{sample}_{type}.bcftools_norm.vcf.gz",
+    log:
+        "vcf_final/{sample}_{type}.bcftools_norm.vcf.gz.log",
+    benchmark:
+        repeat(
+            "vcf_final/{sample}_{type}.bcftools_norm.vcf.gz.benchmark.tsv",
+            config.get("bcftools_norm", {}).get("benchmark_repeats", 1),
+        )
 
 
 use rule bcftools_view from snv_indels as snv_indels_bcftools_view_peddy with:

@@ -13,7 +13,7 @@ default_container: "docker://hydragenetics/common:3.1.1"
 
 modules:
   alignment: "v0.7.0"
-  annotation: "v1.2.0"
+  annotation: "110bc02"
   cnv_sv: "v1.0.2"
   compression: "v2.1.0"
   filtering: "v1.1.0"
@@ -22,7 +22,7 @@ modules:
   qc: "v0.6.0"
   misc: "v0.2.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "v1.3.0"
+  snv_indels: "c5a3130"
 
 reference:
   coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_with_MT_with_non_coding_20240613.bed" # see /beegfs-storage/data/ref_data/refseq/README 
@@ -54,6 +54,14 @@ bcftools_split_vep:
   container: "docker://hydragenetics/common:1.11.1"
   columns: "gnomad_AF:Float"
 
+bcftools_annotate:
+  annotation_db: "config/skipAF/genes_hgnc_skipAF_280126.bed"
+  annotation_string: "-m SKIP_AF "
+  extra: "-c CHROM,FROM,TO "
+
+bcftools_filter_snv_indels:
+  exclude: "'(INFO/gnomad_popmax_af > 0.10 || INFO/colorsdb_af>0.10 ) && INFO/SKIP_AF == 0'"
+
 bcftools_view_biallelic:
   extra: "-m2 -M2 -v snps"
 
@@ -63,6 +71,9 @@ bcftools_softfilter_cnvpytor:
 
 bcftools_hardfilter_cnvpytor:
   exclude: "'pytorP1>0.0001 | pytorDG<100000 | pytorPN>0.5 | ( pytorQ0>0.5 && FORMAT/CN != 0)'"
+
+bcftools_norm:
+  extra: "-m -both -w 10000"
 
 bcftools_view_pass:
   extra: "--apply-filter PASS "
@@ -118,6 +129,11 @@ deepvariant:
   container: "docker://google/deepvariant:1.6.1" 
   model_type: "WGS" 
   output_gvcf: true
+
+echtvar_anno:
+  container: "docker://hydragenetics/echtvar:0.2.2"
+  databases:
+    - "/data/ref_data/wp3/nallo_refs/0.3.0/gnomad_snvs.zip"
 
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
