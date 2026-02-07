@@ -30,4 +30,4 @@ jobs:
       - name: snakemake dry run gpu mode
         working-directory: .tests/integration
         run: |
-          snakemake -n -s ../../workflow/Snakefile --configfile config/config.yaml
+          cp ../../config/* config/ && snakemake -n -s ../../workflow/Snakefile --configfiles config/config.yaml config/config_test.yaml 

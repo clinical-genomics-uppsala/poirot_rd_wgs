@@ -1,17 +1,19 @@
 ---
 
+aligner: "bwa_gpu"
+snp_caller: "deepvariant_gpu"
 
 resources: "config/resources.yaml"
-samples: "config/samples.tsv"
-units: "config/units.tsv"
+samples: "samples_with_info.tsv"
+units: "units.tsv"
 
 output: "config/output_list.json"
 
-default_container: "docker://hydragenetics/common:1.11.1"
+default_container: "docker://hydragenetics/common:3.1.1"
 
 modules:
   alignment: "v0.7.0"
-  annotation: "v1.2.0"
+  annotation: "110bc02"
   cnv_sv: "v1.0.2"
   compression: "v2.1.0"
   filtering: "v1.1.0"
@@ -20,30 +22,27 @@ modules:
   qc: "v0.6.0"
   misc: "v0.2.0"
   mitochondrial: "v0.1.0"
-  snv_indels: "v1.3.0"
+  snv_indels: "c5a3130"
 
 reference:
-  coverage_bed: "reference/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
-  design_bed: "reference/homo_sapiens.wgs.bed"
-  exome_bed: "reference/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
-  exome_intervals: "reference/Twist_Comprehensive_Exome_Covered_Targets_hg38_interval_list.bed"
-  fasta: "reference/homo_sapiens.fasta"
-  fai: "reference/homo_sapiens.fasta.fai"
-  genepanels: "reference/genepanels.list"
-  str_panels_dir: "reference/str_panels"
+  coverage_bed: "/beegfs-storage/data/ref_data/refseq/refseq_select_mane_with_MT_with_non_coding_20240613.bed" # see /beegfs-storage/data/ref_data/refseq/README 
+  design_bed: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/homo_sapiens.hg38.wgs.bed"
+  exome_bed: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/Twist_Comprehensive_Exome_Covered_Targets_hg38.bed"
+  exome_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/Twist_Comprehensive_Exome_Covered_Targets_hg38.interval_list"
+  fasta: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta"
+  fai: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.fai"
+  genepanels: "config/gene_panels/genepanels_WGS.list"
+  sites: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/Homo_sapiens_assembly38.known_indels.vcf.gz"
+  wgs_intervals: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/homo_sapiens.hg38.wgs.interval_list"
+  str_panels_dir: "config/str_panels"
   str_panels:
-    - "ataxia.list"
-  sites: "reference/homo_sapiens.known_indels.vcf.gz"
-  wgs_intervals: "reference/homo_sapiens.wgs.interval_list"
+    - "ataxi.list"
   merge_contigs: # contigs to be merged to a single BAM for mark duplicates
     - ".*_random"
     - "chrUn_.*"
     - "chrEBV"
 
 trimmer_software: "fastp_pe"
-
-aligner: "bwa_gpu" # "bwa_cpu"
-snp_caller: "deepvariant_gpu" # "deepvariant_cpu"
 
 automap:
   container: "docker://hydragenetics/automap:1.2"
@@ -52,7 +51,16 @@ automap:
   outdir: "cnv_sv/automap"
 
 bcftools_split_vep:
+  container: "docker://hydragenetics/common:1.11.1"
   columns: "gnomad_AF:Float"
+
+bcftools_annotate:
+  annotation_db: "config/skipAF/genes_hgnc_skipAF_280126.bed"
+  annotation_string: "-m SKIP_AF "
+  extra: "-c CHROM,FROM,TO "
+
+bcftools_filter_snv_indels:
+  exclude: "'(INFO/gnomad_popmax_af > 0.10 || INFO/colorsdb_af>0.10 ) && INFO/SKIP_AF == 0'"
 
 bcftools_view_biallelic:
   extra: "-m2 -M2 -v snps"
@@ -64,8 +72,11 @@ bcftools_softfilter_cnvpytor:
 bcftools_hardfilter_cnvpytor:
   exclude: "'pytorP1>0.0001 | pytorDG<100000 | pytorPN>0.5 | ( pytorQ0>0.5 && FORMAT/CN != 0)'"
 
+bcftools_norm:
+  docker: "docker://docker.io/library/bcftools:1.23"
+  extra: "-m -both -w 10000"
+
 bcftools_view_pass:
-  container: "docker://hydragenetics/common:1.11.1"
   extra: "--apply-filter PASS "
 
 bcftools_view_svdb:
@@ -73,34 +84,34 @@ bcftools_view_svdb:
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
-  amb: "reference/homo_sapiens.fasta.amb"
-  ann: "reference/homo_sapiens.fasta.ann"
-  bwt: "reference/homo_sapiens.fasta.bwt"
-  pac: "reference/homo_sapiens.fasta.pac"
-  sa: "reference/homo_sapiens.fasta.sa"
+  amb: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.amb"
+  ann: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.ann"
+  bwt: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.bwt"
+  pac: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.pac"
+  sa: "/beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GCA_000001405.15_GRCh38_no_alt_analysis_set_GRCmasked.fasta.sa"
 
 bwa_mem_mito:
   container: "docker://hydragenetics/bwa_mem:0.7.17"
-  extra: "-K 100000000 -v3 -Y"
+  extra: "-K 100000000 -v3 -Y "
   amb:
-    mt: "reference/Homo_sapiens_assembly38.chrM.fasta.amb"
-    mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.amb"
+    mt: "/beegfs-storage/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.amb"
+    mt_shifted: "/beegfs-storage/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.amb"
   ann:
-    mt: "reference/Homo_sapiens_assembly38.chrM.fasta.ann"
-    mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.ann"
+    mt: "/beegfs-storage/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.ann"
+    mt_shifted: "/beegfs-storage/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.ann"
   bwt:
-    mt: "reference/Homo_sapiens_assembly38.chrM.fasta.bwt"
-    mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.bwt"
+    mt: "/beegfs-storage/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.bwt"
+    mt_shifted: "/beegfs-storage/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.bwt"
   pac:
-    mt: "reference/Homo_sapiens_assembly38.chrM.fasta.pac"
-    mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.pac"
+    mt: "/beegfs-storage/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.pac"
+    mt_shifted: "/beegfs-storage/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.pac"
   sa:
-    mt: "reference/Homo_sapiens_assembly38.chrM.fasta.sa"
-    mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.sa"
+    mt: "/beegfs-storage/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta.sa"
+    mt_shifted: "/beegfs-storage/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.sa"
 
 cnvpytor_readdepth:
-  container: "docker://hydragenetics/cnvpytor:1.2.1"
-  length_list: "1000 10000 100000"
+  container: "docker://hydragenetics/cnvpytor:1.3.1"
+  length_list: "500"
   extra: "-chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM "
 
 cnvpytor_filter:
@@ -113,20 +124,24 @@ cnvpytor_filter:
   view: "500"
 
 create_cov_excel:
-  container: "docker://hydragenetics/common:1.11.1"
   covLimits: "10 20 30"
 
 deepvariant:
-  container: "docker://google/deepvariant:1.5.0" 
+  container: "docker://google/deepvariant:1.6.1" 
   model_type: "WGS" 
   output_gvcf: true
 
+echtvar_anno:
+  container: "docker://hydragenetics/echtvar:0.2.2"
+  databases:
+    - "/data/ref_data/wp3/nallo_refs/0.3.0/gnomad_snvs.zip"
+
 expansionhunter:
   container: "docker://hydragenetics/expansionhunter:5.0.0"
-  variant_catalog: "reference/variant_catalog.json"
+  variant_catalog: "config/str_catalog/variant_catalog_hg38.json"
 
 fastp_pe:
-  container: "docker://hydragenetics/fastp:0.20.1"
+  container: "docker://hydragenetics/fastp:0.24.3"
   # Default enabled trimming parameters for fastp. Specified for clarity.
   extra: "--trim_poly_g --qualified_quality_phred 15 --unqualified_percent_limit 40 --n_base_limit 5 --length_required 15"
 
@@ -152,7 +167,7 @@ gatk_left_align_and_trim_variants:
 
 gatk_lift_over_vcf:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
-  shift_back_chain: "reference/ShiftBack.chain"
+  shift_back_chain: "/beegfs-storage/data/ref_data/gatk_mito/ShiftBack.chain"
 
 gatk_mark_duplicates:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
@@ -169,8 +184,8 @@ gatk_merge_stats:
 gatk_mutect2:
   container: "docker://hydragenetics/gatk4:4.2.2.0"
   interval:
-    mt: "reference/non_control_region.chrM.interval_list"
-    mt_shifted: "reference/control_region_shifted.chrM.interval_list"
+    mt: "/beegfs-storage/data/ref_data/gatk_mito/non_control_region.chrM.interval_list"
+    mt_shifted: "/beegfs-storage/data/ref_data/gatk_mito/control_region_shifted.chrM.interval_list"
   max_reads_per_alignment_start: 75
 
 gatk_print_reads:
@@ -202,28 +217,28 @@ glnexus_trio:
 glnexus_peddy:
   container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
   configfile: "DeepVariantWGS"
-  extra: "--bed reference/GRCH38.bed "
+  extra: "--bed /beegfs-storage/data/ref_data/peddy/v0.4.8/GRCH38.bed "
 
 haplocheck:
   container: "docker://hydragenetics/haplocheck:1.3.3"
 
 manta_config_n:
   container: "docker://hydragenetics/manta:1.6.0"
-  extra: "--callRegions reference/GRCh38_chromosomes.bed.gz"
+  extra: "--callRegions /beegfs-storage/data/ref_genomes/GRCh38/GRCmasked/GRCh38_chromosomes.bed.gz"
 
 manta_run_workflow_n:
   container: "docker://hydragenetics/manta:1.6.0"
 
 melt:
-  container: "reference/MELT_v2.2.2.sif"
-  bed: "reference/Hg38.genes.bed"
+  container: "/projects/wp3/Software/MELTv2.2.2/MELT_v2.2.2.sif"
+  bed: "/projects/wp3/Software/MELTv2.2.2/add_bed_files/Hg38/Hg38.genes.bed"
   extra: "-r 150 "
-  mei: "reference/mei_list.txt"
+  mei: "/projects/wp3/Software/MELTv2.2.2/mei_list.txt"
 
 mosdepth:
   container: "docker://hydragenetics/mosdepth:0.3.2"
   by: "500"
-  extra: "--fast-mode --no-per-base "
+  extra: "--fast-mode --use-median --no-per-base "
 
 mosdepth_bed:
   container: "docker://hydragenetics/mosdepth:0.3.2"
@@ -259,17 +274,17 @@ multiqc:
         - "qc/verifybamid2/{sample}_{type}.selfSM"
 
 mt_reference:
-  mt: "reference/Homo_sapiens_assembly38.chrM.fasta"
-  mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta"
-  blacklist: reference/blacklist_sites.hg38.chrM.bed
+  mt: "/beegfs-storage/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.fasta"
+  mt_shifted: "/beegfs-storage/data/ref_data/gatk_mito/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta"
+  blacklist: /beegfs-storage/data/ref_data/gatk_mito/blacklist_sites.hg38.chrM.bed
 
 pbrun_deepvariant:
-  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.2.1-1"
+  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
   extra: "--num-cpu-threads-per-stream 5 --num-streams-per-gpu 2 --disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
   tmp_dir: "/tmp/"
 
 pbrun_fq2bam:
-  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.2.1-1"
+  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
   extra: "--gpusort --gpuwrite --num-cpu-threads-per-stage 10 --fix-mate "
   tmp_dir: "/tmp/"
 
@@ -319,11 +334,11 @@ smn_charts:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
 
 spring:
-  container: "docker://hydragenetics/spring:1.0.1"
+  container: "docker://hydragenetics/spring:1.1.1"
 
 stranger:
   container: "docker://hydragenetics/stranger:0.8.1"
-  catalog: "reference/variant_catalog_grch38.json"
+  catalog: "config/str_catalog/variant_catalog_hg38.json"
 
 svdb_merge:
   container: "docker://hydragenetics/svdb:2.8.2"
@@ -332,42 +347,43 @@ svdb_merge:
   extra: "--pass_only --no_intra "
 
 svdb_query:
-  container: "docker://hydragenetics/svdb:2.6.0"
-  db_string:
-    "--db reference/gnomad_v2.1_sv.sites.vcf.gz \
-    --in_frq AF --in_occ AC --out_frq gnomAD_AF --out_occ gnomAD_OCC "
+  container: "docker://hydragenetics/svdb:2.8.2"
+  db_string: >-
+      --db /beegfs-storage/data/ref_data/wp3/svdb/svdb_create_novaseqx/manta_wgs_hg38_novaseqX_v2.0.sorted.vcf.gz,
+      /beegfs-storage/data/ref_data/wp3/svdb/svdb_create_novaseqx/cnvpytor_wgs_hg38_novaseqX_v2.0.sorted.vcf.gz,
+      /beegfs-storage/data/ref_data/wp3/gnomad/gnomad.v4.1.sv.sites.no_cnv.PASS.vcf.gz
+  extra: "--in_frq FRQ,FRQ,AF --in_occ OCC,OCC,AC --out_frq manta_FRQ,cnvpytor_FRQ,gnomad_AF --out_occ manta_OCC,cnvpytor_OCC,gnomad_AC "
 
 tabix:
-  container: "docker://hydragenetics/common:0.1.9"
+  container: "docker://hydragenetics/common:1.11.1"
 
 tiddit:
   container: "docker://hydragenetics/tiddit:3.7.0"
 
 upd:
   container: "docker://hydragenetics/upd:0.1.1"
-  extra: "--vep "
+  extra: "--af-tag gnomad_popmax_af --min-gq 20 "
 
 vep:
-  container: "docker://ensemblorg/ensembl-vep:release_109.3"
-  vep_cache: "reference/VEP/"
+  container: "docker://ensemblorg/ensembl-vep:release_110.1"
+  vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
   mode: "--offline --cache --refseq "
-  extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol --af --af_1kg --af_gnomad --max_af"
+  extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol "
 
 vep_trio:
-  container: "docker://ensemblorg/ensembl-vep:release_109.3"
-  vep_cache: "reference/VEP/"
+  container: "docker://ensemblorg/ensembl-vep:release_110.1"
+  vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
   mode: "--offline --cache --refseq "
   extra: "--assembly GRCh38 --check_existing --pick --max_af --buffer_size 50000"
 
 vep_svdb:
   container: "docker://ensemblorg/ensembl-vep:release_110.1"
-  vep_cache: "reference/VEP/"
+  vep_cache: "/beegfs-storage/data/ref_genomes/VEP/"
   mode: "--offline --cache --refseq "
-  extra: "--assembly GRCh38 --check_existing --pick --custom file=/data/ref_data/gnomad/gnomad_sv/gnomad.v4.0.sv.vcf.gz,short_name=gnomad,fields=AF%CN_NONREF_FREQ%FILTER%ALGORITHMS%EVIDENCE%SVTYPE,format=vcf,reciprocal=1,overlap_cutoff=60,distance=1000,same_type=1"
+  extra: "--assembly GRCh38 --check_existing --pick "
 
 verifybamid2:
   container: "docker://hydragenetics/verifybamid2:2.0.1"
-  svd_mu: "reference/1000g.phase3.100k.b38.vcf.gz.dat.mu"
+  svd_mu: "/beegfs-storage/data/ref_data/verifybamid2/1000g.phase3.100k.b38.vcf.gz.dat.mu"
 
-vt_decompose:
-  container: "docker://hydragenetics/vt:2015.11.10"
+

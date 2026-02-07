@@ -281,7 +281,7 @@ def compile_output_list(wildcards):
     output_files = []
     types = set([unit.type for unit in units.itertuples()])
     for output in output_json:
-        if output == "results/{sample}/{sample}.upd_regions.bed":
+        if output == "results/{sample}/upd/{sample}.upd_regions.bed":
             for sample in samples[samples.trio_member == "proband"].index:
                 proband_trio_id = samples[samples.index == sample].trioid.iloc[0]
                 trio_num = samples[samples.trioid == proband_trio_id].shape[0]
