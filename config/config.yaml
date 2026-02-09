@@ -2,6 +2,7 @@
 
 aligner: "bwa_gpu"
 snp_caller: "deepvariant_gpu"
+vep_annotation: False
 
 resources: "config/resources.yaml"
 samples: "samples_with_info.tsv"

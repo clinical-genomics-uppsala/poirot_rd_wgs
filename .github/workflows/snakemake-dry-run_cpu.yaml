@@ -30,4 +30,8 @@ jobs:
       - name: snakemake dry run cpu mode
         working-directory: .tests/integration
         run: |
-          cp ../../config/* config/ &&snakemake -n -s ../../workflow/Snakefile --configfile config/config.yaml --config aligner=bwa_cpu --config snp_caller=deepvariant_cpu
+          cp ../../config/* config/ && snakemake -n -s ../../workflow/Snakefile --configfiles config/config.yaml config/config_test.yaml --config aligner=bwa_cpu snp_caller=deepvariant_cpu
+      - name: snakemake dry run cpu mode vep
+        working-directory: .tests/integration
+        run: |
+          snakemake -n -s ../../workflow/Snakefile --configfiles config/config.yaml config/config_test.yaml --config aligner=bwa_cpu snp_caller=deepvariant_cpu vep_annotation=True

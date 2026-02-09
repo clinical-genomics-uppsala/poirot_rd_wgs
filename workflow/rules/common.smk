@@ -5,6 +5,7 @@ __license__ = "GPL-3"
 
 import pandas
 import yaml
+import json
 from datetime import datetime
 
 from hydra_genetics.utils.misc import get_module_snakefile
@@ -71,6 +72,13 @@ validate(units, schema="../schemas/units.schema.yaml")
 ## read the output json
 with open(config["output"]) as output:
     output_json = json.load(output)
+
+# Exclude outputs containing "vep_annotated" if vep_annotation is False
+if config.get("vep_annotation", False) is False:
+    output_json = {
+        key: value for key, value in output_json.items() 
+        if "vep_annotated" not in key
+    }
 
 ## get version information on pipeline, containers and software
 

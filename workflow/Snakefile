@@ -22,21 +22,11 @@ rule all:
         unpack(compile_output_list),
 
 
-# ruleorder: _copy_melt_ALU > misc_bgzip
-# ruleorder: _copy_melt_HERVK > misc_bgzip
-# ruleorder: _copy_melt_LINE1 > misc_bgzip
-# ruleorder: _copy_melt_SVA > misc_bgzip
 ruleorder: _copy_samtools_crai > compression_samtools_index
-# ruleorder: _copy_snv_indels_tbi > misc_tabix
-# ruleorder: _copy_echtvar_filtered_tbi > misc_tabix
-# ruleorder: _copy_snv_indels_filtered_tbi > misc_tabix
-# ruleorder: cnv_sv_bgzip > misc_bgzip
 ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: snv_indels_glnexus_trio > snv_indels_glnexus
-# ruleorder: snv_indels_tabix > misc_tabix
 ruleorder: annotation_echtvar_trio > snv_indels_bgzip
 ruleorder: cnv_sv_manta_run_workflow_n > cnv_sv_tabix 
-
 
 
 module alignment:
@@ -81,12 +71,6 @@ use rule bcftools_annotate from annotation as annotation_bcftools_annotate with:
     benchmark:
         repeat("snv_indels/vcf_final/{sample}_{type}.bcftools_annotated.vcf.gz.benchmark.tsv", config.get("bcftools_annotate", {}).get("benchmark_repeats", 1))
 
-
-# use rule tabix from annotation as annotation_tabix_peddy with:
-#     input:
-#         vcf="qc/peddy/all.vcf.gz",
-#     output:
-#         tbi="qc/peddy/all.vcf.gz.tbi",
 
 use rule echtvar_anno from annotation as annotation_echtvar with:
     input:
@@ -463,12 +447,6 @@ use rule samtools_index from misc as misc_samtools_index with:
             "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.bai.benchmark.tsv",
             config.get("samtools_index", {}).get("benchmark_repeats", 1),
         )
-
-
-# use rule bgzip from misc as misc_bgzip
-
-
-# use rule tabix from misc as misc_tabix
 
 
 module mitochondrial:
