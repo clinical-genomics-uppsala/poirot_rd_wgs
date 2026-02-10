@@ -25,6 +25,7 @@ rule all:
 ruleorder: _copy_samtools_crai > compression_samtools_index
 ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: snv_indels_glnexus_trio > snv_indels_glnexus
+# ruleorder: snv_indels_bcftools_view_trio > snv_indels_bcftools_view
 ruleorder: annotation_echtvar_trio > snv_indels_bgzip
 ruleorder: cnv_sv_manta_run_workflow_n > cnv_sv_tabix 
 
@@ -702,18 +703,18 @@ use rule bcftools_view from snv_indels as snv_indels_bcftools_view_peddy with:
             config.get("bcftools_view", {}).get("benchmark_repeats", 1),
         )
 
-use rule bcftools_view from snv_indels as snv_indels_bcftools_view_trio with:
-    input:
-        bcf="snv_indels/glnexus/{sample}_{type}.bcf",
-    output:
-        vcf=temp("snv_indels/glnexus/{sample}_{type}.vcf.gz"),
-    log:
-        "snv_indels/glnexus/{sample}_{type}.vcf.gz.log",
-    benchmark:
-        repeat(
-            "snv_indels/glnexus/{sample}_{type}.vcf.gz.benchmark.tsv",
-            config.get("bcftools_view", {}).get("benchmark_repeats", 1),
-        )
+# use rule bcftools_view from snv_indels as snv_indels_bcftools_view_trio with:
+#     input:
+#         bcf="snv_indels/glnexus/{sample}_{type}.bcf",
+#     output:
+#         vcf=temp("snv_indels/glnexus/{sample}_{type}.vcf.gz"),
+#     log:
+#         "snv_indels/glnexus/{sample}_{type}.vcf.gz.log",
+#     benchmark:
+#         repeat(
+#             "snv_indels/glnexus/{sample}_{type}.vcf.gz.benchmark.tsv",
+#             config.get("bcftools_view", {}).get("benchmark_repeats", 1),
+#         )
 
 
 use rule bcftools_concat from snv_indels as snv_indels_bcftools_concat_deepvariant with:
