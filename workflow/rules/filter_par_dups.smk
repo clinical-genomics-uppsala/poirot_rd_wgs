@@ -9,7 +9,7 @@ rule filter_par_dups:
         vcf=get_cnvpytor_male_input,
         bed=config["filter_par_dups"]["bed"],
     output:
-        output1="cnv_sv/cnvpytor/{sample}_{type}.par_dups_filtered.vcf.gz",
+        vcf="cnv_sv/cnvpytor/{sample}_{type}.par_dups_filtered.vcf.gz",
     params:
         extra=config.get("filter_par_dups", {}).get("extra", ""),
     log:
