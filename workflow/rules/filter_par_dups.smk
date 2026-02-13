@@ -7,7 +7,7 @@ __license__ = "GPL-3"
 rule filter_par_dups:
     input:
         vcf=get_cnvpytor_male_input,
-        bed=config["filter_par_dups"]["bed"]
+        bed=config["filter_par_dups"]["bed"],
     output:
         output1="cnv_sv/cnvpytor/{sample}_{type}.par_dups_filtered.vcf.gz",
     params:
@@ -17,7 +17,7 @@ rule filter_par_dups:
     benchmark:
         repeat(
             "cnv_sv/cnvpytor/{sample}_{type}.par_dups_filtered.vcf.gz.benchmark.tsv",
-            config.get("filter_par_dups", {}).get("benchmark_repeats", 1)
+            config.get("filter_par_dups", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("filter_par_dups", {}).get("threads", config["default_resources"]["threads"])
     resources:

@@ -28,7 +28,7 @@ ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: snv_indels_glnexus_trio > snv_indels_glnexus
 # ruleorder: snv_indels_bcftools_view_trio > snv_indels_bcftools_view
 ruleorder: annotation_echtvar_trio > snv_indels_bgzip
-ruleorder: cnv_sv_manta_run_workflow_n > cnv_sv_tabix 
+ruleorder: cnv_sv_manta_run_workflow_n > cnv_sv_tabix
 
 
 module alignment:
@@ -71,7 +71,10 @@ use rule bcftools_annotate from annotation as annotation_bcftools_annotate with:
     log:
         "snv_indels/vcf_final/{sample}_{type}.bcftools_annotated.vcf.gz.log",
     benchmark:
-        repeat("snv_indels/vcf_final/{sample}_{type}.bcftools_annotated.vcf.gz.benchmark.tsv", config.get("bcftools_annotate", {}).get("benchmark_repeats", 1))
+        repeat(
+            "snv_indels/vcf_final/{sample}_{type}.bcftools_annotated.vcf.gz.benchmark.tsv",
+            config.get("bcftools_annotate", {}).get("benchmark_repeats", 1),
+        )
 
 
 use rule echtvar_anno from annotation as annotation_echtvar with:
@@ -83,7 +86,10 @@ use rule echtvar_anno from annotation as annotation_echtvar with:
     log:
         "snv_indels/vcf_final/{sample}_{type}.echtvar_annotated.vcf.gz.log",
     benchmark:
-        repeat("snv_indels/vcf_final/{sample}_{type}.echtvar_annotated.vcf.gz.benchmark.tsv", config.get("echtvar_anno", {}).get("benchmark_repeats", 1))
+        repeat(
+            "snv_indels/vcf_final/{sample}_{type}.echtvar_annotated.vcf.gz.benchmark.tsv",
+            config.get("echtvar_anno", {}).get("benchmark_repeats", 1),
+        )
 
 
 use rule echtvar_anno from annotation as annotation_echtvar_trio with:
@@ -95,10 +101,14 @@ use rule echtvar_anno from annotation as annotation_echtvar_trio with:
     log:
         "snv_indels/glnexus/{sample}_{type}.echtvar_annotated.vcf.gz.log",
     benchmark:
-        repeat("snv_indels/glnexus/{sample}_{type}.echtvar_annotated.vcf.gz.benchmark.tsv", config.get("echtvar_anno", {}).get("benchmark_repeats", 1))
+        repeat(
+            "snv_indels/glnexus/{sample}_{type}.echtvar_annotated.vcf.gz.benchmark.tsv",
+            config.get("echtvar_anno", {}).get("benchmark_repeats", 1),
+        )
 
 
 use rule stranger from annotation as annotation_stranger
+
 
 use rule vep from annotation as annotation_vep_echtvar with:
     input:
@@ -114,7 +124,10 @@ use rule vep from annotation as annotation_vep_echtvar with:
     log:
         "snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vep_annotated.vcf.log",
     benchmark:
-        repeat("snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vep_annotated.vcf.benchmark.tsv", config.get("vep", {}).get("benchmark_repeats", 1))
+        repeat(
+            "snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vep_annotated.vcf.benchmark.tsv",
+            config.get("vep", {}).get("benchmark_repeats", 1),
+        )
     container:
         config.get("vep", {}).get("container", config["default_container"])
 
@@ -133,7 +146,10 @@ use rule vep from annotation as annotation_vep with:
     log:
         "snv_indels/vcf_final/{sample}_{type}.vep_annotated.vcf.log",
     benchmark:
-        repeat("snv_indels/vcf_final/{sample}_{type}.vep_annotated.vcf.benchmark.tsv", config.get("vep", {}).get("benchmark_repeats", 1))
+        repeat(
+            "snv_indels/vcf_final/{sample}_{type}.vep_annotated.vcf.benchmark.tsv",
+            config.get("vep", {}).get("benchmark_repeats", 1),
+        )
     container:
         config.get("vep", {}).get("container", config["default_container"])
 
@@ -287,9 +303,11 @@ use rule upd_regions from cnv_sv as cnv_sv_upd_regions with:
     input:
         vcf="snv_indels/glnexus/{sample}_{type}.echtvar_annotated.vcf.gz",
 
+
 use rule upd_sites from cnv_sv as cnv_sv_upd_sites with:
     input:
         vcf="snv_indels/glnexus/{sample}_{type}.echtvar_annotated.vcf.gz",
+
 
 module compression:
     snakefile:
@@ -333,6 +351,7 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
             config.get("bcftools_view", {}).get("benchmark_repeats", 1),
         )
 
+
 use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_snv_indels with:
     input:
         vcf="snv_indels/vcf_final/{sample}_{type}.bcftools_annotated.vcf.gz",
@@ -349,7 +368,8 @@ use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_snv
             config.get("bcftools_filter_snv_indels", {}).get("benchmark_repeats", 1),
         )
 
-use rule  bcftools_filter_exclude_region from filtering as filtering_bcftools_snv_indels_annotated with:
+
+use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_snv_indels_annotated with:
     input:
         vcf="snv_indels/vcf_final/{sample}_{type}.vep_annotated.vcf.gz",
     output:
@@ -415,6 +435,7 @@ use rule bcftools_view from filtering as filtering_bcftools_view_svdb with:
             config.get("bcftools_view_svdb", {}).get("benchmark_repeats", 1),
         )
 
+
 use rule bcftools_view from filtering as filtering_bcftools_view_svdb_annotated with:
     input:
         vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vep_annotated.vcf.gz",
@@ -429,6 +450,7 @@ use rule bcftools_view from filtering as filtering_bcftools_view_svdb_annotated 
             "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vep_annotated.filtered.vcf.benchmark.tsv",
             config.get("bcftools_view_svdb", {}).get("benchmark_repeats", 1),
         )
+
 
 module misc:
     snakefile:
@@ -663,6 +685,7 @@ module snv_indels:
 
 use rule * from snv_indels as snv_indels_*
 
+
 use rule bcftools_norm from snv_indels as snv_indels_bcftools_norm with:
     input:
         vcf="snv_indels/vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz",
@@ -676,6 +699,7 @@ use rule bcftools_norm from snv_indels as snv_indels_bcftools_norm with:
             "snv_indels/vcf_final/{sample}_{type}.bcftools_norm.vcf.gz.benchmark.tsv",
             config.get("bcftools_norm", {}).get("benchmark_repeats", 1),
         )
+
 
 use rule bcftools_norm from snv_indels as snv_indels_bcftools_norm_trio with:
     input:

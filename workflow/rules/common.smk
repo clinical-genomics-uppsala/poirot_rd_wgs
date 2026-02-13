@@ -75,10 +75,7 @@ with open(config["output"]) as output:
 
 # Exclude outputs containing "vep_annotated" if vep_annotation is False
 if config.get("vep_annotation", False) is False:
-    output_json = {
-        key: value for key, value in output_json.items() 
-        if "vep_annotated" not in key
-    }
+    output_json = {key: value for key, value in output_json.items() if "vep_annotated" not in key}
 
 ## get version information on pipeline, containers and software
 
@@ -284,40 +281,42 @@ def get_str_panel_list(wildcards):
 
     return panel_list_path
 
+
 def get_cnvpytor_male_input(wildcards):
     """
     Get CNVpytor VCF path for males only, using sex information from samples dataframe.
-    
+
     Args:
         wildcards: Snakemake wildcards object containing sample and type
-        
+
     Returns:
         string: Path to CNVpytor VCF file if sample is male, otherwise returns empty string
     """
     sample_info = samples.loc[wildcards.sample]
-    sex = sample_info.get('sex', '').lower()
-    
-    if sex == 'male':
+    sex = sample_info.get("sex", "").lower()
+
+    if sex == "male":
         return f"cnv_sv/cnvpytor/{wildcards.sample}_{wildcards.type}.vcf"
     else:
         return []
 
+
 def get_cnvpytor_sex_specific_input(wildcards):
     """
     Get CNVpytor VCF path based on sample sex.
-    
+
     Args:
         wildcards: Snakemake wildcards object containing sample and type
-        
+
     Returns:
         string: Path to DUPS PAR filtered VCF for males, unfiltered VCF for females
     """
     sample_info = samples.loc[wildcards.sample]
-    sex = sample_info.get('sex', '').lower()
-    
-    if sex == 'male':
+    sex = sample_info.get("sex", "").lower()
+
+    if sex == "male":
         return f"cnv_sv/cnvpytor/{wildcards.sample}_{wildcards.type}.par_dups_filtered.vcf.gz"
-    else: 
+    else:
         return f"cnv_sv/cnvpytor/{wildcards.sample}_{wildcards.type}.vcf"
 
 
