@@ -165,3 +165,19 @@ properties:
       - resources
       - default_container
       - reference
+
+# Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
+  filter_par_dups:
+    type: object
+    description: parameters for filter_par_dups
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
+

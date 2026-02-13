@@ -103,26 +103,6 @@ properties:
             type: string
             description: VCF with MT genotypes at split multiallelic sites fixed
 
-  fix_sv_header:
-    type: object
-    description: input and output parameters for fix_sv_header
-    properties:
-      input:
-        type: object
-        description: list of inputs
-        properties:
-          vcf:
-            type: string
-            description: VEP annotated SVDB merged vcf file
-
-      output:
-        type: object
-        description: list of outputs
-        properties:
-          vcf:
-            type: string
-            description: VEP annotated SVDB merged vcf file with gnomad_AF corrected to type float in header
-
   vcf_to_aed:
     type: object
     description: input and output parameters for vcf_to_aed
@@ -208,3 +188,27 @@ properties:
           vcf:
             type: string
             description: Tiddit vcf where the reference genome version has been added to vcf header.
+
+
+# Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
+  filter_par_dups:
+    type: object
+    description: input and output parameters for filter_par_dups
+    properties:
+      input:
+        type: object
+        description: list of inputs
+        properties:
+          input1:
+            type: string
+            description: description input1
+            #value: set to override value in table, else remove
+
+      output:
+        type: object
+        description: list of outputs
+        properties:
+          output1:
+            type: string
+            description: description output1
+            #value: set to override value in table, else remove
