@@ -49,8 +49,15 @@ bwa_mem_mito:
     mt: "reference/Homo_sapiens_assembly38.chrM.fasta.sa"
     mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta.sa"
 
+echtvar_anno:
+  databases:
+    - "reference//gnomad_snvs.zip"
+
 expansionhunter:
   variant_catalog: "reference/variant_catalog.json"
+
+filter_par_dups:
+  bed: "reference/cnv_filter_regions.bed"
 
 gatk_lift_over_vcf:
   shift_back_chain: "reference/ShiftBack.chain"

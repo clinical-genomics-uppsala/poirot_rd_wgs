@@ -86,22 +86,6 @@ properties:
       extra:
         type: string
         description: parameters that should be forwarded
-
-  fix_sv_header:
-    type: object
-    description: parameters for fix_sv_header
-    properties:
-      benchmark_repeats:
-        type: integer
-        description: set number of times benchmark should be repeated
-      container:
-        type: string
-        description: name or path to docker/singularity container
-      extra:
-        type: string
-        description: parameters that should be forwarded
-  
-  
  
   vcf_to_aed:
     type: object

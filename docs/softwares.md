@@ -197,3 +197,24 @@ Introduction to vcf_to_aed
 #RESOURCESSCHEMA__vcf_to_aed_filtered#
 
 
+
+## [filter_par_dups](url_to_tool)
+Introduction to filter_par_dups
+
+### :snake: Rule
+
+#SNAKEMAKE_RULE_SOURCE__filter_par_dups__filter_par_dups#
+
+#### :left_right_arrow: input / output files
+
+#SNAKEMAKE_RULE_TABLE__filter_par_dups__filter_par_dups#
+
+### :wrench: Configuration
+
+#### Software settings (`config.yaml`)
+
+#CONFIGSCHEMA__filter_par_dups#
+
+#### Resources settings (`resources.yaml`)
+
+#RESOURCESSCHEMA__filter_par_dups#

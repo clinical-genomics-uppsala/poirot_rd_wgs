@@ -5,6 +5,7 @@ __license__ = "GPL-3"
 
 
 include: "rules/common.smk"
+include: "rules/filter_par_dups.smk"
 include: "rules/fix_mt_gt.smk"
 include: "rules/vcf_to_aed.smk"
 include: "rules/add_ref_to_vcf.smk"
@@ -367,7 +368,7 @@ use rule  bcftools_filter_exclude_region from filtering as filtering_bcftools_sn
 
 use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_softfilter_cnvpytor with:
     input:
-        vcf="cnv_sv/cnvpytor/{sample}_{type}.vcf",
+        vcf=get_cnvpytor_sex_specific_input,
     output:
         vcf="cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf",
     params:
@@ -384,7 +385,7 @@ use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_sof
 
 use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_hardfilter_cnvpytor with:
     input:
-        vcf="cnv_sv/cnvpytor/{sample}_{type}.vcf",
+        vcf=get_cnvpytor_sex_specific_input,
     output:
         vcf="cnv_sv/cnvpytor/{sample}_{type}.hardfiltered.vcf",
     params:
@@ -702,19 +703,6 @@ use rule bcftools_view from snv_indels as snv_indels_bcftools_view_peddy with:
             "snv_indels/glnexus_peddy/all.vcf.gz.benchmark.tsv",
             config.get("bcftools_view", {}).get("benchmark_repeats", 1),
         )
-
-# use rule bcftools_view from snv_indels as snv_indels_bcftools_view_trio with:
-#     input:
-#         bcf="snv_indels/glnexus/{sample}_{type}.bcf",
-#     output:
-#         vcf=temp("snv_indels/glnexus/{sample}_{type}.vcf.gz"),
-#     log:
-#         "snv_indels/glnexus/{sample}_{type}.vcf.gz.log",
-#     benchmark:
-#         repeat(
-#             "snv_indels/glnexus/{sample}_{type}.vcf.gz.benchmark.tsv",
-#             config.get("bcftools_view", {}).get("benchmark_repeats", 1),
-#         )
 
 
 use rule bcftools_concat from snv_indels as snv_indels_bcftools_concat_deepvariant with:

@@ -284,6 +284,42 @@ def get_str_panel_list(wildcards):
 
     return panel_list_path
 
+def get_cnvpytor_male_input(wildcards):
+    """
+    Get CNVpytor VCF path for males only, using sex information from samples dataframe.
+    
+    Args:
+        wildcards: Snakemake wildcards object containing sample and type
+        
+    Returns:
+        string: Path to CNVpytor VCF file if sample is male, otherwise returns empty string
+    """
+    sample_info = samples.loc[wildcards.sample]
+    sex = sample_info.get('sex', '').lower()
+    
+    if sex == 'male':
+        return f"cnv_sv/cnvpytor/{wildcards.sample}_{wildcards.type}.vcf"
+    else:
+        return []
+
+def get_cnvpytor_sex_specific_input(wildcards):
+    """
+    Get CNVpytor VCF path based on sample sex.
+    
+    Args:
+        wildcards: Snakemake wildcards object containing sample and type
+        
+    Returns:
+        string: Path to DUPS PAR filtered VCF for males, unfiltered VCF for females
+    """
+    sample_info = samples.loc[wildcards.sample]
+    sex = sample_info.get('sex', '').lower()
+    
+    if sex == 'male':
+        return f"cnv_sv/cnvpytor/{wildcards.sample}_{wildcards.type}.par_dups_filtered.vcf.gz"
+    else: 
+        return f"cnv_sv/cnvpytor/{wildcards.sample}_{wildcards.type}.vcf"
+
 
 def compile_output_list(wildcards):
     output_files = []

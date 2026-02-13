@@ -54,6 +54,9 @@ echtvar_anno:
 expansionhunter:
   variant_catalog: "config/str_catalog/variant_catalog_hg38.json"
 
+filter_par_dups:
+  bed: "{{PIPELINE_REF_DATA}}/cnv_filter_regions.bed"
+
 gatk_lift_over_vcf:
   shift_back_chain: "{{PIPELINE_REF_DATA}}/ShiftBack.chain"
 

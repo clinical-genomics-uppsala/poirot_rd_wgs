@@ -82,6 +82,30 @@ properties:
           vcf:
             type: string
             description: deepvariant vcf to which the reference genome version has been added to vcf header
+  
+  filter_par_dups:
+    type: object
+    description: input and output parameters for filter_par_dups
+    properties:
+      input:
+        type: object
+        description: list of inputs
+        properties:
+          vcf:
+            type: string
+            description: cnvpyotor vcf to which the filter for par dups should be applied
+          bed:
+            type: string
+            description: bed file with par dup regions to be filtered out
+
+      output:
+        type: object
+        description: list of outputs
+        properties:
+          vcf:
+            type: string
+            description: filtered cnvpyotor vcf with par dups filtered out
+
 
   fix_mt_gt:
     type: object
@@ -188,27 +212,3 @@ properties:
           vcf:
             type: string
             description: Tiddit vcf where the reference genome version has been added to vcf header.
-
-
-# Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
-  filter_par_dups:
-    type: object
-    description: input and output parameters for filter_par_dups
-    properties:
-      input:
-        type: object
-        description: list of inputs
-        properties:
-          input1:
-            type: string
-            description: description input1
-            #value: set to override value in table, else remove
-
-      output:
-        type: object
-        description: list of outputs
-        properties:
-          output1:
-            type: string
-            description: description output1
-            #value: set to override value in table, else remove
