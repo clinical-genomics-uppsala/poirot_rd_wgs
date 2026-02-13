@@ -83,29 +83,6 @@ GT field has missing alleles and has more than two allele fields.
 
 ---
 
-## fix_sv_header
-A script that changes the gnomad_af type to float in the vcf header
-
-### :snake: Rule
-
-#SNAKEMAKE_RULE_SOURCE__fix_sv_header__fix_sv_header#
-
-#### :left_right_arrow: input / output files
-
-#SNAKEMAKE_RULE_TABLE__fix_sv_header__fix_sv_header#
-
-### :wrench: Configuration
-
-#### Software settings (`config.yaml`)
-
-#CONFIGSCHEMA__fix_sv_header#
-
-#### Resources settings (`resources.yaml`)
-
-#RESOURCESSCHEMA__fix_sv_header#
-
----
-
 ## svdb_add_ref
 Introduction to svdb_add_ref
 
