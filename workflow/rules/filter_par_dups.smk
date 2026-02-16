@@ -31,4 +31,4 @@ rule filter_par_dups:
     message:
         "{rule}: filter cnvpytor DUP calls in {input.vcf} located in for {input.bed}"
     script:
-        "scripts/filter_bed_cnvs.py"
+        "../scripts/filter_bed_cnvs.py"
