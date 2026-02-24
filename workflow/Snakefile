@@ -5,9 +5,8 @@ __license__ = "GPL-3"
 
 
 include: "rules/common.smk"
+include: "rules/filter_par_dups.smk"
 include: "rules/fix_mt_gt.smk"
-include: "rules/fix_sv_header.smk"
-include: "rules/bcftools.smk"
 include: "rules/vcf_to_aed.smk"
 include: "rules/add_ref_to_vcf.smk"
 include: "rules/concat_vcfs.smk"
@@ -24,18 +23,12 @@ rule all:
         unpack(compile_output_list),
 
 
-ruleorder: _copy_melt_ALU > misc_bgzip
-ruleorder: _copy_melt_HERVK > misc_bgzip
-ruleorder: _copy_melt_LINE1 > misc_bgzip
-ruleorder: _copy_melt_SVA > misc_bgzip
 ruleorder: _copy_samtools_crai > compression_samtools_index
-ruleorder: _copy_snv_indels_tbi > misc_tabix
-ruleorder: _copy_snv_indels_filtered_tbi > misc_tabix
-ruleorder: cnv_sv_bgzip > misc_bgzip
 ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: snv_indels_glnexus_trio > snv_indels_glnexus
-ruleorder: snv_indels_tabix > misc_tabix
-ruleorder: snv_indels_bgzip > misc_bgzip
+# ruleorder: snv_indels_bcftools_view_trio > snv_indels_bcftools_view
+ruleorder: annotation_echtvar_trio > snv_indels_bgzip
+ruleorder: cnv_sv_manta_run_workflow_n > cnv_sv_tabix
 
 
 module alignment:
@@ -69,47 +62,96 @@ module annotation:
         config
 
 
+use rule bcftools_annotate from annotation as annotation_bcftools_annotate with:
+    input:
+        vcf="snv_indels/vcf_final/{sample}_{type}.echtvar_annotated.vcf.gz",
+        annots=config.get("bcftools_annotate", {}).get("annots", []),
+    output:
+        vcf=temp("snv_indels/vcf_final/{sample}_{type}.bcftools_annotated.vcf.gz"),
+    log:
+        "snv_indels/vcf_final/{sample}_{type}.bcftools_annotated.vcf.gz.log",
+    benchmark:
+        repeat(
+            "snv_indels/vcf_final/{sample}_{type}.bcftools_annotated.vcf.gz.benchmark.tsv",
+            config.get("bcftools_annotate", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule echtvar_anno from annotation as annotation_echtvar with:
+    input:
+        vcf="snv_indels/vcf_final/{sample}_{type}.bcftools_norm.vcf.gz",
+        fasta=config["reference"]["fasta"],
+    output:
+        vcf=temp("snv_indels/vcf_final/{sample}_{type}.echtvar_annotated.vcf.gz"),
+    log:
+        "snv_indels/vcf_final/{sample}_{type}.echtvar_annotated.vcf.gz.log",
+    benchmark:
+        repeat(
+            "snv_indels/vcf_final/{sample}_{type}.echtvar_annotated.vcf.gz.benchmark.tsv",
+            config.get("echtvar_anno", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule echtvar_anno from annotation as annotation_echtvar_trio with:
+    input:
+        vcf="snv_indels/glnexus/{sample}_{type}.bcftools_norm.vcf.gz",
+        fasta=config["reference"]["fasta"],
+    output:
+        vcf=temp("snv_indels/glnexus/{sample}_{type}.echtvar_annotated.vcf.gz"),
+    log:
+        "snv_indels/glnexus/{sample}_{type}.echtvar_annotated.vcf.gz.log",
+    benchmark:
+        repeat(
+            "snv_indels/glnexus/{sample}_{type}.echtvar_annotated.vcf.gz.benchmark.tsv",
+            config.get("echtvar_anno", {}).get("benchmark_repeats", 1),
+        )
+
+
 use rule stranger from annotation as annotation_stranger
+
+
+use rule vep from annotation as annotation_vep_echtvar with:
+    input:
+        cache=config.get("vep", {}).get("vep_cache", ""),
+        fasta=config["reference"]["fasta"],
+        tabix="snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vcf.gz.tbi",
+        vcf="snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vcf.gz",
+    output:
+        vcf=temp("snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vep_annotated.vcf"),
+    params:
+        extra=config.get("vep", {}).get("extra", "--pick"),
+        mode=config.get("vep", {}).get("mode", "--offline --cache"),
+    log:
+        "snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vep_annotated.vcf.log",
+    benchmark:
+        repeat(
+            "snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vep_annotated.vcf.benchmark.tsv",
+            config.get("vep", {}).get("benchmark_repeats", 1),
+        )
+    container:
+        config.get("vep", {}).get("container", config["default_container"])
 
 
 use rule vep from annotation as annotation_vep with:
     input:
         cache=config.get("vep", {}).get("vep_cache", ""),
         fasta=config["reference"]["fasta"],
-        tabix="vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz.tbi",
-        vcf="vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz",
+        tabix="snv_indels/vcf_final/{sample}_{type}.echtvar_annotated.vcf.gz.tbi",
+        vcf="snv_indels/vcf_final/{sample}_{type}.echtvar_annotated.vcf.gz",
     output:
-        vcf=temp("vcf_final/{sample}_{type}.vep_annotated.vcf"),
+        vcf=temp("snv_indels/vcf_final/{sample}_{type}.vep_annotated.vcf"),
     params:
         extra=config.get("vep", {}).get("extra", "--pick"),
         mode=config.get("vep", {}).get("mode", "--offline --cache"),
     log:
-        "vcf_final/{sample}_{type}.vep_annotated.vcf.log",
-    benchmark:
-        repeat("vcf_final/{sample}_{type}.vep_annotated.vcf.benchmark.tsv", config.get("vep", {}).get("benchmark_repeats", 1))
-    container:
-        config.get("vep", {}).get("container", config["default_container"])
-
-
-use rule vep from annotation as annotation_vep_trio with:
-    input:
-        cache=config.get("vep_trio", {}).get("vep_cache", ""),
-        fasta=config["reference"]["fasta"],
-        vcf="snv_indels/glnexus/{sample}_{type}.decomposed.vcf.gz",
-    output:
-        vcf=temp("snv_indels/glnexus/{sample}_{type}.vep_annotated.vcf"),
-    params:
-        extra=config.get("vep_trio", {}).get("extra", "--pick"),
-        mode=config.get("vep_trio", {}).get("mode", "--offline --cache"),
-    log:
-        "snv_indels/glnexus/{sample}_{type}.vep_annotated.vcf.log",
+        "snv_indels/vcf_final/{sample}_{type}.vep_annotated.vcf.log",
     benchmark:
         repeat(
-            "snv_indels/glnexus/{sample}_{type}.vep_annotated.vcf.benchmark.tsv",
+            "snv_indels/vcf_final/{sample}_{type}.vep_annotated.vcf.benchmark.tsv",
             config.get("vep", {}).get("benchmark_repeats", 1),
         )
     container:
-        config.get("vep_trio", {}).get("container", config["default_container"])
+        config.get("vep", {}).get("container", config["default_container"])
 
 
 use rule vep from annotation as annotation_vep_svdb with:
@@ -118,15 +160,15 @@ use rule vep from annotation as annotation_vep_svdb with:
         fasta=config["reference"]["fasta"],
         vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.vcf.gz",
     output:
-        vcf=temp("annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.vcf"),
+        vcf=temp("cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vep_annotated.vcf"),
     params:
         extra=config.get("vep_svdb", {}).get("extra", "--pick"),
         mode=config.get("vep_svdb", {}).get("mode", "--offline --cache"),
     log:
-        "annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.vcf.log",
+        "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vep_annotated.vcf.log",
     benchmark:
         repeat(
-            "annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.vcf.benchmark.tsv",
+            "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vep_annotated.vcf.benchmark.tsv",
             config.get("vep_svdb", {}).get("benchmark_repeats", 1),
         )
     container:
@@ -145,7 +187,7 @@ use rule * from cnv_sv as cnv_sv_*
 
 use rule automap from cnv_sv as cnv_sv_automap with:
     input:
-        vcf="vcf_final/{sample}_{type}.vcf",
+        vcf="snv_indels/vcf_final/{sample}_{type}.vcf",
 
 
 use rule cnvpytor_filter from cnv_sv as cnv_sv_cnvpytor_filter
@@ -257,6 +299,16 @@ use rule tiddit from cnv_sv as cnv_sv_tiddit with:
         ref=config["reference"]["fasta"],
 
 
+use rule upd_regions from cnv_sv as cnv_sv_upd_regions with:
+    input:
+        vcf="snv_indels/glnexus/{sample}_{type}.echtvar_annotated.vcf.gz",
+
+
+use rule upd_sites from cnv_sv as cnv_sv_upd_sites with:
+    input:
+        vcf="snv_indels/glnexus/{sample}_{type}.echtvar_annotated.vcf.gz",
+
+
 module compression:
     snakefile:
         get_module_snakefile(
@@ -300,9 +352,43 @@ use rule bcftools_view from filtering as filtering_bcftools_view_pass with:
         )
 
 
+use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_snv_indels with:
+    input:
+        vcf="snv_indels/vcf_final/{sample}_{type}.bcftools_annotated.vcf.gz",
+    output:
+        vcf="snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vcf.gz",
+    params:
+        filter=lambda wildcards: "-e {}".format(config["bcftools_filter_snv_indels"]["exclude"]),
+        extra=config.get("bcftools_filter_snv_indels", {}).get("extra", ""),
+    log:
+        "snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vcf.gz.log",
+    benchmark:
+        repeat(
+            "snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vcf.gz.benchmark.tsv",
+            config.get("bcftools_filter_snv_indels", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_snv_indels_annotated with:
+    input:
+        vcf="snv_indels/vcf_final/{sample}_{type}.vep_annotated.vcf.gz",
+    output:
+        vcf="snv_indels/vcf_final/{sample}_{type}.vep_annotated.popAF_filtered.vcf.gz",
+    params:
+        filter=lambda wildcards: "-e {}".format(config["bcftools_filter_snv_indels"]["exclude"]),
+        extra=config.get("bcftools_filter_snv_indels", {}).get("extra", ""),
+    log:
+        "snv_indels/vcf_final/{sample}_{type}.vep_annotated.popAF_filtered.vcf.gz.log",
+    benchmark:
+        repeat(
+            "snv_indels/vcf_final/{sample}_{type}.vep_annotated.popAF_filtered.vcf.gz.benchmark.tsv",
+            config.get("bcftools_filter_snv_indels", {}).get("benchmark_repeats", 1),
+        )
+
+
 use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_softfilter_cnvpytor with:
     input:
-        vcf="cnv_sv/cnvpytor/{sample}_{type}.vcf",
+        vcf=get_cnvpytor_sex_specific_input,
     output:
         vcf="cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf",
     params:
@@ -319,7 +405,7 @@ use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_sof
 
 use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_hardfilter_cnvpytor with:
     input:
-        vcf="cnv_sv/cnvpytor/{sample}_{type}.vcf",
+        vcf=get_cnvpytor_sex_specific_input,
     output:
         vcf="cnv_sv/cnvpytor/{sample}_{type}.hardfiltered.vcf",
     params:
@@ -336,16 +422,32 @@ use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_har
 
 use rule bcftools_view from filtering as filtering_bcftools_view_svdb with:
     input:
-        vcf="annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.vep_info.vcf",
+        vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.vcf.gz",
     output:
-        vcf="annotate/vep_svdb/{sample}_{type}.merged.svdb_query.vep_annotated.filtered.vcf.gz",
+        vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.filtered.vcf.gz",
     params:
         extra=config.get("bcftools_view_svdb", {}).get("extra", ""),
     log:
-        "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.filtered.vcf.log",
+        "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.filtered.vcf.log",
     benchmark:
         repeat(
-            "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.filtered.vcf.benchmark.tsv",
+            "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.filtered.vcf.benchmark.tsv",
+            config.get("bcftools_view_svdb", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule bcftools_view from filtering as filtering_bcftools_view_svdb_annotated with:
+    input:
+        vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vep_annotated.vcf.gz",
+    output:
+        vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vep_annotated.filtered.vcf.gz",
+    params:
+        extra=config.get("bcftools_view_svdb", {}).get("extra", ""),
+    log:
+        "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vep_annotated.filtered.vcf.log",
+    benchmark:
+        repeat(
+            "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vep_annotated.filtered.vcf.benchmark.tsv",
             config.get("bcftools_view_svdb", {}).get("benchmark_repeats", 1),
         )
 
@@ -369,12 +471,6 @@ use rule samtools_index from misc as misc_samtools_index with:
             "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.bai.benchmark.tsv",
             config.get("samtools_index", {}).get("benchmark_repeats", 1),
         )
-
-
-use rule bgzip from misc as misc_bgzip
-
-
-use rule tabix from misc as misc_tabix
 
 
 module mitochondrial:
@@ -502,6 +598,10 @@ use rule multiqc from qc as qc_multiqc with:
 
 
 use rule peddy from qc as qc_peddy with:
+    input:
+        vcf="snv_indels/glnexus_peddy/all.vcf.gz",
+        tbi="snv_indels/glnexus_peddy/all.vcf.gz.tbi",
+        ped="qc/peddy/all.ped",
     output:
         het_check=temp("qc/peddy/peddy.het_check.csv"),
         pca=temp("qc/peddy/peddy.background_pca.json"),
@@ -586,16 +686,45 @@ module snv_indels:
 use rule * from snv_indels as snv_indels_*
 
 
-use rule bcftools_view from snv_indels as snv_indels_bcftools_view_peddy with:
+use rule bcftools_norm from snv_indels as snv_indels_bcftools_norm with:
     input:
-        bcf="qc/peddy/all.bcf",
+        vcf="snv_indels/vcf_final/{sample}_{type}.bcftools_view_pass.vcf.gz",
+        ref=config.get("reference", {}).get("fasta", ""),
     output:
-        vcf=temp("qc/peddy/all.vcf.gz"),
+        vcf="snv_indels/vcf_final/{sample}_{type}.bcftools_norm.vcf.gz",
     log:
-        "qc/peddy/all.vcf.gz.log",
+        "snv_indels/vcf_final/{sample}_{type}.bcftools_norm.vcf.gz.log",
     benchmark:
         repeat(
-            "qc/peddy/all.vcf.gz.benchmark.tsv",
+            "snv_indels/vcf_final/{sample}_{type}.bcftools_norm.vcf.gz.benchmark.tsv",
+            config.get("bcftools_norm", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule bcftools_norm from snv_indels as snv_indels_bcftools_norm_trio with:
+    input:
+        vcf="snv_indels/glnexus/{sample}_{type}.vcf.gz",
+    output:
+        vcf=temp("snv_indels/glnexus/{sample}_{type}.bcftools_norm.vcf.gz"),
+    log:
+        "snv_indels/glnexus/{sample}_{type}.bcftools_norm.vcf.gz.log",
+    benchmark:
+        repeat(
+            "snv_indels/glnexus/{sample}_{type}.bcftools_norm.vcf.gz.benchmark.tsv",
+            config.get("bcftools_norm", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule bcftools_view from snv_indels as snv_indels_bcftools_view_peddy with:
+    input:
+        bcf="snv_indels/glnexus_peddy/all.bcf",
+    output:
+        vcf=temp("snv_indels/glnexus_peddy/all.vcf.gz"),
+    log:
+        "snv_indels/glnexus_peddy/all.vcf.gz.log",
+    benchmark:
+        repeat(
+            "snv_indels/glnexus_peddy/all.vcf.gz.benchmark.tsv",
             config.get("bcftools_view", {}).get("benchmark_repeats", 1),
         )
 
@@ -614,17 +743,17 @@ use rule glnexus from snv_indels as snv_indels_glnexus_peddy with:
     input:
         gvcfs=lambda wildcards: get_gvcf_list(wildcards),
     output:
-        bcf=temp("qc/peddy/all.bcf"),
-        dir=temp(directory("qc/peddy/GLnexus_peddy.DB")),
+        bcf=temp("snv_indels/glnexus_peddy/all.bcf"),
+        dir=temp(directory("snv_indels/glnexus_peddy/GLnexus_peddy.DB")),
     params:
         extra=config.get("glnexus_peddy", {}).get("extra", ""),
         glnexus_config=config.get("glnexus_peddy", {}).get("configfile", ""),
         in_gvcf=lambda wildcards, input: get_glnexus_input(wildcards, input),
     log:
-        "qc/peddy/all.bcf.log",
+        "snv_indels/glnexus_peddy/all.bcf.log",
     benchmark:
         repeat(
-            "qc/peddy/all.bcf.benchmark.tsv",
+            "snv_indels/glnexus_peddy/all.bcf.benchmark.tsv",
             config.get("glnexus_peddy", {}).get("benchmark_repeats", 1),
         )
     container:
@@ -652,23 +781,16 @@ use rule glnexus from snv_indels as snv_indels_glnexus_trio with:
         config.get("glnexus_trio", {}).get("container", config["default_container"])
 
 
-use rule vt_decompose from snv_indels as snv_indels_vt_decompose with:
-    input:
-        vcf="snv_indels/glnexus/{sample}_{type}.vcf.gz",
-    output:
-        vcf=temp("snv_indels/{caller}/{sample}_{type}.decomposed.vcf.gz"),
-
-
 use rule fix_af from snv_indels as snv_indels_fix_af with:
     input:
         vcf=lambda wildcards: get_vcf_input(wildcards),
     output:
-        vcf=temp("vcf_final/{sample}_{type}.fix_af.vcf"),
+        vcf=temp("snv_indels/vcf_final/{sample}_{type}.fix_af.vcf"),
     log:
-        "vcf_final/{sample}_{type}.fix_af.vcf.log",
+        "snv_indels/vcf_final/{sample}_{type}.fix_af.vcf.log",
     benchmark:
         repeat(
-            "vcf_final/{sample}_{type}.fix_af.vcf.benchmark.tsv",
+            "snv_indels/vcf_final/{sample}_{type}.fix_af.vcf.benchmark.tsv",
             config.get("fix_af", {}).get("benchmark_repeats", 1),
         )
 

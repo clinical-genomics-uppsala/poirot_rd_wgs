@@ -19,11 +19,11 @@ def translate_sex(sex_code):
         SystemExit: If the sex code is invalid.
     """
 
-    if sex_code == "M":
+    if sex_code in ["M", "m", "Male", "male"]:
         sex = "male"
-    elif sex_code == "K":
+    elif sex_code in ["K", "k", "Female", "female"]:
         sex = "female"
-    elif sex_code == "O":
+    elif sex_code in ["O", "o", "NA", "na", "unknown", "Unknown", ""]:
         sex = "unknown"
     else:
         print('Sex is not specified correctly in the Sample Sheet')
@@ -114,12 +114,16 @@ def main(samples_file, units_file, order_file, replacement_file):
         print(f"Error: Units file not found! {e}")
         sys.exit(1)
 
-    units["sample_order"] = units.fastq1.apply(get_sample_sheet_order)
-
-    sample_order_df = units[
+    try:
+        units["sample_order"] = units.fastq1.apply(get_sample_sheet_order)
+        sample_order_df = units[
         ["sample_order", "sample"]].drop_duplicates().sort_values(
             by="sample_order")
-
+    except Exception as e:
+        samples["sample_order"] = range(1, samples.shape[0] + 1)
+        sample_order_df = samples[["sample_order", "sample"]]
+        print(f"Warning: Could not extract sample order from units file! {e}")
+    
     sample_order_df["sample_order"] = [
         f"sample_{i:03}" for i in range(1, sample_order_df.shape[0] + 1)]
 

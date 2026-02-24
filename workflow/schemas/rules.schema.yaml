@@ -3,26 +3,6 @@ description: snakemake rule input and output files description file
 type: object
 properties:
 
-  bcftools_split_vep:
-    type: object
-    description: input and output parameters for bcftools_split_vep
-    properties:
-      input:
-        type: object
-        description: list of inputs
-        properties:
-          vcf:
-            type: string
-            description: VEP annotated SVDB merged vcf file with gnomad_AF corrected to type float in header
-
-      output:
-        type: object
-        description: list of outputs
-        properties:
-          vcf:
-            type: string
-            description: VEP annotated SVDB merged vcf file with gnomad_AF added as an info field
-
   create_cov_excel:
     type: object
     properties:
@@ -82,6 +62,30 @@ properties:
           vcf:
             type: string
             description: deepvariant vcf to which the reference genome version has been added to vcf header
+  
+  filter_par_dups:
+    type: object
+    description: input and output parameters for filter_par_dups
+    properties:
+      input:
+        type: object
+        description: list of inputs
+        properties:
+          vcf:
+            type: string
+            description: cnvpyotor vcf to which the filter for par dups should be applied
+          bed:
+            type: string
+            description: bed file with par dup regions to be filtered out
+
+      output:
+        type: object
+        description: list of outputs
+        properties:
+          vcf:
+            type: string
+            description: filtered cnvpyotor vcf with par dups filtered out
+
 
   fix_mt_gt:
     type: object
@@ -102,26 +106,6 @@ properties:
           vcf:
             type: string
             description: VCF with MT genotypes at split multiallelic sites fixed
-
-  fix_sv_header:
-    type: object
-    description: input and output parameters for fix_sv_header
-    properties:
-      input:
-        type: object
-        description: list of inputs
-        properties:
-          vcf:
-            type: string
-            description: VEP annotated SVDB merged vcf file
-
-      output:
-        type: object
-        description: list of outputs
-        properties:
-          vcf:
-            type: string
-            description: VEP annotated SVDB merged vcf file with gnomad_AF corrected to type float in header
 
   vcf_to_aed:
     type: object

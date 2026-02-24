@@ -13,6 +13,9 @@ When only CPUs are available Poirot can be configured perform the read mapping, 
 ## Variant Calling
 See the [snv_indels hydra-genetics module](https://hydra-genetics-snv-indels.readthedocs.io/en/latest/) or [parabricks hydra-genetics module](https://github.com/hydra-genetics/parabricks) documentation for more details on the softwares for variant calling, [annotation hydra-genetics module](https://hydra-genetics-annotation.readthedocs.io/en/latest/) for annotation, [filtering hydra-genetics module](https://hydra-genetics-filtering.readthedocs.io/en/latest/) for filtering and  [cnv hydra-genetics module](https://hydra-genetics-snv-indels.readthedocs.io/en/latest/) for more details on the softwares for cnv calling. Default hydra-genetics settings/resources are used if no configuration is specified.
 
+### Annotation of variant calls 
+Variant calls for both SNVs and indels, and SVs can be performed by Ensembl's VEP too. Howver this is optional and can be set in the config. See the section on running the pipeline for details.
+
 ### SNV and INDELs
 - [Parabricks DeepVariant](https://docs.nvidia.com/clara/parabricks/latest/documentation/tooldocs/man_deepvariant.html#man-deepvariant) when run on GPU or [Google's DeepVariant](https://github.com/google/deepvariant) when run on CPU
 - [Glnexus](https://github.com/dnanexus-rnd/GLnexus)
