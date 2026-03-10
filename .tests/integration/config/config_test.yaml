@@ -85,7 +85,7 @@ mt_reference:
   blacklist: reference/blacklist_sites.hg38.chrM.bed
 
 somalier_trio_extract:
-  sites: "/beegfs-storage/data/ref_data/somalier/sites.hg38.vcf.gz"
+  sites: "/beegfs-storage/data/ref_data/somalier/v0.2.18/sites.hg38.vcf.gz"
   container: "docker://hydragenetics/somalier:0.2.18"
 
 somalier_trio_mqc:
