@@ -679,6 +679,8 @@ rule convert_samples_for_somalier_trio:
         samples=temp("qc/somalier_trio/.samples_converted.tsv"),
     log:
         "qc/somalier_trio/.samples_converted.log",
+    container:
+        config.get("convert_samples_for_somalier_trio", {}).get("container", config["default_container"])
     run:
         import pandas as pd
         
