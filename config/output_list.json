@@ -42,5 +42,10 @@
   "results/{sample}/{sample}_N.cram": {"name": "_copy_samtools_cram", "file": "compression/samtools_view/{sample}_N.cram", "types": ["N"]},
   "results/{sample}/{sample}_N.cram.crai": {"name": "_copy_samtools_crai", "file": "compression/samtools_view/{sample}_N.cram.crai", "types": ["N"]},
   "results/peddy.html": {"name": "_copy_peddy_html", "file": "qc/peddy/peddy.html", "types": ["N"]},
-  "results/multiqc_DNA.html": {"name": "_copy_multiqc_html", "file": "qc/multiqc/multiqc_DNA.html", "types": ["N"]}
+  "results/multiqc_DNA.html": {"name": "_copy_multiqc_html", "file": "qc/multiqc/multiqc_DNA.html", "types": ["N"]},
+  "results/somalier_trio/somalier_relate.pairs.tsv": {"name": "_copy_somalier_trio_pairs", "file": "qc/somalier_trio/somalier_relate.pairs.tsv", "types": ["N"]},
+  "results/somalier_trio/somalier_relate.samples.tsv": {"name": "_copy_somalier_trio_samples", "file": "qc/somalier_trio/somalier_relate.samples.tsv", "types": ["N"]},
+  "results/somalier_trio/somalier_relate.html": {"name": "_copy_somalier_trio_html", "file": "qc/somalier_trio/somalier_relate.html", "types": ["N"]},
+  "results/somalier_trio/somalier_samples_mqc.tsv": {"name": "_copy_somalier_trio_mqc", "file": "qc/somalier_trio/somalier_samples_mqc.tsv", "types": ["N"]},
+  "results/somalier_trio/trio_validation.txt": {"name": "_copy_somalier_trio_validation", "file": "qc/somalier_trio/trio_validation.txt", "types": ["N"]}
 }

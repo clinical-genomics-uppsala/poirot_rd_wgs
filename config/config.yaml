@@ -20,7 +20,7 @@ modules:
   filtering: "v1.1.0"
   parabricks: "v1.2.1"
   prealignment: "v1.4.0"
-  qc: "v0.6.0"
+  qc: "v0.7.0"
   misc: "v0.2.0"
   mitochondrial: "v0.1.0"
   snv_indels: "v2.1.0"
@@ -231,6 +231,7 @@ multiqc:
         - "qc/samtools_stats/{sample}_{type}.samtools-stats.txt"
         - "qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"
         - "qc/verifybamid2/{sample}_{type}.selfSM"
+        - "qc/somalier_trio/somalier_samples_mqc.tsv"
 
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
@@ -286,6 +287,21 @@ smn_caller:
 
 smn_charts:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
+
+somalier_trio_extract:
+  sites: "/beegfs-storage/data/ref_data/somalier/sites.hg38.vcf.gz"
+  container: "docker://hydragenetics/somalier:0.2.18"
+
+somalier_trio_mqc:
+  mqc_config: "config/somalier_trio_mqc.yaml"
+  container: "docker://hydragenetics/somalier:0.2.18"
+
+somalier_trio_relate:
+  container: "docker://hydragenetics/somalier:0.2.18"
+  extra: ""
+
+somalier_trio_validate:
+  threshold: 0.4
 
 spring:
   container: "docker://hydragenetics/spring:1.1.1"

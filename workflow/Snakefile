@@ -668,6 +668,69 @@ use rule samtools_idxstats from qc as qc_samtools_idxstats with:
         temp("qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"),
 
 
+rule convert_samples_for_somalier_trio:
+    """
+    Convert samples file from trioid/trio_member format to trio/father/mother format
+    for somalier_trio compatibility. Auto-detects format and only converts if needed.
+    """
+    input:
+        samples=config["samples"],
+    output:
+        samples=temp("qc/somalier_trio/.samples_converted.tsv"),
+    log:
+        "qc/somalier_trio/.samples_converted.log",
+    run:
+        import pandas as pd
+        
+        # Load samples
+        samples_df = pd.read_table(input.samples, dtype=str).set_index("sample", drop=False)
+        
+        # Convert using the adapter function
+        samples_converted = get_samples_for_somalier(samples_df)
+        
+        # Write converted samples
+        samples_converted.to_csv(output.samples, sep="\t", index=False)
+
+
+use rule somalier_trio_combine_fam from qc as qc_somalier_trio_combine_fam
+
+
+use rule somalier_trio_create_groupfile from qc as qc_somalier_trio_create_groupfile with:
+    input:
+        samples="qc/somalier_trio/.samples_converted.tsv",
+
+
+use rule somalier_trio_create_ped from qc as qc_somalier_trio_create_ped with:
+    input:
+        samples="qc/somalier_trio/.samples_converted.tsv",
+
+
+use rule somalier_trio_extract from qc as qc_somalier_trio_extract with:
+    input:
+        sites=config.get("somalier_trio_extract", {}).get("sites", ""),
+        fasta=config.get("reference", {}).get("fasta", ""),
+        fai=config.get("reference", {}).get("fasta", "") + ".fai",
+        bam=lambda wildcards: get_bam_input(wildcards)[0],
+        bai=lambda wildcards: get_bam_input(wildcards)[1],
+
+
+use rule somalier_trio_mqc from qc as qc_somalier_trio_mqc
+
+
+use rule somalier_trio_relate from qc as qc_somalier_trio_relate with:
+    input:
+        samples=lambda wildcards: [
+            "qc/somalier_trio_extract/%s_%s.somalier" % (sample, t)
+            for sample in get_samples(samples)
+            for t in get_unit_types(units, sample)
+        ],
+        ped="qc/somalier_trio/somalier_all.ped",
+        group=lambda wildcards: ["qc/somalier_trio/somalier.groups"] if has_trio_samples(samples) else [],
+
+
+use rule somalier_trio_validate from qc as qc_somalier_trio_validate
+
+
 use rule verifybamid2 from qc as qc_verifybamid2 with:
     input:
         bam=lambda wildcards: get_bam_input(wildcards)[0],
