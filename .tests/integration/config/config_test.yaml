@@ -84,6 +84,18 @@ mt_reference:
   mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta"
   blacklist: reference/blacklist_sites.hg38.chrM.bed
 
+convert_samples_for_somalier_trio:
+  container: "docker://hydragenetics/common:3.1.1"
+
+somalier_trio_combine_fam:
+  container: "docker://hydragenetics/somalier:0.2.18"
+
+somalier_trio_create_groupfile:
+  container: "docker://hydragenetics/common:3.1.1"
+
+somalier_trio_create_ped:
+  container: "docker://hydragenetics/common:3.1.1"
+
 somalier_trio_extract:
   sites: "/beegfs-storage/data/ref_data/somalier/v0.2.18/sites.hg38.vcf.gz"
   container: "docker://hydragenetics/somalier:0.2.18"
@@ -97,6 +109,7 @@ somalier_trio_relate:
   extra: ""
 
 somalier_trio_validate:
+  container: "docker://hydragenetics/somalier:0.2.18"
   threshold: 0.4
 
 stranger:

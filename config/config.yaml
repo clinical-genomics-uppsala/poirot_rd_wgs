@@ -273,13 +273,13 @@ reviewer:
   container: "docker://hydragenetics/reviewer:0.2.7"
 
 samtools_stats:
-  container: "docker://hydragenetics/common:1.11.1"
+  container: "docker://hydragenetics/common:3.1.1"
 
 samtools_idxstats:
-  container: "docker://hydragenetics/common:1.11.1"
+  container: "docker://hydragenetics/common:3.1.1"
 
 samtools:
-  container: "docker://hydragenetics/common:1.11.1"
+  container: "docker://hydragenetics/common:3.1.1"
 
 smn_caller:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
@@ -287,6 +287,18 @@ smn_caller:
 
 smn_charts:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
+
+convert_samples_for_somalier_trio:
+  container: "docker://hydragenetics/common:3.1.1"
+
+somalier_trio_combine_fam:
+  container: "docker://hydragenetics/somalier:0.2.18"
+
+somalier_trio_create_groupfile:
+  container: "docker://hydragenetics/common:3.1.1"
+
+somalier_trio_create_ped:
+  container: "docker://hydragenetics/common:3.1.1"
 
 somalier_trio_extract:
   sites: "/beegfs-storage/data/ref_data/somalier/v0.2.18/sites.hg38.vcf.gz"
@@ -301,6 +313,7 @@ somalier_trio_relate:
   extra: ""
 
 somalier_trio_validate:
+  container: "docker://hydragenetics/somalier:0.2.18"
   threshold: 0.4
 
 spring:
@@ -321,7 +334,7 @@ svdb_query:
   extra: "--in_frq FRQ,FRQ,AF --in_occ OCC,OCC,AC --out_frq manta_FRQ,cnvpytor_FRQ,gnomad_AF --out_occ manta_OCC,cnvpytor_OCC,gnomad_AC "
 
 tabix:
-  container: "docker://hydragenetics/common:1.11.1"
+  container: "docker://hydragenetics/common:3.1.1"
 
 tiddit:
   container: "docker://hydragenetics/tiddit:3.7.0"
