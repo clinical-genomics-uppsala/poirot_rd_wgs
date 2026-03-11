@@ -681,17 +681,8 @@ rule convert_samples_for_somalier_trio:
         "qc/somalier_trio/.samples_converted.log",
     container:
         config.get("convert_samples_for_somalier_trio", {}).get("container", config["default_container"])
-    run:
-        import pandas as pd
-        
-        # Load samples
-        samples_df = pd.read_table(input.samples, dtype=str).set_index("sample", drop=False)
-        
-        # Convert using the adapter function
-        samples_converted = get_samples_for_somalier(samples_df)
-        
-        # Write converted samples
-        samples_converted.to_csv(output.samples, sep="\t", index=False)
+    script:
+        "scripts/convert_samples_for_somalier_trio.py"
 
 
 use rule somalier_trio_combine_fam from qc as qc_somalier_trio_combine_fam
