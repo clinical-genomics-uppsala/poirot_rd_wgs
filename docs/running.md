@@ -69,11 +69,20 @@ The pipeline uses sample input files (`samples.tsv` and `units.tsv`) with inform
 hydra-genetics create-input-files -d path/to/fastq-files/
 ```
 
+## Configuration
+All the non-default parameter settings for the pipeline are set in the config.yaml file found under the config folder. A separate config_refs.yaml is also required to provide paths to all the required reference files. These can be specified in the profiles config or on the command line
+
 ## Run command
-Using the activated python virtual environment created above, this is a basic command for running the pipeline:
+Using the activated python virtual environment created above, this is a basic command for running the pipeline with a profile:
 ```bash
 snakemake --profile profiles/NAME_OF_PROFILE -s workflow/Snakefile
 ```  
+
+If the configs are not given in the profile they can be specified on the command line:
+```bash
+snakemake --profile profiles/NAME_OF_PROFILE -s workflow/Snakefile --configfiles config/config.yaml config/config_refs.yaml
+```  
+
 <br />
 The are many additional [snakemake running options](https://snakemake.readthedocs.io/en/stable/executing/cli.html#) some of which is listed below. However, options that are always used should be put in the [profile](https://hydra-genetics.readthedocs.io/en/latest/run_pipeline/profile/).
 
@@ -84,3 +93,11 @@ The are many additional [snakemake running options](https://snakemake.readthedoc
 **Note:** Remember to have singularity and drmaa available on the system where the pipeline will be run.
 
 <br />
+
+## Running with VEP annotation
+
+By default the config.yaml file is setup to not run VEP annotation of the SV vcf or SNV & Indels vcf. VEP annotation can be activated by changing vep_annotation=True in the conig or on the command line:
+
+```bash
+snakemake --profile profiles/NAME_OF_PROFILE -s workflow/Snakefile --config vep_annotation=True
+```  

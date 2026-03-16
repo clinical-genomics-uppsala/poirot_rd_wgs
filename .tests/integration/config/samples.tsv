@@ -1,3 +1,6 @@
 sample	tumor_content	sex	trioid	trio_member
 NA12878	0.0	female	NA	NA
 NA12911	0.0	male	NA	NA
+HG002	0.0	male	proband	NA
+HG003	0.0	male	father	NA
+HG004	0.0	female	mother	NA

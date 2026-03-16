@@ -6,15 +6,15 @@ __license__ = "GPL-3"
 
 rule deepvariant_add_ref:
     input:
-        vcf="vcf_final/{sample}_{type}.fix_af.vcf.gz",
+        vcf="snv_indels/vcf_final/{sample}_{type}.fix_af.vcf.gz",
         ref=config["reference"]["fasta"],
     output:
-        vcf=temp("vcf_final/{sample}_{type}_ref.vcf"),
+        vcf=temp("snv_indels/vcf_final/{sample}_{type}_ref.vcf"),
     log:
-        "vcf_final/{sample}_{type}_ref.log",
+        "snv_indels/vcf_final/{sample}_{type}_ref.log",
     benchmark:
         repeat(
-            "vcf_final/{sample}_{type}_ref.vcf.benchmark.tsv",
+            "snv_indels/vcf_final/{sample}_{type}_ref.vcf.benchmark.tsv",
             config.get("deepvariant_add_ref", {}).get("benchmark_repeats", 1),
         )
     resources:

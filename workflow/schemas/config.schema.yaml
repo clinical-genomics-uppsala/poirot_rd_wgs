@@ -28,20 +28,6 @@ properties:
     required:
       - fasta
       - sites
-  
-  bcftools_split_vep:
-    type: object
-    description: parameters for bcftools_split_vep
-    properties:
-      benchmark_repeats:
-        type: integer
-        description: set number of times benchmark should be repeated
-      container:
-        type: string
-        description: name or path to docker/singularity container
-      extra:
-        type: string
-        description: parameters that should be forwarded
 
   create_cov_excel:
     type: object
@@ -86,22 +72,6 @@ properties:
       extra:
         type: string
         description: parameters that should be forwarded
-
-  fix_sv_header:
-    type: object
-    description: parameters for fix_sv_header
-    properties:
-      benchmark_repeats:
-        type: integer
-        description: set number of times benchmark should be repeated
-      container:
-        type: string
-        description: name or path to docker/singularity container
-      extra:
-        type: string
-        description: parameters that should be forwarded
-  
-  
  
   vcf_to_aed:
     type: object
@@ -165,3 +135,18 @@ properties:
       - resources
       - default_container
       - reference
+
+  filter_par_dups:
+    type: object
+    description: parameters for filter_par_dups
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+      extra:
+        type: string
+        description: parameters that should be forwarded
+

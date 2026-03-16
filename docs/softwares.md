@@ -1,30 +1,7 @@
 # Rules specific to Poirot
 
-## bcftools_split_vep
-Introduction to bcftools_split_vep
-
-### :snake: Rule
-
-#SNAKEMAKE_RULE_SOURCE__bcftools__bcftools_split_vep#
-
-#### :left_right_arrow: input / output files
-
-#SNAKEMAKE_RULE_TABLE__bcftools__bcftools_split_vep#
-
-### :wrench: Configuration
-
-#### Software settings (`config.yaml`)
-
-#CONFIGSCHEMA__bcftools_split_vep#
-
-#### Resources settings (`resources.yaml`)
-
-#RESOURCESSCHEMA__bcftools_split_vep#
-
----
-
 ## create_cov_excel
-Introduction to create_cov_excel
+Script that creates the gene panel coverage excel file for poirot.
 
 ### :snake: Rule
 
@@ -36,7 +13,7 @@ Introduction to create_cov_excel
 ---
 
 ## deepvariant_add_ref
-Introduction to deepvariant_add_ref
+Add the reference genome path to the deepvariant vcf header
 
 ### :snake: Rule
 
@@ -55,6 +32,29 @@ Introduction to deepvariant_add_ref
 #### Resources settings (`resources.yaml`)
 
 #RESOURCESSCHEMA__deepvariant_add_ref#
+
+--- 
+## [filter_par_dups]
+A custom python script to filter DUP calls in male sample
+chrX PAR regions in cnvpytor vcf files.
+
+### :snake: Rule
+
+#SNAKEMAKE_RULE_SOURCE__filter_par_dups__filter_par_dups#
+
+#### :left_right_arrow: input / output files
+
+#SNAKEMAKE_RULE_TABLE__filter_par_dups__filter_par_dups#
+
+### :wrench: Configuration
+
+#### Software settings (`config.yaml`)
+
+#CONFIGSCHEMA__filter_par_dups#
+
+#### Resources settings (`resources.yaml`)
+
+#RESOURCESSCHEMA__filter_par_dups#
 
 ---
 
@@ -83,31 +83,8 @@ GT field has missing alleles and has more than two allele fields.
 
 ---
 
-## fix_sv_header
-A script that changes the gnomad_af type to float in the vcf header
-
-### :snake: Rule
-
-#SNAKEMAKE_RULE_SOURCE__fix_sv_header__fix_sv_header#
-
-#### :left_right_arrow: input / output files
-
-#SNAKEMAKE_RULE_TABLE__fix_sv_header__fix_sv_header#
-
-### :wrench: Configuration
-
-#### Software settings (`config.yaml`)
-
-#CONFIGSCHEMA__fix_sv_header#
-
-#### Resources settings (`resources.yaml`)
-
-#RESOURCESSCHEMA__fix_sv_header#
-
----
-
 ## svdb_add_ref
-Introduction to svdb_add_ref
+Add the reference genome path to svdb merge vcf header
 
 ### :snake: Rule
 
@@ -130,7 +107,7 @@ Introduction to svdb_add_ref
 ---
 
 ## tiddit_add_ref
-Introduction to tiddit_add_ref
+Add the reference genome path to tiddit vcf header
 
 ### :snake: Rule
 
@@ -153,7 +130,7 @@ Introduction to tiddit_add_ref
 ---
 
 ## vcf_to_aed
-Introduction to vcf_to_aed
+Conversion of cnvpytor vcf to AED file format. The AED file can be read by Chromosome Analysis Suite (ChAS).
 
 ### :snake: Rule
 
@@ -176,7 +153,7 @@ Introduction to vcf_to_aed
 ---
 
 ## vcf_to_aed_filtered
-Introduction to vcf_to_aed
+Conversion of the filtered cnvpytor vcf to AED file format. The AED file can be read by Chromosome Analysis Suite (ChAS).
 
 ### :snake: Rule
 
