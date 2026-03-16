@@ -136,7 +136,6 @@ properties:
       - default_container
       - reference
 
-# Entry added using Hydra-Genetics CLI - please move it into alphabetically sorted order
   filter_par_dups:
     type: object
     description: parameters for filter_par_dups

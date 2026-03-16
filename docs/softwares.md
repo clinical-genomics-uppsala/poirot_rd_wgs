@@ -153,7 +153,7 @@ Conversion of cnvpytor vcf to AED file format. The AED file can be read by Chrom
 ---
 
 ## vcf_to_aed_filtered
-Conversion of teh filtered cnvpytor vcf to AED file format. The AED file can be read by Chromosome Analysis Suite (ChAS).
+Conversion of the filtered cnvpytor vcf to AED file format. The AED file can be read by Chromosome Analysis Suite (ChAS).
 
 ### :snake: Rule
 

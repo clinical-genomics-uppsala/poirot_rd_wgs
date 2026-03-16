@@ -73,7 +73,7 @@ properties:
         properties:
           vcf:
             type: string
-            description: cnvpyotor vcf to which the filter for par dups should be applied
+            description: cnvpytor vcf to which the filter for par dups should be applied
           bed:
             type: string
             description: bed file with par dup regions to be filtered out
@@ -84,7 +84,7 @@ properties:
         properties:
           vcf:
             type: string
-            description: filtered cnvpyotor vcf with par dups filtered out
+            description: filtered cnvpytor vcf with par dups filtered out
 
 
   fix_mt_gt:
