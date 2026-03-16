@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.0.0](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.11.0...v1.0.0) (2026-03-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* make vep annotation optional
+
+### Features
+
+* add echtvar for annotation of AFs in snv_indels vcf ([1ac4195](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/1ac41954aac271310c3a3501f86bfc5558f8cb6b))
+* add filtering of cnvpytor DUP calls in male chrX PAR ([901fb51](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/901fb518d7f0efd8d62aabe5459d4273ec0975fd))
+* make vep annotation optional ([63e4448](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/63e44487d22c0ef9e67cee866eb16ee063c94b06))
+* remove unneeded test config ([03645c5](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/03645c5c34308389038ad3d569103b9af43a3d63))
+* use echtvar for variant annotation ([847d652](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/847d652f16785ad306b1571ac4af7fe59852c107))
+
+
+### Documentation
+
+* cleanup schemas and update rulegraph image ([897b2a6](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/897b2a683699cfc89e764f3b31fd792bc42e07f8))
+* cleanup the softwares.md file ([0bae5f4](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/0bae5f4302f619cc794f71868cdca562b1546dde))
+* update build readme ([1a7bee5](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/1a7bee51cf2c6736f6310e876fa9c36a451f9c90))
+* update changes in the docs ([4cd9a97](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/4cd9a9771d6864eb6d141279ff8cd3f0d480a5e2))
+
 ## [0.10.0](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.9.0...v0.10.0) (2025-10-15)
 
 
