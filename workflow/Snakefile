@@ -681,6 +681,12 @@ rule convert_samples_for_somalier_trio:
         "qc/somalier_trio/.samples_converted.log",
     container:
         config.get("convert_samples_for_somalier_trio", {}).get("container", config["default_container"])
+    resources:
+        mem_mb=config.get("create_ped", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
+        mem_per_cpu=config.get("create_ped", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
+        partition=config.get("create_ped", {}).get("partition", config["default_resources"]["partition"]),
+        threads=config.get("create_ped", {}).get("threads", config["default_resources"]["threads"]),
+        time=config.get("create_ped", {}).get("time", config["default_resources"]["time"]),
     script:
         "scripts/convert_samples_for_somalier_trio.py"
 
