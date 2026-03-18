@@ -280,6 +280,10 @@ samtools_idxstats:
 samtools:
   container: "docker://hydragenetics/common:1.11.1"
 
+scramble_cluster_analysis:
+  container: "docker://hydragenetics/scramble:1.0.2"
+  mei_refs: "/opt/scramble/cluster_analysis/resources/MEI_consensus_seqs.fa" # path in the container
+  
 smn_caller:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
   genome_version: '38'
