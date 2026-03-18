@@ -1,6 +1,6 @@
 ---
 
-aligner: "bwa_gpu"
+aligner: "parabruicks_fq2bam"
 snp_caller: "deepvariant_gpu"
 vep_annotation: False
 
