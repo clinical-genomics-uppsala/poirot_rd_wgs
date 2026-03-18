@@ -252,6 +252,7 @@ use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
         wrk_dir=temp(directory("cnv_sv/manta_run_workflow_n/{sample}/workspace")),
 
 
+<<<<<<< HEAD
 use rule melt from cnv_sv as cnv_sv_melt with:
     input:
         bam=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
@@ -267,6 +268,8 @@ use rule melt from cnv_sv as cnv_sv_melt with:
         tmpdir=directory("cnv_sv/melt/{sample}_{type}"),
 
 
+=======
+>>>>>>> 2bc7e91 (remove outdated melt inputs and outputs)
 use rule smn_manifest from cnv_sv as cnv_sv_smn_manifest with:
     input:
         bam=lambda wildcards: get_bam_input(wildcards)[0],
