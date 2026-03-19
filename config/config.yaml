@@ -306,14 +306,14 @@ somalier_trio_extract:
 
 somalier_trio_mqc:
   mqc_config: "config/somalier_trio_mqc.yaml"
-  container: "docker://hydragenetics/somalier:0.2.18"
+  container: "docker://hydragenetics/common:3.1.1"
 
 somalier_trio_relate:
   container: "docker://hydragenetics/somalier:0.2.18"
   extra: ""
 
 somalier_trio_validate:
-  container: "docker://hydragenetics/somalier:0.2.18"
+  container: "docker://hydragenetics/common:3.1.1"
   threshold: 0.4
 
 spring:
