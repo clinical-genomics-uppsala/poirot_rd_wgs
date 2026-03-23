@@ -35,6 +35,10 @@ from hydra_genetics.utils.software_versions import use_container
 sys.path.insert(0, str(Path(workflow.basedir) / "scripts"))
 from somalier_utils import convert_trio_format_to_somalier, get_samples_for_somalier, has_trio_samples
 
+from hydra_genetics.utils import misc
+misc.ALIGNER_PATHS.update({
+    "bwa_cpu": "alignment/samtools_merge_bam"
+})
 
 hydra_min_version("3.0.0")
 
