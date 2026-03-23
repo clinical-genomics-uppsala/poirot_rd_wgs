@@ -59,11 +59,11 @@ bcftools_softfilter_cnvpytor:
   extra: "-s LowQual "
 
 bcftools_softfilter_melt:
-  exclude: 'FILTER="rSD" || FILTER="hDP" || FILTER="ac0" || INFO/ASSESS<3 || INFO/SR<1 || (INFO/LP+INFO/RP+INFO/SR)<11'
+  exclude: "'FILTER=\"rSD\" || FILTER=\"hDP\" || FILTER=\"ac0\" || INFO/ASSESS<3 || INFO/SR<1 || (INFO/LP+INFO/RP+INFO/SR)<11'"
   extra: "-s LowQual "
 
 bcftools_softfilter_scramble:
-  exclude: 'INFO/Clipped_Reads_In_Cluster<5 || INFO/Alignment_Score<70 || INFO/Alignment_Percent_Length<90 || INFO/Alignment_Percent_Identity<90'
+  exclude: "'INFO/Clipped_Reads_In_Cluster<5 || INFO/Alignment_Score<70 || INFO/Alignment_Percent_Length<90 || INFO/Alignment_Percent_Identity<90'"
   extra: "-s LowQual "
 
 bcftools_hardfilter_cnvpytor:
