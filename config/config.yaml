@@ -15,7 +15,7 @@ default_container: "docker://hydragenetics/common:3.1.1"
 modules:
   alignment: "v0.7.0"
   annotation: "v1.3.0"
-  cnv_sv: "b01ccc9"
+  cnv_sv: "5ded18f"
   compression: "v2.1.0"
   filtering: "v1.1.0"
   parabricks: "v1.2.1"
@@ -283,7 +283,11 @@ samtools:
 scramble_cluster_analysis:
   container: "docker://hydragenetics/scramble:1.0.2"
   mei_refs: "/opt/scramble/cluster_analysis/resources/MEI_consensus_seqs.fa" # path in the container
-  
+  install_dir: "/opt/scramble/cluster_analysis/bin" # path in the container
+
+scramble_cluster_identifier:
+  container: "docker://hydragenetics/scramble:1.0.2"
+
 smn_caller:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
   genome_version: '38'

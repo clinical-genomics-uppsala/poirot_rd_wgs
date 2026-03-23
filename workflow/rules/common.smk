@@ -28,6 +28,10 @@ from hydra_genetics.utils.software_versions import touch_pipeline_version_file_n
 from hydra_genetics.utils.software_versions import touch_software_version_file
 from hydra_genetics.utils.software_versions import use_container
 
+from hydra_genetics.utils import misc
+misc.ALIGNER_PATHS.update({
+    "bwa_cpu": "alignment/samtools_merge_bam"
+})
 
 hydra_min_version("3.0.0")
 
