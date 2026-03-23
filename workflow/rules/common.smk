@@ -270,12 +270,21 @@ def get_glnexus_input(wildcards, input):
 
 
 def get_vcfs_for_svdb_merge(wildcards, input):
+    """
+    Construct a list of VCF file paths with their corresponding input names as suffixes for SVDB merge.
+
+    Args:
+        wildcards: Snakemake wildcards object (not used, but kept for compatibility).
+        input: Snakemake input object, expected to have attributes manta, melt, scramble, cnvpytor.
+
+    Returns:
+        List of strings in the format 'path:name' for each input item, e.g., 'file.vcf.gz:manta'.
+    """
     vcfs_with_suffix = []
-    vcfs_with_suffix.append(f"{input.manta}:manta")
-    vcfs_with_suffix.append(f"{input.cnvpytor}:cnvpytor")
-
+    for name, path in input.items():
+        vcfs_with_suffix.append(f"{path}:{name}")
+        
     return vcfs_with_suffix
-
 
 def get_str_panel_list(wildcards):
 

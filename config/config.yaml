@@ -58,6 +58,14 @@ bcftools_softfilter_cnvpytor:
   exclude: "'pytorP1>0.0001 | pytorDG<100000 | pytorPN>0.5 | ( pytorQ0>0.5 && FORMAT/CN != 0)'"
   extra: "-s LowQual "
 
+bcftools_softfilter_melt:
+  exclude: 'FILTER="rSD" || FILTER="hDP" || FILTER="ac0" || INFO/ASSESS<3 || INFO/SR<1 || (INFO/LP+INFO/RP+INFO/SR)<11'
+  extra: "-s LowQual "
+
+bcftools_softfilter_scramble:
+  exclude: 'INFO/Clipped_Reads_In_Cluster<5 || INFO/Alignment_Score<70 || INFO/Alignment_Percent_Length<90 || INFO/Alignment_Percent_Identity<90'
+  extra: "-s LowQual "
+
 bcftools_hardfilter_cnvpytor:
   exclude: "'pytorP1>0.0001 | pytorDG<100000 | pytorPN>0.5 | ( pytorQ0>0.5 && FORMAT/CN != 0)'"
 
@@ -303,13 +311,13 @@ stranger:
   catalog: "config/str_catalog/variant_catalog_hg38.json"
 
 svdb_merge:
-  container: "docker://hydragenetics/svdb:2.8.2"
+  container: "docker://hydragenetics/svdb:2.8.4"
   overlap: 0.6
-  priority: "manta,cnvpytor"
+  priority: "manta,melt,scramble,cnvpytor"
   extra: "--pass_only --no_intra "
 
 svdb_query:
-  container: "docker://hydragenetics/svdb:2.8.2"
+  container: "docker://hydragenetics/svdb:2.8.4"
   extra: "--in_frq FRQ,FRQ,AF --in_occ OCC,OCC,AC --out_frq manta_FRQ,cnvpytor_FRQ,gnomad_AF --out_occ manta_OCC,cnvpytor_OCC,gnomad_AC "
 
 tabix:

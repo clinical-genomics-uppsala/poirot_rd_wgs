@@ -245,6 +245,8 @@ use rule smn_manifest from cnv_sv as cnv_sv_smn_manifest with:
 use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
     input:
         manta="cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz",
+        melt="cnv_sv/melt/{sample}_{type}.softfiltered.vcf.gz",
+        scramble="cnv_sv/scramble_vcf/{sample}_{type}.softfiltered.vcf.gz",
         cnvpytor="cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf",
     output:
         vcf=temp("cnv_sv/svdb_merge/{sample}_{type}.merged.vcf"),
@@ -253,7 +255,7 @@ use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
         overlap=config.get("svdb_merge", {}).get("overlap", 0.6),
         bnd_distance=config.get("svdb_merge", {}).get("bnd_distance", 10000),
         priority=config.get("svdb_merge", {}).get("priority", ""),
-        vcfs=lambda wildards, input: get_vcfs_for_svdb_merge(wildards, input),
+        vcfs=lambda wildcards, input: get_vcfs_for_svdb_merge(wildcards, input),
     log:
         "cnv_sv/svdb_merge/{sample}_{type}.merged.vcf.log",
     benchmark:
@@ -402,6 +404,40 @@ use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_har
         repeat(
             "cnv_sv/cnvpytor/{sample}_{type}.hardfiltered.vcf.benchmark.tsv",
             config.get("bcftools_hardfilter_cnvpytor", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_softfilter_melt with:
+    input:
+        vcf="cnv_sv/melt/{sample}_{type}.vcf.gz",
+    output:
+        vcf="cnv_sv/melt/{sample}_{type}.softfiltered.vcf.gz",
+    params:
+        filter=lambda wildcards: "-e {}".format(config["bcftools_softfilter_melt"]["exclude"]),
+        extra=config.get("bcftools_softfilter_melt", {}).get("extra", ""),
+    log:
+        "cnv_sv/melt/{sample}_{type}.softfiltered.vcf.gz.log",
+    benchmark:
+        repeat(
+            "cnv_sv/melt/{sample}_{type}.softfiltered.vcf.gz.benchmark.tsv",
+            config.get("bcftools_softfilter_melt", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_softfilter_scramble with:
+    input:
+        vcf="cnv_sv/scramble_vcf/{sample}_{type}.sorted.vcf.gz",
+    output:
+        vcf="cnv_sv/scramble_vcf/{sample}_{type}.softfiltered.vcf.gz",
+    params:
+        filter=lambda wildcards: "-e {}".format(config["bcftools_softfilter_scramble"]["exclude"]),
+        extra=config.get("bcftools_softfilter_scramble", {}).get("extra", ""),
+    log:
+        "cnv_sv/scramble_vcf/{sample}_{type}.softfiltered.vcf.gz.log",
+    benchmark:
+        repeat(
+            "cnv_sv/scramble_vcf/{sample}_{type}.softfiltered.vcf.gz.benchmark.tsv",
+            config.get("bcftools_softfilter_scramble", {}).get("benchmark_repeats", 1),
         )
 
 
