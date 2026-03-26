@@ -231,7 +231,9 @@ multiqc:
         - "qc/samtools_stats/{sample}_{type}.samtools-stats.txt"
         - "qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"
         - "qc/verifybamid2/{sample}_{type}.selfSM"
-        - "qc/somalier_trio/somalier_samples_mqc.tsv"
+        - "qc/somalier_trio/somalier_rel_check_mqc.tsv"
+        - "qc/somalier_trio/somalier_sex_check_mqc.tsv"
+        - "qc/somalier_trio/somalier_general_stats_mqc.tsv"
 
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
@@ -305,7 +307,10 @@ somalier_trio_extract:
   container: "docker://hydragenetics/somalier:0.2.18"
 
 somalier_trio_mqc:
-  mqc_config: "config/somalier_trio_mqc.yaml"
+  mqc_config: "config/somalier_mqc.yaml"
+  container: "docker://hydragenetics/common:3.1.1"
+
+create_somalier_mqc_tsv:
   container: "docker://hydragenetics/common:3.1.1"
 
 somalier_trio_relate:

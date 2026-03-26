@@ -1,0 +1,212 @@
+somalier_rel_check:
+  parent_id: somalier_section
+  parent_name: "Somalier"
+  parent_description: "Somalier quality control for sample relatedness and sex check using informative sites"
+  id: 'somalier_rel_check_table'
+  format: tsv
+  plot_type: 'table'
+  section_name: 'Relatedness Check'
+  description: 'Report relatedness between sample pairs based on genotype concordance'
+  pconfig:
+    namespace: 'Somalier Relatedness'
+  headers:
+    sample_pair:
+      title: Sample Pair
+      description: The pair of samples being compared
+      hidden: False
+      placement: 900
+    trio_id:
+      title: Trio ID
+      description: ID for the trio the sample pair belong to
+      hidden: False
+      placement: 910
+    sample_a:
+      title: sample_a
+      description: First sample in the pair
+      hidden: True
+      placement: 920
+    sample_b:
+      title: sample_b
+      description: Second sample in the pair
+      hidden: True
+      placement: 930
+    relatedness:
+      title: Relatedness
+      description: The relatedness coefficient calculated from genotypes (0.5 for parent-child, 1.0 for duplicates)
+      hidden: False
+      placement: 940
+      format: '{:,.3f}'
+    ibs0:
+      title: IBS0
+      description: The number of sites at which the 2 samples shared no alleles (should approach 0 for parent-child pairs)
+      hidden: False
+      placement: 950
+      format: '{:,.0f}'
+    ibs2:
+      title: IBS2
+      description: The number of sites at which the 2 samples were both hom-ref, both het, or both hom-alt
+      hidden: True
+      format: '{:,.0f}'
+    hom_concordance:
+      title: Hom Concordance
+      description: Homozygous concordance between the sample pair
+      hidden: True
+      format: '{:,.3f}'
+    hets_a:
+      title: hets_a
+      description: The number of sites at which sample_a was heterozygous
+      hidden: True
+      format: '{:,.0f}'
+    hets_b:
+      title: hets_b
+      description: The number of sites at which sample_b was heterozygous
+      hidden: True
+      format: '{:,.0f}'
+    shared_hets:
+      title: Shared Hets
+      description: The number of sites at which both samples were heterozygous
+      hidden: True
+      format: '{:,.0f}'
+    n:
+      title: n
+      description: The number of sites used to calculate relatedness
+      hidden: True
+      format: '{:,.0f}'
+    expected_relatedness:
+      title: Expected Relatedness
+      description: The expected relatedness based on pedigree information
+      hidden: False
+      placement: 960
+      format: '{:,.3f}'
+    relatedness_check:
+      title: Relatedness Check
+      description: Pass if relatedness matches expected relatedness within tolerance, Fail otherwise
+      hidden: False
+      placement: 970
+
+somalier_sex_check:
+  parent_id: somalier_section
+  parent_name: "Somalier"
+  parent_description: "Somalier quality control for sample relatedness and sex check using informative sites"
+  id: 'somalier_sex_check_table'
+  format: tsv
+  plot_type: 'table'
+  section_name: 'Sex Check'
+  description: 'Check predicted sex from X/Y chromosome genotypes against pedigree sex'
+  pconfig:
+    namespace: 'Somalier Sex'
+  headers:
+    sample_id:
+      title: Sample
+      description: Sample identifier
+      hidden: False
+      placement: 1000
+    family_id:
+      title: Family ID
+      description: Family identifier from pedigree
+      hidden: False
+      placement: 1010
+    original_pedigree_sex:
+      title: Pedigree Sex
+      description: Sex from pedigree file (1=male, 2=female, 0=unknown)
+      hidden: False
+      placement: 1020
+    predicted_sex:
+      title: Predicted Sex
+      description: Sex predicted from X and Y chromosome genotype patterns
+      hidden: False
+      placement: 1030
+    X_depth_mean:
+      title: X Depth
+      description: Mean depth on X chromosome
+      hidden: True
+      format: '{:,.1f}'
+    X_n:
+      title: X Sites
+      description: Number of sites genotyped on X chromosome
+      hidden: True
+      format: '{:,.0f}'
+    X_hom_ref:
+      title: X Hom Ref
+      description: Number of homozygous reference calls on X chromosome
+      hidden: True
+      format: '{:,.0f}'
+    X_het:
+      title: X Het
+      description: Number of heterozygous calls on X chromosome
+      hidden: True
+      format: '{:,.0f}'
+    X_hom_alt:
+      title: X Hom Alt
+      description: Number of homozygous alternate calls on X chromosome
+      hidden: True
+      format: '{:,.0f}'
+    Y_depth_mean:
+      title: Y Depth
+      description: Mean depth on Y chromosome
+      hidden: True
+      format: '{:,.1f}'
+    Y_n:
+      title: Y Sites
+      description: Number of sites genotyped on Y chromosome
+      hidden: True
+      format: '{:,.0f}'
+    gt_depth_mean:
+      title: Mean Depth
+      description: Mean depth across all genotyped sites
+      hidden: True
+      format: '{:,.1f}'
+    gt_depth_sd:
+      title: Depth SD
+      description: Standard deviation of depth
+      hidden: True
+      format: '{:,.1f}'
+    ab_mean:
+      title: AB Mean
+      description: Mean allele balance for heterozygous sites
+      hidden: True
+      format: '{:,.3f}'
+    ab_std:
+      title: AB Std
+      description: Standard deviation of allele balance
+      hidden: True
+      format: '{:,.3f}'
+    n_hom_ref:
+      title: Hom Ref
+      description: Total number of homozygous reference calls
+      hidden: True
+      format: '{:,.0f}'
+    n_het:
+      title: Het
+      description: Total number of heterozygous calls
+      hidden: True
+      format: '{:,.0f}'
+    n_hom_alt:
+      title: Hom Alt
+      description: Total number of homozygous alternate calls
+      hidden: True
+      format: '{:,.0f}'
+    sex_check:
+      title: Sex Check
+      description: PASS if predicted sex matches pedigree sex, FAIL otherwise
+      hidden: False
+      placement: 1040
+
+somalier_general_stats:
+  section_name: 'Somalier General Stats'
+  description: 'Add Somalier sex check data to general statistics table'
+  plot_type: 'generalstats'
+  pconfig:
+    id: 'somalier_generalstats'
+    namespace: 'Somalier'
+  headers:
+    predicted_sex:
+      title: 'Somalier: Predicted Sex'
+      description: 'Sex predicted from X and Y chromosome genotype patterns'
+      scale: false
+      format: '{}'
+    sex_check:
+      title: 'Somalier: Sex Check'
+      description: 'PASS if predicted sex matches pedigree sex, FAIL otherwise'
+      scale: false
+      format: '{}'

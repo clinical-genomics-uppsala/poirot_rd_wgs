@@ -86,6 +86,37 @@ properties:
             type: string
             description: filtered cnvpyotor vcf with par dups filtered out
 
+  create_somalier_mqc_tsv:
+    type: object
+    description: input and output parameters for create_somalier_mqc_tsv
+    properties:
+      input:
+        type: object
+        description: list of inputs
+        properties:
+          pairs:
+            type: string
+            description: somalier pairs.tsv file with relatedness data
+          samples:
+            type: string
+            description: somalier samples.tsv file with sex check data
+          ped:
+            type: string
+            description: pedigree file with family information
+
+      output:
+        type: object
+        description: list of outputs
+        properties:
+          rel_check_mqc:
+            type: string
+            description: MultiQC custom content TSV for relatedness check
+          sex_check_mqc:
+            type: string
+            description: MultiQC custom content TSV for sex check
+          general_stats_mqc:
+            type: string
+            description: MultiQC custom content TSV for general statistics table
 
   fix_mt_gt:
     type: object

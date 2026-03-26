@@ -151,3 +151,14 @@ properties:
         type: string
         description: parameters that should be forwarded
 
+  create_somalier_mqc_tsv:
+    type: object
+    description: parameters for create_somalier_mqc_tsv
+    properties:
+      benchmark_repeats:
+        type: integer
+        description: set number of times benchmark should be repeated
+      container:
+        type: string
+        description: name or path to docker/singularity container
+

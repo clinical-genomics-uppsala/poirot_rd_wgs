@@ -173,4 +173,27 @@ Conversion of teh filtered cnvpytor vcf to AED file format. The AED file can be 
 
 #RESOURCESSCHEMA__vcf_to_aed_filtered#
 
+---
+
+## create_somalier_mqc_tsv
+Create MultiQC custom content TSV files from Somalier output. This script processes somalier relatedness and sex check data to create custom tables similar to Peddy tables, with Pass/Fail QC checks.
+
+### :snake: Rule
+
+#SNAKEMAKE_RULE_SOURCE__somalier__create_somalier_mqc_tsv#
+
+#### :left_right_arrow: input / output files
+
+#SNAKEMAKE_RULE_TABLE__somalier__create_somalier_mqc_tsv#
+
+### :wrench: Configuration
+
+#### Software settings (`config.yaml`)
+
+#CONFIGSCHEMA__create_somalier_mqc_tsv#
+
+#### Resources settings (`resources.yaml`)
+
+#RESOURCESSCHEMA__create_somalier_mqc_tsv#
+
 
