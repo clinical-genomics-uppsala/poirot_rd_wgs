@@ -13,6 +13,7 @@ include: "rules/concat_vcfs.smk"
 include: "rules/coverage.smk"
 include: "rules/extract_str_bed.smk"
 include: "rules/peddy.smk"
+include: "rules/somalier.smk"
 
 
 report: "report/workflow.rst"
@@ -248,7 +249,7 @@ use rule melt from cnv_sv as cnv_sv_melt with:
         hervk=temp("cnv_sv/melt/{sample}_{type}/HERVK.final_comp.vcf"),
         line1=temp("cnv_sv/melt/{sample}_{type}/LINE1.final_comp.vcf"),
         sva=temp("cnv_sv/melt/{sample}_{type}/SVA.final_comp.vcf"),
-        tmpdir=temp(directory("cnv_sv/melt/{sample}_{type}")),
+        tmpdir=directory("cnv_sv/melt/{sample}_{type}"),
 
 
 use rule smn_manifest from cnv_sv as cnv_sv_smn_manifest with:
