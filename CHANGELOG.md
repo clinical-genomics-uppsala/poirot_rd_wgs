@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v1.0.0...v1.0.1) (2026-03-26)
+
+
+### Bug Fixes
+
+* Replace cnvpytor_filtered with cnv in output list ([1de23f0](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/1de23f0ba0d37c6643ca2ca7394b8033dabada4d))
+
 ## [1.0.0](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v0.11.0...v1.0.0) (2026-03-16)
 
 
