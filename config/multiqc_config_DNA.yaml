@@ -86,7 +86,7 @@ table_columns_visible:
     sex_het_ratio: False
     'Peddy: Sex Error': True
     'Peddy: Predicted Sex': True
-  Somalier:
+  somalier_generalstats:
     'Somalier: Predicted Sex': True
     'Somalier: Sex Check': True
   "Picard: HsMetrics":
@@ -171,7 +171,7 @@ table_columns_placement:
     'Peddy: Sex Error': 701
     'Peddy: Predicted Sex': 702
     family_id: 703
-  Somalier:
+  somalier_generalstats:
     'Somalier: Sex Check': 704
     'Somalier: Predicted Sex': 705
   "Picard: HsMetrics":

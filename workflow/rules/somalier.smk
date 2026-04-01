@@ -14,7 +14,8 @@ rule create_somalier_mqc_tsv:
         sex_check_mqc=temp("qc/somalier_trio/somalier_sex_check_mqc.tsv"),
         general_stats_mqc=temp("qc/somalier_trio/somalier_general_stats_mqc.tsv"),
     params:
-        pre="qc/somalier_trio/somalier_mqc",
+        script=workflow.basedir + "/scripts/create_somalier_mqc_config.py",
+        mqc_config=config.get("somalier_trio_mqc", {}).get("mqc_config", ""),
     log:
         "qc/somalier_trio/somalier_mqc.log",
     benchmark:
@@ -32,5 +33,23 @@ rule create_somalier_mqc_tsv:
         config.get("create_somalier_mqc_tsv", {}).get("container", config["default_container"])
     message:
         "{rule}: Create multiqc custom content embedded config tsv files from somalier sex_check and relatedness files"
-    script:
-        "../scripts/create_somalier_mqc_config.py"
+    shell:
+        """
+        exec &> {log}
+        set -ex
+        
+        echo "Starting Somalier MultiQC TSV creation"
+        echo "Script path: {params.script}"
+        ls -l {params.script}
+        
+        python3 --version
+        
+        python3 {params.script} \
+            --pairs {input.pairs} \
+            --samples {input.samples} \
+            --ped {input.ped} \
+            --config {params.mqc_config} \
+            --rel-check-mqc {output.rel_check_mqc} \
+            --sex-check-mqc {output.sex_check_mqc} \
+            --general-stats-mqc {output.general_stats_mqc}
+        """

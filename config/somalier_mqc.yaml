@@ -201,12 +201,12 @@ somalier_general_stats:
     namespace: 'Somalier'
   headers:
     predicted_sex:
-      title: 'Somalier: Predicted Sex'
+      title: 'Predicted Sex'
       description: 'Sex predicted from X and Y chromosome genotype patterns'
       scale: false
       format: '{}'
     sex_check:
-      title: 'Somalier: Sex Check'
+      title: 'Sex Check'
       description: 'PASS if predicted sex matches pedigree sex, FAIL otherwise'
       scale: false
       format: '{}'
