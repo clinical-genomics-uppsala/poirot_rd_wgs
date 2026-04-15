@@ -12,7 +12,7 @@ from pathlib import Path
 
 # Add scripts directory to path to import somalier_utils
 sys.path.insert(0, str(Path(snakemake.scriptdir).resolve()))
-from somalier_utils import get_samples_for_somalier
+from somalier_utils import get_samples_for_somalier  # noqa: E402
 
 
 # Load samples

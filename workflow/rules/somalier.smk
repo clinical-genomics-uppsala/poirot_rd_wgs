@@ -14,7 +14,7 @@ rule create_somalier_mqc_tsv:
         sex_check_mqc=temp("qc/somalier_trio/somalier_sex_check_mqc.tsv"),
         general_stats_mqc=temp("qc/somalier_trio/somalier_general_stats_mqc.tsv"),
     params:
-        script=workflow.basedir + "/scripts/create_somalier_mqc_config.py",
+        script=f"{workflow.basedir}/scripts/create_somalier_mqc_config.py",
         mqc_config=config.get("somalier_trio_mqc", {}).get("mqc_config", ""),
     log:
         "qc/somalier_trio/somalier_mqc.log",
