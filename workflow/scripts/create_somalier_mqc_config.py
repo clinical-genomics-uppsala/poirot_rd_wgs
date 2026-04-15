@@ -139,6 +139,15 @@ def get_relatedness_df(pairs_file_path, samples_file_path, ped_df, trio_dict):
         (relatedness_df['rel_check_test'] == 'Fail')
     ]
 
+    # Select only the columns we want to display in MultiQC
+    display_columns = ['sample_pair', 'sample_a', 'sample_b', 'relatedness', 'ibs0', 'ibs2',
+                       'hom_concordance', 'hets_a', 'hets_b', 'shared_hets', 'n',
+                       'expected_relatedness', 'rel_check_test', 'trio_id']
+    
+    # Only keep columns that exist in the dataframe
+    available_columns = [col for col in display_columns if col in trio_or_error_df.columns]
+    trio_or_error_df = trio_or_error_df[available_columns]
+
     return trio_or_error_df
 
 
@@ -173,6 +182,16 @@ def get_sex_check_df(samples_file_path):
 
         sex_check_df['sex_check'] = sex_check_df.apply(check_sex, axis=1)
 
+    # Select only the columns we want to display in MultiQC (matching config)
+    display_columns = ['sample_id', 'family_id', 'original_pedigree_sex', 'predicted_sex',
+                       'X_depth_mean', 'X_n', 'X_hom_ref', 'X_het', 'X_hom_alt',
+                       'Y_depth_mean', 'Y_n', 'gt_depth_mean', 'gt_depth_sd',
+                       'ab_mean', 'ab_std', 'n_hom_ref', 'n_het', 'n_hom_alt', 'sex_check']
+    
+    # Only keep columns that exist in the dataframe
+    available_columns = [col for col in display_columns if col in sex_check_df.columns]
+    sex_check_df = sex_check_df[available_columns]
+
     return sex_check_df
 
 
@@ -180,9 +199,17 @@ def write_somalier_mqc(somalier_df, somalier_config, outfile):
     """
     Write MultiQC custom content TSV with embedded config.
     """
+    # Clean column names - remove any newlines or special characters
+    somalier_df.columns = [str(col).replace('\n', ' ').replace('\r', ' ').strip() for col in somalier_df.columns]
+    
+    # Clean data - ensure no newlines in data values
+    for col in somalier_df.columns:
+        if somalier_df[col].dtype == 'object':
+            somalier_df[col] = somalier_df[col].astype(str).str.replace('\n', ' ').str.replace('\r', ' ')
+    
     with open(outfile, 'w') as outfile_handle:
         print(comment_the_config_keys(somalier_config), file=outfile_handle)
-        somalier_df.to_csv(outfile_handle, sep='\t', mode='a', index=False)
+        somalier_df.to_csv(outfile_handle, sep='\t', mode='a', index=False, line_terminator='\n')
 
 
 def get_trio_id(sample_id, trio_dict):

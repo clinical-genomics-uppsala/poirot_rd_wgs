@@ -35,7 +35,10 @@ def convert_trio_format_to_somalier(samples_dict):
     df["mother"] = "."
 
     # Get unique trio IDs (excluding NA, nan, ., 0)
-    trio_ids = df[df["trioid"].notna() & (df["trioid"] != "NA") & (df["trioid"] != ".") & (df["trioid"] != "0")]["trioid"].unique()
+    trio_ids = df[
+        df["trioid"].notna() & (df["trioid"] != "NA") &
+        (df["trioid"] != ".") & (df["trioid"] != "0")
+    ]["trioid"].unique()
 
     for trio_id in trio_ids:
         trio_samples = df[df["trioid"] == trio_id]
@@ -92,4 +95,8 @@ def has_trio_samples(samples_dict):
         return False
 
     # Check if any sample has non-empty trio information
-    return any((samples_for_somalier["trio"].notna()) & (samples_for_somalier["trio"] != ".") & (samples_for_somalier["trio"] != "0"))
+    return any(
+        (samples_for_somalier["trio"].notna()) &
+        (samples_for_somalier["trio"] != ".") &
+        (samples_for_somalier["trio"] != "0")
+    )
