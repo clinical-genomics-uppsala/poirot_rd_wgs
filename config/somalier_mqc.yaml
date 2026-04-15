@@ -193,12 +193,11 @@ somalier_sex_check:
       placement: 1040
 
 somalier_general_stats:
+  id: 'somalier_generalstats'
   section_name: 'Somalier General Stats'
   description: 'Add Somalier sex check data to general statistics table'
   plot_type: 'generalstats'
-  pconfig:
-    id: 'somalier_generalstats'
-    namespace: 'Somalier'
+  namespace: 'Somalier'
   headers:
     predicted_sex:
       title: 'Predicted Sex'
