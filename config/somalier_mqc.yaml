@@ -36,6 +36,17 @@ somalier_rel_check:
       hidden: False
       placement: 940
       format: '{:,.3f}'
+somalier_trio:
+  id: 'somalier_trio'
+  section_name: 'Somalier Trio Analysis'
+  description: 'Sex check and relatedness for trio samples'
+  plot_type: 'table'
+  pconfig:
+    id: 'somalier_trio_table'
+    title: 'Somalier Trio Sex Check'
+    namespace: 'Somalier Trio'
+    col1_header: 'Sample'
+    format: '{:,.0f}'
     ibs0:
       title: IBS0
       description: The number of sites at which the 2 samples shared no alleles (should approach 0 for parent-child pairs)
