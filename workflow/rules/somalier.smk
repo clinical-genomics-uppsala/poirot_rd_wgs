@@ -17,7 +17,7 @@ rule create_somalier_mqc_tsv:
         script=f"{workflow.basedir}/scripts/create_somalier_mqc_config.py",
         mqc_config=config.get("somalier_trio_mqc", {}).get("mqc_config", ""),
     log:
-        "qc/somalier_trio/somalier_mqc.log",
+        "qc/somalier_trio_mqc/somalier_mqc.log",
     benchmark:
         repeat(
             "qc/somalier_trio/create_somalier_mqc_tsv.benchmark.tsv",
