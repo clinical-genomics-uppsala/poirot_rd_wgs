@@ -209,7 +209,7 @@ def write_somalier_mqc(somalier_df, somalier_config, outfile):
     
     with open(outfile, 'w') as outfile_handle:
         print(comment_the_config_keys(somalier_config), file=outfile_handle)
-        somalier_df.to_csv(outfile_handle, sep='\t', mode='a', index=False, line_terminator='\n')
+        somalier_df.to_csv(outfile_handle, sep='\t', mode='a', index=False, lineterminator='\n')
 
 
 def get_trio_id(sample_id, trio_dict):
