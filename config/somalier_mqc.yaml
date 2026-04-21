@@ -47,6 +47,7 @@ somalier_trio:
     namespace: 'Somalier Trio'
     col1_header: 'Sample'
     format: '{:,.0f}'
+  headers:
     ibs0:
       title: IBS0
       description: The number of sites at which the 2 samples shared no alleles (should approach 0 for parent-child pairs)
