@@ -86,9 +86,9 @@ table_columns_visible:
     sex_het_ratio: False
     'Peddy: Sex Error': True
     'Peddy: Predicted Sex': True
-  somalier_generalstats:
-    'Somalier: Predicted Sex': True
-    'Somalier: Sex Check': True
+  Somalier:
+    predicted_sex: True
+    sex_check: True
   "Picard: HsMetrics":
     FOLD_ENRICHMENT: False
     MEDIAN_TARGET_COVERAGE: False
@@ -144,8 +144,17 @@ multiqc_cgs:
       min: 0
       max: 60
       scale: "RdYlGn"
+  "Somalier":
+    predicted_sex:
+      title: "Somalier: Predicted Sex"
+      description: "Sex predicted from X and Y chromosome genotype patterns by Somalier"
+      scale: false
+    sex_check:
+      title: "Som: Sex Check"
+      description: "PASS if predicted sex matches pedigree sex, FAIL otherwise (Somalier)"
+      scale: false
 
-# Galler alla kolumner oberoende pa module!
+# All columns independent of module!
 table_columns_placement:
   mosdepth:
     median_coverage: 601
@@ -171,9 +180,9 @@ table_columns_placement:
     'Peddy: Sex Error': 701
     'Peddy: Predicted Sex': 702
     family_id: 703
-  somalier_generalstats:
-    'Somalier: Sex Check': 704
-    'Somalier: Predicted Sex': 705
+  Somalier:
+    sex_check: 704
+    predicted_sex: 705
   "Picard: HsMetrics":
     PCT_SELECTED_BASES: 801
     FOLD_80_BASE_PENALTY: 802

@@ -345,11 +345,10 @@ try:
     # Create general stats tsv (subset of sex check)
     if 'sample_id' in sex_check_df.columns and 'predicted_sex' in sex_check_df.columns and 'sex_check' in sex_check_df.columns:
         general_stats_df = sex_check_df[['sample_id', 'predicted_sex', 'sex_check']].copy()
-        general_stats_df.set_index('sample_id', inplace=True)
+        # Do NOT set_index - sample_id must be the first column for MultiQC generalstats
     else:
         # Create empty general stats df to satisfy Snakemake requirement
         general_stats_df = pd.DataFrame(columns=['sample_id', 'predicted_sex', 'sex_check'])
-        general_stats_df.set_index('sample_id', inplace=True)
 
     if somalier_mqc_configs:
         somalier_general_config = somalier_mqc_configs.get('somalier_general_stats')
