@@ -37,13 +37,9 @@ rule create_somalier_mqc_tsv:
         """
         exec &> {log}
         set -ex
-        
+
         echo "Starting Somalier MultiQC TSV creation"
-        echo "Script path: {params.script}"
-        ls -l {params.script}
-        
-        python3 --version
-        
+
         python3 {params.script} \
             --pairs {input.pairs} \
             --samples {input.samples} \
