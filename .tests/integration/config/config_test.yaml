@@ -7,6 +7,23 @@ units: "config/units.tsv"
 
 output: "config/output_list.json"
 
+trimmer_software: "fastp_pe"
+
+default_container: "docker://hydragenetics/common:3.1.1"
+
+modules:
+  alignment: "v0.7.0"
+  annotation: "v1.3.0"
+  cnv_sv: "v1.0.2"
+  compression: "v2.1.0"
+  filtering: "v1.1.0"
+  parabricks: "v1.2.1"
+  prealignment: "v1.4.0"
+  qc: "ed533ebed648a4645bd5026831debef475308235"
+  misc: "v0.2.0"
+  mitochondrial: "v0.1.0"
+  snv_indels: "v2.1.0"
+
 reference:
   coverage_bed: "reference/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
   design_bed: "reference/homo_sapiens.wgs.bed"
@@ -61,6 +78,11 @@ filter_par_dups:
 
 gatk_lift_over_vcf:
   shift_back_chain: "reference/ShiftBack.chain"
+
+gatk_collect_wgs_metrics:
+  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  coverage_cap: 100000
+  read_length: 151
 
 gatk_mutect2:
   interval:
@@ -137,3 +159,14 @@ vep_svdb:
   
 verifybamid2:
   svd_mu: "reference/1000g.phase3.100k.b38.vcf.gz.dat.mu"
+
+multiqc:
+  container: "docker://hydragenetics/multiqc:1.21"
+  reports:
+    DNA:
+      config: "config/multiqc_config_DNA.yaml"
+      included_unit_types: ["N"]
+      qc_files:
+        - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq1_fastqc.zip"
+        - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq2_fastqc.zip"
+        - "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"

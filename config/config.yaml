@@ -20,7 +20,7 @@ modules:
   filtering: "v1.1.0"
   parabricks: "v1.2.1"
   prealignment: "v1.4.0"
-  qc: "v0.7.0"
+  qc: "ed533ebed648a4645bd5026831debef475308235"
   misc: "v0.2.0"
   mitochondrial: "v0.1.0"
   snv_indels: "v2.1.0"
@@ -233,7 +233,6 @@ multiqc:
         - "qc/verifybamid2/{sample}_{type}.selfSM"
         - "qc/somalier_trio/somalier_rel_check_mqc.tsv"
         - "qc/somalier_trio/somalier_sex_check_mqc.tsv"
-        - "qc/somalier_trio/somalier_general_stats_mqc.tsv"
 
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"

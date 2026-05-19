@@ -1,45 +1,61 @@
 title: "Clinical Genomics MultiQC Report"
 subtitle: "Reference used: GRCh38"
-intro_text: "The MultiQC report summarise analysis results from WGS data that been analysed by the pipeline Poirot_RD-WGS (https://github.com/clinical-genomics-uppsala/Poirot_RD-WGS)."
+intro_text: "The MultiQC report summarise analysis results from WGS data that been analysed by the pipeline Poirot_RD-WGS (https://github.com/clinical-genomics-uppsala/poirot_rd_wgs)."
 
 report_header_info:
-  - Contact E-mail: "jessika.nordin@scilifelab.uu.se"
+  - Contact E-mail: "igp-klinsek-bioinfo@lists.uu.se"
   - Application Type: "Bioinformatic analysis of WGS for rare diseases"
 
 show_analysis_paths: True
+
+# Rename columns to add module prefixes for clarity
+table_rename:
+  error_sex_check: 'Peddy: Sex Error'
+  predicted_sex_sex_check: 'Peddy: Predicted Sex'
 
 decimalPoint_format: ','
 
 extra_fn_clean_exts: ##from this until end
     - '.dup'
-    - '_N'
     - type: regex
       pattern: '_fastq[12]'
 #    - '_S'
 extra_fn_clean_trim:
   - 'Sample_VE-3297_'
-#fn_ignore_dirs:
-#fn_ignore_files:
 
-#top_modules:
-#    - "samtools"
-#    - "picard"
-#    - "fastqc"
+custom_table_header_config:
+  general_stats_table:
+    raw_total_sequences:
+      suffix: ""
+      title: "Total seqs M"
+    reads_mapped:
+      suffix: ""
+      title: "Reads mapped M"
+    reads_mapped_percent:
+      suffix: ""
+    reads_properly_paired_percent:
+      suffix: ""
+    median_coverage:
+      suffix: ""
+    10_x_pc:
+      suffix: ""
+    30_x_pc:
+      suffix: ""
+    PERCENT_DUPLICATION:
+      suffix: ""
+    summed_mean:
+      suffix: ""
 
+module_order:
+  - fastqc
+  - fastp
+  - verifybamid
+  - mosdepth
+  - peddy
+  - samtools
+  - picard
 
-# https://github.com/ewels/MultiQC/blob/master/docs/customisation.md
-
-
-custom_content: # Not working
-  order:
-    - fastqc
-    - fastp
-    - mosdepth
-    - peddy
-    - samtools
-    - picard
-
-table_columns_visible:
+table_columns_visible: 
   FastQC:
     percent_duplicates: False
     percent_gc: False
@@ -68,21 +84,27 @@ table_columns_visible:
     ancestry-prediction: False
     ancestry-prob_het_check: False
     sex_het_ratio: False
-    error_sex_check: True
-    predicted_sex_sex_check: True
-  Picard:
-    TOTAL_READS: False
-    PCT_PF_READS_ALIGNED: False
+    'Peddy: Sex Error': True
+    'Peddy: Predicted Sex': True
+  "Picard: HsMetrics":
+    FOLD_ENRICHMENT: False
+    MEDIAN_TARGET_COVERAGE: False
+    PCT_TARGET_BASES_30X: False
+  "Picard: InsertSizeMetrics":
     summed_median: False
     summed_mean: True
+  "Picard: Mark Duplicates":
     PERCENT_DUPLICATION: True
+  "Picard: WGSMetrics":
+    STANDARD_DEVIATION: False
     MEDIAN_COVERAGE: False
     MEAN_COVERAGE: False
     SD_COVERAGE: False
     PCT_30X: False
     PCT_TARGET_BASES_30X: False
     FOLD_ENRICHMENT: False
-  Samtools:
+
+  "Samtools: stats":
     error_rate: False
     non-primary_alignments: False
     reads_mapped: True
@@ -93,10 +115,10 @@ table_columns_visible:
 
 # Patriks plug in, addera egna columner till general stats
 multiqc_cgs:
-  Picard:
-    FOLD_80_BASE_PENALTY:
+  "Picard: HsMetrics":
+    FOLD_80_BASE_PENALTY: 
       title: "Fold80"
-      description: "Fold80 penalty from picard WGS metrics"
+      description: "Fold80 penalty from picard hs metrics"
       min: 1
       max: 3
       scale: "RdYlGn-rev"
@@ -112,28 +134,15 @@ multiqc_cgs:
       max: 100
       scale: "RdYlGn-rev"
       format: "{:.2%}"
-    TOTAL_READS:
-      title: "Total Reads"
-      description: "Total read in BAM file from Picard"
-      scale: "RdYlGn-rev"
-      format: "{:.1f}"
-  Samtools:
+  "Samtools: stats":
     average_quality:
       title: "Average Quality"
       description: "Ratio between the sum of base qualities and total length from Samtools stats"
       min: 0
       max: 60
       scale: "RdYlGn"
-  mosdepth:
-     20_x_pc: #Cant get it to work
-        title: "20x percent"
-        description: "Fraction of genome with at least 20X coverage"
-        max: 100
-        min: 0
-        suffix: "%"
-        scale: "RdYlGn"
 
-# Galler alla kolumner oberoende pa module!
+# All columns independent of module!
 table_columns_placement:
   mosdepth:
     median_coverage: 601
@@ -143,7 +152,7 @@ table_columns_placement:
     20_x_pc: 603
     30_x_pc: 604
     50_x_pc: 605
-  Samtools:
+  "Samtools: stats":
     raw_total_sequences: 500
     reads_mapped: 501
     reads_mapped_percent: 502
@@ -156,19 +165,21 @@ table_columns_placement:
     ancestry-prediction: 777
     ancestry-prob_het_check: 777
     sex_het_ratio: 777
-    error_sex_check: 701
-    predicted_sex_sex_check: 702
+    'Peddy: Sex Error': 701
+    'Peddy: Predicted Sex': 702
     family_id: 703
-  Picard:
-    TOTAL_READS: 800
+  "Picard: HsMetrics":
     PCT_SELECTED_BASES: 801
     FOLD_80_BASE_PENALTY: 802
     PCT_PF_READS_ALIGNED: 888
-    summed_median: 888
-    PERCENT_DUPLICATION: 803
-    summed_mean: 804
-    STANDARD_DEVIATION: 805
     ZERO_CVG_TARGETS_PCT: 888
+  "Picard: InsertSizeMetrics":
+    summed_median: 888
+    summed_mean: 804
+  "Picard: Mark Duplicates":
+    PERCENT_DUPLICATION: 803
+  "Picard: WGSMetrics":
+    STANDARD_DEVIATION: 805
     MEDIAN_COVERAGE: 888
     MEAN_COVERAGE: 888
     SD_COVERAGE: 888
