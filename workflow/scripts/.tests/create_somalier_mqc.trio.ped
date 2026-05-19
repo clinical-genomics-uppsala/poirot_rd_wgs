@@ -1,0 +1,4 @@
+Trio1	Mother_N	0	0	2	1
+Trio1	Father_N	0	0	1	1
+Trio1	Child_N	Father_N	Mother_N	1	2
+Single1	Unrelated_N	0	0	1	1

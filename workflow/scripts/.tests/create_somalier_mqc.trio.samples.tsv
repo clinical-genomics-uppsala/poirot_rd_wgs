@@ -1,0 +1,5 @@
+#family_id	sample_id	paternal_id	maternal_id	sex	phenotype	original_pedigree_sex	gt_depth_mean	gt_depth_sd	depth_mean	depth_sd	ab_mean	ab_std	n_hom_ref	n_het	n_hom_alt	n_unknown	p_middling_ab	X_depth_mean	X_n	X_hom_ref	X_het	X_hom_alt	Y_depth_mean	Y_n	ancestry-prediction
+Trio1	Mother_N	0	0	2	1	female	34.2	12.5	35.1	15.3	0.52	0.15	245678	125678	98456	123	0.034	28.5	45678	23456	21234	1000	2.1	234	EUR
+Trio1	Father_N	0	0	1	1	male	36.8	13.1	37.5	16.2	0.51	0.14	248932	124532	97234	98	0.029	29.1	45234	42234	2000	1000	31.2	5678	EUR
+Trio1	Child_N	Father_N	Mother_N	1	2	male	35.5	12.8	36.2	15.7	0.52	0.15	247123	89234	67345	67	0.032	30.2	44987	41987	2000	1000	32.5	5823	EUR
+Single1	Unrelated_N	0	0	1	1	male	33.9	12.2	34.7	15.1	0.51	0.16	246534	132456	102345	143	0.036	28.9	45123	42123	2000	1000	30.8	5634	EUR
