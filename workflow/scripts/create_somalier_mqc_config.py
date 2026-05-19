@@ -79,28 +79,45 @@ def get_relatedness_df(pairs_file_path, samples_file_path, ped_df, trio_dict):
         axis=1
     )
 
-    # Determine if the relationship passes QC
-    # Pass if observed relatedness matches expected (within tolerance)
-    def check_relatedness(row):
+    # Determine relationship status with more granular categories
+    # Threshold for unexpected relatedness detection
+    RELATEDNESS_THRESHOLD = 0.25
+
+    def check_relatedness_status(row):
         obs = row['relatedness']
         exp = row['expected_relatedness']
 
         if pd.isna(obs):
-            return 'Fail'
+            return 'Unknown', 'Fail'
 
         # For parent-child or siblings (expected = 0.5), allow 0.35-0.65
         if exp == 0.5:
-            return 'Pass' if 0.35 <= obs <= 0.65 else 'Fail'
-        # For unrelated (expected = 0.0), allow up to 0.1
-        elif exp == 0.0:
-            return 'Pass' if obs < 0.1 else 'Fail'
+            status = 'Pass' if 0.35 <= obs <= 0.65 else 'Fail'
+            relationship = 'Expected (Family)' if status == 'Pass' else 'Expected but Out of Range'
+            return relationship, status
+
         # For duplicates (expected = 1.0), allow > 0.9
         elif exp == 1.0:
-            return 'Pass' if obs > 0.9 else 'Fail'
-        else:
-            return 'Fail'
+            status = 'Pass' if obs > 0.9 else 'Fail'
+            relationship = 'Expected (Duplicate)' if status == 'Pass' else 'Expected but Out of Range'
+            return relationship, status
 
-    relatedness_df['rel_check_test'] = relatedness_df.apply(check_relatedness, axis=1)
+        # For unrelated (expected = 0.0)
+        elif exp == 0.0:
+            if obs >= RELATEDNESS_THRESHOLD:
+                # Unexpected high relatedness - flag as warning!
+                return 'Unexpected High Relatedness', 'Fail'
+            elif obs < 0.1:
+                return 'Unrelated', 'Pass'
+            else:
+                return 'Possible Relatedness', 'Warn'
+
+        else:
+            return 'Unknown', 'Fail'
+
+    relatedness_df[['relationship_status', 'rel_check_test']] = relatedness_df.apply(
+        lambda row: pd.Series(check_relatedness_status(row)), axis=1
+    )
 
     # Add trio_id column for each sample pair
     # For trio display, we want to group samples that belong to the same trio
@@ -109,7 +126,24 @@ def get_relatedness_df(pairs_file_path, samples_file_path, ped_df, trio_dict):
         sample_a = row['sample_a']
         sample_b = row['sample_b']
 
-        # If they have expected relatedness > 0, they're in a trio together
+        # First check if they're parents of the same child
+        # (Handles parent-parent pairs where expected_relatedness = 0)
+        is_parent_a = (ped_df['paternal_id'] == sample_a) | (ped_df['maternal_id'] == sample_a)
+        is_parent_b = (ped_df['paternal_id'] == sample_b) | (ped_df['maternal_id'] == sample_b)
+
+        children_a = ped_df[is_parent_a]
+        children_b = ped_df[is_parent_b]
+
+        # Find shared children
+        shared_children = set(children_a['sample_id']) & set(children_b['sample_id'])
+
+        if shared_children:
+            # Get family_id from the first shared child
+            child_id = list(shared_children)[0]
+            child_info = ped_df[ped_df['sample_id'] == child_id].iloc[0]
+            return child_info['family_id']
+
+        # If they have expected relatedness > 0, check parent-child or sibling relationships
         if row['expected_relatedness'] > 0:
             # Use the child's family_id if one is a parent-child relationship
             info_a = ped_df[ped_df['sample_id'] == sample_a]
@@ -133,22 +167,112 @@ def get_relatedness_df(pairs_file_path, samples_file_path, ped_df, trio_dict):
 
     relatedness_df['trio_id'] = relatedness_df.apply(get_trio_id_for_pair, axis=1)
 
-    # Filter to show trio pairs (expected_relatedness > 0) or pairs with QC failures
-    trio_or_error_df = relatedness_df[
-        (relatedness_df['expected_relatedness'] > 0) |
-        (relatedness_df['rel_check_test'] == 'Fail')
-    ]
+    # Identify pairs that belong to the same trio (for complete trio view)
+    # Handle duplicate PED entries (parent as standalone + parent in trio)
+    def samples_in_same_trio(row):
+        sample_a = row['sample_a']
+        sample_b = row['sample_b']
+
+        # Check if they're parents of the same child first
+        # (This handles parent-parent pairs where neither appears as sample_id in PED)
+        is_parent_a = (ped_df['paternal_id'] == sample_a) | (ped_df['maternal_id'] == sample_a)
+        is_parent_b = (ped_df['paternal_id'] == sample_b) | (ped_df['maternal_id'] == sample_b)
+
+        children_a = set(ped_df[is_parent_a]['sample_id'])
+        children_b = set(ped_df[is_parent_b]['sample_id'])
+
+        # If they share any children, they're in the same trio
+        if children_a & children_b:
+            return True
+
+        # Also check if they're in the same family as sample_id
+        info_a_all = ped_df[ped_df['sample_id'] == sample_a]
+        info_b_all = ped_df[ped_df['sample_id'] == sample_b]
+
+        if info_a_all.empty or info_b_all.empty:
+            return False
+
+        # Check all combinations of PED entries for these samples
+        # This handles cases where samples appear both as standalone and in trio
+        for _, info_a in info_a_all.iterrows():
+            for _, info_b in info_b_all.iterrows():
+                family_a = info_a['family_id']
+                family_b = info_b['family_id']
+
+                # Skip if families don't match
+                if family_a != family_b:
+                    continue
+
+                # Check if this family is a real trio (at least one member has parents)
+                has_parents_a = (info_a['paternal_id'] != '0' or info_a['maternal_id'] != '0')
+                has_parents_b = (info_b['paternal_id'] != '0' or info_b['maternal_id'] != '0')
+
+                if has_parents_a or has_parents_b:
+                    return True
+
+        return False
+
+    relatedness_df['in_same_trio'] = relatedness_df.apply(samples_in_same_trio, axis=1)
+
+    # Filter to show (DO THIS BEFORE MERGES to avoid losing rows):
+    # 1. ALL pairs within the same trio (including father-mother)
+    # 2. Pairs with relatedness above threshold (catches unexpected relationships like quattro siblings)
+    # 3. Pairs with QC failures
+    RELATEDNESS_THRESHOLD = 0.25
+    filtered_df = relatedness_df[
+        (relatedness_df['in_same_trio']) |
+        (relatedness_df['relatedness'] >= RELATEDNESS_THRESHOLD) |
+        (relatedness_df['rel_check_test'] == 'Fail') |
+        (relatedness_df['rel_check_test'] == 'Warn')
+    ].copy()
+
+    # Add sex check information for both samples (like Peddy does)
+    # Prepare sex check data from samples_df using same logic as get_sex_check_df
+    samples_df['predicted_sex'] = samples_df['sex'].replace({
+        '1': 'male',
+        '2': 'female',
+        '0': 'unknown'
+    })
+
+    # Create sex_check column - check if it exists and is valid
+    if 'sex_check' not in samples_df.columns or samples_df['sex_check'].isna().all():
+        # Create sex_check based on predicted_sex vs original_pedigree_sex
+        def check_sex(row):
+            ped_sex = str(row.get('original_pedigree_sex', 'unknown')).lower()
+            pred_sex = str(row.get('predicted_sex', 'unknown')).lower()
+
+            if ped_sex == 'unknown' or ped_sex == '0' or pred_sex == 'unknown':
+                return 'UNKNOWN'
+
+            return 'PASS' if ped_sex == pred_sex else 'FAIL'
+
+        samples_df['sex_check'] = samples_df.apply(check_sex, axis=1)
+
+    # Merge sex info for sample_a
+    sex_cols_a = samples_df[['sample_id', 'predicted_sex', 'sex_check']].copy()
+    sex_cols_a.columns = ['sample_id', 'sex_a', 'sex_check_a']
+    filtered_df = filtered_df.merge(sex_cols_a, left_on='sample_a', right_on='sample_id', how='left')
+    filtered_df.drop('sample_id', axis=1, inplace=True)
+
+    # Merge sex info for sample_b
+    sex_cols_b = samples_df[['sample_id', 'predicted_sex', 'sex_check']].copy()
+    sex_cols_b.columns = ['sample_id', 'sex_b', 'sex_check_b']
+    filtered_df = filtered_df.merge(sex_cols_b, left_on='sample_b', right_on='sample_id', how='left')
+    filtered_df.drop('sample_id', axis=1, inplace=True)
 
     # Select only the columns we want to display in MultiQC
-    display_columns = ['sample_pair', 'sample_a', 'sample_b', 'relatedness', 'ibs0', 'ibs2',
-                       'hom_concordance', 'hets_a', 'hets_b', 'shared_hets', 'n',
-                       'expected_relatedness', 'rel_check_test', 'trio_id']
-    
-    # Only keep columns that exist in the dataframe
-    available_columns = [col for col in display_columns if col in trio_or_error_df.columns]
-    trio_or_error_df = trio_or_error_df[available_columns]
+    # Order: identifiers, relatedness metrics, expected/status checks, then sex checks
+    display_columns = ['sample_pair', 'trio_id', 'sample_a', 'sample_b',
+                       'relatedness', 'ibs0', 'expected_relatedness',
+                       'relationship_status', 'rel_check_test',
+                       'sex_a', 'sex_check_a', 'sex_b', 'sex_check_b',
+                       'ibs2', 'hom_concordance', 'hets_a', 'hets_b', 'shared_hets', 'n']
 
-    return trio_or_error_df
+    # Only keep columns that exist in the dataframe
+    available_columns = [col for col in display_columns if col in filtered_df.columns]
+    filtered_df = filtered_df[available_columns]
+
+    return filtered_df
 
 
 def get_sex_check_df(samples_file_path):
@@ -187,7 +311,7 @@ def get_sex_check_df(samples_file_path):
                        'X_depth_mean', 'X_n', 'X_hom_ref', 'X_het', 'X_hom_alt',
                        'Y_depth_mean', 'Y_n', 'gt_depth_mean', 'gt_depth_sd',
                        'ab_mean', 'ab_std', 'n_hom_ref', 'n_het', 'n_hom_alt', 'sex_check']
-    
+
     # Only keep columns that exist in the dataframe
     available_columns = [col for col in display_columns if col in sex_check_df.columns]
     sex_check_df = sex_check_df[available_columns]
@@ -201,12 +325,12 @@ def write_somalier_mqc(somalier_df, somalier_config, outfile):
     """
     # Clean column names - remove any newlines or special characters
     somalier_df.columns = [str(col).replace('\n', ' ').replace('\r', ' ').strip() for col in somalier_df.columns]
-    
+
     # Clean data - ensure no newlines in data values
     for col in somalier_df.columns:
         if somalier_df[col].dtype == 'object':
             somalier_df[col] = somalier_df[col].astype(str).str.replace('\n', ' ').str.replace('\r', ' ')
-    
+
     with open(outfile, 'w') as outfile_handle:
         print(comment_the_config_keys(somalier_config), file=outfile_handle)
         somalier_df.to_csv(outfile_handle, sep='\t', mode='a', index=False, lineterminator='\n')
@@ -342,24 +466,10 @@ try:
         args.sex_check_mqc
     )
 
-    # Create general stats tsv (subset of sex check)
-    if 'sample_id' in sex_check_df.columns and 'predicted_sex' in sex_check_df.columns and 'sex_check' in sex_check_df.columns:
-        general_stats_df = sex_check_df[['sample_id', 'predicted_sex', 'sex_check']].copy()
-        # Do NOT set_index - sample_id must be the first column for MultiQC generalstats
-    else:
-        # Create empty general stats df to satisfy Snakemake requirement
-        general_stats_df = pd.DataFrame(columns=['sample_id', 'predicted_sex', 'sex_check'])
-
-    if somalier_mqc_configs:
-        somalier_general_config = somalier_mqc_configs.get('somalier_general_stats')
-    else:
-        somalier_general_config = {}
-
-    write_somalier_mqc(
-        general_stats_df,
-        somalier_general_config,
-        args.general_stats_mqc
-    )
+    # General stats output removed - redundant with sex check table
+    # Create empty file to satisfy Snakemake rule requirement
+    with open(args.general_stats_mqc, 'w') as f:
+        f.write("# Empty file - sex check summary removed as redundant\n")
 
 except FileNotFoundError as e:
     print(f'File not found: {e}', file=sys.stderr)
