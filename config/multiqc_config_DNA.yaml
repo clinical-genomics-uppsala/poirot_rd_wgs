@@ -55,7 +55,7 @@ module_order:
   - samtools
   - picard
 
-table_columns_visible:
+table_columns_visible: 
   FastQC:
     percent_duplicates: False
     percent_gc: False
@@ -86,9 +86,6 @@ table_columns_visible:
     sex_het_ratio: False
     'Peddy: Sex Error': True
     'Peddy: Predicted Sex': True
-  Somalier:
-    predicted_sex: True
-    sex_check: True
   "Picard: HsMetrics":
     FOLD_ENRICHMENT: False
     MEDIAN_TARGET_COVERAGE: False
@@ -119,7 +116,7 @@ table_columns_visible:
 # Patriks plug in, addera egna columner till general stats
 multiqc_cgs:
   "Picard: HsMetrics":
-    FOLD_80_BASE_PENALTY:
+    FOLD_80_BASE_PENALTY: 
       title: "Fold80"
       description: "Fold80 penalty from picard hs metrics"
       min: 1
@@ -144,15 +141,6 @@ multiqc_cgs:
       min: 0
       max: 60
       scale: "RdYlGn"
-  "Somalier":
-    predicted_sex:
-      title: "Somalier: Predicted Sex"
-      description: "Sex predicted from X and Y chromosome genotype patterns by Somalier"
-      scale: false
-    sex_check:
-      title: "Som: Sex Check"
-      description: "PASS if predicted sex matches pedigree sex, FAIL otherwise (Somalier)"
-      scale: false
 
 # All columns independent of module!
 table_columns_placement:
@@ -180,9 +168,6 @@ table_columns_placement:
     'Peddy: Sex Error': 701
     'Peddy: Predicted Sex': 702
     family_id: 703
-  Somalier:
-    sex_check: 704
-    predicted_sex: 705
   "Picard: HsMetrics":
     PCT_SELECTED_BASES: 801
     FOLD_80_BASE_PENALTY: 802
