@@ -39,8 +39,7 @@ vardict:
   time: "48:00:00"
 ```
 
-The lates resources config file can be viewed [here](The latest config file on main can be viewed [here](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/blob/main/config/resources.yaml)
-)
+The latest resources config file can be viewed [here](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/blob/main/config/resources.yaml)
 
 ## profile yaml
 Profiles are saved in yaml files and used to control how snakemake will be executed, if jobs will be submitted
