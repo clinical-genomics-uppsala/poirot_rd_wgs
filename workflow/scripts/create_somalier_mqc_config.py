@@ -406,21 +406,14 @@ try:
     ped_df.columns = ped_df.columns.str.lstrip('#').str.strip()
 
     # Create relatedness check tsv
-    try:
-        rel_check_df = get_relatedness_df(
-            args.pairs,
-            args.samples,
-            ped_df,
-            trio_dict
-        )
-    except Exception as e:
-        print(f"WARNING: Could not process relatedness data: {e}", file=sys.stderr)
-        import traceback
-        traceback.print_exc(file=sys.stderr)
-        rel_check_df = pd.DataFrame(
-            columns=['sample_pair', 'sample_a', 'sample_b', 'relatedness',
-                     'expected_relatedness', 'relatedness_check']
-        )
+    # Let unexpected parsing/schema/merge failures propagate so the
+    # workflow exits non-zero instead of silently dropping relatedness QC.
+    rel_check_df = get_relatedness_df(
+        args.pairs,
+        args.samples,
+        ped_df,
+        trio_dict
+    )
 
     # Add trio_id column if not present
     if 'trio_id' not in rel_check_df.columns and 'sample_a' in rel_check_df.columns:
