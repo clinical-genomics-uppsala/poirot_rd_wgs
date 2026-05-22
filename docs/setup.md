@@ -20,14 +20,7 @@ The `common.smk` is located under workflow/rules/. This is a general rule taking
 The `config.yaml` is located under config/. The file ties all file and other dependencies as well as parameters for different rules together.
 See further [pipeline configuration](https://hydra-genetics.readthedocs.io/en/latest/make_pipeline/config/).
 
-<br />
-
-/// details | Expand to view current config.yaml
-```yaml
-{% include "includes/config.yaml" %}
-```
-///
-
+The latest config file on main can be viewed [here](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/blob/main/config/config.yaml)
 
 ## resources.yaml
 The `resources.yaml` is located under config/. The file declares default resources used by rules as well as resources for specific rules that needs more resources than allocated by default. See further [pipeline configuration](https://hydra-genetics.readthedocs.io/en/latest/make_pipeline/config/).
@@ -46,13 +39,7 @@ vardict:
   time: "48:00:00"
 ```
 
-<br />
-
-/// details | Expand to view current resources.yaml
-```yaml
-{% include "includes/resources.yaml" %}
-```
-///
+The latest resources config file can be viewed [here](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/blob/main/config/resources.yaml)
 
 ## profile yaml
 Profiles are saved in yaml files and used to control how snakemake will be executed, if jobs will be submitted
