@@ -34,7 +34,12 @@ ruleorder: cnv_sv_manta_run_workflow_n > cnv_sv_tabix
 
 module alignment:
     snakefile:
-        get_module_snakefile(config, "hydra-genetics/alignment", path="workflow/Snakefile", tag=config["modules"]["alignment"])
+        get_module_snakefile(
+            config,
+            "hydra-genetics/alignment",
+            path="workflow/Snakefile",
+            tag=config["modules"]["alignment"],
+        )
     config:
         config
 
@@ -58,7 +63,12 @@ use rule samtools_sort from alignment as alignment_samtools_sort_eh_bam with:
 
 module annotation:
     snakefile:
-        get_module_snakefile(config, "hydra-genetics/annotation", path="workflow/Snakefile", tag=config["modules"]["annotation"])
+        get_module_snakefile(
+            config,
+            "hydra-genetics/annotation",
+            path="workflow/Snakefile",
+            tag=config["modules"]["annotation"],
+        )
     config:
         config
 
@@ -118,7 +128,9 @@ use rule vep from annotation as annotation_vep_echtvar with:
         tabix="snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vcf.gz.tbi",
         vcf="snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vcf.gz",
     output:
-        vcf=temp("snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vep_annotated.vcf"),
+        vcf=temp(
+            "snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vep_annotated.vcf"
+        ),
     params:
         extra=config.get("vep", {}).get("extra", "--pick"),
         mode=config.get("vep", {}).get("mode", "--offline --cache"),
@@ -161,7 +173,9 @@ use rule vep from annotation as annotation_vep_svdb with:
         fasta=config["reference"]["fasta"],
         vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.vcf.gz",
     output:
-        vcf=temp("cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vep_annotated.vcf"),
+        vcf=temp(
+            "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vep_annotated.vcf"
+        ),
     params:
         extra=config.get("vep_svdb", {}).get("extra", "--pick"),
         mode=config.get("vep_svdb", {}).get("mode", "--offline --cache"),
@@ -178,7 +192,12 @@ use rule vep from annotation as annotation_vep_svdb with:
 
 module cnv_sv:
     snakefile:
-        get_module_snakefile(config, "hydra-genetics/cnv_sv", path="workflow/Snakefile", tag=config["modules"]["cnv_sv"])
+        get_module_snakefile(
+            config,
+            "hydra-genetics/cnv_sv",
+            path="workflow/Snakefile",
+            tag=config["modules"]["cnv_sv"],
+        )
     config:
         config
 
@@ -228,12 +247,24 @@ use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
         ref=config["reference"]["fasta"],
         scrpt="cnv_sv/manta_run_workflow_n/{sample}/runWorkflow.py",
     output:
-        cand_si_vcf=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSmallIndels.vcf.gz"),
-        cand_si_tbi=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSmallIndels.vcf.gz.tbi"),
-        cand_sv_vcf=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSV.vcf.gz"),
-        cand_sv_tbi=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSV.vcf.gz.tbi"),
-        dip_sv_vcf=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz"),
-        dip_sv_tbi=temp("cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz.tbi"),
+        cand_si_vcf=temp(
+            "cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSmallIndels.vcf.gz"
+        ),
+        cand_si_tbi=temp(
+            "cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSmallIndels.vcf.gz.tbi"
+        ),
+        cand_sv_vcf=temp(
+            "cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSV.vcf.gz"
+        ),
+        cand_sv_tbi=temp(
+            "cnv_sv/manta_run_workflow_n/{sample}/results/variants/candidateSV.vcf.gz.tbi"
+        ),
+        dip_sv_vcf=temp(
+            "cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz"
+        ),
+        dip_sv_tbi=temp(
+            "cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz.tbi"
+        ),
         wrk_dir=temp(directory("cnv_sv/manta_run_workflow_n/{sample}/workspace")),
 
 
@@ -313,7 +344,10 @@ use rule upd_sites from cnv_sv as cnv_sv_upd_sites with:
 module compression:
     snakefile:
         get_module_snakefile(
-            config, "hydra-genetics/compression", path="workflow/Snakefile", tag=config["modules"]["compression"]
+            config,
+            "hydra-genetics/compression",
+            path="workflow/Snakefile",
+            tag=config["modules"]["compression"],
         )
     config:
         config
@@ -331,7 +365,12 @@ use rule samtools_view from compression as compression_samtools_view with:
 
 module filtering:
     snakefile:
-        get_module_snakefile(config, "hydra-genetics/filtering", path="workflow/Snakefile", tag=config["modules"]["filtering"])
+        get_module_snakefile(
+            config,
+            "hydra-genetics/filtering",
+            path="workflow/Snakefile",
+            tag=config["modules"]["filtering"],
+        )
     config:
         config
 
@@ -359,7 +398,9 @@ use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_snv
     output:
         vcf="snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vcf.gz",
     params:
-        filter=lambda wildcards: "-e {}".format(config["bcftools_filter_snv_indels"]["exclude"]),
+        filter=lambda wildcards: "-e {}".format(
+            config["bcftools_filter_snv_indels"]["exclude"]
+        ),
         extra=config.get("bcftools_filter_snv_indels", {}).get("extra", ""),
     log:
         "snv_indels/vcf_final/{sample}_{type}.popAF_filtered.vcf.gz.log",
@@ -376,7 +417,9 @@ use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_snv
     output:
         vcf="snv_indels/vcf_final/{sample}_{type}.vep_annotated.popAF_filtered.vcf.gz",
     params:
-        filter=lambda wildcards: "-e {}".format(config["bcftools_filter_snv_indels"]["exclude"]),
+        filter=lambda wildcards: "-e {}".format(
+            config["bcftools_filter_snv_indels"]["exclude"]
+        ),
         extra=config.get("bcftools_filter_snv_indels", {}).get("extra", ""),
     log:
         "snv_indels/vcf_final/{sample}_{type}.vep_annotated.popAF_filtered.vcf.gz.log",
@@ -393,7 +436,9 @@ use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_sof
     output:
         vcf="cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf",
     params:
-        filter=lambda wildcards: "-e {}".format(config["bcftools_softfilter_cnvpytor"]["exclude"]),
+        filter=lambda wildcards: "-e {}".format(
+            config["bcftools_softfilter_cnvpytor"]["exclude"]
+        ),
         extra=config.get("bcftools_softfilter_cnvpytor", {}).get("extra", ""),
     log:
         "cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf.log",
@@ -410,7 +455,9 @@ use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_har
     output:
         vcf="cnv_sv/cnvpytor/{sample}_{type}.hardfiltered.vcf",
     params:
-        filter=lambda wildcards: "-e {}".format(config["bcftools_hardfilter_cnvpytor"]["exclude"]),
+        filter=lambda wildcards: "-e {}".format(
+            config["bcftools_hardfilter_cnvpytor"]["exclude"]
+        ),
         extra=config.get("bcftools_hardfilter_cnvpytor", {}).get("extra", ""),
     log:
         "cnv_sv/cnvpytor/{sample}_{type}.hardfiltered.vcf.log",
@@ -455,7 +502,12 @@ use rule bcftools_view from filtering as filtering_bcftools_view_svdb_annotated 
 
 module misc:
     snakefile:
-        get_module_snakefile(config, "hydra-genetics/misc", path="workflow/Snakefile", tag=config["modules"]["misc"])
+        get_module_snakefile(
+            config,
+            "hydra-genetics/misc",
+            path="workflow/Snakefile",
+            tag=config["modules"]["misc"],
+        )
     config:
         config
 
@@ -477,7 +529,10 @@ use rule samtools_index from misc as misc_samtools_index with:
 module mitochondrial:
     snakefile:
         get_module_snakefile(
-            config, "hydra-genetics/mitochondrial", path="workflow/Snakefile", tag=config["modules"]["mitochondrial"]
+            config,
+            "hydra-genetics/mitochondrial",
+            path="workflow/Snakefile",
+            tag=config["modules"]["mitochondrial"],
         )
     config:
         config
@@ -494,7 +549,12 @@ use rule gatk_print_reads from mitochondrial as mitochondrial_gatk_print_reads w
 
 module parabricks:
     snakefile:
-        get_module_snakefile(config, "hydra-genetics/parabricks", path="workflow/Snakefile", tag=config["modules"]["parabricks"])
+        get_module_snakefile(
+            config,
+            "hydra-genetics/parabricks",
+            path="workflow/Snakefile",
+            tag=config["modules"]["parabricks"],
+        )
     config:
         config
 
@@ -503,11 +563,21 @@ use rule pbrun_fq2bam from parabricks as parabricks_fq2bam with:
     resources:
         constraint=config.get("pbrun_fq2bam", {}).get("constraint", ""),
         gres=config.get("pbrun_fq2bam", {}).get("gres", ""),
-        mem_mb=config.get("pbrun_fq2bam", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("pbrun_fq2bam", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("pbrun_fq2bam", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("pbrun_fq2bam", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("pbrun_fq2bam", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=config.get("pbrun_fq2bam", {}).get(
+            "mem_mb", config["default_resources"]["mem_mb"]
+        ),
+        mem_per_cpu=config.get("pbrun_fq2bam", {}).get(
+            "mem_per_cpu", config["default_resources"]["mem_per_cpu"]
+        ),
+        partition=config.get("pbrun_fq2bam", {}).get(
+            "partition", config["default_resources"]["partition"]
+        ),
+        threads=config.get("pbrun_fq2bam", {}).get(
+            "threads", config["default_resources"]["threads"]
+        ),
+        time=config.get("pbrun_fq2bam", {}).get(
+            "time", config["default_resources"]["time"]
+        ),
 
 
 use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
@@ -521,17 +591,30 @@ use rule pbrun_deepvariant from parabricks as parabricks_deepvariant with:
     resources:
         constraint=config.get("pbrun_deepvariant", {}).get("constraint", ""),
         gres=config.get("pbrun_deepvariant", {}).get("gres", ""),
-        mem_mb=config.get("pbrun_deepvariant", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("pbrun_deepvariant", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("pbrun_deepvariant", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("pbrun_deepvariant", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("pbrun_deepvariant", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=config.get("pbrun_deepvariant", {}).get(
+            "mem_mb", config["default_resources"]["mem_mb"]
+        ),
+        mem_per_cpu=config.get("pbrun_deepvariant", {}).get(
+            "mem_per_cpu", config["default_resources"]["mem_per_cpu"]
+        ),
+        partition=config.get("pbrun_deepvariant", {}).get(
+            "partition", config["default_resources"]["partition"]
+        ),
+        threads=config.get("pbrun_deepvariant", {}).get(
+            "threads", config["default_resources"]["threads"]
+        ),
+        time=config.get("pbrun_deepvariant", {}).get(
+            "time", config["default_resources"]["time"]
+        ),
 
 
 module prealignment:
     snakefile:
         get_module_snakefile(
-            config, "hydra-genetics/prealignment", path="workflow/Snakefile", tag=config["modules"]["prealignment"]
+            config,
+            "hydra-genetics/prealignment",
+            path="workflow/Snakefile",
+            tag=config["modules"]["prealignment"],
         )
     config:
         config
@@ -542,7 +625,12 @@ use rule * from prealignment as prealignment_*
 
 module qc:
     snakefile:
-        get_module_snakefile(config, "hydra-genetics/qc", path="workflow/Snakefile", tag=config["modules"]["qc"])
+        get_module_snakefile(
+            config,
+            "hydra-genetics/qc",
+            path="workflow/Snakefile",
+            tag=config["modules"]["qc"],
+        )
     config:
         config
 
@@ -577,16 +665,31 @@ use rule multiqc from qc as qc_multiqc with:
     input:
         files=lambda wildcards: set(
             [
-                file.format(sample=sample, type=u.type, lane=u.lane, flowcell=u.flowcell, barcode=u.barcode, read=read, ext=ext)
+                file.format(
+                    sample=sample,
+                    type=u.type,
+                    lane=u.lane,
+                    flowcell=u.flowcell,
+                    barcode=u.barcode,
+                    read=read,
+                    ext=ext,
+                )
                 for file in config["multiqc"]["reports"][wildcards.report]["qc_files"]
                 for sample in get_samples(samples)
                 for u in units.loc[sample].dropna().itertuples()
-                if u.type in config["multiqc"]["reports"][wildcards.report]["included_unit_types"]
+                if u.type
+                in config["multiqc"]["reports"][wildcards.report][
+                    "included_unit_types"
+                ]
                 for read in ["fastq1", "fastq2"]
-                for ext in config.get("picard_collect_multiple_metrics", {}).get("output_ext", [""])
+                for ext in config.get("picard_collect_multiple_metrics", {}).get(
+                    "output_ext", [""]
+                )
             ]
         ),
-        config=lambda wildcards: config["multiqc"]["reports"][wildcards.report]["config"],
+        config=lambda wildcards: config["multiqc"]["reports"][wildcards.report][
+            "config"
+        ],
         sample_order="config/sample_order.tsv",
         sample_replacement="config/sample_replacement.tsv",
     params:
@@ -681,13 +784,25 @@ rule convert_samples_for_somalier_trio:
     log:
         "qc/somalier_trio/.samples_converted.log",
     container:
-        config.get("convert_samples_for_somalier_trio", {}).get("container", config["default_container"])
+        config.get("convert_samples_for_somalier_trio", {}).get(
+            "container", config["default_container"]
+        )
     resources:
-        mem_mb=config.get("convert_samples_for_somalier_trio", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("convert_samples_for_somalier_trio", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("convert_samples_for_somalier_trio", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("convert_samples_for_somalier_trio", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("convert_samples_for_somalier_trio", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=config.get("convert_samples_for_somalier_trio", {}).get(
+            "mem_mb", config["default_resources"]["mem_mb"]
+        ),
+        mem_per_cpu=config.get("convert_samples_for_somalier_trio", {}).get(
+            "mem_per_cpu", config["default_resources"]["mem_per_cpu"]
+        ),
+        partition=config.get("convert_samples_for_somalier_trio", {}).get(
+            "partition", config["default_resources"]["partition"]
+        ),
+        threads=config.get("convert_samples_for_somalier_trio", {}).get(
+            "threads", config["default_resources"]["threads"]
+        ),
+        time=config.get("convert_samples_for_somalier_trio", {}).get(
+            "time", config["default_resources"]["time"]
+        ),
     script:
         "scripts/convert_samples_for_somalier_trio.py"
 
@@ -725,7 +840,9 @@ use rule somalier_trio_relate from qc as qc_somalier_trio_relate with:
             for t in get_unit_types(units, sample)
         ],
         ped="qc/somalier_trio/somalier_all.ped",
-        group=lambda wildcards: ["qc/somalier_trio/somalier.groups"] if has_trio_samples(samples) else [],
+        group=lambda wildcards: (
+            ["qc/somalier_trio/somalier.groups"] if has_trio_samples(samples) else []
+        ),
 
 
 use rule somalier_trio_validate from qc as qc_somalier_trio_validate
@@ -741,7 +858,12 @@ use rule verifybamid2 from qc as qc_verifybamid2 with:
 
 module snv_indels:
     snakefile:
-        get_module_snakefile(config, "hydra-genetics/snv_indels", path="workflow/Snakefile", tag=config["modules"]["snv_indels"])
+        get_module_snakefile(
+            config,
+            "hydra-genetics/snv_indels",
+            path="workflow/Snakefile",
+            tag=config["modules"]["snv_indels"],
+        )
     config:
         config
 
@@ -795,10 +917,16 @@ use rule bcftools_view from snv_indels as snv_indels_bcftools_view_peddy with:
 use rule bcftools_concat from snv_indels as snv_indels_bcftools_concat_deepvariant with:
     input:
         calls=expand(
-            "{{file}}_{chr}.{{vcf}}.gz", chr=extract_chr("%s.fai" % (config["reference"]["fasta"]), filter_out=skip_contigs)
+            "{{file}}_{chr}.{{vcf}}.gz",
+            chr=extract_chr(
+                "%s.fai" % (config["reference"]["fasta"]), filter_out=skip_contigs
+            ),
         ),
         index=expand(
-            "{{file}}_{chr}.{{vcf}}.gz.tbi", chr=extract_chr("%s.fai" % (config["reference"]["fasta"]), filter_out=skip_contigs)
+            "{{file}}_{chr}.{{vcf}}.gz.tbi",
+            chr=extract_chr(
+                "%s.fai" % (config["reference"]["fasta"]), filter_out=skip_contigs
+            ),
         ),
 
 

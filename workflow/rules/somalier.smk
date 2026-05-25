@@ -16,7 +16,9 @@ rule create_somalier_mqc_tsv:
     params:
         script=f"{workflow.basedir}/scripts/create_somalier_mqc_config.py",
         mqc_config=config.get("somalier_trio_mqc", {}).get("mqc_config", ""),
-        config_arg=lambda w, params: f"--config {params.mqc_config}" if params.mqc_config else "",
+        config_arg=lambda w, params: (
+            f"--config {params.mqc_config}" if params.mqc_config else ""
+        ),
     log:
         "qc/somalier_trio_mqc/somalier_mqc.log",
     benchmark:
@@ -25,13 +27,25 @@ rule create_somalier_mqc_tsv:
             config.get("create_somalier_mqc_tsv", {}).get("benchmark_repeats", 1),
         )
     resources:
-        mem_mb=config.get("create_somalier_mqc_tsv", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("create_somalier_mqc_tsv", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("create_somalier_mqc_tsv", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("create_somalier_mqc_tsv", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("create_somalier_mqc_tsv", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=config.get("create_somalier_mqc_tsv", {}).get(
+            "mem_mb", config["default_resources"]["mem_mb"]
+        ),
+        mem_per_cpu=config.get("create_somalier_mqc_tsv", {}).get(
+            "mem_per_cpu", config["default_resources"]["mem_per_cpu"]
+        ),
+        partition=config.get("create_somalier_mqc_tsv", {}).get(
+            "partition", config["default_resources"]["partition"]
+        ),
+        threads=config.get("create_somalier_mqc_tsv", {}).get(
+            "threads", config["default_resources"]["threads"]
+        ),
+        time=config.get("create_somalier_mqc_tsv", {}).get(
+            "time", config["default_resources"]["time"]
+        ),
     container:
-        config.get("create_somalier_mqc_tsv", {}).get("container", config["default_container"])
+        config.get("create_somalier_mqc_tsv", {}).get(
+            "container", config["default_container"]
+        )
     message:
         "{rule}: Create multiqc custom content embedded config tsv files from somalier sex_check and relatedness files"
     shell:
