@@ -232,14 +232,28 @@
   },
   "results/{sample}/cnv_sv/{sample}.melt.vcf.gz": {
     "name": "_copy_melt_vcf",
-    "file": "cnv_sv/melt/{sample}_N.vcf.gz",
+    "file": "cnv_sv/melt/{sample}_N.softfiltered.vcf.gz",
+    "types": [
+      "N"
+    ]
+  },
+  "results/{sample}/cnv_sv/{sample}.melt.vcf.gz.tbi": {
+    "name": "_copy_melt_vcf_tbi",
+    "file": "cnv_sv/melt/{sample}_N.softfiltered.vcf.gz.tbi",
     "types": [
       "N"
     ]
   },
   "results/{sample}/cnv_sv/{sample}.scramble.vcf.gz": {
     "name": "_copy_scramble_vcf",
-    "file": "cnv_sv/scramble_vcf/{sample}_N.vcf.gz",
+    "file": "cnv_sv/scramble_vcf/{sample}_N.softfiltered.vcf.gz",
+    "types": [
+      "N"
+    ]
+  },
+  "results/{sample}/cnv_sv/{sample}.scramble.vcf.gz.tbi": {
+    "name": "_copy_scramble_vcf_tbi",
+    "file": "cnv_sv/scramble_vcf/{sample}_N.softfiltered.vcf.gz.tbi",
     "types": [
       "N"
     ]
