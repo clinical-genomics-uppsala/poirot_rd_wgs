@@ -18,28 +18,17 @@ import numpy as np
 TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 SCRIPT_DIR = TEST_DIR  # Scripts are in the same directory
 
-# Read the source file and extract only function definitions
-# This avoids triggering the main script execution
-source_file = os.path.join(SCRIPT_DIR, "create_somalier_mqc_config.py")
-with open(source_file, 'r') as f:
-    source_code = f.read()
+# Add script directory to path for importing
+sys.path.insert(0, SCRIPT_DIR)
 
-# Create a modified version that doesn't execute the main block
-# Stop before the "try: args = parse_args()" line
-main_try_index = source_code.find('try:\n    args = parse_args()')
-if main_try_index > 0:
-    source_code = source_code[:main_try_index]
-
-# Execute the modified source to get the functions
-exec_globals = {}
-exec(source_code, exec_globals)
-
-# Extract the functions we need
-comment_the_config_keys = exec_globals['comment_the_config_keys']
-get_trio_info = exec_globals['get_trio_info']
-get_relatedness_df = exec_globals['get_relatedness_df']
-get_sex_check_df = exec_globals['get_sex_check_df']
-get_expected_relatedness = exec_globals['get_expected_relatedness']
+# Import the module directly - main block won't execute thanks to if __name__ guard
+from create_somalier_mqc_config import (
+    comment_the_config_keys,
+    get_trio_info,
+    get_relatedness_df,
+    get_sex_check_df,
+    get_expected_relatedness,
+)
 
 
 class TestCommentTheConfigKeys(unittest.TestCase):

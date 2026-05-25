@@ -16,6 +16,7 @@ rule create_somalier_mqc_tsv:
     params:
         script=f"{workflow.basedir}/scripts/create_somalier_mqc_config.py",
         mqc_config=config.get("somalier_trio_mqc", {}).get("mqc_config", ""),
+        config_arg=lambda w, params: f"--config {params.mqc_config}" if params.mqc_config else "",
     log:
         "qc/somalier_trio_mqc/somalier_mqc.log",
     benchmark:
@@ -44,7 +45,7 @@ rule create_somalier_mqc_tsv:
             --pairs {input.pairs} \
             --samples {input.samples} \
             --ped {input.ped} \
-            --config {params.mqc_config} \
+            {params.config_arg} \
             --rel-check-mqc {output.rel_check_mqc} \
             --sex-check-mqc {output.sex_check_mqc} \
             --general-stats-mqc {output.general_stats_mqc}

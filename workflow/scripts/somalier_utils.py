@@ -9,7 +9,7 @@ Shared between workflow scripts and common.smk.
 import pandas as pd
 
 
-def convert_trio_format_to_somalier(samples_dict):
+def convert_trio_format_to_somalier(samples_df):
     """
     Adapter function to convert trioid/trio_member format to trio/father/mother format.
 
@@ -27,7 +27,7 @@ def convert_trio_format_to_somalier(samples_dict):
 
     Returns a copy of the DataFrame with added trio/father/mother columns.
     """
-    df = samples_dict.copy()
+    df = samples_df.copy()
 
     # Initialize new columns with default values
     df["trio"] = "."
@@ -61,33 +61,33 @@ def convert_trio_format_to_somalier(samples_dict):
     return df
 
 
-def get_samples_for_somalier(samples_dict):
+def get_samples_for_somalier(samples_df):
     """
     Get samples DataFrame in the format expected by somalier_trio.
     Auto-detects format and converts if needed.
     """
     # Check which format we have
-    has_somalier_format = all(col in samples_dict.columns for col in ["trio", "father", "mother"])
-    has_pipeline_format = all(col in samples_dict.columns for col in ["trioid", "trio_member"])
+    has_somalier_format = all(col in samples_df.columns for col in ["trio", "father", "mother"])
+    has_pipeline_format = all(col in samples_df.columns for col in ["trioid", "trio_member"])
 
     if has_somalier_format:
         # Already in correct format
-        return samples_dict
+        return samples_df
     elif has_pipeline_format:
         # Convert from pipeline format to somalier format
-        return convert_trio_format_to_somalier(samples_dict)
+        return convert_trio_format_to_somalier(samples_df)
     else:
         # No trio information available
-        return samples_dict
+        return samples_df
 
 
-def has_trio_samples(samples_dict):
+def has_trio_samples(samples_df):
     """
     Check if samples file has trio information.
     Works with both trioid/trio_member and trio/father/mother formats.
     Uses adapter to convert trioid/trio_member to trio/father/mother if needed.
     """
-    samples_for_somalier = get_samples_for_somalier(samples_dict)
+    samples_for_somalier = get_samples_for_somalier(samples_df)
     required_cols = ["trio", "father", "mother"]
 
     # Check if required columns exist in the DataFrame

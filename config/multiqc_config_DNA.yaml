@@ -8,11 +8,6 @@ report_header_info:
 
 show_analysis_paths: True
 
-# Rename columns to add module prefixes for clarity
-table_rename:
-  error_sex_check: 'Peddy: Sex Error'
-  predicted_sex_sex_check: 'Peddy: Predicted Sex'
-
 decimalPoint_format: ','
 
 extra_fn_clean_exts: ##from this until end
@@ -84,8 +79,8 @@ table_columns_visible:
     ancestry-prediction: False
     ancestry-prob_het_check: False
     sex_het_ratio: False
-    'Peddy: Sex Error': True
-    'Peddy: Predicted Sex': True
+    error_sex_check: True
+    predicted_sex_sex_check: True
   "Picard: HsMetrics":
     FOLD_ENRICHMENT: False
     MEDIAN_TARGET_COVERAGE: False
@@ -103,7 +98,6 @@ table_columns_visible:
     PCT_30X: False
     PCT_TARGET_BASES_30X: False
     FOLD_ENRICHMENT: False
-
   "Samtools: stats":
     error_rate: False
     non-primary_alignments: False
@@ -165,8 +159,8 @@ table_columns_placement:
     ancestry-prediction: 777
     ancestry-prob_het_check: 777
     sex_het_ratio: 777
-    'Peddy: Sex Error': 701
-    'Peddy: Predicted Sex': 702
+    error_sex_check: 701
+    predicted_sex_sex_check: 702
     family_id: 703
   "Picard: HsMetrics":
     PCT_SELECTED_BASES: 801

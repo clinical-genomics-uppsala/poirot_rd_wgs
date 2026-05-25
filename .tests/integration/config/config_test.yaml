@@ -7,23 +7,6 @@ units: "config/units.tsv"
 
 output: "config/output_list.json"
 
-trimmer_software: "fastp_pe"
-
-default_container: "docker://hydragenetics/common:3.1.1"
-
-modules:
-  alignment: "v0.7.0"
-  annotation: "v1.3.0"
-  cnv_sv: "v1.0.2"
-  compression: "v2.1.0"
-  filtering: "v1.1.0"
-  parabricks: "v1.2.1"
-  prealignment: "v1.4.0"
-  qc: "ed533ebed648a4645bd5026831debef475308235"
-  misc: "v0.2.0"
-  mitochondrial: "v0.1.0"
-  snv_indels: "v2.1.0"
-
 reference:
   coverage_bed: "reference/refseq_select_mane_20221123.bed"   #Created bed with https://github.com/zezzipa/UCSCtable2bed
   design_bed: "reference/homo_sapiens.wgs.bed"
@@ -37,10 +20,6 @@ reference:
     - "ataxia.list"
   sites: "reference/homo_sapiens.known_indels.vcf.gz"
   wgs_intervals: "reference/homo_sapiens.wgs.interval_list"
-
-
-aligner: "bwa_gpu" # "bwa_cpu"
-snp_caller: "deepvariant_gpu" # "deepvariant_cpu"
 
 bwa_mem:
   amb: "reference/homo_sapiens.fasta.amb"
@@ -80,7 +59,6 @@ gatk_lift_over_vcf:
   shift_back_chain: "reference/ShiftBack.chain"
 
 gatk_collect_wgs_metrics:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
   coverage_cap: 100000
   read_length: 151
 
@@ -97,7 +75,6 @@ manta_config_n:
   extra: "--callRegions reference/GRCh38_chromosomes.bed.gz"
 
 melt:
-  container: "reference/MELT_v2.2.2.sif"
   bed: "reference/Hg38.genes.bed"
   mei: "reference/mei_list.txt"
 
@@ -106,42 +83,19 @@ mt_reference:
   mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta"
   blacklist: reference/blacklist_sites.hg38.chrM.bed
 
-convert_samples_for_somalier_trio:
-  container: "docker://hydragenetics/common:3.1.1"
-
-somalier_trio_combine_fam:
-  container: "docker://hydragenetics/somalier:0.2.18"
-
-somalier_trio_create_groupfile:
-  container: "docker://hydragenetics/common:3.1.1"
-
-somalier_trio_create_ped:
-  container: "docker://hydragenetics/common:3.1.1"
-
 somalier_trio_extract:
   sites: "resources/somalier/sites.hg38.vcf.gz"
-  container: "docker://hydragenetics/somalier:0.2.18"
 
 somalier_trio_mqc:
   mqc_config: "config/somalier_mqc.yaml"
-  container: "docker://hydragenetics/common:3.1.1"
-
-create_somalier_mqc_tsv:
-  container: "docker://hydragenetics/common:3.1.1"
-
-somalier_trio_relate:
-  container: "docker://hydragenetics/somalier:0.2.18"
-  extra: ""
 
 somalier_trio_validate:
-  container: "docker://hydragenetics/somalier:0.2.18"
   threshold: 0.4
 
 stranger:
   catalog: "reference/variant_catalog_grch38.json"
 
 svdb_merge:
-  container: "docker://hydragenetics/svdb:2.8.2"
   overlap: 0.6
   priority: "manta,cnvpytor"
   extra: "--pass_only --no_intra "
@@ -161,7 +115,6 @@ verifybamid2:
   svd_mu: "reference/1000g.phase3.100k.b38.vcf.gz.dat.mu"
 
 multiqc:
-  container: "docker://hydragenetics/multiqc:1.21"
   reports:
     DNA:
       config: "config/multiqc_config_DNA.yaml"
