@@ -159,9 +159,13 @@ class TestGetRelatednessDF(unittest.TestCase):
         # Check that we have at least 3 pairs (the trio)
         self.assertGreaterEqual(len(df), 3)
 
-        # Check that No Relatedness Expected status exists (for unrelated with low relatedness)
-        no_rel_pairs = df[df['relationship_status'] == 'No Relatedness Expected']
-        self.assertGreaterEqual(len(no_rel_pairs), 0)  # May or may not have unrelated pairs depending on filtering
+        # Verify a known unrelated fixture pair is present and classified correctly
+        unrelated_pair = df[
+            ((df['sample_a'] == 'Unrelated_N') & (df['sample_b'] == 'Mother_N')) |
+            ((df['sample_a'] == 'Mother_N') & (df['sample_b'] == 'Unrelated_N'))
+        ]
+        self.assertEqual(len(unrelated_pair), 1)
+        self.assertEqual(unrelated_pair.iloc[0]['relationship_status'], 'No Relatedness Expected')
 
 
 class TestGetSexCheckDF(unittest.TestCase):
