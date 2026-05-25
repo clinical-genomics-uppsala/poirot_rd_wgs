@@ -37,12 +37,13 @@ Variant calls for both SNVs and indels, and SVs can be performed by Ensembl's VE
 
 - Mobile elements
     - [MELT](https://melt.igs.umaryland.edu/index.php) that call ALU, HERVK, LINE1 and SVA mobile elements.
+    - [Scramble](https://github.com/nih-fmrb/scramble) for mobile element insertion (MEI) calling.
 
-- Merging and filtering of SV VCF files
-    - [SVDB merge](https://github.com/J35P312/SVDB?tab=readme-ov-file#merge) used to merge the Tiddit, Manta and CNVpytor VCF files. [Hydra genetics documentation](https://hydra-genetics-cnv-sv.readthedocs.io/en/latest/softwares/#svdb)
-    - [SVDB query](https://github.com/J35P312/SVDB?tab=readme-ov-file#query) used to annotate the merge VCF with frequency information from local SV databases
-    - Annotation of SVDB merged VCF with Gnomad v4.0 AF using the [Ensembl Variant Effect Predictor](https://www.ensembl.org/info/docs/tools/vep/index.html)
-    - Filtering of SV annotated VCF files based on Gnomad AF and the frequency of each SV called in local svdb databases
+### Merging and filtering of SV VCF files
+- [SVDB merge](https://github.com/J35P312/SVDB?tab=readme-ov-file#merge) used to merge the Manta, Tiddit, CNVpytor, MELT and Scramble VCF files. [Hydra genetics documentation](https://hydra-genetics-cnv-sv.readthedocs.io/en/latest/softwares/#svdb)
+- [SVDB query](https://github.com/J35P312/SVDB?tab=readme-ov-file#query) used to annotate the merge VCF with frequency information from local SV databases
+- Annotation of SVDB merged VCF with Gnomad v4.0 AF using the [Ensembl Variant Effect Predictor](https://www.ensembl.org/info/docs/tools/vep/index.html)
+- Filtering of SV annotated VCF files based on Gnomad AF and the frequency of each SV called in local svdb databases
 
 ### Repeat expansions
 
@@ -89,7 +90,7 @@ Results written to an excel spreadsheet with a tab for each gene panel.
 
 - GATK CNV germline caller
 - Continued work on SV calling and filtering
-- Mobile elements
+- Sex-checks
 - Several sex-checks
   - samtools idxstats helps with determining sex, can see XXY and females with highly homozygote chrX (make a table with predicted sex based on this)
 
