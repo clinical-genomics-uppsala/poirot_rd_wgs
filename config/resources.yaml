@@ -153,8 +153,10 @@ spring:
   partition: "core_bkup"
 
 tiddit:
-  threads: 8
+  threads: 10
   time: "20:00:00"
+  mem_mb: 61440
+  mem_per_cpu: 6144
 
 vep:
   threads: 4
