@@ -376,11 +376,21 @@ def get_expected_relatedness(sample_a, sample_b, ped_df):
             sample_b == info_a['paternal_id'] or sample_b == info_a['maternal_id']):
         return 0.5
 
-    # Check if siblings (same parents)
+    # Check if full siblings (same parents)
     if (info_a['paternal_id'] == info_b['paternal_id'] and
             info_a['maternal_id'] == info_b['maternal_id'] and
             info_a['paternal_id'] != '0' and info_a['maternal_id'] != '0'):
         return 0.5
+
+    # Check if half-siblings (share exactly one non-zero parent)
+    shared_father = (
+        info_a['paternal_id'] == info_b['paternal_id'] and info_a['paternal_id'] != '0'
+    )
+    shared_mother = (
+        info_a['maternal_id'] == info_b['maternal_id'] and info_a['maternal_id'] != '0'
+    )
+    if shared_father ^ shared_mother:
+        return 0.25
 
     # Different families = unrelated (check this LAST)
     if info_a['family_id'] != info_b['family_id']:
