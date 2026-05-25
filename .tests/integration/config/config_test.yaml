@@ -86,7 +86,6 @@ somalier_trio_extract:
 somalier_trio_mqc:
   mqc_config: "config/somalier_mqc.yaml"
 
-
 stranger:
   catalog: "reference/variant_catalog_grch38.json"
 
