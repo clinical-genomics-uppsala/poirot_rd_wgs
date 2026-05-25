@@ -1,8 +1,0 @@
-run_poirot.sh
-prepare_poirot.sh
-*.html
-/site
-/docs
-/docs
-/docs
-docs/changelog.md
