@@ -291,8 +291,9 @@ samtools_stats:
 samtools_idxstats:
   container: "docker://hydragenetics/common:3.1.1"
 
-samtools:
-  container: "docker://hydragenetics/common:3.1.1"
+samtools_merge_bam:
+  container: "docker://hydragenetics/common:1.11.1"
+  extra: "-c -p"
 
 scramble_cluster_analysis:
   container: "docker://hydragenetics/scramble:1.0.2"
@@ -356,9 +357,9 @@ svdb_merge:
 svdb_query:
   container: "docker://hydragenetics/svdb:2.10.2"
   extra: >-
-    --in_frq FRQ,FRQ,FRQ,FRQ,FRQ,AF \
-    --in_occ OCC,OCC,OCC,OCC,OCC,AC \
-    --out_frq manta_FRQ,cnvpytor_FRQ,tiddit_FRQ,melt_FRQ,scramble_FRQ,gnomad_AF \
+    --in_frq FRQ,FRQ,FRQ,FRQ,FRQ,AF
+    --in_occ OCC,OCC,OCC,OCC,OCC,AC
+    --out_frq manta_FRQ,cnvpytor_FRQ,tiddit_FRQ,melt_FRQ,scramble_FRQ,gnomad_AF
     --out_occ manta_OCC,cnvpytor_OCC,tiddit_OCC,melt_OCC,scramble_OCC,gnomad_AC
 
 tabix:
