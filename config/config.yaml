@@ -20,7 +20,7 @@ modules:
   filtering: "v1.1.0"
   parabricks: "v1.2.1"
   prealignment: "v1.4.0"
-  qc: "v0.6.0"
+  qc: "ed533ebed648a4645bd5026831debef475308235"
   misc: "v0.2.0"
   mitochondrial: "v0.1.0"
   snv_indels: "v2.1.0"
@@ -231,6 +231,8 @@ multiqc:
         - "qc/samtools_stats/{sample}_{type}.samtools-stats.txt"
         - "qc/samtools_idxstats/{sample}_{type}.samtools-idxstats.txt"
         - "qc/verifybamid2/{sample}_{type}.selfSM"
+        - "qc/somalier_trio/somalier_rel_check_mqc.tsv"
+        - "qc/somalier_trio/somalier_sex_check_mqc.tsv"
 
 pbrun_deepvariant:
   container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
@@ -272,13 +274,13 @@ reviewer:
   container: "docker://hydragenetics/reviewer:0.2.7"
 
 samtools_stats:
-  container: "docker://hydragenetics/common:1.11.1"
+  container: "docker://hydragenetics/common:3.1.1"
 
 samtools_idxstats:
-  container: "docker://hydragenetics/common:1.11.1"
+  container: "docker://hydragenetics/common:3.1.1"
 
 samtools:
-  container: "docker://hydragenetics/common:1.11.1"
+  container: "docker://hydragenetics/common:3.1.1"
 
 smn_caller:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
@@ -286,6 +288,37 @@ smn_caller:
 
 smn_charts:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
+
+convert_samples_for_somalier_trio:
+  container: "docker://hydragenetics/common:3.1.1"
+
+somalier_trio_combine_fam:
+  container: "docker://hydragenetics/common:3.1.1"
+
+somalier_trio_create_groupfile:
+  container: "docker://hydragenetics/common:3.1.1"
+
+somalier_trio_create_ped:
+  container: "docker://hydragenetics/common:3.1.1"
+
+somalier_trio_extract:
+  sites: "/beegfs-storage/data/ref_data/somalier/v0.2.18/sites.hg38.vcf.gz"
+  container: "docker://hydragenetics/somalier:0.2.18"
+
+somalier_trio_mqc:
+  mqc_config: "config/somalier_mqc.yaml"
+  container: "docker://hydragenetics/common:3.1.1"
+
+create_somalier_mqc_tsv:
+  container: "docker://hydragenetics/common:3.1.1"
+
+somalier_trio_relate:
+  container: "docker://hydragenetics/somalier:0.2.18"
+  extra: ""
+
+somalier_trio_validate:
+  container: "docker://hydragenetics/common:3.1.1"
+  threshold: 0.4
 
 spring:
   container: "docker://hydragenetics/spring:1.1.1"
@@ -305,7 +338,7 @@ svdb_query:
   extra: "--in_frq FRQ,FRQ,AF --in_occ OCC,OCC,AC --out_frq manta_FRQ,cnvpytor_FRQ,gnomad_AF --out_occ manta_OCC,cnvpytor_OCC,gnomad_AC "
 
 tabix:
-  container: "docker://hydragenetics/common:1.11.1"
+  container: "docker://hydragenetics/common:3.1.1"
 
 tiddit:
   container: "docker://hydragenetics/tiddit:3.7.0"

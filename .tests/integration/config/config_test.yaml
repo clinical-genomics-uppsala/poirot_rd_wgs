@@ -21,10 +21,6 @@ reference:
   sites: "reference/homo_sapiens.known_indels.vcf.gz"
   wgs_intervals: "reference/homo_sapiens.wgs.interval_list"
 
-
-aligner: "bwa_gpu" # "bwa_cpu"
-snp_caller: "deepvariant_gpu" # "deepvariant_cpu"
-
 bwa_mem:
   amb: "reference/homo_sapiens.fasta.amb"
   ann: "reference/homo_sapiens.fasta.ann"
@@ -62,6 +58,7 @@ filter_par_dups:
 gatk_lift_over_vcf:
   shift_back_chain: "reference/ShiftBack.chain"
 
+
 gatk_mutect2:
   interval:
     mt: "reference/non_control_region.chrM.interval_list"
@@ -75,7 +72,6 @@ manta_config_n:
   extra: "--callRegions reference/GRCh38_chromosomes.bed.gz"
 
 melt:
-  container: "reference/MELT_v2.2.2.sif"
   bed: "reference/Hg38.genes.bed"
   mei: "reference/mei_list.txt"
 
@@ -84,11 +80,17 @@ mt_reference:
   mt_shifted: "reference/Homo_sapiens_assembly38.chrM.shifted_by_8000_bases.fasta"
   blacklist: reference/blacklist_sites.hg38.chrM.bed
 
+somalier_trio_extract:
+  sites: "resources/somalier/sites.hg38.vcf.gz"
+
+somalier_trio_mqc:
+  mqc_config: "config/somalier_mqc.yaml"
+
+
 stranger:
   catalog: "reference/variant_catalog_grch38.json"
 
 svdb_merge:
-  container: "docker://hydragenetics/svdb:2.8.2"
   overlap: 0.6
   priority: "manta,cnvpytor"
   extra: "--pass_only --no_intra "
@@ -106,3 +108,4 @@ vep_svdb:
   
 verifybamid2:
   svd_mu: "reference/1000g.phase3.100k.b38.vcf.gz.dat.mu"
+

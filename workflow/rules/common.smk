@@ -3,10 +3,13 @@ __copyright__ = "Copyright 2022"
 __email__ = "jessika.nordin@scilifelab.uu.se"
 __license__ = "GPL-3"
 
+import os
 import pandas
 import yaml
 import json
+import sys
 from datetime import datetime
+from pathlib import Path
 
 from hydra_genetics.utils.misc import get_module_snakefile
 from hydra_genetics.utils.resources import load_resources
@@ -27,6 +30,10 @@ from hydra_genetics.utils.software_versions import get_pipeline_version
 from hydra_genetics.utils.software_versions import touch_pipeline_version_file_name
 from hydra_genetics.utils.software_versions import touch_software_version_file
 from hydra_genetics.utils.software_versions import use_container
+
+# Import somalier utility functions
+sys.path.insert(0, str(Path(workflow.basedir) / "scripts"))
+from somalier_utils import convert_trio_format_to_somalier, get_samples_for_somalier, has_trio_samples
 
 
 hydra_min_version("3.0.0")
@@ -332,6 +339,10 @@ def compile_output_list(wildcards):
                     continue
                 else:
                     output_files.append(output.format(sample=sample))
+        elif output.startswith("results/somalier_trio/"):
+            # Only add somalier_trio outputs if config enabled and trios exist
+            if config.get("somalier_trio_extract") and has_trio_samples(samples):
+                output_files.append(output)
         else:
             output_files += set(
                 [

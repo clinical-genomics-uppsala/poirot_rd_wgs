@@ -1,0 +1,5 @@
+#family_ids	sample_a	sample_b	relatedness	ibs0	ibs2	hom_concordance	hets_a	hets_b	hets_ab	shared_hets	hom_alts_a	hom_alts_b	shared_hom_alts	n	x_ibs0	x_ibs2	expected_relatedness
+Trio1,Single1	Mother_N	Father_N	0.02	55321	106234	0.9342	125678	124532	1234	1000	98456	97234	89012	450000	523	8234	-1.0
+Trio1	Mother_N	Child_N	0.48	234	206234	0.9856	125678	89234	45678	44000	98456	67345	54321	450000	12	9845	0.5
+Trio1	Father_N	Child_N	0.51	198	206534	0.9867	124532	89234	44523	43800	97234	67345	54100	450000	10	9876	0.5
+Single1	Unrelated_N	Mother_N	0.01	56432	105234	0.9328	132456	125678	1145	900	102345	98456	88234	450000	634	8123	0.0
