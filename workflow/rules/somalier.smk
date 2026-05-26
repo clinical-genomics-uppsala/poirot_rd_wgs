@@ -1,6 +1,6 @@
-___author__ = "Padraic Corcoran"
-__copyright__ = "Copyright 2025"
-__email__ = "padraic.corcoran@scilifelab.uu.se"
+___author__ = "Julia Höglund"
+__copyright__ = "Copyright 2026"
+__email__ = "julia.hoglund@scilifelab.uu.se"
 __license__ = "GPL-3"
 
 
