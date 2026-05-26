@@ -1,4 +1,4 @@
-___author__ = "Julia Höglund"
+__author__ = "Julia Höglund"
 __copyright__ = "Copyright 2026"
 __email__ = "julia.hoglund@scilifelab.uu.se"
 __license__ = "GPL-3"
