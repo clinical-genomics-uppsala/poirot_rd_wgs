@@ -58,9 +58,6 @@ filter_par_dups:
 gatk_lift_over_vcf:
   shift_back_chain: "reference/ShiftBack.chain"
 
-gatk_collect_wgs_metrics:
-  coverage_cap: 100000
-  read_length: 151
 
 gatk_mutect2:
   interval:
@@ -89,8 +86,6 @@ somalier_trio_extract:
 somalier_trio_mqc:
   mqc_config: "config/somalier_mqc.yaml"
 
-somalier_trio_validate:
-  threshold: 0.4
 
 stranger:
   catalog: "reference/variant_catalog_grch38.json"
@@ -114,12 +109,3 @@ vep_svdb:
 verifybamid2:
   svd_mu: "reference/1000g.phase3.100k.b38.vcf.gz.dat.mu"
 
-multiqc:
-  reports:
-    DNA:
-      config: "config/multiqc_config_DNA.yaml"
-      included_unit_types: ["N"]
-      qc_files:
-        - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq1_fastqc.zip"
-        - "qc/fastqc/{sample}_{type}_{flowcell}_{lane}_{barcode}_fastq2_fastqc.zip"
-        - "qc/mosdepth/{sample}_{type}.mosdepth.summary.txt"
