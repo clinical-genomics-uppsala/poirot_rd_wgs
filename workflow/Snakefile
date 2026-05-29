@@ -30,6 +30,7 @@ ruleorder: snv_indels_glnexus_trio > snv_indels_glnexus
 ruleorder: annotation_echtvar_trio > snv_indels_bgzip
 ruleorder: cnv_sv_manta_run_workflow_n > cnv_sv_tabix
 
+
 module alignment:
     snakefile:
         get_module_snakefile(
@@ -415,6 +416,7 @@ use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_har
             config.get("bcftools_hardfilter_cnvpytor", {}).get("benchmark_repeats", 1),
         )
 
+
 use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_softfilter_melt with:
     input:
         vcf="cnv_sv/melt/{sample}_{type}.vcf.gz",
@@ -447,6 +449,7 @@ use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_sof
             "cnv_sv/scramble_vcf/{sample}_{type}.softfiltered.vcf.gz.benchmark.tsv",
             config.get("bcftools_softfilter_scramble", {}).get("benchmark_repeats", 1),
         )
+
 
 use rule bcftools_view from filtering as filtering_bcftools_view_svdb with:
     input:

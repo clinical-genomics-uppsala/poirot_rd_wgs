@@ -36,9 +36,8 @@ sys.path.insert(0, str(Path(workflow.basedir) / "scripts"))
 from somalier_utils import convert_trio_format_to_somalier, get_samples_for_somalier, has_trio_samples
 
 from hydra_genetics.utils import misc
-misc.ALIGNER_PATHS.update({
-    "bwa_cpu": "alignment/samtools_merge_bam"
-})
+
+misc.ALIGNER_PATHS.update({"bwa_cpu": "alignment/samtools_merge_bam"})
 
 hydra_min_version("3.0.0")
 
@@ -290,8 +289,9 @@ def get_vcfs_for_svdb_merge(wildcards, input):
     vcfs_with_suffix = []
     for name, path in input.items():
         vcfs_with_suffix.append(f"{path}:{name}")
-        
+
     return vcfs_with_suffix
+
 
 def get_str_panel_list(wildcards):
 
