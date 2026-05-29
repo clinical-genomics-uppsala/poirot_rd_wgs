@@ -89,23 +89,13 @@ somalier_trio_mqc:
 stranger:
   catalog: "reference/variant_catalog_grch38.json"
 
-<<<<<<< HEAD
-svdb_merge:
-  overlap: 0.6
-  priority: "manta,cnvpytor"
-  extra: "--pass_only --no_intra "
-
-=======
->>>>>>> 71c0647 (tests: update test config)
 svdb_query:
-  db_string: >-
-    --db \
-      reference/manta_wgs_hg38_novaseqX.sorted.vcf.gz,\
+  db_string: "--db reference/manta_wgs_hg38_novaseqX.sorted.vcf.gz,\
       reference/cnvpytor_wgs_hg38_novaseqX.sorted.vcf.gz,\
       reference/tiddit_wgs_hg38_novaseqX.sorted.vcf.gz,\
       reference/melt_wgs_hg38_novaseqX.sorted.vcf.gz,\
       reference/scramble_wgs_hg38_novaseqX.sorted.vcf.gz,\
-      reference/gnomad.v4.1.sv.sites.no_cnv.PASS.vcf.gz
+      reference/gnomad.v4.1.sv.sites.no_cnv.PASS.vcf.gz"
     
 vep:
   vep_cache: "reference/VEP/"
