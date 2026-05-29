@@ -14,16 +14,102 @@ import traceback
 import argparse
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(description='Create Somalier MultiQC config files.')
-    parser.add_argument('--pairs', required=True, help='Somalier pairs.tsv input')
-    parser.add_argument('--samples', required=True, help='Somalier samples.tsv input')
-    parser.add_argument('--ped', required=True, help='PED file input')
-    parser.add_argument('--config', required=True, help='MultiQC config YAML input')
-    parser.add_argument('--rel-check-mqc', required=True, help='Output relatedness TSV')
-    parser.add_argument('--sex-check-mqc', required=True, help='Output sex check TSV')
-    parser.add_argument('--general-stats-mqc', required=True, help='Output general stats TSV')
-    return parser.parse_args()
+def run_from_snakemake(snakemake):
+    """Entry point when called via Snakemake script: directive."""
+    import logging
+
+    logging.basicConfig(filename=snakemake.log[0], level=logging.DEBUG)
+    logger = logging.getLogger(__name__)
+
+    try:
+        logger.info("Starting Somalier MultiQC TSV creation")
+
+        pairs_file = snakemake.input.pairs
+        samples_file = snakemake.input.samples
+        ped_file = snakemake.input.ped
+        mqc_config_file = snakemake.config.get("somalier_trio_mqc", {}).get("mqc_config", "")
+        rel_check_mqc_out = snakemake.output.rel_check_mqc
+        sex_check_mqc_out = snakemake.output.sex_check_mqc
+        general_stats_mqc_out = snakemake.output.general_stats_mqc
+
+        # Load somalier MultiQC config
+        somalier_mqc_configs = {}
+        if mqc_config_file:
+            with open(mqc_config_file, 'r') as report_configs:
+                somalier_mqc_configs = yaml.load(report_configs, Loader=yaml.FullLoader)
+
+        # Get trio info from ped file
+        trio_dict = get_trio_info(ped_file)
+
+        # Also load PED file as dataframe for relatedness calculations
+        ped_cols = ['family_id', 'sample_id', 'paternal_id', 'maternal_id', 'sex', 'phenotype']
+        ped_df = pd.read_csv(ped_file, sep=None, engine='python', header=None, names=ped_cols, dtype=str)
+        ped_df.columns = ped_df.columns.str.lstrip('#').str.strip()
+
+        # Create relatedness check tsv
+        rel_check_df = get_relatedness_df(
+            pairs_file,
+            samples_file,
+            ped_df,
+            trio_dict
+        )
+
+        # Add trio_id column if not present
+        if 'trio_id' not in rel_check_df.columns and 'sample_a' in rel_check_df.columns:
+            rel_check_df['trio_id'] = rel_check_df['sample_a'].apply(
+                get_trio_id, args=(trio_dict,)
+            )
+
+        if 'trio_id' in rel_check_df.columns:
+            rel_check_df.sort_values(by=['trio_id'], inplace=True)
+
+        # Create sample_pair column as first column
+        if rel_check_df.shape[0] > 0 and 'sample_a' in rel_check_df.columns and 'sample_b' in rel_check_df.columns:
+            rel_check_df['sample_pair'] = rel_check_df['sample_a'].astype(str) + '_v_' + rel_check_df['sample_b'].astype(str)
+            first_column = rel_check_df.pop('sample_pair')
+            rel_check_df.insert(0, 'sample_pair', first_column)
+
+        if somalier_mqc_configs:
+            somalier_rel_config = somalier_mqc_configs.get('somalier_rel_check')
+        else:
+            somalier_rel_config = {}
+
+        write_somalier_mqc(
+            rel_check_df,
+            somalier_rel_config,
+            rel_check_mqc_out
+        )
+
+        # Create sex check tsv
+        try:
+            sex_check_df = get_sex_check_df(samples_file)
+        except Exception as e:
+            logger.warning(f"Could not process sex check data: {e}")
+            sex_check_df = pd.DataFrame(columns=['sample_id', 'predicted_sex', 'sex_check'])
+
+        if somalier_mqc_configs:
+            somalier_sex_config = somalier_mqc_configs.get('somalier_sex_check')
+        else:
+            somalier_sex_config = {}
+
+        write_somalier_mqc(
+            sex_check_df,
+            somalier_sex_config,
+            sex_check_mqc_out
+        )
+
+        # General stats output removed - redundant with sex check table
+        # Create empty file to satisfy Snakemake rule requirement
+        with open(general_stats_mqc_out, 'w') as f:
+            f.write("# Empty file - sex check summary removed as redundant\n")
+
+    except FileNotFoundError as e:
+        logger.error(f'File not found: {e}')
+        raise
+    except Exception as e:
+        logger.error(f'Error creating somalier MultiQC files: {e}')
+        traceback.print_exc(file=sys.stderr)
+        raise
 
 
 def comment_the_config_keys(config_dict):
@@ -400,8 +486,25 @@ def get_expected_relatedness(sample_a, sample_b, ped_df):
     return 0.0
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description='Create Somalier MultiQC config files.')
+    parser.add_argument('--pairs', required=True, help='Somalier pairs.tsv input')
+    parser.add_argument('--samples', required=True, help='Somalier samples.tsv input')
+    parser.add_argument('--ped', required=True, help='PED file input')
+    parser.add_argument('--config', required=True, help='MultiQC config YAML input')
+    parser.add_argument('--rel-check-mqc', required=True, help='Output relatedness TSV')
+    parser.add_argument('--sex-check-mqc', required=True, help='Output sex check TSV')
+    parser.add_argument('--general-stats-mqc', required=True, help='Output general stats TSV')
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
     try:
+        # Check if running via Snakemake script directive
+        snakemake  # noqa: F821 - injected by Snakemake
+        run_from_snakemake(snakemake)  # noqa: F821
+    except NameError:
+        # Running standalone via command line
         args = parse_args()
 
         # Load somalier MultiQC config
