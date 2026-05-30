@@ -15,7 +15,7 @@
   },
   "results/{sample}/snv_indels/{sample}.vep_annotated.vcf.gz": {
     "name": "_copy_vep_vcf",
-    "file": "snv_indels/vcf_final/{sample}_N.vcf.gz",
+    "file": "snv_indels/vcf_final/{sample}_N.vep_annotated.vcf.gz",
     "types": [
       "N"
     ]
@@ -29,7 +29,7 @@
   },
   "results/{sample}/snv_indels/{sample}.vep_annotated.hard-filtered.vcf.gz": {
     "name": "_copy_vep_filtered_vcf",
-    "file": "snv_indels/vcf_final/{sample}_N.popAF_filtered.vcf.gz",
+    "file": "snv_indels/vcf_final/{sample}_N.vep_annotated.popAF_filtered.vcf.gz",
     "types": [
       "N"
     ]
