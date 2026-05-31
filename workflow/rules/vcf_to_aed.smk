@@ -15,15 +15,15 @@ rule vcf_to_aed:
         "cnv_sv/cnvpytor/{sample}_{type}.aed.log",
     benchmark:
         repeat("cnv_sv/cnvpytor/{sample}_{type}.aed.benchmark.tsv", config.get("vcf_to_aed", {}).get("benchmark_repeats", 1))
-    threads: config.get("vcf_to_aed", {}).get("threads", config["default_resources"]["threads"])
+    threads: rule_resource("vcf_to_aed", "threads")
     resources:
-        mem_mb=config.get("vcf_to_aed", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("vcf_to_aed", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("vcf_to_aed", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("vcf_to_aed", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("vcf_to_aed", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=rule_resource("vcf_to_aed", "mem_mb"),
+        mem_per_cpu=rule_resource("vcf_to_aed", "mem_per_cpu"),
+        partition=rule_resource("vcf_to_aed", "partition"),
+        threads=rule_resource("vcf_to_aed", "threads"),
+        time=rule_resource("vcf_to_aed", "time"),
     container:
-        config.get("vcf_to_aed", {}).get("container", config["default_container"])
+        rule_container("vcf_to_aed")
     message:
         "{rule}: convert {input.vcf} to AED format"
     script:
@@ -41,15 +41,15 @@ rule vcf_to_aed_filtered:
         "cnv_sv/cnvpytor/{sample}_{type}.aed.log",
     benchmark:
         repeat("cnv_sv/cnvpytor/{sample}_{type}.aed.benchmark.tsv", config.get("vcf_to_aed", {}).get("benchmark_repeats", 1))
-    threads: config.get("vcf_to_aed", {}).get("threads", config["default_resources"]["threads"])
+    threads: rule_resource("vcf_to_aed", "threads")
     resources:
-        mem_mb=config.get("vcf_to_aed", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("vcf_to_aed", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("vcf_to_aed", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("vcf_to_aed", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("vcf_to_aed", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=rule_resource("vcf_to_aed", "mem_mb"),
+        mem_per_cpu=rule_resource("vcf_to_aed", "mem_per_cpu"),
+        partition=rule_resource("vcf_to_aed", "partition"),
+        threads=rule_resource("vcf_to_aed", "threads"),
+        time=rule_resource("vcf_to_aed", "time"),
     container:
-        config.get("vcf_to_aed", {}).get("container", config["default_container"])
+        rule_container("vcf_to_aed")
     message:
         "{rule}: convert {input.vcf} to AED format"
     script:

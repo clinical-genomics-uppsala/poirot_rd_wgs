@@ -16,15 +16,15 @@ rule exclude_chrM:
             "snv_indels/vcf_final/{sample}_{type}.no_ChrM.vcf.benchmark.tsv",
             config.get("exclude_chrM", {}).get("benchmark_repeats", 1),
         )
-    threads: config.get("exclude_chrM", {}).get("threads", config["default_resources"]["threads"])
+    threads: rule_resource("exclude_chrM", "threads")
     resources:
-        mem_mb=config.get("exclude_chrM", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("exclude_chrM", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("exclude_chrM", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("exclude_chrM", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("exclude_chrM", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=rule_resource("exclude_chrM", "mem_mb"),
+        mem_per_cpu=rule_resource("exclude_chrM", "mem_per_cpu"),
+        partition=rule_resource("exclude_chrM", "partition"),
+        threads=rule_resource("exclude_chrM", "threads"),
+        time=rule_resource("exclude_chrM", "time"),
     container:
-        config.get("exclude_chrM", {}).get("container", config["default_container"])
+        rule_container("exclude_chrM")
     message:
         "{rule}: Exclude chrM from the deepvariant vcf: {input.deepvariant_vcf}"
     shell:
@@ -47,15 +47,15 @@ rule bcftools_concat:
             "snv_indels/vcf_final/{sample}_{type}.vcf.benchmark.tsv",
             config.get("bcftools_concat", {}).get("benchmark_repeats", 1),
         )
-    threads: config.get("bcftools_concat", {}).get("threads", config["default_resources"]["threads"])
+    threads: rule_resource("bcftools_concat", "threads")
     resources:
-        mem_mb=config.get("bcftools_concat", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("bcftools_concat", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("bcftools_concat", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("bcftools_concat", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("bcftools_concat", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=rule_resource("bcftools_concat", "mem_mb"),
+        mem_per_cpu=rule_resource("bcftools_concat", "mem_per_cpu"),
+        partition=rule_resource("bcftools_concat", "partition"),
+        threads=rule_resource("bcftools_concat", "threads"),
+        time=rule_resource("bcftools_concat", "time"),
     container:
-        config.get("bcftools_concat", {}).get("container", config["default_container"])
+        rule_container("bcftools_concat")
     message:
         "{rule}: Concatenate the deepvariant vcf: {input.deepvariant_vcf} and mitochondrial vcf: {input.mutect2_vcf}"
     shell:
