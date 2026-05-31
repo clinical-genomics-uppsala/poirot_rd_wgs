@@ -2,7 +2,6 @@
 import os
 import xlsxwriter
 from datetime import date
-import subprocess
 import yaml
 import gzip
 from operator import itemgetter
@@ -170,12 +169,33 @@ worksheetOver.write(6, 0, "Signed by: ")
 worksheetOver.write(6, 4, "Document nr: ")
 worksheetOver.write_row(7, 0, emptyList, lineFormat)
 
-# Add avg. cov and clonality
-cmdAvgCov = "grep total_region "+mosdepth+" | awk '{print $4}'"
-avgCov = subprocess.run(cmdAvgCov, stdout=subprocess.PIPE, shell='TRUE').stdout.decode('utf-8').strip()
+# Add avg. cov and clonality using native Python parsing
+def parse_mosdepth_mean_coverage(mosdepth_summary_file):
+    try:
+        with open(mosdepth_summary_file, 'r') as f:
+            for line in f:
+                parts = line.strip().split('\t')
+                if len(parts) >= 4 and parts[0] == 'total_region':
+                    return parts[3]
+    except Exception as e:
+        log.error(f"Error parsing Mosdepth summary file: {e}")
+    return "0.0"
 
-cmdDupl = 'grep -A1 PERCENT '+duplicationFile+' | tail -1 | cut -f9'
-duplicateLevel = subprocess.run(cmdDupl, stdout=subprocess.PIPE, shell='TRUE').stdout.decode('utf-8').strip()
+def parse_picard_duplication(picard_file):
+    try:
+        with open(picard_file, 'r') as f:
+            for line in f:
+                if line.startswith("LIBRARY\tUNPAIRED_READS_EXAMINED") or "PERCENT_DUPLICATION" in line:
+                    header = line.strip().split('\t')
+                    values = next(f).strip().split('\t')
+                    metrics = dict(zip(header, values))
+                    return metrics.get("PERCENT_DUPLICATION", "0.0")
+    except Exception as e:
+        log.error(f"Error parsing Picard duplication metrics: {e}")
+    return "0.0"
+
+avgCov = parse_mosdepth_mean_coverage(mosdepth)
+duplicateLevel = parse_picard_duplication(duplicationFile)
 
 worksheetOver.write_row(8, 0, ['DNAnr', 'Avg. coverage (x)', 'Duplicationlevel ()%)',
                                str(minCov)+'x (%)', str(medCov)+'x (%)', str(maxCov)+'x (%)'], tableHeadFormat)
