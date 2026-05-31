@@ -18,13 +18,13 @@ rule deepvariant_add_ref:
             config.get("deepvariant_add_ref", {}).get("benchmark_repeats", 1),
         )
     resources:
-        mem_mb=config.get("deepvariant_add_ref", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("deepvariant_add_ref", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("deepvariant_add_ref", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("deepvariant_add_ref", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("deepvariant_add_ref", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=rule_resource("deepvariant_add_ref", "mem_mb"),
+        mem_per_cpu=rule_resource("deepvariant_add_ref", "mem_per_cpu"),
+        partition=rule_resource("deepvariant_add_ref", "partition"),
+        threads=rule_resource("deepvariant_add_ref", "threads"),
+        time=rule_resource("deepvariant_add_ref", "time"),
     container:
-        config.get("deepvariant_add_ref", {}).get("container", config["default_container"])
+        rule_container("deepvariant_add_ref")
     message:
         "{rule}: Add reference to the header of the deepvariant vcf: {input.vcf}"
     script:
@@ -46,15 +46,15 @@ rule tiddit_add_ref:
             "cnv_sv/tiddit/{sample}_{type}.add_ref.benchmark.tsv",
             config.get("tiddit_add_ref", {}).get("benchmark_repeats", 1),
         )
-    threads: config.get("tiddit_add_ref", {}).get("threads", config["default_resources"]["threads"])
+    threads: rule_resource("tiddit_add_ref", "threads")
     resources:
-        mem_mb=config.get("tiddit_add_ref", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("tiddit_add_ref", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("tiddit_add_ref", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("tiddit_add_ref", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("tiddit_add_ref", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=rule_resource("tiddit_add_ref", "mem_mb"),
+        mem_per_cpu=rule_resource("tiddit_add_ref", "mem_per_cpu"),
+        partition=rule_resource("tiddit_add_ref", "partition"),
+        threads=rule_resource("tiddit_add_ref", "threads"),
+        time=rule_resource("tiddit_add_ref", "time"),
     container:
-        config.get("tiddit_add_ref", {}).get("container", config["default_container"])
+        rule_container("tiddit_add_ref")
     message:
         "{rule}: Add reference to the header of the tiddit vcf: {input.vcf}"
     script:
@@ -75,15 +75,15 @@ rule svdb_add_ref:
         repeat(
             "cnv_sv/svdb_merge/{sample}_{type}.output.benchmark.tsv", config.get("svdb_add_ref", {}).get("benchmark_repeats", 1)
         )
-    threads: config.get("svdb_add_ref", {}).get("threads", config["default_resources"]["threads"])
+    threads: rule_resource("svdb_add_ref", "threads")
     resources:
-        mem_mb=config.get("svdb_add_ref", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("svdb_add_ref", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("svdb_add_ref", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("svdb_add_ref", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("svdb_add_ref", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=rule_resource("svdb_add_ref", "mem_mb"),
+        mem_per_cpu=rule_resource("svdb_add_ref", "mem_per_cpu"),
+        partition=rule_resource("svdb_add_ref", "partition"),
+        threads=rule_resource("svdb_add_ref", "threads"),
+        time=rule_resource("svdb_add_ref", "time"),
     container:
-        config.get("svdb_add_ref", {}).get("container", config["default_container"])
+        rule_container("svdb_add_ref")
     message:
         "{rule}: Add reference to the header of the svdb vcf: {input.vcf}"
     script:

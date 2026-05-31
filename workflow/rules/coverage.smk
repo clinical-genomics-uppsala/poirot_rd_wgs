@@ -17,15 +17,15 @@ rule mosdepth_bedtools:
             "qc/mosdepth_bedtools/mosdepth_bedtools_{sample}_{type}.benchmark.tsv",
             config.get("mosdepth_bedtools", {}).get("benchmark_repeats", 1),
         )
-    threads: config.get("mosdepth_bedtools", {}).get("threads", config["default_resources"]["threads"])
+    threads: rule_resource("mosdepth_bedtools", "threads")
     resources:
-        mem_mb=config.get("mosdepth_bedtools", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("mosdepth_bedtools", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("mosdepth_bedtools", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("mosdepth_bedtools", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("mosdepth_bedtools", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=rule_resource("mosdepth_bedtools", "mem_mb"),
+        mem_per_cpu=rule_resource("mosdepth_bedtools", "mem_per_cpu"),
+        partition=rule_resource("mosdepth_bedtools", "partition"),
+        threads=rule_resource("mosdepth_bedtools", "threads"),
+        time=rule_resource("mosdepth_bedtools", "time"),
     container:
-        config.get("mosdepth_bedtools", {}).get("container", config["default_container"])
+        rule_container("mosdepth_bedtools")
     message:
         "{rule}: Run bedtools to intersect mosdepth with bed of the exons of genes"
     shell:
@@ -50,15 +50,15 @@ rule create_cov_excel:
             "qc/create_cov_excel/create_cov_excel_{sample}_{type}.benchmark.tsv",
             config.get("create_cov_excel", {}).get("benchmark_repeats", 1),
         )
-    threads: config.get("create_cov_excel", {}).get("threads", config["default_resources"]["threads"])
+    threads: rule_resource("create_cov_excel", "threads")
     resources:
-        mem_mb=config.get("create_cov_excel", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("create_cov_excel", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("create_cov_excel", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("create_cov_excel", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("create_cov_excel", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=rule_resource("create_cov_excel", "mem_mb"),
+        mem_per_cpu=rule_resource("create_cov_excel", "mem_per_cpu"),
+        partition=rule_resource("create_cov_excel", "partition"),
+        threads=rule_resource("create_cov_excel", "threads"),
+        time=rule_resource("create_cov_excel", "time"),
     container:
-        config.get("create_cov_excel", {}).get("container", config["default_container"])
+        rule_container("create_cov_excel")
     message:
         "{rule}: Get coverage analysis per gene into excel, with tab for each panel and one for all genes in bed"
     script:

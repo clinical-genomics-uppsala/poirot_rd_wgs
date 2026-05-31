@@ -19,15 +19,15 @@ rule filter_par_dups:
             "cnv_sv/cnvpytor/{sample}_{type}.par_dups_filtered.vcf.gz.benchmark.tsv",
             config.get("filter_par_dups", {}).get("benchmark_repeats", 1),
         )
-    threads: config.get("filter_par_dups", {}).get("threads", config["default_resources"]["threads"])
+    threads: rule_resource("filter_par_dups", "threads")
     resources:
-        mem_mb=config.get("filter_par_dups", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("filter_par_dups", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("filter_par_dups", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("filter_par_dups", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("filter_par_dups", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=rule_resource("filter_par_dups", "mem_mb"),
+        mem_per_cpu=rule_resource("filter_par_dups", "mem_per_cpu"),
+        partition=rule_resource("filter_par_dups", "partition"),
+        threads=rule_resource("filter_par_dups", "threads"),
+        time=rule_resource("filter_par_dups", "time"),
     container:
-        config.get("filter_par_dups", {}).get("container", config["default_container"])
+        rule_container("filter_par_dups")
     message:
         "{rule}: filter cnvpytor DUP calls in {input.vcf} located in for {input.bed}"
     script:
