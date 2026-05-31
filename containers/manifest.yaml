@@ -1,0 +1,101 @@
+# Container requirements discovered from config/config.yaml.
+# The sif filenames follow the CGU offline-cache naming convention used by Miarka.
+
+containers:
+  automap:
+    source: docker://hydragenetics/automap:1.2
+    sif: hydragenetics__automap_1.2.sif
+  bcftools:
+    source: docker://docker.io/library/bcftools:1.23
+    sif: docker.io__library__bcftools_1.23.sif
+  bwa:
+    source: docker://hydragenetics/bwa:0.7.15
+    sif: hydragenetics__bwa_0.7.15.sif
+  bwa_mem:
+    source: docker://hydragenetics/bwa_mem:0.7.17
+    sif: hydragenetics__bwa_mem_0.7.17.sif
+  cnvpytor:
+    source: docker://hydragenetics/cnvpytor:1.3.1
+    sif: hydragenetics__cnvpytor_1.3.1.sif
+  common_3_1_1:
+    source: docker://hydragenetics/common:3.1.1
+    sif: hydragenetics__common_3.1.1.sif
+  common_1_11_1:
+    source: docker://hydragenetics/common:1.11.1
+    sif: hydragenetics__common_1.11.1.sif
+  deepvariant:
+    source: docker://google/deepvariant:1.6.1
+    sif: google__deepvariant_1.6.1.sif
+  echtvar:
+    source: docker://hydragenetics/echtvar:0.2.2
+    sif: hydragenetics__echtvar_0.2.2.sif
+  ensembl_vep:
+    source: docker://ensemblorg/ensembl-vep:release_110.1
+    sif: ensemblorg__ensembl-vep_release_110.1.sif
+  expansionhunter:
+    source: docker://hydragenetics/expansionhunter:5.0.0
+    sif: hydragenetics__expansionhunter_5.0.0.sif
+  fastp:
+    source: docker://hydragenetics/fastp:0.24.3
+    sif: hydragenetics__fastp_0.24.3.sif
+  fastqc:
+    source: docker://hydragenetics/fastqc:0.11.9
+    sif: hydragenetics__fastqc_0.11.9.sif
+  gatk4:
+    source: docker://hydragenetics/gatk4:4.2.2.0
+    sif: hydragenetics__gatk4_4.2.2.0.sif
+  glnexus:
+    source: docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1
+    sif: ghcr.io__dnanexus-rnd__glnexus_v1.4.1.sif
+  haplocheck:
+    source: docker://hydragenetics/haplocheck:1.3.3
+    sif: hydragenetics__haplocheck_1.3.3.sif
+  manta:
+    source: docker://hydragenetics/manta:1.6.0
+    sif: hydragenetics__manta_1.6.0.sif
+  melt:
+    source: file:///projects/wp3/Software/MELTv2.2.2/MELT_v2.2.2.sif
+    sif: MELT_v2.2.2.sif
+  mosdepth:
+    source: docker://hydragenetics/mosdepth:0.3.2
+    sif: hydragenetics__mosdepth_0.3.2.sif
+  multiqc:
+    source: docker://hydragenetics/multiqc:1.21
+    sif: hydragenetics__multiqc_1.21.sif
+  parabricks:
+    source: docker://nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1
+    sif: nvcr.io__nvidia__clara__clara-parabricks_4.3.0-1.sif
+    notes: GPU rules only.
+  peddy:
+    source: docker://hydragenetics/peddy:0.4.8
+    sif: hydragenetics__peddy_0.4.8.sif
+  picard_2_25_0:
+    source: docker://hydragenetics/picard:2.25.0
+    sif: hydragenetics__picard_2.25.0.sif
+  picard_2_25_4:
+    source: docker://hydragenetics/picard:2.25.4
+    sif: hydragenetics__picard_2.25.4.sif
+  reviewer:
+    source: docker://hydragenetics/reviewer:0.2.7
+    sif: hydragenetics__reviewer_0.2.7.sif
+  smncopynumbercaller:
+    source: docker://hydragenetics/smncopynumbercaller:1.1.2
+    sif: hydragenetics__smncopynumbercaller_1.1.2.sif
+  spring:
+    source: docker://hydragenetics/spring:1.1.1
+    sif: hydragenetics__spring_1.1.1.sif
+  stranger:
+    source: docker://hydragenetics/stranger:0.8.1
+    sif: hydragenetics__stranger_0.8.1.sif
+  svdb:
+    source: docker://hydragenetics/svdb:2.8.2
+    sif: hydragenetics__svdb_2.8.2.sif
+  tiddit:
+    source: docker://hydragenetics/tiddit:3.7.0
+    sif: hydragenetics__tiddit_3.7.0.sif
+  upd:
+    source: docker://hydragenetics/upd:0.1.1
+    sif: hydragenetics__upd_0.1.1.sif
+  verifybamid2:
+    source: docker://hydragenetics/verifybamid2:2.0.1
+    sif: hydragenetics__verifybamid2_2.0.1.sif
