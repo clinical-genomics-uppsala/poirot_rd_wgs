@@ -17,13 +17,13 @@ rule extract_str_bed:
             config.get("extract_str_bed", {}).get("benchmark_repeats", 1),
         )
     resources:
-        mem_mb=config.get("extract_str_bed", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("extract_str_bed", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("extract_str_bed", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("extract_str_bed", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("extract_str_bed", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=rule_resource("extract_str_bed", "mem_mb"),
+        mem_per_cpu=rule_resource("extract_str_bed", "mem_per_cpu"),
+        partition=rule_resource("extract_str_bed", "partition"),
+        threads=rule_resource("extract_str_bed", "threads"),
+        time=rule_resource("extract_str_bed", "time"),
     container:
-        config.get("extract_str_bed", {}).get("container", config["default_container"])
+        rule_container("extract_str_bed")
     message:
         "{rule}: Convert stranger annotated {input.vcf} to bed file format"
     script:
