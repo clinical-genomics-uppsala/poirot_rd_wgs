@@ -115,6 +115,15 @@ contigs = extract_chr("%s.fai" % (config.get("reference", {}).get("fasta", "")),
 skip_contigs = [c for c in contigs if "_" in c or c == "chrEBV"]
 
 ### Functions
+def rule_resource(rule_name, resource_name):
+    """Return a rule-specific resource value with the pipeline default fallback."""
+    return config.get(rule_name, {}).get(resource_name, config["default_resources"][resource_name])
+
+
+def rule_container(rule_name):
+    """Return a rule-specific container with the pipeline default fallback."""
+    return config.get(rule_name, {}).get("container", config["default_container"])
+
 
 
 def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True):
@@ -357,7 +366,7 @@ def generate_copy_code(workflow, output_json):
             output_file = result
             rule_name = values["name"]
             mem_mb = config.get("_copy", {}).get("mem_mb", config["default_resources"]["mem_mb"])
-            mem_per_cpu = config.get("_copy", {}).get("mem_mb", config["default_resources"]["mem_mb"])
+            mem_per_cpu = config.get("_copy", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"])
             partition = config.get("_copy", {}).get("partition", config["default_resources"]["partition"])
             threads = config.get("_copy", {}).get("threads", config["default_resources"]["threads"])
             time = config.get("_copy", {}).get("time", config["default_resources"]["time"])

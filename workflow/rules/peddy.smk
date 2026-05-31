@@ -12,13 +12,13 @@ rule create_ped:
     log:
         "qc/peddy/all.ped.log",
     resources:
-        mem_mb=config.get("create_ped", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("create_ped", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("create_ped", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("create_ped", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("create_ped", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=rule_resource("create_ped", "mem_mb"),
+        mem_per_cpu=rule_resource("create_ped", "mem_per_cpu"),
+        partition=rule_resource("create_ped", "partition"),
+        threads=rule_resource("create_ped", "threads"),
+        time=rule_resource("create_ped", "time"),
     container:
-        config.get("create_ped", {}).get("container", config["default_container"])
+        rule_container("create_ped")
     message:
         "{rule}: Create a peddy ped/FAM file from the samples.tsv file"
     script:
@@ -43,13 +43,13 @@ rule create_peddy_mqc_tsv:
             config.get("create_peddy_mqc_tsv", {}).get("benchmark_repeats", 1),
         )
     resources:
-        mem_mb=config.get("create_peddy_mqc_tsv", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("create_peddy_mqc_tsv", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("create_peddy_mqc_tsv", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("create_peddy_mqc_tsv", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("create_peddy_mqc_tsv", {}).get("time", config["default_resources"]["time"]),
+        mem_mb=rule_resource("create_peddy_mqc_tsv", "mem_mb"),
+        mem_per_cpu=rule_resource("create_peddy_mqc_tsv", "mem_per_cpu"),
+        partition=rule_resource("create_peddy_mqc_tsv", "partition"),
+        threads=rule_resource("create_peddy_mqc_tsv", "threads"),
+        time=rule_resource("create_peddy_mqc_tsv", "time"),
     container:
-        config.get("create_peddy_mqc_tsv", {}).get("container", config["default_container"])
+        rule_container("create_peddy_mqc_tsv")
     message:
         "{rule}: Create multiqc custom content embedded config tsv files from peddy sex_check and ped_check files"
     script:
