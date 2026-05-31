@@ -3,6 +3,8 @@ __copyright__ = "Copyright 2022"
 __email__ = "jessika.nordin@scilifelab.uu.se"
 __license__ = "GPL-3"
 
+# Workflow structure is documented in workflow/manifest.yaml. Keep local rule
+# includes grouped here and load reusable hydra modules below rule all.
 
 include: "rules/common.smk"
 include: "rules/filter_par_dups.smk"
@@ -31,6 +33,8 @@ ruleorder: annotation_echtvar_trio > snv_indels_bgzip
 ruleorder: cnv_sv_manta_run_workflow_n > cnv_sv_tabix
 
 
+# Reusable hydra modules. Module versions are pinned in config.modules and can
+# be resolved from a packed local hydra-genetics tree by get_module_snakefile.
 module alignment:
     snakefile:
         get_module_snakefile(config, "hydra-genetics/alignment", path="workflow/Snakefile", tag=config["modules"]["alignment"])
