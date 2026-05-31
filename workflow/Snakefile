@@ -7,6 +7,7 @@ __license__ = "GPL-3"
 # includes grouped here and load reusable hydra modules below rule all.
 
 include: "rules/common.smk"
+include: "rules/results.smk"
 include: "rules/filter_par_dups.smk"
 include: "rules/fix_mt_gt.smk"
 include: "rules/vcf_to_aed.smk"
