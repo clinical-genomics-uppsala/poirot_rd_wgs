@@ -97,7 +97,6 @@ def run_from_snakemake(snakemake):
             sex_check_mqc_out
         )
 
-
     except FileNotFoundError as e:
         logger.error(f'File not found: {e}')
         raise
@@ -565,7 +564,6 @@ if __name__ == "__main__":
                 somalier_sex_config,
                 args.sex_check_mqc
             )
-
 
     except FileNotFoundError as e:
         print(f'File not found: {e}', file=sys.stderr)
