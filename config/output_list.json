@@ -97,6 +97,20 @@
       "N"
     ]
   },
+  "results/{sample}/cnv_sv/{sample}.pytor": {
+    "name": "_copy_cnvpytor_pytor",
+    "file": "cnv_sv/cnvpytor/{sample}_N.pytor",
+    "types": [
+      "N"
+    ]
+  },
+  "results/{sample}/cnv_sv/{sample}.manhattan.png": {
+    "name": "_copy_cnvpytor_manhattan",
+    "file": "cnv_sv/cnvpytor/{sample}_N.manhattan.global.0000.png",
+    "types": [
+      "N"
+    ]
+  },
   "results/{sample}/cnv_sv/{sample}.manta_diploidSV.vcf.gz": {
     "name": "_copy_manta_vcf",
     "file": "cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz",
