@@ -65,18 +65,6 @@ gatk_sort_sam:
   mem_mb: 4096
   mem_per_cpu: 4096
 
-gatk_mark_duplicates:
-  mem_mb: 4096
-  mem_per_cpu: 4096
-
-gatk_sam_to_fastq:
-  mem_mb: 5120
-  mem_per_cpu: 5120
-
-gatk_sort_sam:
-  mem_mb: 4096
-  mem_per_cpu: 4096
-
 glnexus:
   threads: 20
 
