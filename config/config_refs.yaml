@@ -84,14 +84,12 @@ mt_reference:
   blacklist: "{{PIPELINE_REF_DATA}}/blacklist_sites.hg38.chrM.bed"
 
 svdb_query:
-  db_string: >-
-    --db \
-      {{PIPELINE_REF_DATA}}/manta_wgs_hg38_novaseqX.sorted.vcf.gz,\
+  db_string: "--db {{PIPELINE_REF_DATA}}/manta_wgs_hg38_novaseqX.sorted.vcf.gz,\
       {{PIPELINE_REF_DATA}}/cnvpytor_wgs_hg38_novaseqX.sorted.vcf.gz,\
       {{PIPELINE_REF_DATA}}/tiddit_wgs_hg38_novaseqX.sorted.vcf.gz,\
       {{PIPELINE_REF_DATA}}/melt_wgs_hg38_novaseqX.sorted.vcf.gz,\
       {{PIPELINE_REF_DATA}}/scramble_wgs_hg38_novaseqX.sorted.vcf.gz,\
-      {{PIPELINE_REF_DATA}}/gnomad.v4.1.sv.sites.no_cnv.PASS.vcf.gz
+      {{PIPELINE_REF_DATA}}/gnomad.v4.1.sv.sites.no_cnv.PASS.vcf.gz"
 
 vep:
   vep_cache: "{{PIPELINE_REF_DATA}}/VEP"
