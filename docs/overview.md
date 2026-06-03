@@ -91,7 +91,6 @@ Results written to an excel spreadsheet with a tab for each gene panel.
 - GATK CNV germline caller
 - Continued work on SV calling and filtering
 - Sex-checks
-- Several sex-checks
   - samtools idxstats helps with determining sex, can see XXY and females with highly homozygote chrX (make a table with predicted sex based on this)
 
 <br />
