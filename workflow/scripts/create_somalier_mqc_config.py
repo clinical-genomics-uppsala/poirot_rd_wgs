@@ -30,7 +30,6 @@ def run_from_snakemake(snakemake):
         mqc_config_file = snakemake.config.get("somalier_trio_mqc", {}).get("mqc_config", "")
         rel_check_mqc_out = snakemake.output.rel_check_mqc
         sex_check_mqc_out = snakemake.output.sex_check_mqc
-        general_stats_mqc_out = snakemake.output.general_stats_mqc
 
         # Load somalier MultiQC config
         somalier_mqc_configs = {}
@@ -83,8 +82,8 @@ def run_from_snakemake(snakemake):
         # Create sex check tsv
         try:
             sex_check_df = get_sex_check_df(samples_file)
-        except Exception as e:
-            logger.warning(f"Could not process sex check data: {e}")
+        except (FileNotFoundError, pd.errors.EmptyDataError) as e:
+            logger.warning(f"Could not process sex check data: {e}. Using empty dataframe.")
             sex_check_df = pd.DataFrame(columns=['sample_id', 'predicted_sex', 'sex_check'])
 
         if somalier_mqc_configs:
@@ -98,10 +97,6 @@ def run_from_snakemake(snakemake):
             sex_check_mqc_out
         )
 
-        # General stats output removed - redundant with sex check table
-        # Create empty file to satisfy Snakemake rule requirement
-        with open(general_stats_mqc_out, 'w') as f:
-            f.write("# Empty file - sex check summary removed as redundant\n")
 
     except FileNotFoundError as e:
         logger.error(f'File not found: {e}')
@@ -494,7 +489,6 @@ def parse_args():
     parser.add_argument('--config', required=True, help='MultiQC config YAML input')
     parser.add_argument('--rel-check-mqc', required=True, help='Output relatedness TSV')
     parser.add_argument('--sex-check-mqc', required=True, help='Output sex check TSV')
-    parser.add_argument('--general-stats-mqc', required=True, help='Output general stats TSV')
     return parser.parse_args()
 
 
@@ -557,8 +551,8 @@ if __name__ == "__main__":
             # Create sex check tsv
             try:
                 sex_check_df = get_sex_check_df(args.samples)
-            except Exception as e:
-                print(f"WARNING: Could not process sex check data: {e}", file=sys.stderr)
+            except (FileNotFoundError, pd.errors.EmptyDataError) as e:
+                print(f"WARNING: Could not process sex check data: {e}. Using empty dataframe.", file=sys.stderr)
                 sex_check_df = pd.DataFrame(columns=['sample_id', 'predicted_sex', 'sex_check'])
 
             if somalier_mqc_configs:
@@ -572,10 +566,6 @@ if __name__ == "__main__":
                 args.sex_check_mqc
             )
 
-            # General stats output removed - redundant with sex check table
-            # Create empty file to satisfy Snakemake rule requirement
-            with open(args.general_stats_mqc, 'w') as f:
-                f.write("# Empty file - sex check summary removed as redundant\n")
 
     except FileNotFoundError as e:
         print(f'File not found: {e}', file=sys.stderr)

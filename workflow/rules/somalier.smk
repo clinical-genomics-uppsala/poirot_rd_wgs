@@ -12,7 +12,6 @@ rule create_somalier_mqc_tsv:
     output:
         rel_check_mqc=temp("qc/somalier_trio/somalier_rel_check_mqc.tsv"),
         sex_check_mqc=temp("qc/somalier_trio/somalier_sex_check_mqc.tsv"),
-        general_stats_mqc=temp("qc/somalier_trio/somalier_general_stats_mqc.tsv"),
     log:
         "qc/somalier_trio_mqc/somalier_mqc.log",
     benchmark:

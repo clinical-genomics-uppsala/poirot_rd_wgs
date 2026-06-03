@@ -114,9 +114,6 @@ properties:
           sex_check_mqc:
             type: string
             description: MultiQC custom content TSV for sex check
-          general_stats_mqc:
-            type: string
-            description: MultiQC custom content TSV for general statistics table
 
   fix_mt_gt:
     type: object
