@@ -103,6 +103,9 @@ properties:
           ped:
             type: string
             description: pedigree file with family information
+          mqc_config:
+            type: string
+            description: MultiQC config YAML file
 
       output:
         type: object

@@ -27,7 +27,7 @@ def run_from_snakemake(snakemake):
         pairs_file = snakemake.input.pairs
         samples_file = snakemake.input.samples
         ped_file = snakemake.input.ped
-        mqc_config_file = snakemake.config.get("somalier_trio_mqc", {}).get("mqc_config", "")
+        mqc_config_file = snakemake.input.mqc_config
         rel_check_mqc_out = snakemake.output.rel_check_mqc
         sex_check_mqc_out = snakemake.output.sex_check_mqc
 

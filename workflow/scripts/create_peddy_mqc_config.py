@@ -87,7 +87,7 @@ def main():
 
     try:
 
-        config = snakemake.config.get("peddy", '').get("config", '')
+        config = snakemake.input.peddy_config
 
         with open(config, 'r') as report_configs:
             peddy_mqc_configs = yaml.load(report_configs, Loader=yaml.FullLoader)

@@ -9,6 +9,7 @@ rule create_somalier_mqc_tsv:
         pairs="qc/somalier_trio/somalier_relate.pairs.tsv",
         samples="qc/somalier_trio/somalier_relate.samples.tsv",
         ped="qc/somalier_trio/somalier_all.ped",
+        mqc_config=config.get("somalier_trio_mqc", {}).get("mqc_config", ""),
     output:
         rel_check_mqc=temp("qc/somalier_trio/somalier_rel_check_mqc.tsv"),
         sex_check_mqc=temp("qc/somalier_trio/somalier_sex_check_mqc.tsv"),

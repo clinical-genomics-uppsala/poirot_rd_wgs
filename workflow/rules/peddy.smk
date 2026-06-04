@@ -30,6 +30,7 @@ rule create_peddy_mqc_tsv:
         peddy_rel_check="qc/peddy/peddy.ped_check.csv",
         peddy_sex_check="qc/peddy/peddy.sex_check.csv",
         ped="qc/peddy/all.ped",
+        peddy_config=config.get("peddy", {}).get("config", ""),
     output:
         rel_check_mqc=temp("qc/peddy/peddy_rel_check_mqc.tsv"),
         sex_check_mqc=temp("qc/peddy/peddy_sex_check_mqc.tsv"),
