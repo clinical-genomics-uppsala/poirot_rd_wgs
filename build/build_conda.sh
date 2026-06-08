@@ -9,7 +9,7 @@ download_pipeline() {
     
     # Create and activate conda environment in the current directory, then install pipeline requirements
     echo "Creating conda environment: ${PIPELINE_NAME}_${TAG_OR_BRANCH}_env"
-    mamba create --prefix ./${PIPELINE_NAME}_${TAG_OR_BRANCH}_env python=${PYTHON_VERSION} -y
+    mamba create --prefix ./${PIPELINE_NAME}_${TAG_OR_BRANCH}_env python=${PYTHON_VERSION} conda-pack -y
     conda activate ./${PIPELINE_NAME}_${TAG_OR_BRANCH}_env
     
     # Clean up existing pipeline directory if it exists
@@ -31,7 +31,7 @@ download_pipeline() {
     
     # Pack the environment with the requirements installed
     echo "Packing conda environment"
-    conda pack --prefix ./${PIPELINE_NAME}_${TAG_OR_BRANCH}_env -o ${PIPELINE_NAME}_${TAG_OR_BRANCH}/env.tar.gz
+    ./${PIPELINE_NAME}_${TAG_OR_BRANCH}_env/bin/conda-pack --prefix ./${PIPELINE_NAME}_${TAG_OR_BRANCH}_env -o ${PIPELINE_NAME}_${TAG_OR_BRANCH}/env.tar.gz
     
     # Clone snakemake-wrappers and hydra-genetics modules
     echo "Cloning snakemake-wrappers and hydra-genetics modules"
@@ -81,19 +81,15 @@ download_containers() {
     echo "=== Downloading Containers ==="
     
     # Check if config directory exists, if not download it
-    if [ ! -d poirot_config ]; then
-        echo "Config directory not found, downloading config files"
-        git clone --branch ${CONFIG_VERSION} ${CONFIG_GITHUB_REPO} poirot_config/
+    if [ ! -d ${PIPELINE_NAME}_${TAG_OR_BRANCH}/${PIPELINE_NAME} ]; then
+        echo "Cloning pipeline from ${PIPELINE_GITHUB_REPO} (branch: ${TAG_OR_BRANCH})"
+        git clone --branch ${TAG_OR_BRANCH} ${PIPELINE_GITHUB_REPO} ${PIPELINE_NAME}_${TAG_OR_BRANCH}/${PIPELINE_NAME}
     fi
     
     # Download containers using hydra-genetics
     echo "Creating singularity files using hydra-genetics"
-    hydra-genetics prepare-environment create-singularity-files -c poirot_config/config/config_production_pipeline.yaml -o apptainer_cache
-    
-    # Copy additional container (MELT)
-    echo "Copying MELT container"
-    cp /projects/wp3/Software/MELTv2.2.2/MELT_v2.2.2.sif apptainer_cache
-    
+    hydra-genetics prepare-environment create-singularity-files -c ${PIPELINE_NAME}_${TAG_OR_BRANCH}/${PIPELINE_NAME}/config/config.yaml -o apptainer_cache
+      
     # Create container archive
     echo "Creating container archive: apptainer_cache.tar.gz"
     tar -czvf apptainer_cache.tar.gz apptainer_cache
