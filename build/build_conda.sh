@@ -106,6 +106,13 @@ download_containers() {
         -o apptainer_cache \
         || { echo "ERROR: Failed to create singularity files"; exit 1; }
 
+    # Update the paths to the containers in the config
+    hydra-genetics prepare-environment container-path-update \
+        -c "${pipeline_dir}/${PIPELINE_NAME}/config/config.yaml" \
+        -n "config.new.yaml" \
+        -p "apptainer_cache"
+    mv config.new.yaml "${pipeline_dir}/${PIPELINE_NAME}/config/config.yaml"
+
     # Create container archive
     echo "Creating container archive: apptainer_cache.tar.gz"
     tar -czvf apptainer_cache.tar.gz apptainer_cache
