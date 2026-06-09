@@ -82,13 +82,6 @@ download_pipeline() {
     echo "Creating pipeline archive: ${PIPELINE_NAME}_${TAG_OR_BRANCH}.tar.gz"
     tar -zcvf "${PIPELINE_NAME}_${TAG_OR_BRANCH}.tar.gz" "${pipeline_dir}"
 
-    # Download the config files from the config repo
-    echo "Downloading config files from ${CONFIG_GITHUB_REPO} (version: ${CONFIG_VERSION})"
-    if [ ! -d poirot_config ]; then
-    git clone --branch "${CONFIG_VERSION}" "${CONFIG_GITHUB_REPO}" poirot_config/ \
-        || { echo "ERROR: Failed to clone config repository"; exit 1; }
-    fi
-
     echo "Pipeline download completed successfully"
 }
 
@@ -349,6 +342,7 @@ parse_arguments() {
     # If no arguments, download all components (except config-only)
     if [ $# -eq 0 ]; then
         DOWNLOAD_PIPELINE=true
+        DOWNLOAD_CONFIG=true
         DOWNLOAD_CONTAINERS=true
         DOWNLOAD_REFERENCES=true
         return
@@ -378,6 +372,7 @@ parse_arguments() {
                 ;;
             -a|--all)
                 DOWNLOAD_PIPELINE=true
+                DOWNLOAD_CONFIG=true
                 DOWNLOAD_CONTAINERS=true
                 DOWNLOAD_REFERENCES=true
                 shift
@@ -400,6 +395,7 @@ parse_arguments() {
         && [ "$DOWNLOAD_REFERENCES" = false ] \
         && [ "$DOWNLOAD_CONFIG" = false ]; then
         DOWNLOAD_PIPELINE=true
+        DOWNLOAD_CONFIG=true
         DOWNLOAD_CONTAINERS=true
         DOWNLOAD_REFERENCES=true
     fi
