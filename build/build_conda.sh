@@ -84,8 +84,10 @@ download_pipeline() {
 
     # Download the config files from the config repo
     echo "Downloading config files from ${CONFIG_GITHUB_REPO} (version: ${CONFIG_VERSION})"
+    if [ ! -d poirot_config ]; then
     git clone --branch "${CONFIG_VERSION}" "${CONFIG_GITHUB_REPO}" poirot_config/ \
         || { echo "ERROR: Failed to clone config repository"; exit 1; }
+    fi
 
     echo "Pipeline download completed successfully"
 }
