@@ -132,13 +132,6 @@
       "N"
     ]
   },
-  "results/{sample}/cnv_sv/{sample}.tiddit.vcf.gz": {
-    "name": "_copy_tiddit_vcf",
-    "file": "cnv_sv/tiddit/{sample}_N.vcf.gz",
-    "types": [
-      "N"
-    ]
-  },
   "results/{sample}/cnv_sv/{sample}.tiddit.vcf.gz.tbi": {
     "name": "_copy_tiddit_vcf_tbi",
     "file": "cnv_sv/tiddit/{sample}_N.vcf.gz.tbi",
