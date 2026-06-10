@@ -11,15 +11,31 @@ When succesfully run the script will generate four compressed tar archives:
 
 The requirments listed in requirements.txt are packaged using conda-pack in a .tar.gz in the poirot_rd_wgs_${PIPELINE_VERSION}.tar.gz. The snakemake-wrappers github repo and all hydra-genetics modules required by the pipeline are cloned and packaged in poirot_rd_wgs_${PIPELINE_VERSION}.tar.gz.
 
+## Requirements
 ```bash
-export TAG_OR_BRANCH="v0.11.0"
-export CONFIG_VERSION="v0.14.0"
+python3.9 -m venv venv
+source venv/bin/activate
+pip install -r ../requirements.txt
+```
+
+## Required environment variable
+
+```bash
+export TAG_OR_BRANCH="v0.11.0" # switch to required version
+export CONFIG_VERSION="v0.14.0" # switch to required version
 export PIPELINE_NAME="poirot_rd_wgs"
 export PROFILE_NAME="miarka"
 export PYTHON_VERSION="3.9"
+export APPTAINER_CACHE="/path/to/apptainer/cache" # path to where the apptainer cache will be on the offline cluster
 export PIPELINE_GITHUB_REPO="https://github.com/clinical-genomics-uppsala/poirot_rd_wgs.git"
 export CONFIG_GITHUB_REPO="https://github.com/clinical-genomics-uppsala/poirot_config.git"
 
+```
+
+Download all files
+
+```bash
+bash build_conda.sh --all poirot_config/config/references/gene_panels.hg38.yaml  poirot_config/config/references/mito_refs.hg38.yaml poirot_config/config/references/references.hg38.yaml poirot_config/config/references/str_panels.hg38.yaml melt_refs.hg38.yaml vep.hg38.yaml
 ```
 
 Download only pipeline files
@@ -47,10 +63,4 @@ Download only gene panels
 
 ```bash
 bash build_conda.sh --references-only poirot_config/config/references/gene_panels.hg38.yaml  
-```
-
-Download all files
-
-```bash
-bash build_conda.sh --all poirot_config/config/references/gene_panels.hg38.yaml  poirot_config/config/references/mito_refs.hg38.yaml poirot_config/config/references/references.hg38.yaml poirot_config/config/references/str_panels.hg38.yaml melt_refs.hg38.yaml vep.hg38.yaml
 ```
