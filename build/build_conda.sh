@@ -235,6 +235,7 @@ validate_environment() {
         "CONFIG_VERSION"
         "PIPELINE_NAME"
         "PYTHON_VERSION"
+        "APPTAINER_CACHE"
         "PIPELINE_GITHUB_REPO"
         "CONFIG_GITHUB_REPO"
     )
@@ -262,6 +263,7 @@ validate_environment() {
         echo '  PYTHON_VERSION="3.9" \'
         echo '  PIPELINE_GITHUB_REPO="https://github.com/clinical-genomics-uppsala/poirot_rd_wgs.git" \'
         echo '  CONFIG_GITHUB_REPO="https://github.com/clinical-genomics-uppsala/poirot_config.git" \'
+        echo '  APPTAINER_CACHE="./apptainer_cache" \'
         echo '  bash build_conda.sh config1.yaml config2.yaml ...'
         exit 1
     fi
