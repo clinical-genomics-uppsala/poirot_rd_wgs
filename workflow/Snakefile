@@ -27,7 +27,6 @@ rule all:
 ruleorder: _copy_samtools_crai > compression_samtools_index
 ruleorder: parabricks_fq2bam > alignment_samtools_index
 ruleorder: snv_indels_glnexus_trio > snv_indels_glnexus
-# ruleorder: snv_indels_bcftools_view_trio > snv_indels_bcftools_view
 ruleorder: annotation_echtvar_trio > snv_indels_bgzip
 ruleorder: cnv_sv_manta_run_workflow_n > cnv_sv_tabix
 
@@ -45,20 +44,6 @@ module alignment:
 
 
 use rule * from alignment as alignment_*
-
-
-use rule samtools_sort from alignment as alignment_samtools_sort_eh_bam with:
-    input:
-        bam="cnv_sv/expansionhunter/{sample}_{type}_realigned.bam",
-    output:
-        bam=temp("cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam"),
-    log:
-        "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.log",
-    benchmark:
-        repeat(
-            "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.benchmark.tsv",
-            config.get("samtools_sort", {}).get("benchmark_repeats", 1),
-        )
 
 
 module annotation:
@@ -252,21 +237,6 @@ use rule manta_run_workflow_n from cnv_sv as cnv_sv_manta_run_workflow_n with:
         wrk_dir=temp(directory("cnv_sv/manta_run_workflow_n/{sample}/workspace")),
 
 
-use rule melt from cnv_sv as cnv_sv_melt with:
-    input:
-        bam=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[0],
-        bai=lambda wildcards: get_bam_input(wildcards, use_type_wildcard=False)[1],
-        bed=config.get("melt", {}).get("bed", ""),
-        mei=config.get("melt", {}).get("mei", ""),
-        ref=config.get("reference", {}).get("fasta", ""),
-    output:
-        alu=temp("cnv_sv/melt/{sample}_{type}/ALU.final_comp.vcf"),
-        hervk=temp("cnv_sv/melt/{sample}_{type}/HERVK.final_comp.vcf"),
-        line1=temp("cnv_sv/melt/{sample}_{type}/LINE1.final_comp.vcf"),
-        sva=temp("cnv_sv/melt/{sample}_{type}/SVA.final_comp.vcf"),
-        tmpdir=directory("cnv_sv/melt/{sample}_{type}"),
-
-
 use rule smn_manifest from cnv_sv as cnv_sv_smn_manifest with:
     input:
         bam=lambda wildcards: get_bam_input(wildcards)[0],
@@ -276,6 +246,9 @@ use rule smn_manifest from cnv_sv as cnv_sv_smn_manifest with:
 use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge with:
     input:
         manta="cnv_sv/manta_run_workflow_n/{sample}/results/variants/diploidSV.vcf.gz",
+        tiddit="cnv_sv/tiddit/{sample}_{type}.vcf.gz",
+        melt="cnv_sv/melt/{sample}_{type}.softfiltered.vcf.gz",
+        scramble="cnv_sv/scramble_vcf/{sample}_{type}.softfiltered.vcf.gz",
         cnvpytor="cnv_sv/cnvpytor/{sample}_{type}.softfiltered.vcf",
     output:
         vcf=temp("cnv_sv/svdb_merge/{sample}_{type}.merged.vcf"),
@@ -444,6 +417,40 @@ use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_har
         )
 
 
+use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_softfilter_melt with:
+    input:
+        vcf="cnv_sv/melt/{sample}_{type}.vcf.gz",
+    output:
+        vcf="cnv_sv/melt/{sample}_{type}.softfiltered.vcf.gz",
+    params:
+        filter=lambda wildcards: "-e {}".format(config["bcftools_softfilter_melt"]["exclude"]),
+        extra=config.get("bcftools_softfilter_melt", {}).get("extra", ""),
+    log:
+        "cnv_sv/melt/{sample}_{type}.softfiltered.vcf.gz.log",
+    benchmark:
+        repeat(
+            "cnv_sv/melt/{sample}_{type}.softfiltered.vcf.gz.benchmark.tsv",
+            config.get("bcftools_softfilter_melt", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule bcftools_filter_exclude_region from filtering as filtering_bcftools_softfilter_scramble with:
+    input:
+        vcf="cnv_sv/scramble_vcf/{sample}_{type}.sorted.vcf.gz",
+    output:
+        vcf="cnv_sv/scramble_vcf/{sample}_{type}.softfiltered.vcf.gz",
+    params:
+        filter=lambda wildcards: "-e {}".format(config["bcftools_softfilter_scramble"]["exclude"]),
+        extra=config.get("bcftools_softfilter_scramble", {}).get("extra", ""),
+    log:
+        "cnv_sv/scramble_vcf/{sample}_{type}.softfiltered.vcf.gz.log",
+    benchmark:
+        repeat(
+            "cnv_sv/scramble_vcf/{sample}_{type}.softfiltered.vcf.gz.benchmark.tsv",
+            config.get("bcftools_softfilter_scramble", {}).get("benchmark_repeats", 1),
+        )
+
+
 use rule bcftools_view from filtering as filtering_bcftools_view_svdb with:
     input:
         vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.vcf.gz",
@@ -473,32 +480,6 @@ use rule bcftools_view from filtering as filtering_bcftools_view_svdb_annotated 
         repeat(
             "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vep_annotated.filtered.vcf.benchmark.tsv",
             config.get("bcftools_view_svdb", {}).get("benchmark_repeats", 1),
-        )
-
-
-module misc:
-    snakefile:
-        get_module_snakefile(
-            config,
-            "hydra-genetics/misc",
-            path="workflow/Snakefile",
-            tag=config["modules"]["misc"],
-        )
-    config:
-        config
-
-
-use rule samtools_index from misc as misc_samtools_index with:
-    input:
-        bam="cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam",
-    output:
-        bam=temp("cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.bai"),
-    log:
-        "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.bai.log",
-    benchmark:
-        repeat(
-            "cnv_sv/expansionhunter/{sample}_{type}_realigned.sorted.bam.bai.benchmark.tsv",
-            config.get("samtools_index", {}).get("benchmark_repeats", 1),
         )
 
 

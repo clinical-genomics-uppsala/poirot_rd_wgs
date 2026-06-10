@@ -86,19 +86,16 @@ somalier_trio_extract:
 somalier_trio_mqc:
   mqc_config: "config/somalier_mqc.yaml"
 
-
 stranger:
   catalog: "reference/variant_catalog_grch38.json"
 
-svdb_merge:
-  overlap: 0.6
-  priority: "manta,cnvpytor"
-  extra: "--pass_only --no_intra "
-
 svdb_query:
-  db_string:
-    "--db reference/gnomad_v2.1_sv.sites.vcf.gz \
-    --in_frq AF --in_occ AC --out_frq gnomAD_AF --out_occ gnomAD_OCC "
+  db_string: "--db reference/manta_wgs_hg38_novaseqX.sorted.vcf.gz,\
+      reference/cnvpytor_wgs_hg38_novaseqX.sorted.vcf.gz,\
+      reference/tiddit_wgs_hg38_novaseqX.sorted.vcf.gz,\
+      reference/melt_wgs_hg38_novaseqX.sorted.vcf.gz,\
+      reference/scramble_wgs_hg38_novaseqX.sorted.vcf.gz,\
+      reference/gnomad.v4.1.sv.sites.no_cnv.PASS.vcf.gz"
     
 vep:
   vep_cache: "reference/VEP/"

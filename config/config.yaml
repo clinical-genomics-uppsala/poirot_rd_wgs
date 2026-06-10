@@ -1,6 +1,6 @@
 ---
 
-aligner: "bwa_gpu"
+aligner: "parabricks_fq2bam"
 snp_caller: "deepvariant_gpu"
 vep_annotation: False
 
@@ -15,13 +15,12 @@ default_container: "docker://hydragenetics/common:3.1.1"
 modules:
   alignment: "v0.7.0"
   annotation: "v1.3.0"
-  cnv_sv: "v1.0.2"
+  cnv_sv: "v3.2.0"
   compression: "v2.1.0"
   filtering: "v1.1.0"
   parabricks: "v1.2.1"
   prealignment: "v1.4.0"
-  qc: "ed533ebed648a4645bd5026831debef475308235"
-  misc: "v0.2.0"
+  qc: "v0.8.0"
   mitochondrial: "v0.1.0"
   snv_indels: "v2.1.0"
 
@@ -58,6 +57,14 @@ bcftools_softfilter_cnvpytor:
   exclude: "'pytorP1>0.05 | pytorDG<100000 | pytorPN>0.5 | ( pytorQ0>0.5 && FORMAT/CN != 0)'"
   extra: "-s LowQual "
 
+bcftools_softfilter_melt:
+  exclude: "'FILTER=\"rSD\" || FILTER=\"hDP\" || FILTER=\"ac0\" || INFO/ASSESS<3 || INFO/SR<1 || (INFO/LP+INFO/RP+INFO/SR)<11'"
+  extra: "-s LowQual "
+
+bcftools_softfilter_scramble:
+  exclude: "'INFO/Clipped_Reads_In_Cluster<5 || INFO/Alignment_Score<70 || INFO/Alignment_Percent_Length<90 || INFO/Alignment_Percent_Identity<90'"
+  extra: "-s LowQual "
+
 bcftools_hardfilter_cnvpytor:
   exclude: "'pytorP1>0.05 | pytorDG<100000 | pytorPN>0.5 | ( pytorQ0>0.5 && FORMAT/CN != 0)'"
 
@@ -69,7 +76,7 @@ bcftools_view_pass:
   extra: "--apply-filter PASS "
 
 bcftools_view_svdb:
-  extra: "-f 'PASS' -e 'manta_FRQ>0.05 | cnvpytor_FRQ>0.05 | gnomad_AF>0.1'"
+  extra: "-f 'PASS' -e 'manta_FRQ>0.05 | cnvpytor_FRQ>0.05 | tiddit_FRQ>0.05 | melt_FRQ>0.05 | scramble_FRQ>0.05 | gnomad_AF>0.1'"
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
@@ -81,7 +88,7 @@ bwa_mem_mito:
 
 cnvpytor_readdepth:
   container: "docker://hydragenetics/cnvpytor:1.3.1"
-  length_list: "500"
+  length_list: "500 5000 100000"
   extra: "-chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM "
 
 cnvpytor_filter:
@@ -92,6 +99,10 @@ cnvpytor_filter:
   pN_range: "0 0.5"
   Q0_range: "-1 0.5"
   view: "500"
+ 
+cnvpytor_plot_manhattan:
+  container: "docker://hydragenetics/cnvpytor:1.3.1"
+  bin_size: "100000"
 
 create_cov_excel:
   covLimits: "10 20 30"
@@ -279,8 +290,17 @@ samtools_stats:
 samtools_idxstats:
   container: "docker://hydragenetics/common:3.1.1"
 
-samtools:
-  container: "docker://hydragenetics/common:3.1.1"
+samtools_merge_bam:
+  container: "docker://hydragenetics/common:1.11.1"
+  extra: "-c -p"
+
+scramble_cluster_analysis:
+  container: "docker://hydragenetics/scramble:1.0.2"
+  mei_refs: "/opt/scramble/cluster_analysis/resources/MEI_consensus_seqs.fa" # path in the container
+  install_dir: "/opt/scramble/cluster_analysis/bin" # path in the container
+
+scramble_cluster_identifier:
+  container: "docker://hydragenetics/scramble:1.0.2"
 
 smn_caller:
   container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
@@ -328,20 +348,24 @@ stranger:
   catalog: "config/str_catalog/variant_catalog_hg38.json"
 
 svdb_merge:
-  container: "docker://hydragenetics/svdb:2.8.2"
+  container: "docker://hydragenetics/svdb:2.10.2"
   overlap: 0.6
-  priority: "manta,cnvpytor"
+  priority: "manta,tiddit,melt,scramble,cnvpytor"
   extra: "--pass_only --no_intra "
 
 svdb_query:
-  container: "docker://hydragenetics/svdb:2.8.2"
-  extra: "--in_frq FRQ,FRQ,AF --in_occ OCC,OCC,AC --out_frq manta_FRQ,cnvpytor_FRQ,gnomad_AF --out_occ manta_OCC,cnvpytor_OCC,gnomad_AC "
+  container: "docker://hydragenetics/svdb:2.10.2"
+  extra: >-
+    --in_frq FRQ,FRQ,FRQ,FRQ,FRQ,AF
+    --in_occ OCC,OCC,OCC,OCC,OCC,AC
+    --out_frq manta_FRQ,cnvpytor_FRQ,tiddit_FRQ,melt_FRQ,scramble_FRQ,gnomad_AF
+    --out_occ manta_OCC,cnvpytor_OCC,tiddit_OCC,melt_OCC,scramble_OCC,gnomad_AC
 
 tabix:
   container: "docker://hydragenetics/common:3.1.1"
 
 tiddit:
-  container: "docker://hydragenetics/tiddit:3.7.0"
+  container: "docker://hydragenetics/tiddit:3.9.5"
 
 upd:
   container: "docker://hydragenetics/upd:0.1.1"
