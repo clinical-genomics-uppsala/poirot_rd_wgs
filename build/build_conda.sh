@@ -78,46 +78,32 @@ download_pipeline() {
             || { echo "ERROR: Failed to clone hydra-genetics/${module}"; exit 1; }
     done
 
-    # Pack all cloned repositories
-    echo "Creating pipeline archive: ${PIPELINE_NAME}_${TAG_OR_BRANCH}.tar.gz"
-    tar -zcvf "${PIPELINE_NAME}_${TAG_OR_BRANCH}.tar.gz" "${pipeline_dir}"
-
-    echo "Pipeline download completed successfully"
-}
-
-# Function to download containers
-download_containers() {
-    echo "=== Downloading Containers ==="
-
-    local pipeline_dir="./${PIPELINE_NAME}_${TAG_OR_BRANCH}"
-
-    # Check if pipeline directory exists; if not, clone it
-    if [ ! -d "${pipeline_dir}/${PIPELINE_NAME}" ]; then
-        echo "Cloning pipeline from ${PIPELINE_GITHUB_REPO} (branch: ${TAG_OR_BRANCH})"
-        git clone --branch "${TAG_OR_BRANCH}" "${PIPELINE_GITHUB_REPO}" \
-            "${pipeline_dir}/${PIPELINE_NAME}" \
-            || { echo "ERROR: Failed to clone pipeline repository"; exit 1; }
-    fi
+    
 
     # Download containers using hydra-genetics
+    echo "=== Downloading Containers ==="
     echo "Creating singularity files using hydra-genetics"
     hydra-genetics prepare-environment create-singularity-files \
         -c "${pipeline_dir}/${PIPELINE_NAME}/config/config.yaml" \
         -o apptainer_cache \
         || { echo "ERROR: Failed to create singularity files"; exit 1; }
 
-    # Update the paths to the containers in the config
+    # Update the paths to the containers in the config before archiving
     hydra-genetics prepare-environment container-path-update \
         -c "${pipeline_dir}/${PIPELINE_NAME}/config/config.yaml" \
         -n "config.new.yaml" \
         -p "apptainer_cache"
     mv config.new.yaml "${pipeline_dir}/${PIPELINE_NAME}/config/config.yaml"
 
+    # Pack all cloned repositories (config now contains updated container paths)
+    echo "Creating pipeline archive: ${PIPELINE_NAME}_${TAG_OR_BRANCH}.tar.gz"
+    tar -zcvf "${PIPELINE_NAME}_${TAG_OR_BRANCH}.tar.gz" "${pipeline_dir}"
+
     # Create container archive
     echo "Creating container archive: apptainer_cache.tar.gz"
     tar -czvf apptainer_cache.tar.gz apptainer_cache
 
-    echo "Container download completed successfully"
+    echo "Pipeline and container download completed successfully"
 }
 
 # Function to download design and reference files
@@ -289,15 +275,13 @@ usage() {
 Usage: build_conda.sh [OPTIONS] [reference_config1.yaml] [reference_config2.yaml] ...
 
 This script builds a complete pipeline package including:
-  1. Pipeline code and conda environment
-  2. Container images (Singularity/Apptainer)
-  3. Design and reference files
+  1. Pipeline code, conda environment, and container images (Singularity/Apptainer)
+  2. Design and reference files
 
 OPTIONS:
   -h, --help              Show this help message and exit
-  -p, --pipeline-only     Download only the pipeline (step 1)
-  -c, --containers-only   Download only the containers (step 2)
-  -r, --references-only   Download only the design and reference files (step 3)
+  -p, --pipeline-only     Download only the pipeline and containers (step 1)
+  -r, --references-only   Download only the design and reference files (step 2)
   -g, --config-only       Download only the config files
   -a, --all               Download all components (default behavior)
 
@@ -322,11 +306,8 @@ Examples:
   CONFIG_GITHUB_REPO="https://github.com/clinical-genomics-uppsala/poirot_config.git" \
   bash build_conda.sh poirot_config/config/references/gene_panels.hg38.yaml
 
-  # Download only the pipeline
+  # Download only the pipeline and containers
   bash build_conda.sh --pipeline-only
-
-  # Download only containers
-  bash build_conda.sh --containers-only
 
   # Download only config files (requires PROFILE_NAME)
   PROFILE_NAME="production" bash build_conda.sh --config-only
@@ -341,7 +322,6 @@ EOF
 # Function to parse command line arguments
 parse_arguments() {
     DOWNLOAD_PIPELINE=false
-    DOWNLOAD_CONTAINERS=false
     DOWNLOAD_REFERENCES=false
     DOWNLOAD_CONFIG=false
     REFERENCE_CONFIGS=()
@@ -350,7 +330,6 @@ parse_arguments() {
     if [ $# -eq 0 ]; then
         DOWNLOAD_PIPELINE=true
         DOWNLOAD_CONFIG=true
-        DOWNLOAD_CONTAINERS=true
         DOWNLOAD_REFERENCES=true
         return
     fi
@@ -365,10 +344,6 @@ parse_arguments() {
                 DOWNLOAD_PIPELINE=true
                 shift
                 ;;
-            -c|--containers-only)
-                DOWNLOAD_CONTAINERS=true
-                shift
-                ;;
             -r|--references-only)
                 DOWNLOAD_REFERENCES=true
                 shift
@@ -380,7 +355,6 @@ parse_arguments() {
             -a|--all)
                 DOWNLOAD_PIPELINE=true
                 DOWNLOAD_CONFIG=true
-                DOWNLOAD_CONTAINERS=true
                 DOWNLOAD_REFERENCES=true
                 shift
                 ;;
@@ -398,12 +372,10 @@ parse_arguments() {
 
     # If no specific component selected, download all (except config-only)
     if [ "$DOWNLOAD_PIPELINE" = false ] \
-        && [ "$DOWNLOAD_CONTAINERS" = false ] \
         && [ "$DOWNLOAD_REFERENCES" = false ] \
         && [ "$DOWNLOAD_CONFIG" = false ]; then
         DOWNLOAD_PIPELINE=true
         DOWNLOAD_CONFIG=true
-        DOWNLOAD_CONTAINERS=true
         DOWNLOAD_REFERENCES=true
     fi
 
@@ -427,10 +399,9 @@ main() {
     echo "Config repo:     ${CONFIG_GITHUB_REPO}"
     echo ""
     echo "Components to download:"
-    echo "  Pipeline:    ${DOWNLOAD_PIPELINE}"
-    echo "  Containers:  ${DOWNLOAD_CONTAINERS}"
-    echo "  References:  ${DOWNLOAD_REFERENCES}"
-    echo "  Config:      ${DOWNLOAD_CONFIG}"
+    echo "  Pipeline + Containers: ${DOWNLOAD_PIPELINE}"
+    echo "  References:            ${DOWNLOAD_REFERENCES}"
+    echo "  Config:                ${DOWNLOAD_CONFIG}"
     if [ ${#REFERENCE_CONFIGS[@]} -gt 0 ]; then
         echo "  Reference configs: ${REFERENCE_CONFIGS[*]}"
     fi
@@ -438,10 +409,6 @@ main() {
 
     if [ "$DOWNLOAD_PIPELINE" = true ]; then
         download_pipeline
-    fi
-
-    if [ "$DOWNLOAD_CONTAINERS" = true ]; then
-        download_containers
     fi
 
     if [ "$DOWNLOAD_REFERENCES" = true ]; then
@@ -459,8 +426,6 @@ main() {
     echo "Generated files:"
     if [ "$DOWNLOAD_PIPELINE" = true ]; then
         echo "  - ${PIPELINE_NAME}_${TAG_OR_BRANCH}.tar.gz (pipeline)"
-    fi
-    if [ "$DOWNLOAD_CONTAINERS" = true ]; then
         echo "  - apptainer_cache.tar.gz (containers)"
     fi
     if [ "$DOWNLOAD_REFERENCES" = true ] && [ ${#REFERENCE_CONFIGS[@]} -gt 0 ]; then
