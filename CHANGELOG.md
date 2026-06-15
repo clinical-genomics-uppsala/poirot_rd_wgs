@@ -1,5 +1,52 @@
 # Changelog
 
+## [1.1.0](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v1.0.1...v1.1.0) (2026-06-15)
+
+
+### Features
+
+* add -c and -p options to samtools merge of duplicate marked bam files ([3872228](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/387222820e4e89deaea43a69d63b0375bf8caa57))
+* add cnvpytor pytor file to results folders ([e48d009](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/e48d0094c9b7a28d447e0d40e98ff445f865d567))
+* add expected relatedness calculation to somalier mqc ([42bde01](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/42bde010adeda2f295537837aca297019e6ed3b5))
+* add melt and scramble to cnv_sv vcf ([93d29a9](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/93d29a913f7a6be623108363c82c03465a2091b6))
+* add tiddit to svdb merge ([a26e12d](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/a26e12da4c5e3edca55bd3e5ec2ee42b3a56058a))
+* make the output json more readable ([0c148f0](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/0c148f01448a18cb35c2eaaf2441fbc8064c50a4))
+* output cnvpytor  manhattan plot ([86d3c8a](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/86d3c8a6b88171196656a3fab9ec7c0b6b8d6929))
+* remove un-needed code after module updates ([4611c98](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/4611c987c6d0631230cc2a06c40278ef045663a3))
+* Update cnv_sv module version to a specific commit ([1075920](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/1075920b2a0ca7d4f7e81e969ec1ecc60c5f4a50))
+* Update exclude pytorP1 thresholds ([a7f3733](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/a7f3733daf11d0afbc84d25c7c55053198c4eb64))
+* update hydra-genetics to v4 ([a00e004](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/a00e00484d2fd985eed1fcdc3ac83a4ae83c2f58))
+* update output list and docs ([d372940](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/d372940d82aa54d29f90abbf7a129dfb7c84cb64))
+* update svdb version ([e88c1d0](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/e88c1d05597f46df9dbf89a6ce3ea650d671392c))
+* update the qc and cnv_sv modules ([3adcf2a](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/3adcf2aa46349c4d46554126939cc7bcf5971a1a))
+
+
+### Bug Fixes
+
+* add check for half siblings ([f032630](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/f032630bb3041fc133ebe80fb68d54bf6d6b45f6))
+* add missing header section ([070059c](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/070059c4da2796dfdfc49478678634fff9c81ede))
+* adress review comments ([50ed279](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/50ed279165b8227b553d4e955125b71442509693))
+* apply suggestions from code review ([3cd1945](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/3cd1945f5c5eea191e9e99e09bb9885309806bbe))
+* clean TSV output and filter columns for MultiQC ([0dbaaba](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/0dbaaba38e9fa2ce56e00c5127fdfc780dfd6e5e))
+* combine somalier mqc files ([5a8398f](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/5a8398f9f3591219562545de2ce9e915674882a0))
+* **copilot:** solve potential silent fail ([05d874e](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/05d874e7182f068d0a616445eb5e1f90cf77565f))
+* correct somalier_mqc.yaml general stats structure ([f44c1e5](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/f44c1e5874137d4a3cada8ac80713f4c12cc4d2e))
+* refactor multiqc variables ([5410377](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/54103772a9fe91fbd5397456553e548d241bc136))
+* solve rule name mismatch ([809cc59](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/809cc5939fe0951f01da42296ba8d196da4dbdf6))
+* solve test pass issue ([773f386](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/773f386d32b09a535ebd2ad7b34550b918c71a52))
+* update authorship ([2009aa1](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/2009aa16e8a9cb0ce8540e4aa39e8b785a82fb26))
+* update log redirection ([1bf815b](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/1bf815b5cce2cdf069e1419a3a61b929717b7819))
+* update relatedness and sex checks ([281f466](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/281f466175416c24c22acd22e0b074f5da48df98))
+* update somalier multiqc tables ([dace431](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/dace4310bf357199ca5345acfa531aa392aa9712))
+* use correct lineterminator argument for pandas to_csv ([08ec48e](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/08ec48e6f72c32a5bba9c0567ccae21333a65087))
+
+
+### Documentation
+
+* add links to configs instead of including copies ([13a007e](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/13a007e46546f90c18748c66e61d6ed79d448c2d))
+* update description of resources config ([8609271](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/8609271c7d73cf8f112b589dbfd10cfd06f1bc53))
+* update docs ([5e5c901](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/5e5c901fc3af9c9e4b8be2b11fe581e70d071591))
+
 ## [1.0.1](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v1.0.0...v1.0.1) (2026-03-26)
 
 
