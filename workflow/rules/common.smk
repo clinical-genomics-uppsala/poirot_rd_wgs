@@ -3,10 +3,13 @@ __copyright__ = "Copyright 2022"
 __email__ = "jessika.nordin@scilifelab.uu.se"
 __license__ = "GPL-3"
 
+import os
 import pandas
 import yaml
 import json
+import sys
 from datetime import datetime
+from pathlib import Path
 
 from hydra_genetics.utils.misc import get_module_snakefile
 from hydra_genetics.utils.resources import load_resources
@@ -28,6 +31,13 @@ from hydra_genetics.utils.software_versions import touch_pipeline_version_file_n
 from hydra_genetics.utils.software_versions import touch_software_version_file
 from hydra_genetics.utils.software_versions import use_container
 
+# Import somalier utility functions
+sys.path.insert(0, str(Path(workflow.basedir) / "scripts"))
+from somalier_utils import convert_trio_format_to_somalier, get_samples_for_somalier, has_trio_samples
+
+from hydra_genetics.utils import misc
+
+misc.ALIGNER_PATHS.update({"bwa_cpu": "alignment/samtools_merge_bam"})
 
 hydra_min_version("3.0.0")
 
@@ -127,15 +137,15 @@ def get_bam_input(wildcards, use_sample_wildcard=True, use_type_wildcard=True):
 
     aligner = config.get("aligner", None)
     if aligner is None:
-        sys.exit("aligner missing from config, valid options: bwa_gpu or bwa_cpu")
-    elif aligner == "bwa_gpu":
+        sys.exit("aligner missing from config, valid options: parabricks_fq2bam or bwa_cpu")
+    elif aligner == "parabricks_fq2bam":
         bam_input = "parabricks/pbrun_fq2bam/{}.bam".format(sample_str)
     elif aligner == "bwa_cpu":
         # if by_chr:  # if a bam for single chromosome is needed
         #     bam_input = "alignment/picard_mark_duplicates/{}_{}.bam".format(sample_str, wildcards.chr)
         bam_input = "alignment/samtools_merge_bam/{}.bam".format(sample_str)
     else:
-        sys.exit("valid options for aligner are: bwa_gpu or bwa_cpu")
+        sys.exit("valid options for aligner are: parabricks_fq2bam or bwa_cpu")
 
     bai_input = "{}.bai".format(bam_input)
 
@@ -266,9 +276,19 @@ def get_glnexus_input(wildcards, input):
 
 
 def get_vcfs_for_svdb_merge(wildcards, input):
+    """
+    Construct a list of VCF file paths with their corresponding input names as suffixes for SVDB merge.
+
+    Args:
+        wildcards: Snakemake wildcards object (not used, but kept for compatibility).
+        input: Snakemake input object, expected to have attributes manta, melt, scramble, cnvpytor.
+
+    Returns:
+        List of strings in the format 'path:name' for each input item, e.g., 'file.vcf.gz:manta'.
+    """
     vcfs_with_suffix = []
-    vcfs_with_suffix.append(f"{input.manta}:manta")
-    vcfs_with_suffix.append(f"{input.cnvpytor}:cnvpytor")
+    for name, path in input.items():
+        vcfs_with_suffix.append(f"{path}:{name}")
 
     return vcfs_with_suffix
 
@@ -332,6 +352,10 @@ def compile_output_list(wildcards):
                     continue
                 else:
                     output_files.append(output.format(sample=sample))
+        elif output.startswith("results/somalier_trio/"):
+            # Only add somalier_trio outputs if config enabled and trios exist
+            if config.get("somalier_trio_extract") and has_trio_samples(samples):
+                output_files.append(output)
         else:
             output_files += set(
                 [

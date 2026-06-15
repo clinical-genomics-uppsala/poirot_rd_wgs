@@ -1,0 +1,30 @@
+somalier_sex_check:
+  id: 'somalier_sex_check_table'
+  format: tsv
+  plot_type: 'table'
+  section_name: 'Sex Check'
+  description: 'Check predicted sex'
+  headers:
+    sample_id:
+      title: Sample
+      placement: 1000
+    predicted_sex:
+      title: Predicted Sex
+      placement: 1030
+
+somalier_rel_check:
+  id: 'somalier_rel_check_table'
+  format: tsv
+  plot_type: 'table'
+  section_name: 'Relatedness Check'
+  description: 'Check sample relatedness'
+  headers:
+    sample_pair:
+      title: Sample Pair
+      placement: 2000
+    relatedness:
+      title: Relatedness
+      placement: 2010
+    relationship_status:
+      title: Status
+      placement: 2020

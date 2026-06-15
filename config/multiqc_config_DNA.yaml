@@ -50,7 +50,7 @@ module_order:
   - samtools
   - picard
 
-table_columns_visible:
+table_columns_visible: 
   FastQC:
     percent_duplicates: False
     percent_gc: False
@@ -98,7 +98,6 @@ table_columns_visible:
     PCT_30X: False
     PCT_TARGET_BASES_30X: False
     FOLD_ENRICHMENT: False
-
   "Samtools: stats":
     error_rate: False
     non-primary_alignments: False
@@ -111,7 +110,7 @@ table_columns_visible:
 # Patriks plug in, addera egna columner till general stats
 multiqc_cgs:
   "Picard: HsMetrics":
-    FOLD_80_BASE_PENALTY:
+    FOLD_80_BASE_PENALTY: 
       title: "Fold80"
       description: "Fold80 penalty from picard hs metrics"
       min: 1
@@ -137,7 +136,7 @@ multiqc_cgs:
       max: 60
       scale: "RdYlGn"
 
-# Galler alla kolumner oberoende pa module!
+# All columns independent of module!
 table_columns_placement:
   mosdepth:
     median_coverage: 601
