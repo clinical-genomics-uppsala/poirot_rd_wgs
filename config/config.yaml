@@ -364,6 +364,8 @@ svdb_query:
 tabix:
   container: "docker://hydragenetics/common:3.1.1"
 
+tiddit:
+  container: "docker://hydragenetics/tiddit:3.9.5"
 
 upd:
   container: "docker://hydragenetics/upd:0.1.1"
