@@ -106,29 +106,6 @@ Add the reference genome path to svdb merge vcf header
 
 ---
 
-## tiddit_add_ref
-Add the reference genome path to tiddit vcf header
-
-### :snake: Rule
-
-`#SNAKEMAKE_RULE_SOURCE__add_ref_to_vcf__tiddit_add_ref#`
-
-#### :left_right_arrow: input / output files
-
-`#SNAKEMAKE_RULE_TABLE__add_ref_to_vcf__tiddit_add_ref#`
-
-### :wrench: Configuration
-
-#### Software settings (`config.yaml`)
-
-`#CONFIGSCHEMA__tiddit_add_ref#`
-
-#### Resources settings (`resources.yaml`)
-
-`#RESOURCESSCHEMA__tiddit_add_ref#`
-
----
-
 ## vcf_to_aed
 Conversion of cnvpytor vcf to AED file format. The AED file can be read by Chromosome Analysis Suite (ChAS).
 

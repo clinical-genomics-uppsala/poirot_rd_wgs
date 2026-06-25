@@ -350,16 +350,16 @@ stranger:
 svdb_merge:
   container: "docker://hydragenetics/svdb:2.10.2"
   overlap: 0.6
-  priority: "manta,tiddit,melt,scramble,cnvpytor"
+  priority: "manta,melt,scramble,cnvpytor"
   extra: "--pass_only --no_intra "
 
 svdb_query:
   container: "docker://hydragenetics/svdb:2.10.2"
   extra: >-
-    --in_frq FRQ,FRQ,FRQ,FRQ,FRQ,AF
-    --in_occ OCC,OCC,OCC,OCC,OCC,AC
-    --out_frq manta_FRQ,cnvpytor_FRQ,tiddit_FRQ,melt_FRQ,scramble_FRQ,gnomad_AF
-    --out_occ manta_OCC,cnvpytor_OCC,tiddit_OCC,melt_OCC,scramble_OCC,gnomad_AC
+    --in_frq FRQ,FRQ,FRQ,FRQ,AF
+    --in_occ OCC,OCC,OCC,OCC,AC
+    --out_frq manta_FRQ,cnvpytor_FRQ,melt_FRQ,scramble_FRQ,gnomad_AF
+    --out_occ manta_OCC,cnvpytor_OCC,melt_OCC,scramble_OCC,gnomad_AC
 
 tabix:
   container: "docker://hydragenetics/common:3.1.1"
