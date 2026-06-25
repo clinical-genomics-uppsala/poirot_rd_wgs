@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v1.1.0...v1.2.0) (2026-06-25)
+
+
+### Features
+
+* remove Tiddit from SV calling ([912a207](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/912a207e945ef040e1edf5f4d3cbf95564b6f39b))
+
+
+### Documentation
+
+* update rulegraph ([331ae26](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/331ae26bd5bb958f904dd299cb72aea1d58e688a))
+
 ## [1.1.0](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v1.0.1...v1.1.0) (2026-06-15)
 
 
