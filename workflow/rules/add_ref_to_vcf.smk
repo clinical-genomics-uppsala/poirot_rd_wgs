@@ -31,36 +31,6 @@ rule deepvariant_add_ref:
         "../scripts/ref_vcf.py"
 
 
-rule tiddit_add_ref:
-    input:
-        vcf="cnv_sv/tiddit/{sample}_{type}.vcf.gz",
-        ref=config["reference"]["fasta"],
-    output:
-        vcf="cnv_sv/tiddit/{sample}_{type}_ref.vcf",
-    params:
-        extra=config.get("tiddit_add_ref", {}).get("extra", ""),
-    log:
-        "cnv_sv/tiddit/{sample}_{type}.add_ref.log",
-    benchmark:
-        repeat(
-            "cnv_sv/tiddit/{sample}_{type}.add_ref.benchmark.tsv",
-            config.get("tiddit_add_ref", {}).get("benchmark_repeats", 1),
-        )
-    threads: config.get("tiddit_add_ref", {}).get("threads", config["default_resources"]["threads"])
-    resources:
-        mem_mb=config.get("tiddit_add_ref", {}).get("mem_mb", config["default_resources"]["mem_mb"]),
-        mem_per_cpu=config.get("tiddit_add_ref", {}).get("mem_per_cpu", config["default_resources"]["mem_per_cpu"]),
-        partition=config.get("tiddit_add_ref", {}).get("partition", config["default_resources"]["partition"]),
-        threads=config.get("tiddit_add_ref", {}).get("threads", config["default_resources"]["threads"]),
-        time=config.get("tiddit_add_ref", {}).get("time", config["default_resources"]["time"]),
-    container:
-        config.get("tiddit_add_ref", {}).get("container", config["default_container"])
-    message:
-        "{rule}: Add reference to the header of the tiddit vcf: {input.vcf}"
-    script:
-        "../scripts/ref_vcf.py"
-
-
 rule svdb_add_ref:
     input:
         vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vcf.gz",
