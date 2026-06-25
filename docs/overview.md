@@ -33,14 +33,13 @@ Variant calls for both SNVs and indels, and SVs can be performed by Ensembl's VE
 
 - Structural variant callers
     - [Manta](https://github.com/Illumina/manta) and hydra genetics documentation [Manta](https://hydra-genetics-cnv-sv.readthedocs.io/en/latest/softwares/#manta)
-    - [Tiddit](https://github.com/SciLifeLab/TIDDIT) and hydra genetics documentation [tiddit](https://hydra-genetics-cnv-sv.readthedocs.io/en/latest/softwares/#tiddit)
 
 - Mobile elements
     - [MELT](https://melt.igs.umaryland.edu/index.php) that call ALU, HERVK, LINE1 and SVA mobile elements.
     - [Scramble](https://github.com/nih-fmrb/scramble) for mobile element insertion (MEI) calling.
 
 ### Merging and filtering of SV VCF files
-- [SVDB merge](https://github.com/J35P312/SVDB?tab=readme-ov-file#merge) used to merge the Manta, Tiddit, CNVpytor, MELT and Scramble VCF files. [Hydra genetics documentation](https://hydra-genetics-cnv-sv.readthedocs.io/en/latest/softwares/#svdb)
+- [SVDB merge](https://github.com/J35P312/SVDB?tab=readme-ov-file#merge) used to merge the Manta, CNVpytor, MELT and Scramble VCF files. [Hydra genetics documentation](https://hydra-genetics-cnv-sv.readthedocs.io/en/latest/softwares/#svdb)
 - [SVDB query](https://github.com/J35P312/SVDB?tab=readme-ov-file#query) used to annotate the merge VCF with frequency information from local SV databases
 - Annotation of SVDB merged VCF with Gnomad v4.0 AF using the [Ensembl Variant Effect Predictor](https://www.ensembl.org/info/docs/tools/vep/index.html)
 - Filtering of SV annotated VCF files based on Gnomad AF and the frequency of each SV called in local svdb databases
