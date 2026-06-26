@@ -76,7 +76,7 @@ bcftools_view_pass:
   extra: "--apply-filter PASS "
 
 bcftools_view_svdb:
-  extra: "-f 'PASS' -e 'manta_FRQ>0.05 | cnvpytor_FRQ>0.05 | tiddit_FRQ>0.05 | melt_FRQ>0.05 | scramble_FRQ>0.05 | gnomad_AF>0.1'"
+  extra: "-f 'PASS' -e 'manta_FRQ>0.05 | cnvpytor_FRQ>0.05 | melt_FRQ>0.05 | scramble_FRQ>0.05 | gnomad_AF>0.1'"
 
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
