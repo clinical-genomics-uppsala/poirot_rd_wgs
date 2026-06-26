@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v1.2.0...v1.2.1) (2026-06-26)
+
+
+### Bug Fixes
+
+* remove tiddit frq from filter in config.yaml ([896eb5b](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/commit/896eb5b14307b3055e2264485a12e06b950d20bc))
+
 ## [1.2.0](https://github.com/clinical-genomics-uppsala/poirot_rd_wgs/compare/v1.1.0...v1.2.0) (2026-06-25)
 
 
