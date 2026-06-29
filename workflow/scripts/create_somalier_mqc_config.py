@@ -146,6 +146,10 @@ def get_relatedness_df(pairs_file_path, samples_file_path, ped_df, trio_dict):
     # Clean column names
     relatedness_df.columns = relatedness_df.columns.str.lstrip('#').str.strip()
 
+    # Single-sample runs produce an empty pairs file — no pairs to process
+    if relatedness_df.empty:
+        return pd.DataFrame()
+
     # Read somalier samples file for additional info
     samples_df = pd.read_csv(samples_file_path, sep='\t', dtype=str)
     samples_df.columns = samples_df.columns.str.lstrip('#').str.strip()
