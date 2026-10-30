@@ -63,17 +63,20 @@ rule tiddit_add_ref:
 
 rule svdb_add_ref:
     input:
-        vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.vcf.gz",
+        vcf="cnv_sv/svdb_query/{sample}_{type}.{svdb_set}.svdb_query.vcf.gz",
         ref=config["reference"]["fasta"],
     output:
-        vcf="cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query_ref.vcf",
+        vcf="cnv_sv/svdb_query/{sample}_{type}.{svdb_set}.svdb_query_ref.vcf",
     params:
         extra=config.get("svdb_add_ref", {}).get("extra", ""),
+    wildcard_constraints:
+        svdb_set="merged|cnv_mei",
     log:
-        "cnv_sv/svdb_query/{sample}_{type}.add_ref.log",
+        "cnv_sv/svdb_query/{sample}_{type}.{svdb_set}.add_ref.log",
     benchmark:
         repeat(
-            "cnv_sv/svdb_merge/{sample}_{type}.output.benchmark.tsv", config.get("svdb_add_ref", {}).get("benchmark_repeats", 1)
+            "cnv_sv/svdb_query/{sample}_{type}.{svdb_set}.add_ref.benchmark.tsv",
+            config.get("svdb_add_ref", {}).get("benchmark_repeats", 1),
         )
     threads: config.get("svdb_add_ref", {}).get("threads", config["default_resources"]["threads"])
     resources:

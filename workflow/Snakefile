@@ -280,6 +280,48 @@ use rule svdb_query from cnv_sv as cnv_sv_svdb_query with:
         )
 
 
+# Replaces the cnvpytor-only {sample}.cnv.vcf.gz in the results
+# for now added MELT and scramble in this merge without removing from cnv_sv
+use rule svdb_merge from cnv_sv as cnv_sv_svdb_merge_cnv_mei with:
+    input:
+        cnvpytor="cnv_sv/cnvpytor/{sample}_{type}.hardfiltered.vcf",
+        melt="cnv_sv/melt/{sample}_{type}.softfiltered.vcf.gz",
+        scramble="cnv_sv/scramble_vcf/{sample}_{type}.softfiltered.vcf.gz",
+    output:
+        vcf=temp("cnv_sv/svdb_merge_cnv_mei/{sample}_{type}.cnv_mei.merged.vcf"),
+    params:
+        extra=config.get("svdb_merge_cnv_mei", {}).get("extra", ""),
+        overlap=config.get("svdb_merge_cnv_mei", {}).get("overlap", 0.6),
+        bnd_distance=config.get("svdb_merge_cnv_mei", {}).get("bnd_distance", 10000),
+        priority=config.get("svdb_merge_cnv_mei", {}).get("priority", ""),
+        vcfs=lambda wildcards, input: get_vcfs_for_svdb_merge(wildcards, input),
+    log:
+        "cnv_sv/svdb_merge_cnv_mei/{sample}_{type}.cnv_mei.merged.vcf.log",
+    benchmark:
+        repeat(
+            "cnv_sv/svdb_merge_cnv_mei/{sample}_{type}.cnv_mei.merged.benchmark.tsv",
+            config.get("svdb_merge_cnv_mei", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule svdb_query from cnv_sv as cnv_sv_svdb_query_cnv_mei with:
+    input:
+        vcf="cnv_sv/svdb_merge_cnv_mei/{sample}_{type}.cnv_mei.merged.vcf",
+    output:
+        vcf=temp("cnv_sv/svdb_query/{sample}_{type}.cnv_mei.svdb_query.vcf"),
+    params:
+        db_string=config.get("svdb_query_cnv_mei", {}).get("db_string", ""),
+        extra=config.get("svdb_query_cnv_mei", {}).get("extra", ""),
+        prefix=lambda wildcards, output: os.path.splitext(output[0])[0][:-6],
+    log:
+        "cnv_sv/svdb_query/{sample}_{type}.cnv_mei.svdb_query.log",
+    benchmark:
+        repeat(
+            "cnv_sv/svdb_query/{sample}_{type}.cnv_mei.svdb_query.benchmark.tsv",
+            config.get("svdb_query_cnv_mei", {}).get("benchmark_repeats", 1),
+        )
+
+
 use rule tiddit from cnv_sv as cnv_sv_tiddit with:
     input:
         bam=lambda wildcards: get_bam_input(wildcards)[0],
@@ -463,6 +505,22 @@ use rule bcftools_view from filtering as filtering_bcftools_view_svdb with:
         repeat(
             "cnv_sv/svdb_query/{sample}_{type}.merged.svdb_query.filtered.vcf.benchmark.tsv",
             config.get("bcftools_view_svdb", {}).get("benchmark_repeats", 1),
+        )
+
+
+use rule bcftools_view from filtering as filtering_bcftools_view_cnv_mei with:
+    input:
+        vcf="cnv_sv/svdb_query/{sample}_{type}.cnv_mei.svdb_query_ref.vcf.gz",
+    output:
+        vcf="cnv_sv/svdb_query/{sample}_{type}.cnv_mei.filtered.vcf.gz",
+    params:
+        extra=config.get("bcftools_view_cnv_mei", {}).get("extra", ""),
+    log:
+        "cnv_sv/svdb_query/{sample}_{type}.cnv_mei.filtered.vcf.log",
+    benchmark:
+        repeat(
+            "cnv_sv/svdb_query/{sample}_{type}.cnv_mei.filtered.vcf.benchmark.tsv",
+            config.get("bcftools_view_cnv_mei", {}).get("benchmark_repeats", 1),
         )
 
 

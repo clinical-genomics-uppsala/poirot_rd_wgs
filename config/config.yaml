@@ -78,6 +78,10 @@ bcftools_view_pass:
 bcftools_view_svdb:
   extra: "-f 'PASS' -e 'manta_FRQ>0.05 | cnvpytor_FRQ>0.05 | melt_FRQ>0.05 | scramble_FRQ>0.05 | gnomad_AF>0.1'"
 
+bcftools_view_cnv_mei:
+  # Only touches MELT/scramble-derived records; cnvpytor records pass through as in the old cnv.vcf.gz
+  extra: "-e '(INFO/set~\"melt\" || INFO/set~\"scramble\") && (FILTER!=\"PASS\" || INFO/melt_FRQ>0.05 || INFO/scramble_FRQ>0.05 || INFO/gnomad_AF>0.1)'"
+
 bwa_mem:
   container: "docker://hydragenetics/bwa:0.7.15"
   extra: "-K 10000000 "
@@ -353,6 +357,11 @@ svdb_merge:
   priority: "manta,melt,scramble,cnvpytor"
   extra: "--pass_only --no_intra "
 
+svdb_merge_cnv_mei:
+  overlap: 0.6
+  priority: "cnvpytor,melt,scramble"
+  extra: "--pass_only --no_intra "
+
 svdb_query:
   container: "docker://hydragenetics/svdb:2.10.2"
   extra: >-
@@ -360,6 +369,13 @@ svdb_query:
     --in_occ OCC,OCC,OCC,OCC,AC
     --out_frq manta_FRQ,cnvpytor_FRQ,melt_FRQ,scramble_FRQ,gnomad_AF
     --out_occ manta_OCC,cnvpytor_OCC,melt_OCC,scramble_OCC,gnomad_AC
+
+svdb_query_cnv_mei:
+  extra: >-
+    --in_frq FRQ,FRQ,FRQ,AF
+    --in_occ OCC,OCC,OCC,AC
+    --out_frq cnvpytor_FRQ,melt_FRQ,scramble_FRQ,gnomad_AF
+    --out_occ cnvpytor_OCC,melt_OCC,scramble_OCC,gnomad_AC
 
 tabix:
   container: "docker://hydragenetics/common:3.1.1"

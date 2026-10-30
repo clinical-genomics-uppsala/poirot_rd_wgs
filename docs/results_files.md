@@ -24,7 +24,7 @@ multiqc_DNA.html| html  | Aggregated QC values for entire sequence run, open in 
 {sample}/{sample}.upd_regions.bed | bed | Bed file of UPD regions called from a Trio VCF. Sample in this case is the sample id of the proband in the trio.  |
 {sample}/automap/{sample}.HomRegions.tsv | tsv |  Regions of homozygosity  detected by AutoMap |
 {sample}/automap/{sample}.HomRegions.pdf | pdf  | Visualisation of ROH regions detected by AutoMap |
-{sample}/cnv_sv/{sample}.cnv.vcf.gz | vcf.gz | Filtered CNVpytor VCF file |
+{sample}/cnv_sv/{sample}.cnv.vcf.gz | vcf.gz | Filtered CNVpytor calls merged (SVDB) with PASS, non-common MELT and Scramble mobile element calls |
 {sample}/cnv_sv/{sample}.cnvpytor.vcf.gz | vcf.gz | Unfiltered CNVpytor VCF file |
 {sample}/cnv_sv/{sample}.cnvpytor_filtered.aed| aed | Filtered CNVpytor calls in aed format (Affymetrix Extensible Data format, tab delimited) |
 {sample}/cnv_sv/{sample}.cnvpytor.aed | aed | CNVpytor calls in aed format (Affymetrix Extensible Data format, tab delimited) |

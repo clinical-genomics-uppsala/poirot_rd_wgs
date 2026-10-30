@@ -57,14 +57,14 @@
   },
   "results/{sample}/cnv_sv/{sample}.cnv.vcf.gz": {
     "name": "_copy_cnvpytor_filtered_vcf",
-    "file": "cnv_sv/cnvpytor/{sample}_N.hardfiltered.vcf.gz",
+    "file": "cnv_sv/svdb_query/{sample}_N.cnv_mei.filtered.vcf.gz",
     "types": [
       "N"
     ]
   },
   "results/{sample}/cnv_sv/{sample}.cnv.vcf.gz.tbi": {
     "name": "_copy_cnvpytor_filtered_vcf_tbi",
-    "file": "cnv_sv/cnvpytor/{sample}_N.hardfiltered.vcf.gz.tbi",
+    "file": "cnv_sv/svdb_query/{sample}_N.cnv_mei.filtered.vcf.gz.tbi",
     "types": [
       "N"
     ]
