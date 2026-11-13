@@ -62,3 +62,4 @@ harmonization_notes:
   - Keep WGS-specific STR, mitochondrial, and CNV export logic local until it has a second pipeline user.
   - Peddy report helpers overlap with Hastings and are candidates for hydra-genetics/report.
   - Reference file names should come from the common cgu/library layout, not cluster-specific workflow logic.
+  - Site configs (CONTAINER_DIR, hydra_local_path) live in poirot_config/config/site_configs/ until the configs are merged into this repo (D7, to be confirmed). Check with check_offline.py --config-repo.

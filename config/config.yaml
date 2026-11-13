@@ -10,7 +10,7 @@ units: "units.tsv"
 
 output: "config/output_list.json"
 
-default_container: "docker://hydragenetics/common:3.1.1"
+default_container: "{{CONTAINER_DIR}}/hydragenetics__common_3.1.1.sif"
 
 modules:
   alignment: "v0.7.0"
@@ -37,7 +37,7 @@ reference:
 trimmer_software: "fastp_pe"
 
 automap:
-  container: "docker://hydragenetics/automap:1.2"
+  container: "{{CONTAINER_DIR}}/hydragenetics__automap_1.2.sif"
   build: "hg38"
   extra: "--DP 10 --minsize 3 --chrX"
   outdir: "cnv_sv/automap"
@@ -69,7 +69,7 @@ bcftools_hardfilter_cnvpytor:
   exclude: "'pytorP1>0.05 | pytorDG<100000 | pytorPN>0.5 | ( pytorQ0>0.5 && FORMAT/CN != 0)'"
 
 bcftools_norm:
-  docker: "docker://docker.io/library/bcftools:1.23"
+  docker: "{{CONTAINER_DIR}}/docker.io__library__bcftools_1.23.sif"
   extra: "-m -both -w 10000"
 
 bcftools_view_pass:
@@ -79,20 +79,20 @@ bcftools_view_svdb:
   extra: "-f 'PASS' -e 'manta_FRQ>0.05 | cnvpytor_FRQ>0.05 | melt_FRQ>0.05 | scramble_FRQ>0.05 | gnomad_AF>0.1'"
 
 bwa_mem:
-  container: "docker://hydragenetics/bwa:0.7.15"
+  container: "{{CONTAINER_DIR}}/hydragenetics__bwa_0.7.15.sif"
   extra: "-K 10000000 "
 
 bwa_mem_mito:
-  container: "docker://hydragenetics/bwa_mem:0.7.17"
+  container: "{{CONTAINER_DIR}}/hydragenetics__bwa_mem_0.7.17.sif"
   extra: "-K 100000000 -v3 -Y "
 
 cnvpytor_readdepth:
-  container: "docker://hydragenetics/cnvpytor:1.3.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__cnvpytor_1.3.1.sif"
   length_list: "500 5000 100000"
   extra: "-chrom chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 chr11 chr12 chr13 chr14 chr15 chr16 chr17 chr18 chr19 chr20 chr21 chr22 chrX chrY chrM "
 
 cnvpytor_filter:
-  container: "docker://hydragenetics/cnvpytor:1.3.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__cnvpytor_1.3.1.sif"
   dG_range: "100000 inf"
   calling_model: "rd_mean_shift"
   p_range: "0 0.05"
@@ -101,121 +101,121 @@ cnvpytor_filter:
   view: "500"
  
 cnvpytor_plot_manhattan:
-  container: "docker://hydragenetics/cnvpytor:1.3.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__cnvpytor_1.3.1.sif"
   bin_size: "100000"
 
 create_cov_excel:
   covLimits: "10 20 30"
 
 deepvariant:
-  container: "docker://google/deepvariant:1.6.1" 
+  container: "{{CONTAINER_DIR}}/google__deepvariant_1.6.1.sif" 
   model_type: "WGS" 
   output_gvcf: true
 
 echtvar_anno:
-  container: "docker://hydragenetics/echtvar:0.2.2"
+  container: "{{CONTAINER_DIR}}/hydragenetics__echtvar_0.2.2.sif"
 
 expansionhunter:
-  container: "docker://hydragenetics/expansionhunter:5.0.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__expansionhunter_5.0.0.sif"
   variant_catalog: "config/str_catalog/variant_catalog_hg38.json"
 
 fastp_pe:
-  container: "docker://hydragenetics/fastp:0.24.3"
+  container: "{{CONTAINER_DIR}}/hydragenetics__fastp_0.24.3.sif"
   # Default enabled trimming parameters for fastp. Specified for clarity.
   extra: "--trim_poly_g --qualified_quality_phred 15 --unqualified_percent_limit 40 --n_base_limit 5 --length_required 15"
 
 fastqc:
-  container: "docker://hydragenetics/fastqc:0.11.9"
+  container: "{{CONTAINER_DIR}}/hydragenetics__fastqc_0.11.9.sif"
 
 gatk_collect_wgs_metrics:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
   coverage_cap: 100000
   read_length: 151
 
 gatk_filter_contamination:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
 
 gatk_filter_mutect_calls_mt:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
 
 gatk_left_align_and_trim_variants:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
 
 gatk_lift_over_vcf:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
 
 gatk_mark_duplicates:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
 
 gatk_merge_bam_alignment:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
 
 gatk_merge_vcfs:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
 
 gatk_merge_stats:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
 
 gatk_mutect2:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
   max_reads_per_alignment_start: 75
 
 gatk_print_reads:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
   interval: "chrM"
 
 gatk_revert_sam:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
 
 gatk_sam_to_fastq:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
 
 gatk_select_variants:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
 
 gatk_sort_sam:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
 
 gatk_split_multi_allelic_sites:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
 
 gatk_variant_filtration:
-  container: "docker://hydragenetics/gatk4:4.2.2.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__gatk4_4.2.2.0.sif"
 
 glnexus_trio:
-  container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
+  container: "{{CONTAINER_DIR}}/ghcr.io__dnanexus-rnd__glnexus_v1.4.1.sif"
   configfile: "DeepVariantWGS"
 
 glnexus_peddy:
-  container: "docker://ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
+  container: "{{CONTAINER_DIR}}/ghcr.io__dnanexus-rnd__glnexus_v1.4.1.sif"
   configfile: "DeepVariantWGS"
 
 haplocheck:
-  container: "docker://hydragenetics/haplocheck:1.3.3"
+  container: "{{CONTAINER_DIR}}/hydragenetics__haplocheck_1.3.3.sif"
 
 manta_config_n:
-  container: "docker://hydragenetics/manta:1.6.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__manta_1.6.0.sif"
 
 manta_run_workflow_n:
-  container: "docker://hydragenetics/manta:1.6.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__manta_1.6.0.sif"
 
 melt:
-  container: "/projects/wp3/Software/MELTv2.2.2/MELT_v2.2.2.sif"
+  container: "{{CONTAINER_DIR}}/MELT_v2.2.2.sif"
   bed: "/projects/wp3/Software/MELTv2.2.2/add_bed_files/Hg38/Hg38.genes.bed"
   extra: "-r 150 "
   mei: "/projects/wp3/Software/MELTv2.2.2/mei_list.txt"
 
 mosdepth:
-  container: "docker://hydragenetics/mosdepth:0.3.2"
+  container: "{{CONTAINER_DIR}}/hydragenetics__mosdepth_0.3.2.sif"
   by: "500"
   extra: "--fast-mode --use-median --no-per-base "
 
 mosdepth_bed:
-  container: "docker://hydragenetics/mosdepth:0.3.2"
+  container: "{{CONTAINER_DIR}}/hydragenetics__mosdepth_0.3.2.sif"
   extra: ""
 
 multiqc:
-  container: "docker://hydragenetics/multiqc:1.21"
+  container: "{{CONTAINER_DIR}}/hydragenetics__multiqc_1.21.sif"
   reports:
     DNA:
       config: "config/multiqc_config_DNA.yaml"
@@ -246,115 +246,115 @@ multiqc:
         - "qc/somalier_trio/somalier_sex_check_mqc.tsv"
 
 pbrun_deepvariant:
-  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
+  container: "{{CONTAINER_DIR}}/nvcr.io__nvidia__clara__clara-parabricks_4.3.0-1.sif"
   extra: "--num-cpu-threads-per-stream 5 --num-streams-per-gpu 2 --disable-use-window-selector-model --gvcf " ## For consistency with deepvariant cpu. Also increases accuracy. 
   tmp_dir: "/tmp/"
 
 pbrun_fq2bam:
-  container: "docker://nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
+  container: "{{CONTAINER_DIR}}/nvcr.io__nvidia__clara__clara-parabricks_4.3.0-1.sif"
   extra: "--gpusort --gpuwrite --num-cpu-threads-per-stage 10 --fix-mate "
   tmp_dir: "/tmp/"
 
 peddy:
-  container: "docker://hydragenetics/peddy:0.4.8"
+  container: "{{CONTAINER_DIR}}/hydragenetics__peddy_0.4.8.sif"
   config: "config/peddy_mqc.yaml"
   extra: "--sites hg38 "
 
 picard_collect_alignment_summary_metrics:
-  container: "docker://hydragenetics/picard:2.25.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__picard_2.25.0.sif"
 
 picard_collect_duplication_metrics:
-  container: "docker://hydragenetics/picard:2.25.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__picard_2.25.0.sif"
 
 picard_collect_gc_bias_metrics:
-  container: "docker://hydragenetics/picard:2.25.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__picard_2.25.0.sif"
 
 picard_collect_hs_metrics:
-  container: "docker://hydragenetics/picard:2.25.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__picard_2.25.0.sif"
 
 picard_collect_insert_size_metrics:
-  container: "docker://hydragenetics/picard:2.25.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__picard_2.25.0.sif"
 
 picard_collect_wgs_metrics:
-  container: "docker://hydragenetics/picard:2.25.0"
+  container: "{{CONTAINER_DIR}}/hydragenetics__picard_2.25.0.sif"
 
 picard_mark_duplicates:
-  container: "docker://hydragenetics/picard:2.25.4"
+  container: "{{CONTAINER_DIR}}/hydragenetics__picard_2.25.4.sif"
 
 reviewer:
-  container: "docker://hydragenetics/reviewer:0.2.7"
+  container: "{{CONTAINER_DIR}}/hydragenetics__reviewer_0.2.7.sif"
 
 samtools_stats:
-  container: "docker://hydragenetics/common:3.1.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__common_3.1.1.sif"
 
 samtools_idxstats:
-  container: "docker://hydragenetics/common:3.1.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__common_3.1.1.sif"
 
 samtools_merge_bam:
-  container: "docker://hydragenetics/common:1.11.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__common_1.11.1.sif"
   extra: "-c -p"
 
 scramble_cluster_analysis:
-  container: "docker://hydragenetics/scramble:1.0.2"
+  container: "{{CONTAINER_DIR}}/hydragenetics__scramble_1.0.2.sif"
   mei_refs: "/opt/scramble/cluster_analysis/resources/MEI_consensus_seqs.fa" # path in the container
   install_dir: "/opt/scramble/cluster_analysis/bin" # path in the container
 
 scramble_cluster_identifier:
-  container: "docker://hydragenetics/scramble:1.0.2"
+  container: "{{CONTAINER_DIR}}/hydragenetics__scramble_1.0.2.sif"
 
 smn_caller:
-  container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
+  container: "{{CONTAINER_DIR}}/hydragenetics__smncopynumbercaller_1.1.2.sif"
   genome_version: '38'
 
 smn_charts:
-  container: "docker://hydragenetics/smncopynumbercaller:1.1.2"
+  container: "{{CONTAINER_DIR}}/hydragenetics__smncopynumbercaller_1.1.2.sif"
 
 convert_samples_for_somalier_trio:
-  container: "docker://hydragenetics/common:3.1.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__common_3.1.1.sif"
 
 somalier_trio_combine_fam:
-  container: "docker://hydragenetics/common:3.1.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__common_3.1.1.sif"
 
 somalier_trio_create_groupfile:
-  container: "docker://hydragenetics/common:3.1.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__common_3.1.1.sif"
 
 somalier_trio_create_ped:
-  container: "docker://hydragenetics/common:3.1.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__common_3.1.1.sif"
 
 somalier_trio_extract:
   sites: "/beegfs-storage/data/ref_data/somalier/v0.2.18/sites.hg38.vcf.gz"
-  container: "docker://hydragenetics/somalier:0.2.18"
+  container: "{{CONTAINER_DIR}}/hydragenetics__somalier_0.2.18.sif"
 
 somalier_trio_mqc:
   mqc_config: "config/somalier_mqc.yaml"
-  container: "docker://hydragenetics/common:3.1.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__common_3.1.1.sif"
 
 create_somalier_mqc_tsv:
-  container: "docker://hydragenetics/common:3.1.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__common_3.1.1.sif"
 
 somalier_trio_relate:
-  container: "docker://hydragenetics/somalier:0.2.18"
+  container: "{{CONTAINER_DIR}}/hydragenetics__somalier_0.2.18.sif"
   extra: ""
 
 somalier_trio_validate:
-  container: "docker://hydragenetics/common:3.1.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__common_3.1.1.sif"
   threshold: 0.4
 
 spring:
-  container: "docker://hydragenetics/spring:1.1.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__spring_1.1.1.sif"
 
 stranger:
-  container: "docker://hydragenetics/stranger:0.8.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__stranger_0.8.1.sif"
   catalog: "config/str_catalog/variant_catalog_hg38.json"
 
 svdb_merge:
-  container: "docker://hydragenetics/svdb:2.10.2"
+  container: "{{CONTAINER_DIR}}/hydragenetics__svdb_2.10.2.sif"
   overlap: 0.6
   priority: "manta,melt,scramble,cnvpytor"
   extra: "--pass_only --no_intra "
 
 svdb_query:
-  container: "docker://hydragenetics/svdb:2.10.2"
+  container: "{{CONTAINER_DIR}}/hydragenetics__svdb_2.10.2.sif"
   extra: >-
     --in_frq FRQ,FRQ,FRQ,FRQ,AF
     --in_occ OCC,OCC,OCC,OCC,AC
@@ -362,24 +362,24 @@ svdb_query:
     --out_occ manta_OCC,cnvpytor_OCC,melt_OCC,scramble_OCC,gnomad_AC
 
 tabix:
-  container: "docker://hydragenetics/common:3.1.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__common_3.1.1.sif"
 
 tiddit:
-  container: "docker://hydragenetics/tiddit:3.9.5"
+  container: "{{CONTAINER_DIR}}/hydragenetics__tiddit_3.9.5.sif"
 
 upd:
-  container: "docker://hydragenetics/upd:0.1.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__upd_0.1.1.sif"
   extra: "--af-tag gnomad_popmax_af --min-gq 20 "
 
 vep:
-  container: "docker://ensemblorg/ensembl-vep:release_110.1"
+  container: "{{CONTAINER_DIR}}/ensemblorg__ensembl-vep_release_110.1.sif"
   mode: "--offline --cache --refseq "
   extra: "--assembly GRCh38 --check_existing --pick --sift b --polyphen b --ccds --symbol "
 
 vep_svdb:
-  container: "docker://ensemblorg/ensembl-vep:release_110.1"
+  container: "{{CONTAINER_DIR}}/ensemblorg__ensembl-vep_release_110.1.sif"
   mode: "--offline --cache --refseq "
   extra: "--assembly GRCh38 --check_existing --pick "
 
 verifybamid2:
-  container: "docker://hydragenetics/verifybamid2:2.0.1"
+  container: "{{CONTAINER_DIR}}/hydragenetics__verifybamid2_2.0.1.sif"

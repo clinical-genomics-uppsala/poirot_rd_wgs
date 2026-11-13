@@ -69,7 +69,7 @@ glnexus_peddy:
   extra: "--bed {{PIPELINE_REF_DATA}}/GRCH38.bed "
 
 haplocheck:
-  container: "docker://hydragenetics/haplocheck:1.3.3"
+  container: "{{CONTAINER_DIR}}/hydragenetics__haplocheck_1.3.3.sif"
 
 manta_config_n:
   extra: "--callRegions {{PIPELINE_REF_DATA}}/GRCh38_chromosomes.bed.gz"
